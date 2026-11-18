@@ -29,7 +29,7 @@ tracking. Works offline.
 - **Design controls** — accent/text/divider colours, divider style
   (solid/dashed/dotted), 4 font stacks, base font size, logo (URL or upload)
   with width and **position (left or right of your name)** in the Classic,
-  Compact and Split layouts, banner image, divider, legal / disclaimer
+  Compact, Split and Banner layouts, banner image, divider, legal / disclaimer
   footer, social style (icons / icons + labels / text links), contact labels
   on/off, and an **initials monogram** that replaces the logo with a coloured
   initials circle — no image needed. The Monogram template makes it the star.

@@ -393,13 +393,14 @@ function updateTemplatePicker() {
   updateLogoPositionUI();
 }
 
-/* Logo position only matters for the side-logo layouts; disable it (with a
-   hint) on the fixed-placement ones. */
+/* Logo position matters for the side-logo layouts (Banner renders its
+   content through the Classic layout, so it supports sides too); disable
+   it (with a hint) on the fixed-placement ones. */
 function updateLogoPositionUI() {
   const sel = $('#logo-position');
   const hint = $('#logo-pos-hint');
   if (!sel) return;
-  const relevant = ['classic', 'compact', 'split'].includes(state.design.template);
+  const relevant = ['classic', 'compact', 'split', 'banner'].includes(state.design.template);
   sel.disabled = !relevant;
   if (hint) hint.hidden = relevant;
 }
