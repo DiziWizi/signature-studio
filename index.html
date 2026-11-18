@@ -58,7 +58,7 @@
 
   <section class="editor" aria-label="Signature editor">
 
-    <details open>
+    <details open data-sec="profile">
       <summary>Profile</summary>
       <div class="body grid2">
         <label class="field">Full name<input data-field="profile.name" placeholder="Ada Lovelace"></label>
@@ -72,7 +72,7 @@
       </div>
     </details>
 
-    <details open>
+    <details open data-sec="contact">
       <summary>Contact details</summary>
       <div class="body grid2">
         <label class="field">Email<input type="email" data-field="contact.email" placeholder="ada@example.com"></label>
@@ -90,8 +90,8 @@
       </div>
     </details>
 
-    <details open>
-      <summary>Social links</summary>
+    <details open data-sec="socials">
+      <summary>Social links <span class="sec-count" id="count-socials">0</span></summary>
       <div class="body">
         <div class="quick" id="quick-socials">
           <span class="hint">Quick add:</span>
@@ -107,8 +107,8 @@
       </div>
     </details>
 
-    <details open>
-      <summary>Custom lines</summary>
+    <details open data-sec="customs">
+      <summary>Custom lines <span class="sec-count" id="count-customs">0</span></summary>
       <div class="body">
         <p class="hint">Extra rows like “Office hours”, “Direct line”, or anything else you need.</p>
         <div id="custom-list"></div>
@@ -116,7 +116,7 @@
       </div>
     </details>
 
-    <details open>
+    <details open data-sec="design">
       <summary>Design</summary>
       <div class="body">
         <div class="tpl-picker" id="tpl-picker">
@@ -188,6 +188,19 @@
           </label>
           <label class="field">Base font size (px)<input type="number" min="10" max="18" step="1" data-field="design.fontSize"></label>
 
+          <label class="field">Density
+            <select data-field="design.density">
+              <option value="airy">Airy</option>
+              <option value="regular">Regular</option>
+              <option value="compact">Compact</option>
+            </select>
+          </label>
+          <div class="field">
+            <span class="lbl">Name size boost</span>
+            <span class="range-row"><input type="range" min="0" max="10" step="1" data-field="design.nameSizeExtra"><output id="name-size-out">+3 px</output></span>
+            <span class="micro">Added to the base font size for your name.</span>
+          </div>
+
           <div class="field span2">
             <span class="lbl">Social link style</span>
             <div class="seg" id="seg-social-style">
@@ -249,6 +262,25 @@
             <input data-field="meta.name" placeholder="My signature">
           </label>
         </div>
+      </div>
+    </details>
+
+    <details open data-sec="elements">
+      <summary>Show / hide</summary>
+      <div class="body grid2">
+        <label class="switch"><input type="checkbox" data-field="design.showTitle"><span class="sw"></span> Job title</label>
+        <label class="switch"><input type="checkbox" data-field="design.showCompany"><span class="sw"></span> Company</label>
+        <label class="switch"><input type="checkbox" data-field="design.showDepartment"><span class="sw"></span> Department</label>
+        <label class="switch"><input type="checkbox" data-field="design.showLocation"><span class="sw"></span> Location &amp; languages</label>
+        <label class="switch"><input type="checkbox" data-field="design.showEmail"><span class="sw"></span> Email</label>
+        <label class="switch"><input type="checkbox" data-field="design.showPhone"><span class="sw"></span> Phone</label>
+        <label class="switch"><input type="checkbox" data-field="design.showMobile"><span class="sw"></span> Mobile</label>
+        <label class="switch"><input type="checkbox" data-field="design.showWebsite"><span class="sw"></span> Website</label>
+        <label class="switch"><input type="checkbox" data-field="design.showAddress"><span class="sw"></span> Address</label>
+        <label class="switch"><input type="checkbox" data-field="design.showBooking"><span class="sw"></span> Booking button</label>
+        <label class="switch"><input type="checkbox" data-field="design.showStatus"><span class="sw"></span> Status badge</label>
+        <label class="switch"><input type="checkbox" data-field="design.showSocials"><span class="sw"></span> Social links</label>
+        <span class="micro span2">Hide anything you don’t need — the preview rebuilds instantly.</span>
       </div>
     </details>
 

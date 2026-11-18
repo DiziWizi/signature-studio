@@ -120,10 +120,14 @@ function onFieldInput(e) {
   let v;
   if (el.type === 'checkbox') v = el.checked;
   else if (el.type === 'radio') { if (!el.checked) return; v = el.value; }
-  else if (el.type === 'number') v = el.value === '' ? '' : Number(el.value);
+  else if (el.type === 'number' || el.type === 'range') v = el.value === '' ? '' : Number(el.value);
   else v = el.value;
   setPath(state, el.dataset.field, v);
   if (el.dataset.field === 'design.logoWidth') updateLogoWidthOut();
+  if (el.dataset.field === 'design.nameSizeExtra') {
+    const o = $('#name-size-out');
+    if (o) o.textContent = `+${v} px`;
+  }
   renderPreview();
   scheduleSave();
 }
@@ -246,10 +250,18 @@ function socialRowHtml(soc, i) {
   </div>`;
 }
 
+function updateSectionCounts() {
+  const cs = $('#count-socials');
+  const cc = $('#count-customs');
+  if (cs) cs.textContent = state.socials.length;
+  if (cc) cc.textContent = state.customLines.length;
+}
+
 function renderSocials() {
   const list = $('#socials-list');
   list.innerHTML = state.socials.map((s, i) => socialRowHtml(s, i)).join('') ||
     '<p class="hint">No social links yet — use the quick-add chips or the button below.</p>';
+  updateSectionCounts();
 }
 
 function addSocial(network = 'linkedin') {
@@ -338,6 +350,7 @@ function customRowHtml(line, i) {
 function renderCustoms() {
   const list = $('#custom-list');
   list.innerHTML = state.customLines.map((l, i) => customRowHtml(l, i)).join('');
+  updateSectionCounts();
 }
 
 function onCustomListInput(e) {
@@ -617,6 +630,8 @@ function rebuildAll() {
   renderCustoms();
   updateTemplatePicker();
   updateLogoWidthOut();
+  const nso = $('#name-size-out');
+  if (nso) nso.textContent = `+${state.design.nameSizeExtra ?? 3} px`;
   updateSavedCount();
   renderThemes();
   renderPreview();
@@ -1224,6 +1239,23 @@ function init() {
     document.querySelectorAll('.overlay:not(.hidden)').forEach(o => o.classList.add('hidden'));
     menu.classList.add('hidden');
   });
+
+  /* editor section open/close state survives reloads */
+  const SECTIONS_KEY = 'sigstudio.sections';
+  try {
+    const saved = JSON.parse(localStorage.getItem(SECTIONS_KEY) || '{}');
+    document.querySelectorAll('details[data-sec]').forEach(d => {
+      const id = d.dataset.sec;
+      if (saved[id] === false) d.open = false;
+      d.addEventListener('toggle', () => {
+        try {
+          const cur = JSON.parse(localStorage.getItem(SECTIONS_KEY) || '{}');
+          cur[id] = d.open;
+          localStorage.setItem(SECTIONS_KEY, JSON.stringify(cur));
+        } catch (e) { /* ignore */ }
+      });
+    });
+  } catch (e) { /* ignore */ }
 
   /* image uploads */
   bindImageUpload('#upload-logo', '#logo-file', 'design.logoUrl', { square: true });

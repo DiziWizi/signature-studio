@@ -55,6 +55,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   when rounded corners are on: export anyway, or one click to strict mode
   and export); live persona thumbnails in the wizard (real scaled renders
   of each starter signature); E2E now 38 tests
+- [x] v0.14.0 — Show/hide element toggles (title, company, department,
+  location, every contact item, booking, status, socials — any layout);
+  density presets (airy/regular/compact) and a name-size boost slider;
+  editor section count badges + open/closed state remembered; E2E now 42
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.

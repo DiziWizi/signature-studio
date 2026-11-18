@@ -306,6 +306,37 @@ thumbnails in the wizard.
 
 ---
 
+# v0.14.0 addendum (element visibility + density + name size + sections)
+
+Date: 2026-11-19 · Scope: per-element Show/hide toggles, density presets,
+name-size boost, editor section counts and remembered open state.
+
+## Issues found and fixed in this round
+
+| # | Severity | Issue | Fix |
+| --- | --- | --- | --- |
+| 1 | Medium | Range inputs arrived as strings in `onFieldInput`, so the name-size boost was silently dropped by the renderer's strict type check (and any future range-bound numeric would hit the same). | `type=range` coerced to Number alongside `number`; `nameExtraOf` also Number()-coerces defensively. |
+| 2 | Low | The `+N px` output next to the name-size slider only refreshed on full rebuilds, lagging behind every slider movement. | Output updates in `onFieldInput` for `design.nameSizeExtra`. |
+| 3 | Test-only | Density assertions measured the wrong attributes (padding shorthand incl. the mobile media query; chip `height:22px`) until the real convention — spacer rows as `<td colspan height="N">` — was pinned. | Assertions target spacer-row height attributes. |
+| 4 | Test-only | Playwright's `fill()` does not dispatch events for range inputs. | Explicit `dispatchEvent(new Event('input'))` in the spec. |
+
+## Verification evidence (all passed)
+
+- Renderer subagent: 71/71 node assertions; 15 pre-change renders (5
+  personas × 10 templates) byte-identical (sha256) after the changes;
+  density scaling verified per element; name sizes 16/19/24 for extra
+  0/3/8; monogram size pinned.
+- Browser: toggles remove title/company/phone/address while email/mobile
+  survive; counts show 3 socials / 1 custom line; density switches re-render;
+  zero console errors.
+- Playwright: 42/42 twice consecutively (4 new customize tests: toggle
+  sweep, density + font-size invariance, name-size slider + output, section
+  counts + persistence across reload).
+- Release published with verified SHA-256 assets; CI check + e2e green on
+  the tag.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

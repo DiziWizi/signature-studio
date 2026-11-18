@@ -30,7 +30,8 @@ tracking. Works offline.
   reorderable by drag or buttons.
 - **Design controls** — **one-click colour themes** (7 curated palettes),
   accent/text/divider/card colours, divider style (solid/dashed/dotted), 4
-  font stacks, base font size, logo (URL or upload) with width, **position
+  font stacks, base font size, **density presets** (airy/regular/compact)
+  and a **name-size boost**, logo (URL or upload) with width, **position
   (left/right)** and a **round-photo** crop, banner image, divider,
   **status badge**, **card wrapper** (tint + border), **strict mode** that
   renders exactly as Word-engine Outlook will (no rounded corners), legal /
@@ -38,6 +39,9 @@ tracking. Works offline.
   contact labels on/off, and an **initials monogram** that replaces the
   logo with a coloured initials circle — no image needed. Imported
   signatures get the logo position guessed from the source HTML.
+- **Show / hide anything** — per-element toggles (title, company,
+  department, location, each contact item, booking, status, socials)
+  across every layout, so a signature can be as minimal as you like.
 - **Dark-mode friendly toggle** — adds `prefers-color-scheme` overrides for
   Gmail and Apple Mail dark mode, with a dark preview backdrop to check the
   result.

@@ -69,6 +69,22 @@ function defaultState() {
       cardColor: '#f6f8fa',
       roundPhoto: false,
       strictOutlook: false,
+      /* element visibility — hide anything you don't need */
+      showTitle: true,
+      showDepartment: true,
+      showCompany: true,
+      showLocation: true,
+      showEmail: true,
+      showPhone: true,
+      showMobile: true,
+      showWebsite: true,
+      showAddress: true,
+      showBooking: true,
+      showStatus: true,
+      showSocials: true,
+      /* density + name size */
+      density: 'regular',   // airy | regular | compact
+      nameSizeExtra: 3,     // px added to the base font size for the name
     },
     meta: { name: 'My signature' },
   };
