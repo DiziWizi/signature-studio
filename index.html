@@ -4,8 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Signature Studio — build and edit HTML email signatures in the browser. Templates, social links, contact details, live preview, one-click export. No account, everything stays local.">
+<meta name="theme-color" content="#0d1017">
 <title>Signature Studio — HTML email signature builder</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -27,12 +29,19 @@
     <button class="btn" id="btn-sample" type="button">Sample data</button>
     <button class="btn" id="btn-import" type="button">Import HTML</button>
     <button class="btn" id="btn-saved" type="button">Saved <span class="pill" id="saved-count">0</span></button>
+    <button class="btn btn-icon" id="btn-undo" type="button" title="Undo (Ctrl+Z)" disabled>↶</button>
+    <button class="btn btn-icon" id="btn-redo" type="button" title="Redo (Ctrl+Shift+Z)" disabled>↷</button>
     <div class="export-wrap">
       <button class="btn btn-primary" id="btn-export" type="button">Export ▾</button>
       <div class="menu hidden" id="export-menu" role="menu">
         <button role="menuitem" id="x-copy" type="button">Copy to clipboard</button>
         <button role="menuitem" id="x-download" type="button">Download .html file</button>
         <button role="menuitem" id="x-instructions" type="button">Install in your mail client…</button>
+        <hr class="sep">
+        <button role="menuitem" id="x-preset-export" type="button">Export preset (.json)</button>
+        <button role="menuitem" id="x-preset-import" type="button">Import preset (.json)</button>
+        <button role="menuitem" id="x-vcard" type="button">Download vCard (.vcf)</button>
+        <button role="menuitem" id="x-qr" type="button">Show QR code</button>
       </div>
     </div>
     <button class="btn btn-icon" id="btn-reset" type="button" title="Start over">↺</button>
@@ -60,7 +69,7 @@
         <label class="field">Phone<input data-field="contact.phone" placeholder="+44 20 7946 0958"></label>
         <label class="field">Mobile<input data-field="contact.mobile" placeholder="+44 7700 900123"></label>
         <label class="field">Website<input data-field="contact.website" placeholder="example.com"></label>
-        <label class="field">Website label<input data-field="contact.websiteLabel" placeholder="example.com — leave empty to use the URL"></label>
+        <label class="field">Website label<input data-field="contact.websiteLabel" placeholder="Leave empty to use the URL"></label>
         <label class="field span2">Address (one line or multiple)
           <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom"></textarea>
         </label>
@@ -97,25 +106,37 @@
       <summary>Design</summary>
       <div class="body">
         <div class="tpl-picker" id="tpl-picker">
-          <button class="tpl-btn" data-template="classic" type="button" aria-pressed="false">
-            <span class="thumb"><i class="b-logo"></i><i class="b-l1"></i><i class="b-l2"></i><i class="b-l3"></i></span>
+          <button class="tpl-btn" data-template="classic" type="button" aria-pressed="true">
+            <span class="thumb"><iframe class="tthumb" data-tpl="classic" title="Classic preview" sandbox=""></iframe></span>
             <span class="tpl-name">Classic</span>
           </button>
           <button class="tpl-btn" data-template="centered" type="button" aria-pressed="false">
-            <span class="thumb"><i class="b-c1"></i><i class="b-c2"></i><i class="b-c3"></i></span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="centered" title="Centered preview" sandbox=""></iframe></span>
             <span class="tpl-name">Centered</span>
           </button>
           <button class="tpl-btn" data-template="compact" type="button" aria-pressed="false">
-            <span class="thumb"><i class="b-k1"></i><i class="b-k2"></i><i class="b-k3"></i><i class="b-k4"></i></span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="compact" title="Compact preview" sandbox=""></iframe></span>
             <span class="tpl-name">Compact</span>
           </button>
           <button class="tpl-btn" data-template="banner" type="button" aria-pressed="false">
-            <span class="thumb"><i class="b-n1"></i><i class="b-n2"></i><i class="b-n3"></i></span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="banner" title="Banner preview" sandbox=""></iframe></span>
             <span class="tpl-name">Banner</span>
           </button>
           <button class="tpl-btn" data-template="minimal" type="button" aria-pressed="false">
-            <span class="thumb"><i class="b-m1"></i><i class="b-m2"></i><i class="b-m3"></i></span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="minimal" title="Minimal preview" sandbox=""></iframe></span>
             <span class="tpl-name">Minimal</span>
+          </button>
+          <button class="tpl-btn" data-template="split" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="split" title="Split preview" sandbox=""></iframe></span>
+            <span class="tpl-name">Split</span>
+          </button>
+          <button class="tpl-btn" data-template="roundel" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="roundel" title="Roundel preview" sandbox=""></iframe></span>
+            <span class="tpl-name">Roundel</span>
+          </button>
+          <button class="tpl-btn" data-template="masthead" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="masthead" title="Masthead preview" sandbox=""></iframe></span>
+            <span class="tpl-name">Masthead</span>
           </button>
         </div>
 
@@ -270,6 +291,19 @@
   </div>
 </div>
 
+<!-- QR modal -->
+<div class="overlay hidden" id="modal-qr" role="dialog" aria-modal="true">
+  <div class="modal modal-narrow">
+    <h2>QR code</h2>
+    <canvas id="qr-canvas" width="264" height="264"></canvas>
+    <p id="qr-caption" class="qr-caption"></p>
+    <p class="note">The code contains this contact as a vCard — scan it with a phone camera to add it to the address book. Everything is generated locally, nothing is uploaded.</p>
+    <div class="modal-actions">
+      <button class="btn" data-close type="button">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- Confirm modal -->
 <div class="overlay hidden" id="modal-confirm" role="dialog" aria-modal="true">
   <div class="modal">
@@ -298,12 +332,16 @@
 
 <div id="toasts" aria-live="polite"></div>
 
+<input type="file" id="preset-file" accept=".json,application/json" hidden>
+
 <script src="assets/js/state.js"></script>
 <script src="assets/js/socials.js"></script>
 <script src="assets/js/templates.js"></script>
 <script src="assets/js/import.js"></script>
 <script src="assets/js/export.js"></script>
 <script src="assets/js/storage.js"></script>
+<script src="assets/js/vcard.js"></script>
+<script src="assets/js/qrcode.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

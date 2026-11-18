@@ -6,6 +6,11 @@
 let state = null;
 let lastParsedImport = null;
 let lastSaveAt = 0;
+let dragCtx = null; // { type: 'socials'|'customs', index }
+
+const HISTORY_MAX = 50;
+let undoStack = [];
+let redoStack = [];
 
 const $ = sel => document.querySelector(sel);
 
@@ -21,6 +26,42 @@ function normalizeLoadedState(raw) {
   return out;
 }
 
+/* ── history (undo/redo) ──────────────────────────────────────────────── */
+
+function pushHistory() {
+  undoStack.push(clone(state));
+  if (undoStack.length > HISTORY_MAX) undoStack.shift();
+  redoStack = [];
+  updateUndoButtons();
+}
+
+function doUndo() {
+  if (!undoStack.length) return;
+  redoStack.push(clone(state));
+  state = undoStack.pop();
+  rebuildAll();
+  scheduleSave();
+  updateUndoButtons();
+  showToast('Undone.');
+}
+
+function doRedo() {
+  if (!redoStack.length) return;
+  undoStack.push(clone(state));
+  state = redoStack.pop();
+  rebuildAll();
+  scheduleSave();
+  updateUndoButtons();
+  showToast('Redone.');
+}
+
+function updateUndoButtons() {
+  const u = $('#btn-undo');
+  const r = $('#btn-redo');
+  if (u) u.disabled = !undoStack.length;
+  if (r) r.disabled = !redoStack.length;
+}
+
 /* ── preview ──────────────────────────────────────────────────────────── */
 
 /* Synchronous preview: no timers, so it stays reliable even in browsers
@@ -32,6 +73,22 @@ function renderPreview() {
     '<script>document.addEventListener("click",function(e){e.preventDefault();},true);<\/script></body>'
   );
   frame.srcdoc = html;
+  renderThumbs();
+}
+
+/* Live template thumbnails: real renders of the current state per template,
+   scaled down 0.13× in the picker. Embedded data: images are stripped so
+   typing never re-decodes them across all thumbnails. */
+function renderThumbs() {
+  const thumbs = document.querySelectorAll('.tthumb');
+  if (!thumbs.length) return;
+  const base = clone(state);
+  for (const iframe of thumbs) {
+    const s = clone(base);
+    s.design.template = iframe.dataset.tpl;
+    const html = renderSignature(s).replace(/src="data:[^"]*"/g, 'src=""');
+    iframe.srcdoc = html;
+  }
 }
 
 /* Time-throttled autosave: at most one write per second, plus a flush on
@@ -73,6 +130,85 @@ function updateLogoWidthOut() {
   $('#logo-width-out').textContent = `${state.design.logoWidth || 72} px`;
 }
 
+/* ── drag & drop (socials + custom lines) ─────────────────────────────── */
+
+function clearDropMarks(list) {
+  list.querySelectorAll('.drop-above, .drop-below').forEach(r =>
+    r.classList.remove('drop-above', 'drop-below'));
+}
+
+function renderBoth() {
+  renderSocials();
+  renderCustoms();
+}
+
+function finishDrag(type, beforeIndex) {
+  const { index } = dragCtx;
+  const arr = type === 'socials' ? state.socials : state.customLines;
+  const list = type === 'socials' ? $('#socials-list') : $('#custom-list');
+  clearDropMarks(list);
+  list.querySelectorAll('.dragging').forEach(r => r.classList.remove('dragging'));
+  dragCtx = null;
+  if (beforeIndex == null) {
+    renderBoth();
+    renderPreview();
+    return;
+  }
+  const from = index;
+  let to = beforeIndex;
+  if (to > from) to -= 1;
+  if (to === from || to === from + 1) {
+    renderBoth();
+    renderPreview();
+    return;
+  }
+  pushHistory();
+  const [item] = arr.splice(from, 1);
+  arr.splice(to, 0, item);
+  renderBoth();
+  renderPreview();
+  scheduleSave();
+}
+
+function bindDragDrop(listEl, type) {
+  listEl.addEventListener('dragstart', e => {
+    if (!e.target.classList || !e.target.classList.contains('row-drag')) return;
+    const row = e.target.closest('[data-i]');
+    if (!row) return;
+    dragCtx = { type, index: Number(row.dataset.i) };
+    row.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    try { e.dataTransfer.setData('text/plain', String(dragCtx.index)); } catch (err) { /* ignore */ }
+  });
+  listEl.addEventListener('dragover', e => {
+    if (!dragCtx || dragCtx.type !== type) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const row = e.target.closest('[data-i]');
+    clearDropMarks(listEl);
+    if (!row || row.classList.contains('dragging')) return;
+    const rect = row.getBoundingClientRect();
+    row.classList.add(e.clientY < rect.top + rect.height / 2 ? 'drop-above' : 'drop-below');
+  });
+  listEl.addEventListener('dragleave', e => {
+    if (e.target === listEl) clearDropMarks(listEl);
+  });
+  listEl.addEventListener('drop', e => {
+    if (!dragCtx || dragCtx.type !== type) return;
+    e.preventDefault();
+    const marked = listEl.querySelector('.drop-above, .drop-below');
+    let beforeIndex = null;
+    if (marked) {
+      const idx = Number(marked.dataset.i);
+      beforeIndex = marked.classList.contains('drop-above') ? idx : idx + 1;
+    }
+    finishDrag(type, beforeIndex);
+  });
+  listEl.addEventListener('dragend', () => {
+    if (dragCtx && dragCtx.type === type) finishDrag(type, null);
+  });
+}
+
 /* ── socials ──────────────────────────────────────────────────────────── */
 
 function socialRowHtml(soc, i) {
@@ -80,19 +216,28 @@ function socialRowHtml(soc, i) {
   const options = NETWORKS.map(n =>
     `<option value="${n.id}"${n.id === soc.network ? ' selected' : ''}>${esc(n.name)}</option>`).join('');
   const isCustom = soc.network === 'custom';
+  const iconOn = !!soc.iconOn;
   const extra = isCustom
     ? `<div class="soc-extra">
          <input type="text" class="soc-glyph" maxlength="3" placeholder="Glyph (1–3 chars)" value="${esc(soc.glyph || '')}">
          <input type="color" class="soc-color" value="${esc(soc.color || '#5b6472')}" title="Brand colour">
        </div>`
     : '';
+  const iconRow = iconOn
+    ? `<div class="soc-extra">
+         <input type="text" class="soc-icon-url" placeholder="Icon image URL (https://…/icon.png)" value="${esc(soc.iconUrl || '')}">
+       </div>`
+    : '';
   return `<div class="social-row" data-i="${i}">
+    <button class="row-btn row-drag" title="Drag to reorder" type="button" draggable="true" aria-label="Drag to reorder">⠿</button>
     <select class="soc-net">${options}</select>
     <input type="text" class="soc-url" placeholder="${esc(net.placeholder || 'https://…')}" value="${esc(soc.url)}">
+    <button class="row-btn soc-img${iconOn ? ' on' : ''}" title="Use an image icon instead of the glyph" type="button">🖼</button>
     <button class="row-btn soc-up" title="Move up" ${i === 0 ? 'disabled' : ''}>▲</button>
     <button class="row-btn soc-down" title="Move down" ${i === state.socials.length - 1 ? 'disabled' : ''}>▼</button>
     <button class="row-btn del soc-del" title="Remove">×</button>
     ${extra}
+    ${iconRow}
   </div>`;
 }
 
@@ -103,6 +248,7 @@ function renderSocials() {
 }
 
 function addSocial(network = 'linkedin') {
+  pushHistory();
   state.socials.push({ network, url: '', glyph: '', color: '' });
   renderSocials();
   renderPreview();
@@ -116,6 +262,7 @@ function onSocialListInput(e) {
   const soc = state.socials[i];
   if (!soc) return;
   if (e.target.classList.contains('soc-net')) {
+    pushHistory();
     soc.network = e.target.value;
     if (soc.network === 'custom' && !soc.glyph) soc.glyph = '↗';
     renderSocials();
@@ -125,6 +272,8 @@ function onSocialListInput(e) {
     soc.glyph = e.target.value;
   } else if (e.target.classList.contains('soc-color')) {
     soc.color = e.target.value;
+  } else if (e.target.classList.contains('soc-icon-url')) {
+    soc.iconUrl = e.target.value;
   }
   renderPreview();
   scheduleSave();
@@ -136,11 +285,29 @@ function onSocialListClick(e) {
   const row = btn.closest('.social-row');
   if (!row) return;
   const i = Number(row.dataset.i);
+  const soc = state.socials[i];
+  if (btn.classList.contains('soc-img')) {
+    pushHistory();
+    if (soc.iconOn) {
+      soc.iconOn = false;
+      soc.iconUrl = '';
+    } else {
+      soc.iconOn = true;
+      soc.iconUrl = soc.iconUrl || '';
+    }
+    renderSocials();
+    renderPreview();
+    scheduleSave();
+    return;
+  }
   if (btn.classList.contains('soc-up') && i > 0) {
+    pushHistory();
     [state.socials[i - 1], state.socials[i]] = [state.socials[i], state.socials[i - 1]];
   } else if (btn.classList.contains('soc-down') && i < state.socials.length - 1) {
+    pushHistory();
     [state.socials[i], state.socials[i + 1]] = [state.socials[i + 1], state.socials[i]];
   } else if (btn.classList.contains('soc-del')) {
+    pushHistory();
     state.socials.splice(i, 1);
   } else {
     return;
@@ -154,6 +321,7 @@ function onSocialListClick(e) {
 
 function customRowHtml(line, i) {
   return `<div class="custom-row" data-i="${i}">
+    <button class="row-btn row-drag" title="Drag to reorder" type="button" draggable="true" aria-label="Drag to reorder">⠿</button>
     <input type="text" class="line-label" placeholder="Label" value="${esc(line.label)}">
     <input type="text" class="line-value" placeholder="Value" value="${esc(line.value)}">
     <button class="row-btn line-up" title="Move up" ${i === 0 ? 'disabled' : ''}>▲</button>
@@ -185,10 +353,13 @@ function onCustomListClick(e) {
   if (!row) return;
   const i = Number(row.dataset.i);
   if (btn.classList.contains('line-up') && i > 0) {
+    pushHistory();
     [state.customLines[i - 1], state.customLines[i]] = [state.customLines[i], state.customLines[i - 1]];
   } else if (btn.classList.contains('line-down') && i < state.customLines.length - 1) {
+    pushHistory();
     [state.customLines[i], state.customLines[i + 1]] = [state.customLines[i + 1], state.customLines[i]];
   } else if (btn.classList.contains('line-del')) {
+    pushHistory();
     state.customLines.splice(i, 1);
   } else {
     return;
@@ -262,6 +433,81 @@ async function doCopy() {
   }
 }
 
+/* ── presets (JSON brand kits) ────────────────────────────────────────── */
+
+function downloadBlob(blob, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+function doExportPreset() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  downloadBlob(blob, `${slugify(state.meta.name)}-preset.json`);
+  showToast('Preset exported — share the file with your team.');
+}
+
+function doImportPresetFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      if (!parsed || typeof parsed !== 'object' || !parsed.design || !parsed.profile) {
+        throw new Error('bad shape');
+      }
+      pushHistory();
+      state = normalizeLoadedState(parsed);
+      rebuildAll();
+      scheduleSave();
+      showToast('Preset imported.');
+    } catch (err) {
+      showToast('Not a valid Signature Studio preset.', 'err');
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ── vCard + QR ───────────────────────────────────────────────────────── */
+
+function doVCard() {
+  const vcf = buildVCard(state);
+  const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
+  downloadBlob(blob, `${slugify(state.meta.name)}.vcf`);
+  showToast('vCard downloaded — send it to contacts or add it to your phone.');
+}
+
+function doShowQR() {
+  const vcf = buildVCard(state);
+  const canvas = $('#qr-canvas');
+  if (typeof qrcode !== 'function') {
+    showToast('QR generator failed to load.', 'err');
+    return;
+  }
+  const qr = qrcode(0, 'M');
+  qr.addData(vcf);
+  qr.make();
+  const n = qr.getModuleCount();
+  const size = 264;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, size, size);
+  ctx.fillStyle = '#141824';
+  const cell = size / n;
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      if (qr.isDark(r, c)) ctx.fillRect(c * cell, r * cell, Math.ceil(cell), Math.ceil(cell));
+    }
+  }
+  $('#qr-caption').textContent =
+    `Scan to add ${state.profile.name || state.meta.name || 'this contact'} to your phone's address book.`;
+  openOverlay('#modal-qr');
+}
+
 /* ── import ───────────────────────────────────────────────────────────── */
 
 function summarizeParsed(p) {
@@ -304,6 +550,7 @@ function doImportParse() {
 function doImportApply() {
   if (!lastParsedImport) return;
   const p = lastParsedImport;
+  pushHistory();
   if (p.profile.name) state.profile.name = p.profile.name;
   if (p.profile.title) state.profile.title = p.profile.title;
   if (p.profile.department) state.profile.department = p.profile.department;
@@ -404,11 +651,25 @@ function init() {
   document.addEventListener('input', onFieldInput);
   document.addEventListener('change', onFieldInput);
 
+  /* undo/redo */
+  $('#btn-undo').addEventListener('click', doUndo);
+  $('#btn-redo').addEventListener('click', doRedo);
+  document.addEventListener('keydown', e => {
+    const t = e.target;
+    if (t && (t.closest('input, textarea, select') || t.isContentEditable)) return;
+    const mod = e.ctrlKey || e.metaKey;
+    if (!mod) return;
+    const key = e.key.toLowerCase();
+    if (key === 'z' && !e.shiftKey) { e.preventDefault(); doUndo(); }
+    else if (key === 'y' || (key === 'z' && e.shiftKey)) { e.preventDefault(); doRedo(); }
+  });
+
   /* socials */
   const socialsList = $('#socials-list');
   socialsList.addEventListener('input', onSocialListInput);
   socialsList.addEventListener('change', onSocialListInput);
   socialsList.addEventListener('click', onSocialListClick);
+  bindDragDrop(socialsList, 'socials');
   $('#add-social').addEventListener('click', () => addSocial('linkedin'));
   $('#quick-socials').addEventListener('click', e => {
     const b = e.target.closest('.chip-btn');
@@ -419,7 +680,9 @@ function init() {
   const customList = $('#custom-list');
   customList.addEventListener('input', onCustomListInput);
   customList.addEventListener('click', onCustomListClick);
+  bindDragDrop(customList, 'customs');
   $('#add-custom').addEventListener('click', () => {
+    pushHistory();
     state.customLines.push({ label: '', value: '' });
     renderCustoms();
     scheduleSave();
@@ -429,6 +692,7 @@ function init() {
   $('#tpl-picker').addEventListener('click', e => {
     const b = e.target.closest('.tpl-btn');
     if (!b) return;
+    pushHistory();
     state.design.template = b.dataset.template;
     updateTemplatePicker();
     renderPreview();
@@ -457,6 +721,7 @@ function init() {
 
   /* topbar */
   $('#btn-sample').addEventListener('click', () => {
+    pushHistory();
     state = sampleState();
     rebuildAll();
     scheduleSave();
@@ -472,6 +737,7 @@ function init() {
   $('#btn-saved').addEventListener('click', openSavedPanel);
   $('#btn-reset').addEventListener('click', () => {
     showConfirm('Start over?', 'This clears the current signature and your autosaved draft. Saved snapshots in the “Saved” panel are kept.', () => {
+      pushHistory();
       state = defaultState();
       clearDraft();
       rebuildAll();
@@ -497,6 +763,17 @@ function init() {
   $('#x-instructions').addEventListener('click', () => {
     menu.classList.add('hidden');
     openOverlay('#modal-instructions');
+  });
+  $('#x-preset-export').addEventListener('click', () => { menu.classList.add('hidden'); doExportPreset(); });
+  $('#x-preset-import').addEventListener('click', () => { menu.classList.add('hidden'); $('#preset-file').click(); });
+  $('#x-vcard').addEventListener('click', () => { menu.classList.add('hidden'); doVCard(); });
+  $('#x-qr').addEventListener('click', () => { menu.classList.add('hidden'); doShowQR(); });
+
+  /* preset file input */
+  $('#preset-file').addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (file) doImportPresetFile(file);
   });
 
   /* instructions tabs */
@@ -529,6 +806,7 @@ function init() {
     if (e.target.classList.contains('snap-load')) {
       const loaded = loadSnapshot(id);
       if (loaded) {
+        pushHistory();
         state = normalizeLoadedState(loaded);
         closeSavedPanel();
         rebuildAll();
@@ -559,7 +837,15 @@ function init() {
   bindImageUpload('#upload-logo', '#logo-file', 'design.logoUrl');
   bindImageUpload('#upload-banner', '#banner-file', 'design.bannerUrl');
 
+  /* PWA: register the service worker for offline use */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* non-fatal */ });
+    });
+  }
+
   rebuildAll();
+  updateUndoButtons();
 }
 
 document.addEventListener('DOMContentLoaded', init);

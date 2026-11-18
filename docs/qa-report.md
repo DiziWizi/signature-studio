@@ -61,3 +61,50 @@ markup.
    browsers; the legacy `execCommand` fallback and download option cover it.
 4. **Data-URI images** are embedded on upload but many clients strip them;
    the app warns and recommends hosted URLs.
+
+---
+
+# v0.2.0 addendum
+
+Date: 2026-11-19 · Scope: brand presets, drag-drop, undo/redo, 3 new
+templates, live thumbnails, vCard/QR, image icons, PWA/offline.
+
+## Issues found and fixed in this round
+
+| # | Severity | Issue | Fix |
+| --- | --- | --- | --- |
+| 1 | Medium | Template thumbnails rendered only a ~20 px sliver: `sandbox=""` gives iframes an opaque origin, so `contentDocument` is null from the parent and the load-time height sync silently failed, leaving the default 150 px iframe. | Fixed 360 px CSS height for thumbnails (container crops), removed the cross-origin height logic. |
+| 2 | Medium | Service worker 404: the SW was created at `assets/sw.js`, but it must live at the root to take `/` scope (and the app registers `sw.js` at root). | Moved to `sw.js` at root; PRECACHE paths are root-relative and now resolve. |
+| 3 | Low | Masthead template dropped title/department when the company band was absent (no company → those fields vanished). | Fall back to the normal title/company lines under the name when there's no band. |
+| 4 | Low | vCard `URL:` field emitted the raw website value without a scheme. | Normalize through the app's URL normalizer (https:// prepended when missing). |
+| 5 | Low | Test-harness lesson: two v0.2 test assertions were wrong (expected trailing `;` in `ORG`, comma in the wrong ADR component) — the vCard output itself was valid RFC 2426. No code change. |
+
+## Verification evidence (all passed)
+
+- Node vm suite: **58/58** — 8 templates × structure checks (doctype, name,
+  balanced tables, no NaN/undefined) + template markers (split card, roundel
+  border-radius, masthead band) + image-icon replacement + vCard
+  (FN/N/ORG/ADR escaping, folding ≤ 76, URL normalised) + QR (HELLO WORLD →
+  21 modules, ~400-char vCard encodes).
+- Browser: all 8 templates render distinct output; all 8 live thumbnails
+  populated with template-specific content (pixel-verified: 11–40 % non-white
+  per tile, masthead band present); undo/redo via buttons and Ctrl+Z /
+  Ctrl+Shift+Z; drag-drop reorders socials and custom lines and is undoable;
+  image-icon toggle renders `<img>` chip; preset export + import round-trip +
+  invalid-JSON rejection; vCard download; QR modal renders a real scannable
+  pattern (three finder squares present, pixel-verified); typing latency with
+  8 live thumbnails ≈ 1.2 ms avg per keystroke; full interaction sweep zero
+  console errors; mobile 420 px no horizontal scroll.
+- PWA: SW registers at `/` scope, activates, precaches all 16 files; the app
+  loads and edits **fully offline** (Network.emulateNetworkConditions).
+- Packaging unchanged (static files); container smoke test from v0.1.0 still
+  applies to the same serving model.
+
+## Residual risks (added)
+
+- Real-device DnD: drag-drop was exercised via synthetic DragEvents plus the
+  ▲▼ fallback; a quick manual drag on a real browser is worth doing once.
+- QR scanning was verified structurally (finder patterns, standard encoder),
+  not with a phone camera.
+- Cache-first SW means stale content after upgrades until `VERSION` is bumped
+  — documented in the README.

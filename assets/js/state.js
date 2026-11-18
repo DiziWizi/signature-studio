@@ -14,6 +14,9 @@ const TEMPLATES = [
   { id: 'compact',  name: 'Compact',  desc: 'One tight block for short replies.' },
   { id: 'banner',   name: 'Banner',   desc: 'Full-width image up top.' },
   { id: 'minimal',  name: 'Minimal',  desc: 'Plain text, links only.' },
+  { id: 'split',    name: 'Split',    desc: 'Logo and identity left, contact details in a card on the right.' },
+  { id: 'roundel',  name: 'Roundel',  desc: 'Circular photo, centred text, inline socials.' },
+  { id: 'masthead', name: 'Masthead', desc: 'Company name in a coloured brand band up top.' },
 ];
 
 function defaultState() {

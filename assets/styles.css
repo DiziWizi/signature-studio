@@ -352,6 +352,15 @@ textarea { resize: vertical; min-height: 40px; }
 .row-btn:disabled { opacity: .3; cursor: default; }
 .row-btn:disabled:hover { color: var(--mut); border-color: var(--line2); }
 
+/* drag handle + drop feedback */
+.row-drag { cursor: grab; color: var(--mut); }
+.row-drag:active { cursor: grabbing; }
+.social-row.dragging, .custom-row.dragging { opacity: .45; }
+.social-row.drop-above, .custom-row.drop-above { box-shadow: 0 -2px 0 0 var(--acc); }
+.social-row.drop-below, .custom-row.drop-below { box-shadow: 0 2px 0 0 var(--acc); }
+
+.soc-img.on { color: var(--acc2); border-color: var(--acc); }
+
 .custom-row {
   display: flex;
   gap: 8px;
@@ -369,7 +378,7 @@ textarea { resize: vertical; min-height: 40px; }
 
 .tpl-picker {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   margin-bottom: 16px;
 }
@@ -392,6 +401,7 @@ textarea { resize: vertical; min-height: 40px; }
 .tpl-name { font-size: 11.5px; color: var(--mut); }
 .tpl-btn[aria-pressed="true"] .tpl-name { color: var(--text); }
 
+/* live thumbnails: a scaled-down real render of the current state */
 .thumb {
   position: relative;
   width: 100%;
@@ -401,30 +411,18 @@ textarea { resize: vertical; min-height: 40px; }
   border-radius: 6px;
   overflow: hidden;
 }
-.thumb i { position: absolute; display: block; background: #c9d2e0; border-radius: 2px; }
-
-/* classic */
-.thumb .b-logo { width: 8px; height: 8px; left: 6px; top: 6px; background: #9db4f2; }
-.thumb .b-l1 { width: 46px; height: 4px; left: 20px; top: 6px; }
-.thumb .b-l2 { width: 38px; height: 3px; left: 20px; top: 14px; }
-.thumb .b-l3 { width: 30px; height: 3px; left: 20px; top: 20px; }
-/* centered */
-.thumb .b-c1 { width: 42px; height: 4px; left: 50%; margin-left: -21px; top: 8px; }
-.thumb .b-c2 { width: 32px; height: 3px; left: 50%; margin-left: -16px; top: 16px; }
-.thumb .b-c3 { width: 22px; height: 3px; left: 50%; margin-left: -11px; top: 22px; }
-/* compact */
-.thumb .b-k1 { width: 8px; height: 8px; left: 6px; top: 6px; background: #9db4f2; }
-.thumb .b-k2 { width: 20px; height: 4px; left: 19px; top: 6px; }
-.thumb .b-k3 { width: 16px; height: 3px; left: 19px; top: 13px; }
-.thumb .b-k4 { width: 24px; height: 3px; right: 6px; top: 7px; }
-/* banner */
-.thumb .b-n1 { width: 100%; height: 12px; left: 0; top: 0; background: #9db4f2; border-radius: 0; }
-.thumb .b-n2 { width: 48px; height: 4px; left: 6px; top: 18px; }
-.thumb .b-n3 { width: 36px; height: 3px; left: 6px; top: 26px; }
-/* minimal */
-.thumb .b-m1 { width: 48px; height: 4px; left: 6px; top: 10px; }
-.thumb .b-m2 { width: 60px; height: 3px; left: 6px; top: 19px; }
-.thumb .b-m3 { width: 52px; height: 3px; left: 6px; top: 28px; }
+.tthumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 600px;
+  height: 360px; /* fixed: sandboxed iframes hide contentDocument from the parent */
+  border: 0;
+  background: #ffffff;
+  transform: scale(0.13);
+  transform-origin: top left;
+  pointer-events: none;
+}
 
 /* ── preview ──────────────────────────────────────────────────────────── */
 
@@ -493,6 +491,21 @@ textarea { resize: vertical; min-height: 40px; }
   font-family: inherit;
 }
 .menu button:hover { background: #232c42; }
+.menu hr.sep { border: 0; border-top: 1px solid var(--line); margin: 5px 6px; }
+
+.btn:disabled { opacity: .4; cursor: default; }
+.btn:disabled:hover { background: #1b2233; border-color: var(--line2); }
+
+.modal-narrow { max-width: 360px; text-align: center; }
+#qr-canvas {
+  display: block;
+  margin: 0 auto 10px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .35);
+}
+.qr-caption { text-align: center; color: var(--text) !important; }
 
 .overlay {
   position: fixed;
@@ -675,7 +688,7 @@ textarea { resize: vertical; min-height: 40px; }
   .editor { border-right: 0; overflow: visible; }
   .preview-col { min-height: 320px; }
   .brand-tag { display: none; }
-  .tpl-picker { grid-template-columns: repeat(5, 1fr); }
+  .tpl-picker { grid-template-columns: repeat(4, 1fr); }
 }
 
 @media (max-width: 620px) {

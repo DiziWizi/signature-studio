@@ -109,9 +109,12 @@ function socialChipHtml(d, soc, withLabel) {
   const raw = String(soc.url || '').trim();
   if (!raw) return '';
   const href = normalizeUrl(net.id, raw);
-  const chip = `<span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;` +
-    `background-color:${color};color:#ffffff;border-radius:11px;` +
-    `font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:bold;vertical-align:middle;">${esc(glyph)}</span>`;
+  const iconUrl = String(soc.iconUrl || '').trim();
+  const chip = iconUrl
+    ? `<img src="${esc(iconUrl)}" width="22" height="22" alt="" style="display:inline-block;width:22px;height:22px;border:0;border-radius:11px;vertical-align:middle;">`
+    : `<span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;` +
+      `background-color:${color};color:#ffffff;border-radius:11px;` +
+      `font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:bold;vertical-align:middle;">${esc(glyph)}</span>`;
   if (!withLabel) return `<a href="${esc(href)}" style="text-decoration:none;">${chip}</a>`;
   const clsAttr = d.darkModeFriendly ? ' class="dm-txt"' : '';
   const label = `<span${clsAttr} style="display:inline-block;vertical-align:middle;` +
@@ -253,6 +256,105 @@ function bannerRows(s, d) {
   return rows.join('\n');
 }
 
+/* Split: logo + identity left, contact details in a bordered card. */
+function splitRows(s, d) {
+  const rows = [];
+  if (d.bannerUrl) {
+    rows.push(`<tr><td colspan="2" align="center">${imgTag(d.bannerUrl, 600, 'banner')}</td></tr>`);
+    rows.push(spacerHtml(16));
+  }
+  const hasLogo = !!d.logoUrl;
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d);
+  if (hasLogo || identity) {
+    const logoCell = hasLogo
+      ? `<td width="${d.logoWidth + 16}" valign="middle" align="left" style="padding:0 16px 0 0;">${imgTag(d.logoUrl, d.logoWidth, 'logo')}</td>`
+      : '<td width="16" style="padding:0;font-size:0;line-height:0;">&nbsp;</td>';
+    rows.push(`<tr>
+    ${logoCell}
+    <td valign="middle" align="left">${identity || '&nbsp;'}</td>
+  </tr>`);
+  }
+  const stack = contactStackHtml(s, d);
+  if (stack) {
+    rows.push(spacerHtml(10));
+    rows.push(`<tr><td colspan="2" align="left" style="background-color:#f6f8fa;border:1px solid ${d.dividerColor};padding:10px 14px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td style="padding:0;">${stack}</td></tr></table>
+    </td></tr>`);
+  }
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    rows.push(spacerHtml(10));
+    rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
+  }
+  rows.push(dividerHtml(d));
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
+/* Roundel: circular logo, everything centred. */
+function roundelRows(s, d) {
+  const rows = [];
+  if (d.logoUrl) {
+    rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 12px 0;">` +
+      `<img src="${esc(d.logoUrl)}" width="${d.logoWidth}" alt="logo" ` +
+      `style="display:block;width:${d.logoWidth}px;max-width:${d.logoWidth}px;height:auto;border:0;border-radius:50%;"></td></tr>`);
+  }
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d);
+  if (identity) {
+    rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
+  }
+  rows.push(dividerHtml(d));
+  const stack = contactStackHtml(s, d);
+  if (stack) {
+    rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
+    rows.push(spacerHtml(10));
+  }
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    const nested = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`;
+    rows.push(`<tr><td colspan="2" align="center">${nested}</td></tr>`);
+    rows.push(spacerHtml(4));
+  }
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
+/* Masthead: company name in a coloured brand band up top. */
+function mastheadRows(s, d) {
+  const rows = [];
+  if (s.profile.company) {
+    const bandStyle = textStyle(d, { size: d.fontSize + 6, color: '#ffffff', weight: 'bold' });
+    const bits = [s.profile.title, s.profile.department].filter(Boolean);
+    const sub = bits.length
+      ? `<span style="${textStyle(d, { size: d.fontSize, color: '#ffffff' })}">${esc(bits.join('  ·  '))}</span>`
+      : '';
+    rows.push(`<tr><td colspan="2" style="background-color:${d.primaryColor};padding:12px 16px;">` +
+      `<span style="${bandStyle}">${esc(s.profile.company)}</span>` +
+      (sub ? `<br>${sub}` : '') +
+      `</td></tr>`);
+    rows.push(spacerHtml(12));
+  }
+  if (s.profile.name) {
+    /* Without the band (no company), keep title/department visible. */
+    const rest = s.profile.company ? '' : titleHtml(s, d) + companyHtml(s, d);
+    rows.push(`<tr><td colspan="2" align="left">${nameHtml(s, d)}${rest}</td></tr>`);
+    rows.push(spacerHtml(6));
+  }
+  const stack = contactStackHtml(s, d);
+  if (stack) {
+    rows.push(`<tr><td colspan="2" align="left">${stack}</td></tr>`);
+    rows.push(spacerHtml(10));
+  }
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
+    rows.push(spacerHtml(4));
+  }
+  rows.push(dividerHtml(d));
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
 /* ── document assembly ────────────────────────────────────────────────── */
 
 function darkStyleBlock(d) {
@@ -281,10 +383,13 @@ function renderSignature(state) {
     case 'compact':  inner = compactRows(s, d); break;
     case 'minimal':  inner = minimalRows(s, d); break;
     case 'banner':   inner = bannerRows(s, d); break;
+    case 'split':    inner = splitRows(s, d); break;
+    case 'roundel':  inner = roundelRows(s, d); break;
+    case 'masthead': inner = mastheadRows(s, d); break;
     default:         inner = classicRows(s, d);
   }
 
-  const outerAlign = d.template === 'centered' ? 'center' : 'left';
+  const outerAlign = (d.template === 'centered' || d.template === 'roundel') ? 'center' : 'left';
 
   const doc =
 `<!DOCTYPE html>
