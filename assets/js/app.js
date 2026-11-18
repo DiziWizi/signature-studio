@@ -428,12 +428,32 @@ function renderWizard() {
   $('#wiz-personas').innerHTML = SAMPLE_PERSONAS.map(p =>
     `<button type="button" class="wiz-choice${wizardChoices.persona === p.id ? ' selected' : ''}" data-persona="${p.id}">
        <span class="wiz-choice-name">${esc(p.name)}</span>
+       <span class="wiz-persona-thumb" data-persona="${p.id}"></span>
        <span class="wiz-choice-desc">${esc(p.desc)}</span>
      </button>`
   ).join('') + `<button type="button" class="wiz-choice${wizardChoices.persona === '' ? ' selected' : ''}" data-persona="">
        <span class="wiz-choice-name">Start clean</span>
        <span class="wiz-choice-desc">Empty signature — fill everything in yourself</span>
      </button>`;
+  renderWizardThumbs();
+}
+
+/* Live persona thumbnails in wizard step 3: a scaled-down real render of
+   each sample signature. Personas are static, so each thumbnail renders
+   once and is cached across selection clicks. */
+function renderWizardThumbs() {
+  document.querySelectorAll('.wiz-persona-thumb').forEach(box => {
+    const pid = box.dataset.persona;
+    if (!pid || box.dataset.rendered === pid) return;
+    box.dataset.rendered = pid;
+    box.innerHTML = '';
+    const f = document.createElement('iframe');
+    f.className = 'wiz-thumb-frame';
+    f.setAttribute('sandbox', '');
+    f.title = '';
+    f.srcdoc = renderSignature(sampleState(pid)).replace(/src="data:[^"]*"/g, 'src=""');
+    box.appendChild(f);
+  });
 }
 
 function wizShowStep(n) {
@@ -685,6 +705,37 @@ function showConfirm(title, body, onOk) {
 }
 
 /* ── export ───────────────────────────────────────────────────────────── */
+
+/* Rounded corners Word-engine Outlook will render square, when strict
+   mode is off. Lists the features currently producing them. */
+function outlookIssues(s) {
+  if (s.design.strictOutlook) return [];
+  const issues = [];
+  if (s.design.roundPhoto) issues.push('round photo');
+  if (s.design.showCard) issues.push('card');
+  if (s.design.useMonogram) issues.push('monogram');
+  if (String(s.design.statusText || '').trim()) issues.push('status badge');
+  if (String(s.contact.booking || '').trim()) issues.push('booking button');
+  if (s.socials.some(x => String(x.url || '').trim())) issues.push('social chips');
+  return issues;
+}
+
+let pendingExport = null;
+
+/* Intercept HTML exports when the signature carries rounded corners that
+   Outlook desktop will square off. The user can export as-is, or switch
+   strict mode on and export the Outlook-honest version. */
+function guardOutlookExport(fn) {
+  const issues = outlookIssues(state);
+  if (!issues.length) {
+    fn();
+    return;
+  }
+  pendingExport = fn;
+  $('#outlook-issues').textContent =
+    `Outlook desktop renders rounded corners as square for: ${issues.join(', ')}.`;
+  openOverlay('#modal-outlook');
+}
 
 async function doCopy() {
   const html = renderSignature(state);
@@ -1072,11 +1123,13 @@ function init() {
   document.addEventListener('click', e => {
     if (!e.target.closest('.export-wrap')) menu.classList.add('hidden');
   });
-  $('#x-copy').addEventListener('click', () => { menu.classList.add('hidden'); doCopy(); });
+  $('#x-copy').addEventListener('click', () => { menu.classList.add('hidden'); guardOutlookExport(() => doCopy()); });
   $('#x-download').addEventListener('click', () => {
     menu.classList.add('hidden');
-    downloadSignature(renderSignature(state), state.meta.name);
-    showToast('Downloading .html file.');
+    guardOutlookExport(() => {
+      downloadSignature(renderSignature(state), state.meta.name);
+      showToast('Downloading .html file.');
+    });
   });
   $('#x-instructions').addEventListener('click', () => {
     menu.classList.add('hidden');
@@ -1138,6 +1191,26 @@ function init() {
       showToast('Deleted.');
     }
   });
+
+  $('#outlook-anyway').addEventListener('click', () => {
+    closeOverlay('#modal-outlook');
+    const fn = pendingExport;
+    pendingExport = null;
+    if (fn) fn();
+  });
+  $('#outlook-strict').addEventListener('click', () => {
+    closeOverlay('#modal-outlook');
+    state.design.strictOutlook = true;
+    const cb = document.querySelector('[data-field="design.strictOutlook"]');
+    if (cb) cb.checked = true;
+    rebuildAll();
+    scheduleSave();
+    const fn = pendingExport;
+    pendingExport = null;
+    if (fn) fn();
+    showToast('Strict mode on — exported the Outlook-honest version.');
+  });
+  $('#modal-outlook [data-close]').addEventListener('click', () => { pendingExport = null; });
 
   /* generic close buttons + Esc */
   document.querySelectorAll('[data-close]').forEach(b =>

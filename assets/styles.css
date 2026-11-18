@@ -333,6 +333,31 @@ textarea { resize: vertical; min-height: 40px; }
 .wiz-swatch-dot { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line2); display: block; }
 .wiz-swatch-name { font-size: 10.5px; line-height: 1.1; color: var(--mut); max-width: 52px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wiz-swatch.active .wiz-swatch-name { color: var(--text); }
+
+/* wizard persona thumbnails: scaled-down real renders */
+.wiz-persona-thumb {
+  position: relative;
+  width: 120px;
+  height: 54px;
+  margin-left: auto;
+  flex: 0 0 auto;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid var(--line);
+}
+.wiz-thumb-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 600px;
+  height: 360px;
+  border: 0;
+  background: #ffffff;
+  transform: scale(0.15);
+  transform-origin: top left;
+  pointer-events: none;
+}
 .wiz-choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 .wiz-choice {
   display: flex;

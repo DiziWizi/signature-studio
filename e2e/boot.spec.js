@@ -57,6 +57,7 @@ test('full wizard walkthrough (3 steps) reaches done and applies the sample data
   await expect(page.locator('#wiz-step-3')).toBeVisible();
 
   /* Step 3: freelancer persona (Maya Chen), then finish. */
+  await expect(page.locator('.wiz-persona-thumb iframe')).toHaveCount(5);
   await page.click('.wiz-choice[data-persona="freelancer"]');
   await page.click('#wiz-finish');
 

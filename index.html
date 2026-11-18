@@ -432,6 +432,20 @@
   </div>
 </div>
 
+<!-- Outlook export warning -->
+<div class="overlay hidden" id="modal-outlook" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2>Export with rounded corners?</h2>
+    <p id="outlook-issues"></p>
+    <p class="micro">Word-engine Outlook ignores rounded corners, so recipients on Outlook desktop see square shapes. Strict mode makes the preview and export match that.</p>
+    <div class="modal-actions">
+      <button class="btn" data-close type="button">Cancel</button>
+      <button class="btn" id="outlook-anyway" type="button">Export anyway</button>
+      <button class="btn btn-primary" id="outlook-strict" type="button">Use strict mode &amp; export</button>
+    </div>
+  </div>
+</div>
+
 <!-- Saved signatures panel -->
 <div class="scrim hidden" id="scrim"></div>
 <aside class="panel" id="saved-panel" aria-label="Saved signatures">

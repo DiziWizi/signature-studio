@@ -275,6 +275,37 @@ one-slot-down DnD fix, real drag coverage in E2E.
 
 ---
 
+# v0.13.0 addendum (export-time warning + wizard persona thumbnails)
+
+Date: 2026-11-19 · Scope: Outlook warning gate on HTML exports, live persona
+thumbnails in the wizard.
+
+## Notes
+
+- Copy HTML and Download .html now run through `guardOutlookExport()`: when
+  strict mode is off and the signature carries any rounded corners (round
+  photo, card, monogram, status badge, booking button, social chips), an
+  export-time modal lists exactly what Outlook will square off and offers
+  Export anyway / Use strict mode & export / Cancel. With strict mode on
+  (or no radius sources), exports go straight through.
+- Wizard step 3 persona choices now show a live thumbnail — a scaled-down
+  real render of each sample signature (same sandboxed-iframe technique as
+  the template picker; data: images stripped). Rendered once per persona
+  and cached across selection clicks; "Start clean" intentionally has no
+  thumbnail.
+- E2E grew to **38 tests**: export-warning.spec covers the warning on copy,
+  the strict-apply path (checkbox + subsequent exports skip the gate),
+  the already-strict no-warning path, and Cancel on the download path;
+  boot.spec asserts all 5 persona thumbnails render. The two pre-existing
+  export tests now pre-enable strict mode so they keep testing export
+  mechanics rather than the gate.
+- Verified: 38/38 twice consecutively locally; browser QA confirmed the
+  issue list text, the strict-apply chain (checkbox synced, toast), five
+  thumbnails each containing their persona's name + table markup, zero
+  console errors; CI e2e job green on the tag run.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

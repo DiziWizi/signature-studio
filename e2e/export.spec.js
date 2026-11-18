@@ -23,6 +23,9 @@ test('#x-copy puts rich HTML on the clipboard', async ({ page }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');
   await expect(page.locator('[data-field="profile.name"]')).toHaveValue('Ada Lovelace');
+  /* Strict mode on: export mechanics are under test here — the Outlook
+     warning gate has its own spec (export-warning.spec.js). */
+  await page.locator('label.switch:has(input[data-field="design.strictOutlook"])').click();
 
   await openExportMenu(page);
   await page.click('#x-copy');
@@ -52,6 +55,8 @@ test('#x-copy puts rich HTML on the clipboard', async ({ page }) => {
 test('#x-download yields an .html file containing the name', async ({ page }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');
+  /* Strict mode on: see the copy test above. */
+  await page.locator('label.switch:has(input[data-field="design.strictOutlook"])').click();
 
   await openExportMenu(page);
   const [download] = await Promise.all([

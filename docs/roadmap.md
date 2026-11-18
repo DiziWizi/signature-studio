@@ -51,6 +51,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   (labelled theme swatches, persona descriptions, step indicator, consistent
   "start clean" wording); fixed one-slot-down drag-and-drop no-op; E2E now
   covers real mouse-path drags (4 tests) + strict mode (35 total)
+- [x] v0.13.0 — export-time Outlook warning (Copy/Download HTML intercept
+  when rounded corners are on: export anyway, or one click to strict mode
+  and export); live persona thumbnails in the wizard (real scaled renders
+  of each starter signature); E2E now 38 tests
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.
