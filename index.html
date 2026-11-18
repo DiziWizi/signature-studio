@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Signature Studio — build and edit HTML email signatures in the browser. Templates, social links, contact details, live preview, one-click export. No account, everything stays local.">
+<title>Signature Studio — HTML email signature builder</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-logo" viewBox="0 0 64 64" aria-hidden="true">
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#5b7cfa"/><stop offset="1" stop-color="#8b5cf6"/>
+      </linearGradient></defs>
+      <rect width="64" height="64" rx="14" fill="url(#lg)"/>
+      <path d="M45 13 19 39l9 2 2 9 26-26z" fill="#ffffff" opacity=".95"/>
+      <circle cx="26" cy="45" r="3.5" fill="#ffffff"/>
+    </svg>
+    <span class="brand-name">Signature Studio</span>
+    <span class="brand-tag">HTML email signatures, built locally</span>
+  </div>
+  <nav class="top-actions">
+    <button class="btn" id="btn-sample" type="button">Sample data</button>
+    <button class="btn" id="btn-import" type="button">Import HTML</button>
+    <button class="btn" id="btn-saved" type="button">Saved <span class="pill" id="saved-count">0</span></button>
+    <div class="export-wrap">
+      <button class="btn btn-primary" id="btn-export" type="button">Export ▾</button>
+      <div class="menu hidden" id="export-menu" role="menu">
+        <button role="menuitem" id="x-copy" type="button">Copy to clipboard</button>
+        <button role="menuitem" id="x-download" type="button">Download .html file</button>
+        <button role="menuitem" id="x-instructions" type="button">Install in your mail client…</button>
+      </div>
+    </div>
+    <button class="btn btn-icon" id="btn-reset" type="button" title="Start over">↺</button>
+  </nav>
+</header>
+
+<main class="layout">
+
+  <section class="editor" aria-label="Signature editor">
+
+    <details open>
+      <summary>Profile</summary>
+      <div class="body grid2">
+        <label class="field">Name<input data-field="profile.name" placeholder="Ada Lovelace"></label>
+        <label class="field">Job title<input data-field="profile.title" placeholder="Head of Analytics"></label>
+        <label class="field">Department<input data-field="profile.department" placeholder="Data Science"></label>
+        <label class="field">Company<input data-field="profile.company" placeholder="Analytical Engines Ltd"></label>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Contact details</summary>
+      <div class="body grid2">
+        <label class="field">Email<input type="email" data-field="contact.email" placeholder="ada@example.com"></label>
+        <label class="field">Phone<input data-field="contact.phone" placeholder="+44 20 7946 0958"></label>
+        <label class="field">Mobile<input data-field="contact.mobile" placeholder="+44 7700 900123"></label>
+        <label class="field">Website<input data-field="contact.website" placeholder="example.com"></label>
+        <label class="field">Website label<input data-field="contact.websiteLabel" placeholder="example.com — leave empty to use the URL"></label>
+        <label class="field span2">Address (one line or multiple)
+          <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom"></textarea>
+        </label>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Social links</summary>
+      <div class="body">
+        <div class="quick" id="quick-socials">
+          <span class="hint">Quick add:</span>
+          <button class="chip-btn" data-net="linkedin" title="LinkedIn" type="button">in</button>
+          <button class="chip-btn" data-net="x" title="X / Twitter" type="button">𝕏</button>
+          <button class="chip-btn" data-net="github" title="GitHub" type="button">gh</button>
+          <button class="chip-btn" data-net="instagram" title="Instagram" type="button">◉</button>
+          <button class="chip-btn" data-net="youtube" title="YouTube" type="button">▶</button>
+          <button class="chip-btn" data-net="whatsapp" title="WhatsApp" type="button">✆</button>
+        </div>
+        <div id="socials-list"></div>
+        <button class="btn btn-ghost" id="add-social" type="button">+ Add social link</button>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Custom lines</summary>
+      <div class="body">
+        <p class="hint">Extra rows like “Office hours”, “Direct line”, or anything else you need.</p>
+        <div id="custom-list"></div>
+        <button class="btn btn-ghost" id="add-custom" type="button">+ Add custom line</button>
+      </div>
+    </details>
+
+    <details open>
+      <summary>Design</summary>
+      <div class="body">
+        <div class="tpl-picker" id="tpl-picker">
+          <button class="tpl-btn" data-template="classic" type="button" aria-pressed="false">
+            <span class="thumb"><i class="b-logo"></i><i class="b-l1"></i><i class="b-l2"></i><i class="b-l3"></i></span>
+            <span class="tpl-name">Classic</span>
+          </button>
+          <button class="tpl-btn" data-template="centered" type="button" aria-pressed="false">
+            <span class="thumb"><i class="b-c1"></i><i class="b-c2"></i><i class="b-c3"></i></span>
+            <span class="tpl-name">Centered</span>
+          </button>
+          <button class="tpl-btn" data-template="compact" type="button" aria-pressed="false">
+            <span class="thumb"><i class="b-k1"></i><i class="b-k2"></i><i class="b-k3"></i><i class="b-k4"></i></span>
+            <span class="tpl-name">Compact</span>
+          </button>
+          <button class="tpl-btn" data-template="banner" type="button" aria-pressed="false">
+            <span class="thumb"><i class="b-n1"></i><i class="b-n2"></i><i class="b-n3"></i></span>
+            <span class="tpl-name">Banner</span>
+          </button>
+          <button class="tpl-btn" data-template="minimal" type="button" aria-pressed="false">
+            <span class="thumb"><i class="b-m1"></i><i class="b-m2"></i><i class="b-m3"></i></span>
+            <span class="tpl-name">Minimal</span>
+          </button>
+        </div>
+
+        <div class="grid2">
+          <label class="field">Accent colour<input type="color" data-field="design.primaryColor"></label>
+          <label class="field">Text colour<input type="color" data-field="design.textColor"></label>
+          <label class="field">Divider colour<input type="color" data-field="design.dividerColor"></label>
+          <label class="field">Font
+            <select data-field="design.font">
+              <option value="modern">Modern (system)</option>
+              <option value="classic">Serif (Georgia)</option>
+              <option value="clean">Arial</option>
+              <option value="mono">Monospace</option>
+            </select>
+          </label>
+          <label class="field">Base font size (px)<input type="number" min="10" max="18" step="1" data-field="design.fontSize"></label>
+
+          <div class="field span2">
+            <span class="lbl">Social link style</span>
+            <div class="seg" id="seg-social-style">
+              <label><input type="radio" name="socialStyle" value="icons" data-field="design.socialStyle"><span>Icons</span></label>
+              <label><input type="radio" name="socialStyle" value="icons_labels" data-field="design.socialStyle"><span>Icons + labels</span></label>
+              <label><input type="radio" name="socialStyle" value="labels" data-field="design.socialStyle"><span>Text links</span></label>
+            </div>
+          </div>
+
+          <label class="field">Logo / photo URL
+            <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button">Upload</button></span>
+            <input type="file" id="logo-file" accept="image/*" hidden>
+            <span class="range-row"><input type="range" min="40" max="160" step="4" data-field="design.logoWidth" id="logo-width"><output id="logo-width-out"></output></span>
+            <span class="micro">Most clients block embedded (data:) images — host the file and paste its URL for reliable delivery.</span>
+          </label>
+
+          <label class="field">Banner URL (banner template)
+            <span class="url-row"><input data-field="design.bannerUrl" placeholder="https://…/banner.png"><button class="btn btn-sm" id="upload-banner" type="button">Upload</button></span>
+            <input type="file" id="banner-file" accept="image/*" hidden>
+          </label>
+
+          <label class="switch span2"><input type="checkbox" data-field="design.showDivider"><span class="sw"></span> Show divider line</label>
+          <label class="switch span2"><input type="checkbox" data-field="design.darkModeFriendly"><span class="sw"></span> Dark-mode friendly (adds dark-theme colours for Gmail / Apple Mail)</label>
+          <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> Show legal / disclaimer line</label>
+          <label class="field span2">Legal / disclaimer text
+            <textarea rows="2" data-field="design.legalText" placeholder="This message and any attachments are confidential…"></textarea>
+          </label>
+        </div>
+      </div>
+    </details>
+
+  </section>
+
+  <section class="preview-col" aria-label="Live preview">
+    <div class="preview-toolbar">
+      <div class="seg" id="seg-width">
+        <label><input type="radio" name="prevWidth" value="600" checked><span>Full</span></label>
+        <label><input type="radio" name="prevWidth" value="460"><span>Medium</span></label>
+        <label><input type="radio" name="prevWidth" value="340"><span>Phone</span></label>
+      </div>
+      <div class="seg" id="seg-bg">
+        <label><input type="radio" name="prevBg" value="white" checked><span>White</span></label>
+        <label><input type="radio" name="prevBg" value="grey"><span>Grey</span></label>
+        <label><input type="radio" name="prevBg" value="dark"><span>Dark</span></label>
+      </div>
+    </div>
+    <div class="stage" id="stage"><iframe id="preview-frame" title="Signature preview"></iframe></div>
+    <p class="micro preview-note">Live preview at real size — the dark backdrop simulates a dark-mode mail client. Everything stays in your browser and is autosaved locally.</p>
+  </section>
+
+</main>
+
+<!-- Import modal -->
+<div class="overlay hidden" id="modal-import" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2>Import an existing signature</h2>
+    <p class="hint">Paste the HTML of a signature you already use. Signature Studio will try to recover the name, contact details, links and images. It’s best-effort — always review the result.</p>
+    <textarea id="import-src" rows="7" placeholder="&lt;table&gt;…&lt;/table&gt; or a full HTML document"></textarea>
+    <div class="modal-actions">
+      <button class="btn" data-close type="button">Cancel</button>
+      <button class="btn btn-primary" id="import-parse" type="button">Parse</button>
+    </div>
+    <div id="import-summary" class="hidden"></div>
+    <div class="modal-actions hidden" id="import-apply-row">
+      <button class="btn" data-close type="button">Cancel</button>
+      <button class="btn btn-primary" id="import-apply" type="button">Apply to editor</button>
+    </div>
+  </div>
+</div>
+
+<!-- Instructions modal -->
+<div class="overlay hidden" id="modal-instructions" role="dialog" aria-modal="true">
+  <div class="modal modal-wide">
+    <h2>Install in your mail client</h2>
+    <div class="tabs" id="instr-tabs">
+      <button class="itab active" data-tab="gmail" type="button">Gmail</button>
+      <button class="itab" data-tab="outlook" type="button">Outlook (Windows)</button>
+      <button class="itab" data-tab="outlookmac" type="button">Outlook (Mac)</button>
+      <button class="itab" data-tab="applemail" type="button">Apple Mail</button>
+      <button class="itab" data-tab="thunderbird" type="button">Thunderbird</button>
+      <button class="itab" data-tab="webmail" type="button">Other webmail</button>
+    </div>
+    <div class="ipane active" id="pane-gmail">
+      <ol>
+        <li>Choose <b>Export ▸ Copy to clipboard</b> above.</li>
+        <li>Gmail → ⚙ Settings → <b>See all settings</b> → General → <b>Signature</b>.</li>
+        <li>Create a new signature, click in the edit box and paste (Ctrl/Cmd+V).</li>
+        <li>Under <b>Signature defaults</b>, select it for new emails and replies. Save changes.</li>
+      </ol>
+      <p class="note">Gmail simplifies some formatting. If images vanish, use a hosted image URL (not an uploaded one) and paste again.</p>
+    </div>
+    <div class="ipane" id="pane-outlook">
+      <ol>
+        <li>Choose <b>Export ▸ Copy to clipboard</b>.</li>
+        <li>File → Options → Mail → <b>Signatures…</b> → New.</li>
+        <li>Click in the signature editor and paste with <b>right-click → Keep Source Formatting</b> (or Ctrl+V).</li>
+        <li>Set the defaults for <b>New messages</b> and <b>Replies/forwards</b>, then OK.</li>
+      </ol>
+      <p class="note">Outlook renders signatures with the Word engine — these templates are built for it, but tiny differences are normal. Test once by sending yourself an email.</p>
+    </div>
+    <div class="ipane" id="pane-outlookmac">
+      <ol>
+        <li>Choose <b>Export ▸ Copy to clipboard</b>.</li>
+        <li>Outlook → Settings (⌘+,) → <b>Signatures</b>.</li>
+        <li>Click <b>+</b>, paste (⌘V), then set the signature for your account.</li>
+      </ol>
+    </div>
+    <div class="ipane" id="pane-applemail">
+      <ol>
+        <li>Choose <b>Export ▸ Copy to clipboard</b>.</li>
+        <li>Mail → Settings (⌘+,) → <b>Signatures</b> → select your account → <b>+</b>.</li>
+        <li>Paste (⌘V) and close. The signature syncs to iPhone/iPad if your account uses iCloud sync.</li>
+      </ol>
+    </div>
+    <div class="ipane" id="pane-thunderbird">
+      <ol>
+        <li>Choose <b>Export ▸ Copy to clipboard</b>.</li>
+        <li>Account Settings → select the account → <b>Signature text</b>.</li>
+        <li>Tick <b>Use HTML</b>, paste (Ctrl/Cmd+V) and close the dialog.</li>
+      </ol>
+    </div>
+    <div class="ipane" id="pane-webmail">
+      <ol>
+        <li>Choose <b>Export ▸ Copy to clipboard</b>.</li>
+        <li>Proton: Settings → Identity and addresses → Signature → paste.</li>
+        <li>Outlook on the web: Settings → Mail → Compose and reply → signature → paste.</li>
+        <li>Fastmail: Settings → Accounts → your account → Signature → paste.</li>
+        <li>Any other client with a rich-text signature box: paste with formatting intact.</li>
+      </ol>
+      <p class="note">Not every client keeps every style. Keep signatures ≤ 600 px wide, use hosted images, and test in the client your recipients actually use.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm modal -->
+<div class="overlay hidden" id="modal-confirm" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2 id="confirm-title">Are you sure?</h2>
+    <p id="confirm-body"></p>
+    <div class="modal-actions">
+      <button class="btn" data-close type="button">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok" type="button">Yes, do it</button>
+    </div>
+  </div>
+</div>
+
+<!-- Saved signatures panel -->
+<div class="scrim hidden" id="scrim"></div>
+<aside class="panel" id="saved-panel" aria-label="Saved signatures">
+  <div class="panel-head">
+    <h2>Saved signatures</h2>
+    <button class="btn btn-icon" id="saved-close" type="button" title="Close">×</button>
+  </div>
+  <div class="save-row">
+    <input id="save-name" placeholder="Name this signature…" maxlength="60">
+    <button class="btn btn-primary" id="save-now" type="button">Save current</button>
+  </div>
+  <div id="saved-list"></div>
+</aside>
+
+<div id="toasts" aria-live="polite"></div>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/socials.js"></script>
+<script src="assets/js/templates.js"></script>
+<script src="assets/js/import.js"></script>
+<script src="assets/js/export.js"></script>
+<script src="assets/js/storage.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

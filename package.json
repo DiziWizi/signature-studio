@@ -1,0 +1,10 @@
+{
+  "name": "signature-studio",
+  "version": "0.1.0",
+  "description": "Web-based HTML email signature builder and editor. Static, dependency-free.",
+  "scripts": {
+    "serve": "python3 -m http.server 8137",
+    "check": "for f in assets/js/*.js; do node --check \"$f\" || exit 1; done && python3 -m py_compile tools/publish_release.py && echo OK"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,7 @@
+services:
+  signature-studio:
+    build: .
+    image: signature-studio:latest
+    ports:
+      - "8080:80"
+    restart: unless-stopped

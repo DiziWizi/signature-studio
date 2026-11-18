@@ -1,0 +1,5 @@
+.git
+.gitignore
+dist/
+docs/screenshots/
+.dockerignore
