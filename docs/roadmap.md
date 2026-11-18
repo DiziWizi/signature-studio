@@ -46,10 +46,12 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   all 10 templates, socials CRUD + reorder, checklist, square crop, import
   fixtures, exports incl. clipboard + downloads, undo/redo, presets, PWA
   offline) running in CI on every push and tag; repo made public
-- [ ] Forgejo Pages live demo — repo is public; blocked on the instance-level
-  `[pages] ENABLED` switch (no Pages API in this build, vhost not serving).
-  Once enabled: repo Settings → Pages → branch `main`, demo at
-  https://slopware.forgejo.dizi.dev/signature-studio/
+- [ ] Live demo — skipped for now (user decision, 2026-11-19). This
+  instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
+  it from the 1.21 base; there is no `[pages]` config and no Pages API.
+  If revisited: (a) Caddy site block on the existing host
+  (e.g. sig.dizi.dev) with a git-hook/webhook auto-deploy, or (b) a public
+  GitHub Pages mirror fed by a Forgejo push mirror.
 
 ## Suggested next steps
 
