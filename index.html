@@ -196,7 +196,8 @@
             </div>
           </div>
 
-          <label class="field">Logo / photo URL
+          <div class="field">
+            <span class="lbl">Logo / photo URL</span>
             <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button">Upload</button></span>
             <input type="file" id="logo-file" accept="image/*" hidden>
             <span class="range-row"><input type="range" min="40" max="160" step="4" data-field="design.logoWidth" id="logo-width"><output id="logo-width-out"></output></span>
@@ -207,8 +208,17 @@
               </select>
             </span>
             <span class="micro" id="logo-pos-hint" hidden>Position applies to the Classic, Compact, Split and Banner layouts — Centered, Roundel and Monogram place it top-centre by design.</span>
+            <details class="host-help">
+              <summary class="micro">Where can I host my image?</summary>
+              <ul class="micro host-list">
+                <li>Your own website or CMS — upload and copy the URL.</li>
+                <li>GitHub repo — use the raw file URL.</li>
+                <li>Imgur or Cloudinary (free tiers).</li>
+                <li>Keep the URL stable — changing it breaks already-sent emails.</li>
+              </ul>
+            </details>
             <span class="micro">Most clients block embedded (data:) images — host the file and paste its URL for reliable delivery.</span>
-          </label>
+          </div>
 
           <label class="field">Banner URL (banner template)
             <span class="url-row"><input data-field="design.bannerUrl" placeholder="https://…/banner.png"><button class="btn btn-sm" id="upload-banner" type="button">Upload</button></span>
@@ -254,6 +264,7 @@
         <label><input type="radio" name="prevBg" value="dark"><span>Dark</span></label>
       </div>
     </div>
+    <div class="checklist" id="checklist"></div>
     <div class="stage" id="stage"><iframe id="preview-frame" title="Signature preview"></iframe></div>
     <p class="micro preview-note"><span id="conciseness" class="concise-ok"></span> · Live preview at real size — the dark backdrop simulates a dark-mode mail client. Everything stays in your browser and is autosaved locally.</p>
   </section>

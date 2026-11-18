@@ -75,6 +75,7 @@ function renderPreview() {
   frame.srcdoc = html;
   renderThumbs();
   updateConciseness();
+  updateChecklist();
 }
 
 /* Live template thumbnails: real renders of the current state per template,
@@ -535,6 +536,41 @@ function initQuickSwitch() {
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') menu.classList.add('hidden');
   });
+}
+
+/* ── pre-export checklist ─────────────────────────────────────────────── */
+
+function collectWarnings(s) {
+  const w = [];
+  if (!s.profile.displayName && !s.profile.name) {
+    w.push({ kind: 'err', msg: 'No name set — the signature won’t say who it’s from.' });
+  }
+  if (!String(s.contact.email || '').trim()) {
+    w.push({ kind: 'warn', msg: 'No email address — recipients can’t reach you from the signature.' });
+  }
+  if (String(s.design.logoUrl || '').startsWith('data:')) {
+    w.push({ kind: 'warn', msg: 'Logo is embedded (data: image) — Outlook strips these. Host it and paste the URL.' });
+  }
+  if (String(s.design.bannerUrl || '').startsWith('data:')) {
+    w.push({ kind: 'warn', msg: 'Banner is embedded (data: image) — Outlook strips these. Host it and paste the URL.' });
+  }
+  for (const soc of s.socials) {
+    if (!String(soc.url || '').trim()) {
+      w.push({ kind: 'info', msg: `${esc(networkById(soc.network).name)} has no link yet — it won’t show in the signature.` });
+    }
+  }
+  return w;
+}
+
+function updateChecklist() {
+  const el = $('#checklist');
+  if (!el) return;
+  const w = collectWarnings(state);
+  if (!w.length) {
+    el.innerHTML = '<div class="check-ok">✓ Ready to export — nothing missing</div>';
+    return;
+  }
+  el.innerHTML = w.map(x => `<div class="check-item check-${x.kind}">${x.msg}</div>`).join('');
 }
 
 /* ── rebuild everything ───────────────────────────────────────────────── */

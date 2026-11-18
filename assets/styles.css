@@ -364,6 +364,27 @@ textarea { resize: vertical; min-height: 40px; }
 .concise-ok { color: var(--mut); }
 .concise-long { color: #e9b36a !important; }
 
+/* pre-export checklist */
+.checklist { margin-bottom: 12px; }
+.check-item {
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid;
+  margin-bottom: 6px;
+}
+.check-err { color: #ffb3b6; border-color: #7a2e32; background: rgba(229, 72, 77, .08); }
+.check-warn { color: #e9b36a; border-color: #8a6d3b; background: rgba(233, 179, 106, .08); }
+.check-info { color: var(--mut); border-color: var(--line2); background: rgba(42, 50, 69, .4); }
+.check-ok { color: #7fd08a; font-size: 12px; padding: 6px 10px; }
+
+/* image hosting helper */
+.host-help { margin-top: 2px; }
+.host-help summary { cursor: pointer; color: var(--mut); }
+.host-help summary:hover { color: var(--text); }
+.host-list { margin: 4px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+
 .chip-btn {
   width: 30px;
   height: 30px;
