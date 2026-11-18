@@ -182,7 +182,9 @@ wipe everything.
 
 ## Roadmap
 
-See [docs/roadmap.md](docs/roadmap.md).
+See [docs/roadmap.md](docs/roadmap.md). A separate
+[personal-signatures roadmap](docs/personal-signatures-roadmap.md) collects
+recommendations focused on individual (non-corporate) users.
 
 ## License
 
