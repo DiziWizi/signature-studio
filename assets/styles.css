@@ -300,6 +300,22 @@ textarea { resize: vertical; min-height: 40px; }
 .quick { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
 .quick .hint { margin: 0 4px 0 0; }
 
+/* colour theme swatches */
+.themes-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.themes-row .hint { margin: 0 4px 0 0; }
+.theme-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--line2);
+  cursor: pointer;
+  position: relative;
+  transition: transform .12s, border-color .12s;
+}
+.theme-swatch:hover { transform: scale(1.12); border-color: var(--text); }
+.theme-swatch.active { border-color: var(--acc); box-shadow: 0 0 0 2px rgba(91, 124, 250, .35); }
+.mini-color { width: 46px; height: 38px; padding: 2px; background: var(--panel2); border: 1px solid var(--line2); border-radius: 8px; cursor: pointer; flex: 0 0 auto; }
+
 .chip-btn {
   width: 30px;
   height: 30px;

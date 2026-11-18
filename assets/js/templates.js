@@ -36,12 +36,40 @@ function dmCls(d, kind) {
 }
 
 function nameHtml(s, d, { big = true } = {}) {
-  if (!s.profile.name) return '';
+  const shown = s.profile.displayName || s.profile.name;
+  if (!shown) return '';
   const style = textStyle(d, { size: big ? d.fontSize + 5 : d.fontSize + 1, weight: 'bold' });
   const pronouns = s.profile.pronouns
     ? ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: (big ? d.fontSize + 5 : d.fontSize + 1) - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
     : '';
-  return `<span${dmCls(d, 'txt')} style="${style}">${esc(s.profile.name)}</span>${pronouns}<br>`;
+  return `<span${dmCls(d, 'txt')} style="${style}">${esc(shown)}</span>${pronouns}<br>`;
+}
+
+/* Personal context line: location · languages, muted under the title. */
+function contextLineHtml(s, d) {
+  const bits = [s.profile.location, s.profile.languages].filter(Boolean);
+  if (!bits.length) return '';
+  return `<span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d) })}">${esc(bits.join('  ·  '))}</span><br>`;
+}
+
+/* Availability / status badge (e.g. "Open to freelance work"). */
+function statusHtml(s, d) {
+  const text = String(s.design.statusText || '').trim();
+  if (!text) return '';
+  return `<span style="display:inline-block;background-color:${s.design.statusColor || '#2f9e44'};color:#ffffff;` +
+    `border-radius:10px;padding:1px 9px;font-family:${stackOf(d)};font-size:${d.fontSize - 3}px;` +
+    `line-height:1.7;font-weight:bold;">${esc(text)}</span>`;
+}
+
+/* Booking link chip (Calendly & friends) — accent-coloured, tappable. */
+function bookingHtml(s, d) {
+  const raw = String(s.contact.booking || '').trim();
+  if (!raw) return '';
+  const href = normalizeUrl('custom', raw);
+  const label = String(s.contact.bookingLabel || '').trim() || 'Book a call';
+  return `<a href="${esc(href)}" style="display:inline-block;background-color:${d.primaryColor};color:#ffffff;` +
+    `border-radius:12px;padding:2px 13px;font-family:${stackOf(d)};font-size:${d.fontSize - 2}px;` +
+    `line-height:1.8;text-decoration:none;font-weight:bold;">${esc(label)}</a>`;
 }
 
 function titleHtml(s, d) {
@@ -172,7 +200,8 @@ function spacerHtml(h, cols = 2) {
    professional avatar that needs no image file. Outlook shows a square,
    which is acceptable. */
 function monogramHtml(s, d) {
-  const initials = String(s.profile.name || '').trim().split(/\s+/)
+  const shown = String(s.profile.displayName || s.profile.name || '').trim();
+  const initials = shown.split(/\s+/)
     .map(w => w[0]).join('').slice(0, 2).toUpperCase();
   if (!initials) return '';
   const size = d.logoWidth;
@@ -199,7 +228,7 @@ function classicRows(s, d, { center = false } = {}) {
     ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="${align}" style="${right ? 'padding:0 0 0 16px;' : 'padding:0 16px 0 0;'}">${logoContent}</td>`
     : '';
   const identityCell = `<td class="m-cell" valign="middle" align="${align}">
-      ${nameHtml(s, d)}${titleHtml(s, d)}${companyHtml(s, d)}
+      ${nameHtml(s, d)}${titleHtml(s, d)}${companyHtml(s, d)}${contextLineHtml(s, d)}${statusHtml(s, d)}
     </td>`;
 
   rows.push(`<tr>${right ? identityCell + logoCell : logoCell + identityCell}</tr>`);
@@ -209,6 +238,11 @@ function classicRows(s, d, { center = false } = {}) {
   if (stack) {
     rows.push(`<tr><td colspan="2" align="${align}">${stack}</td></tr>`);
     rows.push(spacerHtml(10));
+  }
+  const booking = bookingHtml(s, d);
+  if (booking) {
+    rows.push(`<tr><td colspan="2" align="${align}">${booking}</td></tr>`);
+    rows.push(spacerHtml(8));
   }
   const socials = socialsRowHtml(s, d);
   if (socials) {
@@ -236,7 +270,7 @@ function compactRows(s, d) {
     .join('<br>');
 
   const identityCell = `<td class="m-cell" valign="middle" align="left">
-      ${nameHtml(s, d, { big: false })}${titleHtml(s, d)}
+      ${nameHtml(s, d, { big: false })}${titleHtml(s, d)}${contextLineHtml(s, d)}${statusHtml(s, d)}
     </td>`;
   const contactCell = `<td class="m-cell" valign="middle" align="right" style="padding-left:24px;">${contact || '&nbsp;'}</td>`;
 
@@ -253,7 +287,7 @@ function compactRows(s, d) {
 
 function minimalRows(s, d) {
   const rows = [];
-  const first = [nameHtml(s, d, { big: true }), titleHtml(s, d), companyHtml(s, d)].join('');
+  const first = [nameHtml(s, d, { big: true }), titleHtml(s, d), companyHtml(s, d), contextLineHtml(s, d), statusHtml(s, d)].join('');
   rows.push(`<tr><td colspan="2" align="left">${first}</td></tr>`);
   const stack = contactStackHtml(s, d, { labels: false });
   if (stack) {
@@ -288,7 +322,7 @@ function splitRows(s, d) {
   }
   const logoContent = logoCellHtml(s, d);
   const right = d.logoPosition === 'right';
-  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d);
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
   if (logoContent || identity) {
     const logoCell = logoContent
       ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="${right ? 'right' : 'left'}" style="${right ? 'padding:0 0 0 16px;' : 'padding:0 16px 0 0;'}">${logoContent}</td>`
@@ -302,6 +336,11 @@ function splitRows(s, d) {
     rows.push(`<tr><td colspan="2" align="left" class="m-cell" style="background-color:#f6f8fa;border:1px solid ${d.dividerColor};padding:10px 14px;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td style="padding:0;">${stack}</td></tr></table>
     </td></tr>`);
+  }
+  const booking = bookingHtml(s, d);
+  if (booking) {
+    rows.push(spacerHtml(10));
+    rows.push(`<tr><td colspan="2" align="left">${booking}</td></tr>`);
   }
   const socials = socialsRowHtml(s, d);
   if (socials) {
@@ -324,7 +363,7 @@ function roundelRows(s, d) {
       : monogramHtml(s, d);
     rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 12px 0;">${circle}</td></tr>`);
   }
-  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d);
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
   if (identity) {
     rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
   }
@@ -333,6 +372,11 @@ function roundelRows(s, d) {
   if (stack) {
     rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
     rows.push(spacerHtml(10));
+  }
+  const booking = bookingHtml(s, d);
+  if (booking) {
+    rows.push(`<tr><td colspan="2" align="center">${booking}</td></tr>`);
+    rows.push(spacerHtml(8));
   }
   const socials = socialsRowHtml(s, d);
   if (socials) {
@@ -359,16 +403,21 @@ function mastheadRows(s, d) {
       `</td></tr>`);
     rows.push(spacerHtml(12));
   }
-  if (s.profile.name) {
+  if (s.profile.displayName || s.profile.name) {
     /* Without the band (no company), keep title/department visible. */
     const rest = s.profile.company ? '' : titleHtml(s, d) + companyHtml(s, d);
-    rows.push(`<tr><td colspan="2" align="left">${nameHtml(s, d)}${rest}</td></tr>`);
+    rows.push(`<tr><td colspan="2" align="left">${nameHtml(s, d)}${rest}${contextLineHtml(s, d)}${statusHtml(s, d)}</td></tr>`);
     rows.push(spacerHtml(6));
   }
   const stack = contactStackHtml(s, d);
   if (stack) {
     rows.push(`<tr><td colspan="2" align="left">${stack}</td></tr>`);
     rows.push(spacerHtml(10));
+  }
+  const booking = bookingHtml(s, d);
+  if (booking) {
+    rows.push(`<tr><td colspan="2" align="left">${booking}</td></tr>`);
+    rows.push(spacerHtml(8));
   }
   const socials = socialsRowHtml(s, d);
   if (socials) {
@@ -383,10 +432,10 @@ function mastheadRows(s, d) {
 /* Monogram: initials avatar, centred — a complete signature with no images. */
 function monogramRows(s, d) {
   const rows = [];
-  if (s.profile.name) {
+  if (s.profile.displayName || s.profile.name) {
     rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 12px 0;">${monogramHtml(s, d)}</td></tr>`);
   }
-  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d);
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
   if (identity) {
     rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
   }
@@ -395,6 +444,11 @@ function monogramRows(s, d) {
   if (stack) {
     rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
     rows.push(spacerHtml(10));
+  }
+  const booking = bookingHtml(s, d);
+  if (booking) {
+    rows.push(`<tr><td colspan="2" align="center">${booking}</td></tr>`);
+    rows.push(spacerHtml(8));
   }
   const socials = socialsRowHtml(s, d);
   if (socials) {

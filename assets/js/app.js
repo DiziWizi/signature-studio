@@ -383,6 +383,7 @@ function rebuildAll() {
   updateTemplatePicker();
   updateLogoWidthOut();
   updateSavedCount();
+  renderThemes();
   renderPreview();
 }
 
@@ -407,6 +408,41 @@ function updateLogoPositionUI() {
 
 function updateSavedCount() {
   $('#saved-count').textContent = listSnapshots().length;
+}
+
+/* ── colour themes ────────────────────────────────────────────────────── */
+
+function renderThemes() {
+  const row = $('#themes-row');
+  if (!row) return;
+  const btns = THEMES.map(t => {
+    const active = state.design.primaryColor.toLowerCase() === t.primary &&
+      state.design.textColor.toLowerCase() === t.text &&
+      state.design.dividerColor.toLowerCase() === t.divider;
+    return `<button type="button" class="theme-swatch${active ? ' active' : ''}" data-theme="${t.id}" ` +
+      `title="${esc(t.name)}" style="background:linear-gradient(135deg, ${t.primary} 50%, ${t.text} 50%);"></button>`;
+  }).join('');
+  row.innerHTML = '<span class="hint">Colour themes:</span>' + btns;
+}
+
+function onThemeClick(e) {
+  const b = e.target.closest('.theme-swatch');
+  if (!b) return;
+  const t = themeById(b.dataset.theme);
+  if (!t) return;
+  state.design.primaryColor = t.primary;
+  state.design.textColor = t.text;
+  state.design.dividerColor = t.divider;
+  renderThemes();
+  const primary = document.querySelector('[data-field="design.primaryColor"]');
+  const text = document.querySelector('[data-field="design.textColor"]');
+  const divider = document.querySelector('[data-field="design.dividerColor"]');
+  if (primary) primary.value = t.primary;
+  if (text) text.value = t.text;
+  if (divider) divider.value = t.divider;
+  renderPreview();
+  scheduleSave();
+  showToast(`Theme applied: ${t.name}.`);
 }
 
 /* ── toasts ───────────────────────────────────────────────────────────── */
@@ -712,6 +748,9 @@ function init() {
     renderPreview();
     scheduleSave();
   });
+
+  /* colour themes */
+  $('#themes-row').addEventListener('click', onThemeClick);
 
   /* preview chrome */
   $('#seg-width').addEventListener('change', e => {

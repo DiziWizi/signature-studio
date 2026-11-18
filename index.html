@@ -55,9 +55,12 @@
     <details open>
       <summary>Profile</summary>
       <div class="body grid2">
-        <label class="field">Name<input data-field="profile.name" placeholder="Ada Lovelace"></label>
+        <label class="field">Full name<input data-field="profile.name" placeholder="Ada Lovelace"></label>
+        <label class="field">Preferred name <span class="opt">(shown in the signature)</span><input data-field="profile.displayName" placeholder="Ada"></label>
         <label class="field">Pronouns <span class="opt">(optional)</span><input data-field="profile.pronouns" placeholder="she/her"></label>
+        <label class="field">Location <span class="opt">(city, timezone)</span><input data-field="profile.location" placeholder="Melbourne, AU · UTC+11"></label>
         <label class="field">Job title<input data-field="profile.title" placeholder="Head of Analytics"></label>
+        <label class="field">Languages <span class="opt">(optional)</span><input data-field="profile.languages" placeholder="English · Deutsch"></label>
         <label class="field">Department<input data-field="profile.department" placeholder="Data Science"></label>
         <label class="field">Company<input data-field="profile.company" placeholder="Analytical Engines Ltd"></label>
       </div>
@@ -71,6 +74,8 @@
         <label class="field">Mobile<input data-field="contact.mobile" placeholder="+44 7700 900123"></label>
         <label class="field">Website<input data-field="contact.website" placeholder="example.com"></label>
         <label class="field">Website label<input data-field="contact.websiteLabel" placeholder="Leave empty to use the URL"></label>
+        <label class="field">Booking link <span class="opt">(Calendly, Cal.com…)</span><input data-field="contact.booking" placeholder="cal.com/you"></label>
+        <label class="field">Booking label<input data-field="contact.bookingLabel" placeholder="Book a call"></label>
         <label class="field span2">Address (one line or multiple)
           <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom"></textarea>
         </label>
@@ -145,6 +150,10 @@
           </button>
         </div>
 
+        <div class="themes-row" id="themes-row">
+          <span class="hint">Colour themes:</span>
+        </div>
+
         <div class="grid2">
           <label class="field">Accent colour<input type="color" data-field="design.primaryColor"></label>
           <label class="field">Text colour<input type="color" data-field="design.textColor"></label>
@@ -199,6 +208,12 @@
           <label class="switch span2"><input type="checkbox" data-field="design.stackMobile"><span class="sw"></span> Stack columns on mobile (media query; ignored by Outlook)</label>
           <label class="switch span2"><input type="checkbox" data-field="design.showLabels"><span class="sw"></span> Show contact labels (“Email:”, “Phone:”, …)</label>
           <label class="switch span2"><input type="checkbox" data-field="design.useMonogram"><span class="sw"></span> Use initials monogram when no logo is set</label>
+          <label class="field span2">Status badge <span class="opt">(e.g. “Open to freelance work” — leave empty to hide)</span>
+            <span class="url-row">
+              <input data-field="design.statusText" placeholder="Open to freelance work">
+              <input type="color" data-field="design.statusColor" title="Badge colour" class="mini-color">
+            </span>
+          </label>
           <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> Show legal / disclaimer line</label>
           <label class="field span2">Legal / disclaimer text
             <textarea rows="2" data-field="design.legalText" placeholder="This message and any attachments are confidential…"></textarea>

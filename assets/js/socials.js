@@ -16,6 +16,18 @@ const NETWORKS = [
   { id: 'signal',    name: 'Signal',      glyph: 'S',  color: '#3a76f0', prefix: 'https://signal.me/#p/',     placeholder: 'number or full URL' },
   { id: 'xing',      name: 'Xing',        glyph: 'X',  color: '#006567', prefix: 'https://www.xing.com/profile/', placeholder: 'profile id or full URL' },
   { id: 'pinterest', name: 'Pinterest',   glyph: 'P',  color: '#bd081c', prefix: 'https://www.pinterest.com/',placeholder: 'username or full URL' },
+  { id: 'medium',    name: 'Medium',      glyph: 'M',  color: '#000000', prefix: 'https://medium.com/@',        placeholder: 'username or full URL' },
+  { id: 'substack',  name: 'Substack',    glyph: 'S',  color: '#ff6719', prefix: '',                            placeholder: 'yourname.substack.com' },
+  { id: 'behance',   name: 'Behance',     glyph: 'Bē', color: '#1769ff', prefix: 'https://www.behance.net/',   placeholder: 'username or full URL' },
+  { id: 'dribbble',  name: 'Dribbble',    glyph: 'D',  color: '#ea4c89', prefix: 'https://dribbble.com/',       placeholder: 'username or full URL' },
+  { id: 'twitch',    name: 'Twitch',      glyph: 'T',  color: '#9146ff', prefix: 'https://www.twitch.tv/',     placeholder: 'username or full URL' },
+  { id: 'discord',   name: 'Discord',     glyph: 'D',  color: '#5865f2', prefix: 'https://discord.gg/',        placeholder: 'invite code or full URL' },
+  { id: 'etsy',      name: 'Etsy',        glyph: 'E',  color: '#f1641e', prefix: 'https://www.etsy.com/shop/', placeholder: 'shop name or full URL' },
+  { id: 'vimeo',     name: 'Vimeo',       glyph: 'V',  color: '#1ab7ea', prefix: 'https://vimeo.com/',         placeholder: 'username or full URL' },
+  { id: 'goodreads', name: 'Goodreads',   glyph: 'G',  color: '#754e20', prefix: 'https://www.goodreads.com/', placeholder: 'user or author, or full URL' },
+  { id: 'letterboxd',name: 'Letterboxd',  glyph: 'L',  color: '#00a84c', prefix: 'https://letterboxd.com/',    placeholder: 'username or full URL' },
+  { id: 'spotify',   name: 'Spotify',     glyph: '♪',  color: '#1db954', prefix: 'https://open.spotify.com/user/', placeholder: 'user id or full URL' },
+  { id: 'kofi',      name: 'Ko-fi',       glyph: '☕',  color: '#ff5e5b', prefix: 'https://ko-fi.com/',         placeholder: 'username or full URL' },
   { id: 'custom',    name: 'Custom link…',glyph: '↗',  color: '#5b6472', prefix: '',                          placeholder: 'https://…' },
 ];
 

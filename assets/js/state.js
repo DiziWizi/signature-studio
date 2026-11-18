@@ -20,10 +20,26 @@ const TEMPLATES = [
   { id: 'monogram', name: 'Monogram', desc: 'Initials avatar, centred — no image needed.' },
 ];
 
+/* Curated colour themes: one click sets accent, text and divider together.
+   Personal users have no brand guidelines — this is their fastest start. */
+const THEMES = [
+  { id: 'slate',      name: 'Slate',      primary: '#3b5bdb', text: '#343a40', divider: '#e9ecef' },
+  { id: 'ocean',      name: 'Ocean',      primary: '#0b7285', text: '#2b3a42', divider: '#dee7ea' },
+  { id: 'forest',     name: 'Forest',     primary: '#2f9e44', text: '#2b3a2b', divider: '#e4efe5' },
+  { id: 'terracotta', name: 'Terracotta', primary: '#c94f2d', text: '#44302a', divider: '#f0e4de' },
+  { id: 'plum',       name: 'Plum',       primary: '#7048a8', text: '#33313d', divider: '#e9e4f0' },
+  { id: 'ink',        name: 'Ink',        primary: '#1c7ed6', text: '#212529', divider: '#dee2e6' },
+  { id: 'mono',       name: 'Mono',       primary: '#495057', text: '#212529', divider: '#dee2e6' },
+];
+
+function themeById(id) {
+  return THEMES.find(t => t.id === id) || null;
+}
+
 function defaultState() {
   return {
-    profile: { name: '', title: '', department: '', company: '', pronouns: '' },
-    contact: { email: '', phone: '', mobile: '', website: '', websiteLabel: '', address: '' },
+    profile: { name: '', displayName: '', title: '', department: '', company: '', pronouns: '', location: '', languages: '' },
+    contact: { email: '', phone: '', mobile: '', website: '', websiteLabel: '', booking: '', bookingLabel: '', address: '' },
     socials: [],      // { network, url, glyph, color }
     customLines: [],  // { label, value }
     design: {
@@ -46,6 +62,8 @@ function defaultState() {
       stackMobile: true,
       showLabels: true,
       useMonogram: false,
+      statusText: '',
+      statusColor: '#2f9e44',
     },
     meta: { name: 'My signature' },
   };

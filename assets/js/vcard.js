@@ -119,9 +119,11 @@ function buildVCard(state) {
   lines.push('BEGIN:VCARD');
   lines.push('VERSION:3.0');
 
-  const name = splitName(p.name);
+  const fullName = String(p.name || '').trim();
+  const displayName = String(p.displayName || '').trim() || fullName;
+  const name = splitName(fullName);
   if (name.family || name.given) {
-    lines.push(vcardField('FN', null, p.name));
+    lines.push(vcardField('FN', null, displayName));
     lines.push(vcardField('N', null, null, [name.family, name.given, '', '', '']));
   }
 

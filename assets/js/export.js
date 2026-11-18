@@ -4,10 +4,14 @@
 function plainTextVersion(s) {
   const lines = [];
   const p = s.profile;
-  if (p.name) lines.push(p.pronouns ? `${p.name} (${p.pronouns})` : p.name);
+  const shown = p.displayName || p.name;
+  if (shown) lines.push(p.pronouns ? `${shown} (${p.pronouns})` : shown);
   const bits = [p.title, p.department].filter(Boolean).join(' · ');
   if (bits) lines.push(bits);
   if (p.company) lines.push(p.company);
+  const ctx = [p.location, p.languages].filter(Boolean).join(' · ');
+  if (ctx) lines.push(ctx);
+  if (s.design.statusText) lines.push(`[${s.design.statusText}]`);
   lines.push('');
   const c = s.contact;
   const contact = [];
@@ -18,6 +22,7 @@ function plainTextVersion(s) {
   if (c.address) contact.push(c.address.replace(/\r?\n/g, ', '));
   for (const l of s.customLines) if (l.value) contact.push(`${l.label ? l.label + ': ' : ''}${l.value}`);
   if (contact.length) lines.push(contact.join(' | '));
+  if (c.booking) lines.push(`${c.bookingLabel || 'Book a call'}: ${c.booking}`);
   const socials = s.socials.filter(x => String(x.url || '').trim())
     .map(x => {
       const net = networkById(x.network);
