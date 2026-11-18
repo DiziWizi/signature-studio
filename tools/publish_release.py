@@ -42,7 +42,7 @@ def get_token():
     tok = os.environ.get("RELEASE_TOKEN", "").strip()
     if tok:
         return tok
-    path = os.path.expanduser("/opt/data/.config/forgejo/token")
+    path = os.path.expanduser(os.environ.get("FORGEJO_TOKEN_FILE", "~/.config/forgejo/token"))
     if os.path.exists(path):
         return open(path).read().strip()
     return ""
