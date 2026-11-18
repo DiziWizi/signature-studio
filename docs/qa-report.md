@@ -184,6 +184,42 @@ booking link (v0.5.0); wizard, personas, quick-switch, conciseness hint
 
 ---
 
+# v0.8.0–v0.10.0 addendum (export polish + import fixtures)
+
+Date: 2026-11-19 · Scope: pre-export checklist + hosting helper (v0.8.0),
+square photo crop + vCard 4.0 (v0.9.0), real-world import fixtures (v0.10.0).
+
+## Issues found and fixed in this round
+
+| # | Severity | Issue | Fix |
+| --- | --- | --- | --- |
+| 1 | Low | Legal-line detection only matched px font sizes; Outlook exports use points (8.0pt). | Importer accepts pt with the 1pt ≈ 4/3px conversion; px path unchanged. |
+| 2 | Low | The logo field was a `<label>` so an interactive "host my image" helper couldn't nest legally. | Restructured to `div.field` with an explicit label span + `<details>` helper. |
+
+## Verification evidence (all passed)
+
+- Node vm: vCard 4.0 suite 11/11 (envelope, FN/N split, PRONOUN present and
+  absent, website + TYPE=portfolio URLs, no folded lines, escaping) plus the
+  vCard 3.0 regression (folding ≤ 76, no PRONOUN).
+- Browser: square crop verified by decoding the uploaded data URL — a
+  200×100 PNG lands as exactly 100×100; banner uploads stay uncropped
+  (160×40); checklist states verified (empty → error+warning, sample →
+  ready, data: logo → warning, URL-less social → info); hosting helper
+  expands; vCard 4.0 menu downloads.
+- Import fixtures: `runImportFixtureTests()` in the browser passes **4/4**
+  (gmail-basic, gmail-image, outlook-desktop incl. pt legal line + two tel
+  links, apple-mail) on live code; `tests/*.js` syntax-checked in CI.
+- Releases v0.8.0, v0.9.0, v0.10.0 published with verified SHA-256 assets;
+  CI green on each tag.
+
+## Residual risks (added)
+
+- Fixture suite is browser-side only (DOMParser); it runs in the QA pass,
+  not in CI — wiring it into a headless-browser CI job is the remaining step
+  (already on the roadmap as the Playwright/E2E item).
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

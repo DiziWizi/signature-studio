@@ -35,6 +35,13 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.7.0 flair pack — card wrapper (tint + border), round-photo crop for
   side logos, Photo card template (10 total), portfolio link split from
   website (signature, plain text, vCard, import)
+- [x] v0.8.0 — pre-export checklist (missing name/email, embedded images,
+  empty socials) + "where to host my image" helper in the logo field
+- [x] v0.9.0 — square centre-crop for logo uploads (portrait photos no
+  longer stretch); vCard 4.0 export with PRONOUN + portfolio URL
+- [x] v0.10.0 — real-world import fixtures (Gmail, Gmail+image, Outlook
+  desktop with pt sizes, Apple Mail) as a browser-side test suite;
+  importer accepts pt font sizes for legal-line detection
 
 ## Suggested next steps
 

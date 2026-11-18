@@ -84,13 +84,21 @@ function parseSignatureHTML(html) {
     }
   }
 
-  /* Legal line: very small text. */
+  /* Legal line: very small text. Gmail uses px; Outlook uses points — its
+     canonical disclaimer size is 8.0pt, and 1pt ≈ 4/3px, so 8.0pt is the pt
+     equivalent of the existing 10.5px threshold (8.0 × 4/3 ≈ 10.5). The \b
+     keeps mso-bidi-font-size etc. from matching. */
   const small = Array.from(doc.querySelectorAll('span,td,p,div,font'))
     .map(el => {
-      const m = /font-size\s*:\s*([0-9.]+)\s*px/i.exec(el.getAttribute('style') || '');
-      return m ? { size: parseFloat(m[1]), text: (el.textContent || '').trim() } : null;
+      const m = /\bfont-size\s*:\s*([0-9.]+)\s*(px|pt)/i.exec(el.getAttribute('style') || '');
+      if (!m) return null;
+      const value = parseFloat(m[1]);
+      const unit = (m[2] || 'px').toLowerCase();
+      const sizePx = unit === 'pt' ? value * 4 / 3 : value;
+      const maxPx = unit === 'pt' ? 8.0 * 4 / 3 : 10.5;
+      return { small: sizePx <= maxPx, text: (el.textContent || '').trim() };
     })
-    .filter(x => x && x.size <= 10.5 && x.text.length > 15)
+    .filter(x => x && x.small && x.text.length > 15)
     .map(x => x.text)
     .sort((a, b) => b.length - a.length);
   if (small.length) {
