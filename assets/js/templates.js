@@ -267,7 +267,12 @@ function darkStyleBlock(d) {
 }
 
 function renderSignature(state) {
-  const d = state.design;
+  /* Clamp user/imported numeric values so the output can never degenerate. */
+  const raw = state.design || {};
+  const d = Object.assign({}, raw, {
+    fontSize: Math.min(18, Math.max(10, Number(raw.fontSize) || 14)),
+    logoWidth: Math.min(300, Math.max(20, Number(raw.logoWidth) || 72)),
+  });
   const s = state;
 
   let inner;

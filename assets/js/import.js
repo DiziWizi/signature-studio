@@ -41,10 +41,23 @@ function parseSignatureHTML(html) {
     }
   }
 
-  /* Text: first short lines become name/title/company. */
-  const lines = doc.body ? doc.body.innerText.split(/\r?\n/).map(l => l.trim()).filter(Boolean) : [];
+  /* Text: first short lines become name/title/company. innerText is unreliable
+     on detached documents, so split on block boundaries in the raw HTML. */
+  let lines = [];
+  const bodyHtml = doc.body ? doc.body.innerHTML : '';
+  if (bodyHtml) {
+    const textish = bodyHtml
+      .replace(/<(br|\/td|\/tr|\/th|\/div|\/p|\/li|\/h[1-6]|\/section|\/header|\/footer)\b[^>]*>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'");
+    lines = textish.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  }
   if (lines.length) {
-    if (lines[0].length <= 60 && !lines[0].includes('@')) out.profile.name = lines[0];
+    if (lines[0].length <= 60 && !lines[0].includes('@') && !/^https?:/i.test(lines[0])) {
+      out.profile.name = lines[0];
+    }
     const second = lines[1] || '';
     if (second && second.length <= 80 && !second.includes('@') && /[·|•,—]/.test(second)) {
       const [title, department] = second.split(/\s*[·|•,—]\s*/);
@@ -57,10 +70,12 @@ function parseSignatureHTML(html) {
 
   /* Legal line: very small text. */
   const small = Array.from(doc.querySelectorAll('span,td,p,div,font'))
-    .filter(el => /font-size\s*:\s*([0-9]([.,][0-9])?)\s*px/i.test(el.getAttribute('style') || ''))
-    .filter(el => parseFloat(/font-size\s*:\s*([0-9.]+)\s*px/i.exec(el.getAttribute('style') || '')[1]) <= 10.5)
-    .map(el => (el.textContent || '').trim())
-    .filter(t => t.length > 15)
+    .map(el => {
+      const m = /font-size\s*:\s*([0-9.]+)\s*px/i.exec(el.getAttribute('style') || '');
+      return m ? { size: parseFloat(m[1]), text: (el.textContent || '').trim() } : null;
+    })
+    .filter(x => x && x.size <= 10.5 && x.text.length > 15)
+    .map(x => x.text)
     .sort((a, b) => b.length - a.length);
   if (small.length) {
     out.design.showLegal = true;

@@ -5,8 +5,7 @@
 
 let state = null;
 let lastParsedImport = null;
-let previewTimer = null;
-let saveTimer = null;
+let lastSaveAt = 0;
 
 const $ = sel => document.querySelector(sel);
 
@@ -24,6 +23,8 @@ function normalizeLoadedState(raw) {
 
 /* ── preview ──────────────────────────────────────────────────────────── */
 
+/* Synchronous preview: no timers, so it stays reliable even in browsers
+   that throttle background tabs. Rendering is cheap (a few KB of HTML). */
 function renderPreview() {
   const frame = $('#preview-frame');
   const html = renderSignature(state).replace(
@@ -33,17 +34,24 @@ function renderPreview() {
   frame.srcdoc = html;
 }
 
-function schedulePreview() {
-  clearTimeout(previewTimer);
-  previewTimer = setTimeout(renderPreview, 60);
+/* Time-throttled autosave: at most one write per second, plus a flush on
+   unload. No setTimeout — same background-throttling reason as above. */
+function scheduleSave() {
+  const now = Date.now();
+  if (now - lastSaveAt < 1000) return;
+  lastSaveAt = now;
+  if (!saveDraft(state)) showToast('Could not autosave — local storage is full or blocked.', 'warn');
 }
 
-function scheduleSave() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    if (!saveDraft(state)) showToast('Could not autosave — local storage is full or blocked.', 'warn');
-  }, 400);
+function flushSave() {
+  if (!saveDraft(state)) return;
+  lastSaveAt = Date.now();
 }
+
+window.addEventListener('beforeunload', flushSave);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flushSave();
+});
 
 /* ── field binding ────────────────────────────────────────────────────── */
 
@@ -57,7 +65,7 @@ function onFieldInput(e) {
   else v = el.value;
   setPath(state, el.dataset.field, v);
   if (el.dataset.field === 'design.logoWidth') updateLogoWidthOut();
-  schedulePreview();
+  renderPreview();
   scheduleSave();
 }
 
@@ -97,7 +105,7 @@ function renderSocials() {
 function addSocial(network = 'linkedin') {
   state.socials.push({ network, url: '', glyph: '', color: '' });
   renderSocials();
-  schedulePreview();
+  renderPreview();
   scheduleSave();
 }
 
@@ -118,7 +126,7 @@ function onSocialListInput(e) {
   } else if (e.target.classList.contains('soc-color')) {
     soc.color = e.target.value;
   }
-  schedulePreview();
+  renderPreview();
   scheduleSave();
 }
 
@@ -138,7 +146,7 @@ function onSocialListClick(e) {
     return;
   }
   renderSocials();
-  schedulePreview();
+  renderPreview();
   scheduleSave();
 }
 
@@ -166,7 +174,7 @@ function onCustomListInput(e) {
   if (!line) return;
   if (e.target.classList.contains('line-label')) line.label = e.target.value;
   else if (e.target.classList.contains('line-value')) line.value = e.target.value;
-  schedulePreview();
+  renderPreview();
   scheduleSave();
 }
 
@@ -186,7 +194,7 @@ function onCustomListClick(e) {
     return;
   }
   renderCustoms();
-  schedulePreview();
+  renderPreview();
   scheduleSave();
 }
 
@@ -380,7 +388,7 @@ function bindImageUpload(btnId, fileId, fieldPath) {
       setPath(state, fieldPath, reader.result);
       const el = document.querySelector(`[data-field="${fieldPath}"]`);
       if (el) el.value = reader.result;
-      schedulePreview();
+      renderPreview();
       scheduleSave();
       showToast('Embedded image — most mail clients block these. Host it and paste a URL for reliability.', 'warn');
     };
@@ -423,7 +431,7 @@ function init() {
     if (!b) return;
     state.design.template = b.dataset.template;
     updateTemplatePicker();
-    schedulePreview();
+    renderPreview();
     scheduleSave();
   });
 

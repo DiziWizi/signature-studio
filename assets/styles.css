@@ -17,6 +17,13 @@
 
 * { box-sizing: border-box; }
 
+/* slim scrollbars to match the UI */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a3245; border-radius: 6px; border: 2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: #3a4459; }
+* { scrollbar-width: thin; scrollbar-color: #2a3245 transparent; }
+
 html, body {
   margin: 0;
   padding: 0;

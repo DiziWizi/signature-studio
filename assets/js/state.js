@@ -50,7 +50,7 @@ function sampleState() {
     phone: '+44 20 7946 0958',
     mobile: '+44 7700 900123',
     website: 'analytical-engines.example',
-    websiteLabel: 'analytical-engines.example',
+    websiteLabel: '',
     address: '17 Analytical Lane\nLondon, United Kingdom',
   };
   s.socials = [
