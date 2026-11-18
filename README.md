@@ -192,6 +192,14 @@ The app is 100% client-side. Drafts and saved signatures live in your
 browser's `localStorage`; nothing is sent anywhere. Clear your site data to
 wipe everything.
 
+## Accessibility
+
+Keyboard-complete: modal dialogs trap and restore focus, every control is
+tab-reachable (switches and segmented buttons work with Space), icon
+buttons are labelled for screen readers, toasts announce via
+`role=status`, a skip-to-content link opens the page, focus is always
+visible, and `prefers-reduced-motion` disables the animations.
+
 ## Roadmap
 
 See [docs/roadmap.md](docs/roadmap.md). A separate

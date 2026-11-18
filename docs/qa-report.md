@@ -364,6 +364,42 @@ window around the live preview.
 
 ---
 
+# v0.16.0 addendum (accessibility pass)
+
+Date: 2026-11-19 · Scope: keyboard & focus management, screen-reader
+support, reduced motion — audited with the better-accessibility skill.
+
+## What changed (subagent audit, all verified)
+
+- Modal focus trap (Tab/Shift+Tab cycle inside), focus moves into the
+  dialog on open and restores to the invoking control on close; no-invoker
+  closes park focus on `<main>`. Fixed a real bug found empirically:
+  Chromium's tab start point persists across blur, so the auto-opened
+  wizard stranded focus on a hidden button.
+- Switches and segmented radios were `display:none` (no keyboard path) —
+  now opacity-0 overlays with Space activation and focus rings.
+- `aria-label` on every icon-only button (undo/redo/reset/quick/close,
+  row ▲/▼/×, quick-add chips, theme swatches, badge colour); dialogs named
+  via `aria-labelledby`; toasts `role=status aria-live=polite`.
+- Skip-to-content link as the first tab stop; thumbnail iframes
+  `tabindex=-1 aria-hidden`; compose mock chrome hidden from AT.
+- Global `:focus-visible` rings; `prefers-reduced-motion: reduce` removes
+  toast slide-in, hover scales and transitions.
+
+## Verification
+
+- Playwright: 49/49 twice consecutively (5 new a11y tests: skip link +
+  focus ring, wizard focus trap + restore, toast/status + icon labels,
+  switch/radio keyboard operation, reduced motion); parent re-ran 49/49.
+- Browser spot QA: skip link present, toasts role/live correct, wizard
+  focus lands inside the dialog, zero console errors.
+- Release published with verified SHA-256 assets; CI check + e2e green on
+  the tag.
+- Residual: no real screen reader (NVDA/VoiceOver) was run — verified via
+  the Chrome accessibility tree and computed styles instead.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

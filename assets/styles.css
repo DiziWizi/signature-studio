@@ -891,3 +891,78 @@ textarea { resize: vertical; min-height: 40px; }
   .span2 { grid-column: auto; }
   .tpl-picker { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ── accessibility ────────────────────────────────────────────────────── */
+
+/* Skip link: the first tab stop. Visually clipped until keyboard focus
+   (kept in-viewport at 1px, because Chromium drops fully off-screen
+   elements from the sequential tab order). */
+.skip-link {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  z-index: 400;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 8px;
+  font-size: 13px;
+  text-decoration: none;
+}
+.skip-link:focus-visible {
+  width: auto;
+  height: auto;
+  padding: 9px 14px;
+  overflow: visible;
+  clip-path: none;
+  border: 1px solid var(--acc);
+}
+
+/* Visible focus rings for keyboard users (WCAG 2.4.7 / 1.4.11): a 2px
+   accent ring on every button and details/summary control. */
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--acc2);
+  outline-offset: 2px;
+}
+
+/* Switches and segmented radios: the native inputs stay focusable and
+   clickable (opacity-0 overlay covering the label, instead of display:none),
+   so the keyboard path works. The visible track / text carries the ring. */
+.switch, .seg label { position: relative; }
+.switch input, .seg input {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.switch input:focus-visible + .sw { box-shadow: 0 0 0 3px rgba(91, 124, 250, .5); }
+.seg input:focus-visible + span {
+  outline: 2px solid var(--acc2);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+
+/* Reduced motion: kill non-essential animation (toasts, hover scale, panel
+   slide, compose background, control transitions) when the user asks for
+   it. Transitions collapse to ~instant instead of being removed, so every
+   interaction still lands in its final state. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .toast { animation: none; }
+  .theme-swatch:hover { transform: none; }
+}

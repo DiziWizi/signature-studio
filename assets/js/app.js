@@ -241,10 +241,10 @@ function socialRowHtml(soc, i) {
     <button class="row-btn row-drag" title="Drag to reorder" type="button" draggable="true" aria-label="Drag to reorder">⠿</button>
     <select class="soc-net">${options}</select>
     <input type="text" class="soc-url" placeholder="${esc(net.placeholder || 'https://…')}" value="${esc(soc.url)}">
-    <button class="row-btn soc-img${iconOn ? ' on' : ''}" title="Use an image icon instead of the glyph" type="button">🖼</button>
-    <button class="row-btn soc-up" title="Move up" ${i === 0 ? 'disabled' : ''}>▲</button>
-    <button class="row-btn soc-down" title="Move down" ${i === state.socials.length - 1 ? 'disabled' : ''}>▼</button>
-    <button class="row-btn del soc-del" title="Remove">×</button>
+    <button class="row-btn soc-img${iconOn ? ' on' : ''}" title="Use an image icon instead of the glyph" aria-label="Use an image icon instead of the glyph" type="button">🖼</button>
+    <button class="row-btn soc-up" title="Move up" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>▲</button>
+    <button class="row-btn soc-down" title="Move down" aria-label="Move down" ${i === state.socials.length - 1 ? 'disabled' : ''}>▼</button>
+    <button class="row-btn del soc-del" title="Remove" aria-label="Remove">×</button>
     ${extra}
     ${iconRow}
   </div>`;
@@ -341,9 +341,9 @@ function customRowHtml(line, i) {
     <button class="row-btn row-drag" title="Drag to reorder" type="button" draggable="true" aria-label="Drag to reorder">⠿</button>
     <input type="text" class="line-label" placeholder="Label" value="${esc(line.label)}">
     <input type="text" class="line-value" placeholder="Value" value="${esc(line.value)}">
-    <button class="row-btn line-up" title="Move up" ${i === 0 ? 'disabled' : ''}>▲</button>
-    <button class="row-btn line-down" title="Move down" ${i === state.customLines.length - 1 ? 'disabled' : ''}>▼</button>
-    <button class="row-btn del line-del" title="Remove">×</button>
+    <button class="row-btn line-up" title="Move up" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>▲</button>
+    <button class="row-btn line-down" title="Move down" aria-label="Move down" ${i === state.customLines.length - 1 ? 'disabled' : ''}>▼</button>
+    <button class="row-btn del line-del" title="Remove" aria-label="Remove">×</button>
   </div>`;
 }
 
@@ -463,6 +463,8 @@ function renderWizardThumbs() {
     const f = document.createElement('iframe');
     f.className = 'wiz-thumb-frame';
     f.setAttribute('sandbox', '');
+    f.setAttribute('tabindex', '-1');
+    f.setAttribute('aria-hidden', 'true');
     f.title = '';
     f.srcdoc = renderSignature(sampleState(pid)).replace(/src="data:[^"]*"/g, 'src=""');
     box.appendChild(f);
@@ -478,9 +480,9 @@ function wizShowStep(n) {
 }
 
 function openWizard() {
-  openOverlay('#modal-wizard');
   wizShowStep(1);
   renderWizard();
+  openOverlay('#modal-wizard');
 }
 
 function finishWizard() {
@@ -526,9 +528,13 @@ function initWizard() {
   });
   $('#wiz-finish').addEventListener('click', finishWizard);
   /* First run: offer the wizard once. Synchronous — no timers, so it also
-     works in throttled/background contexts. */
+     works in throttled/background contexts. The Guide button is recorded
+     as the invoker so closing returns focus to it. */
   try {
-    if (!localStorage.getItem(WIZARD_DONE_KEY)) openWizard();
+    if (!localStorage.getItem(WIZARD_DONE_KEY)) {
+      $('#btn-guide').focus();
+      openWizard();
+    }
   } catch (e) { /* ignore */ }
 }
 
@@ -670,7 +676,7 @@ function renderThemes() {
       state.design.textColor.toLowerCase() === t.text &&
       state.design.dividerColor.toLowerCase() === t.divider;
     return `<button type="button" class="theme-swatch${active ? ' active' : ''}" data-theme="${t.id}" ` +
-      `title="${esc(t.name)}" style="background:linear-gradient(135deg, ${t.primary} 50%, ${t.text} 50%);"></button>`;
+      `title="${esc(t.name)}" aria-label="${esc(t.name)}" style="background:linear-gradient(135deg, ${t.primary} 50%, ${t.text} 50%);"></button>`;
   }).join('');
   row.innerHTML = '<span class="hint">Colour themes:</span>' + btns;
 }
@@ -707,8 +713,51 @@ function showToast(msg, kind = '') {
 
 /* ── modals & overlays ────────────────────────────────────────────────── */
 
-function openOverlay(id) { $(id).classList.remove('hidden'); }
-function closeOverlay(id) { $(id).classList.add('hidden'); }
+/* Focusable elements inside an overlay, for focus trapping. Visibility is
+   checked per element so hidden wizard steps and display:none inputs drop
+   out of the cycle. */
+const FOCUSABLE_SEL = 'a[href], button:not([disabled]), input:not([disabled]), ' +
+  'select:not([disabled]), textarea:not([disabled]), iframe:not([tabindex="-1"]), ' +
+  'summary, [contenteditable="true"], [tabindex]:not([tabindex="-1"])';
+
+function getFocusables(container) {
+  return [...container.querySelectorAll(FOCUSABLE_SEL)].filter(el => el.getClientRects().length > 0);
+}
+
+/* Opening an overlay records the invoking control and moves focus into the
+   dialog (WCAG 2.4.3 focus order); closing restores focus to the invoker.
+   Restore is skipped when the invoker has since been hidden or removed. */
+const overlayReturnFocus = new WeakMap();
+
+function openOverlay(id) {
+  const ov = $(id);
+  if (!ov) return;
+  const opener = document.activeElement;
+  if (opener && opener !== document.body && !ov.contains(opener)) {
+    overlayReturnFocus.set(ov, opener);
+  }
+  ov.classList.remove('hidden');
+  const focusables = getFocusables(ov);
+  const autofocus = ov.querySelector('[data-autofocus]');
+  const target = (autofocus && focusables.includes(autofocus)) ? autofocus : focusables[0];
+  if (target) target.focus();
+}
+
+function closeOverlay(id) {
+  const ov = $(id);
+  if (!ov) return;
+  ov.classList.add('hidden');
+  const back = overlayReturnFocus.get(ov);
+  overlayReturnFocus.delete(ov);
+  if (back && back.isConnected && back.getClientRects().length > 0) {
+    back.focus();
+  } else if (document.activeElement && ov.contains(document.activeElement)) {
+    /* No valid invoker to return to: park focus on <main> so the next Tab
+       resumes from a sensible place instead of a hidden dialog. */
+    const main = $('#main');
+    if (main) main.focus();
+  }
+}
 
 function showConfirm(title, body, onOk) {
   $('#confirm-title').textContent = title;
@@ -936,16 +985,28 @@ function renderSavedList() {
   updateSavedCount();
 }
 
+let savedPanelReturn = null;
+
 function openSavedPanel() {
+  savedPanelReturn = document.activeElement;
   $('#saved-panel').classList.add('open');
   $('#scrim').classList.remove('hidden');
   renderSavedList();
   $('#save-name').value = state.meta.name || '';
+  $('#save-name').focus();
 }
 
 function closeSavedPanel() {
-  $('#saved-panel').classList.remove('open');
+  const panel = $('#saved-panel');
+  panel.classList.remove('open');
   $('#scrim').classList.add('hidden');
+  const back = savedPanelReturn;
+  savedPanelReturn = null;
+  if (back && back.isConnected && back.getClientRects().length > 0) back.focus();
+  else if (document.activeElement && panel.contains(document.activeElement)) {
+    const main = $('#main');
+    if (main) main.focus();
+  }
 }
 
 function doSaveSnapshot() {
@@ -1112,11 +1173,10 @@ function init() {
     showToast(`Sample: ${persona.name} — click again for another.`);
   });
   $('#btn-import').addEventListener('click', () => {
-    openOverlay('#modal-import');
+    openOverlay('#modal-import'); /* focus lands on #import-src via data-autofocus */
     $('#import-summary').classList.add('hidden');
     $('#import-apply-row').classList.add('hidden');
     lastParsedImport = null;
-    setTimeout(() => $('#import-src').focus(), 50);
   });
   $('#btn-saved').addEventListener('click', openSavedPanel);
   $('#btn-reset').addEventListener('click', () => {
@@ -1167,7 +1227,10 @@ function init() {
   $('#instr-tabs').addEventListener('click', e => {
     const tab = e.target.closest('.itab');
     if (!tab) return;
-    document.querySelectorAll('.itab').forEach(t => t.classList.toggle('active', t === tab));
+    document.querySelectorAll('.itab').forEach(t => {
+      t.classList.toggle('active', t === tab);
+      t.setAttribute('aria-pressed', String(t === tab));
+    });
     document.querySelectorAll('.ipane').forEach(p =>
       p.classList.toggle('active', p.id === 'pane-' + tab.dataset.tab));
   });
@@ -1227,17 +1290,36 @@ function init() {
   });
   $('#modal-outlook [data-close]').addEventListener('click', () => { pendingExport = null; });
 
-  /* generic close buttons + Esc */
+  /* generic close buttons + Esc: route through closeOverlay so focus is
+     restored to whatever opened the dialog. */
   document.querySelectorAll('[data-close]').forEach(b =>
     b.addEventListener('click', () => {
       const overlay = b.closest('.overlay');
-      if (overlay) overlay.classList.add('hidden');
+      if (overlay && overlay.id) closeOverlay('#' + overlay.id);
     }));
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
     if ($('#saved-panel').classList.contains('open')) closeSavedPanel();
-    document.querySelectorAll('.overlay:not(.hidden)').forEach(o => o.classList.add('hidden'));
+    document.querySelectorAll('.overlay:not(.hidden)').forEach(o => closeOverlay('#' + o.id));
     menu.classList.add('hidden');
+  });
+  /* Focus trap: while a modal overlay is open, Tab and Shift+Tab cycle
+     within it (APG dialog pattern; the background stays keyboard-inert). */
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return;
+    const ov = document.querySelector('.overlay:not(.hidden)');
+    if (!ov) return;
+    const focusables = getFocusables(ov);
+    if (!focusables.length) { e.preventDefault(); return; }
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey) {
+      if (active === first || !ov.contains(active)) { e.preventDefault(); last.focus(); }
+    } else if (active === last || !ov.contains(active)) {
+      e.preventDefault();
+      first.focus();
+    }
   });
 
   /* editor section open/close state survives reloads */
