@@ -185,6 +185,9 @@ details[open] summary::before { transform: rotate(90deg); }
 }
 .field .lbl { font-size: 11px; }
 .field .opt { font-weight: 400; text-transform: none; letter-spacing: normal; opacity: .8; }
+.field .field-inline { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.field .field-inline select { flex: 1; }
+.field .field-inline select:disabled { opacity: .45; }
 
 .field input[type="text"],
 .field input[type="email"],

@@ -21,6 +21,8 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.3.0 — Monogram template + initials-monogram option for all layouts
 - [x] v0.3.0 — pronouns field, divider style (solid/dashed/dotted), contact
   labels toggle, signature name field
+- [x] v0.4.0 — logo position (left/right of name) in Classic, Compact and
+  Split; position guessed on HTML import; monogram follows the position
 
 ## Suggested next steps
 

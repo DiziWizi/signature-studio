@@ -194,16 +194,15 @@ function classicRows(s, d, { center = false } = {}) {
   const rows = [];
   const align = center ? 'center' : 'left';
   const logoContent = logoCellHtml(s, d);
+  const right = d.logoPosition === 'right';
   const logoCell = logoContent
-    ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="${align}" style="padding:0 16px 0 0;">${logoContent}</td>`
+    ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="${align}" style="${right ? 'padding:0 0 0 16px;' : 'padding:0 16px 0 0;'}">${logoContent}</td>`
     : '';
-
-  rows.push(`<tr>
-    ${logoCell}
-    <td class="m-cell" valign="middle" align="${align}">
+  const identityCell = `<td class="m-cell" valign="middle" align="${align}">
       ${nameHtml(s, d)}${titleHtml(s, d)}${companyHtml(s, d)}
-    </td>
-  </tr>`);
+    </td>`;
+
+  rows.push(`<tr>${right ? identityCell + logoCell : logoCell + identityCell}</tr>`);
   rows.push(dividerHtml(d));
 
   const stack = contactStackHtml(s, d);
@@ -226,8 +225,9 @@ function classicRows(s, d, { center = false } = {}) {
 function compactRows(s, d) {
   const rows = [];
   const logoContent = logoCellHtml(s, d);
+  const right = d.logoPosition === 'right';
   const logoCell = logoContent
-    ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="left" style="padding:0 16px 0 0;">${logoContent}</td>`
+    ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="${right ? 'right' : 'left'}" style="${right ? 'padding:0 0 0 16px;' : 'padding:0 16px 0 0;'}">${logoContent}</td>`
     : '';
 
   const contact = contactItems(s)
@@ -235,13 +235,12 @@ function compactRows(s, d) {
     .map(it => contactLineHtml(d, it, { labels: false }))
     .join('<br>');
 
-  rows.push(`<tr>
-    ${logoCell}
-    <td class="m-cell" valign="middle" align="left">
+  const identityCell = `<td class="m-cell" valign="middle" align="left">
       ${nameHtml(s, d, { big: false })}${titleHtml(s, d)}
-    </td>
-    <td class="m-cell" valign="middle" align="right" style="padding-left:24px;">${contact || '&nbsp;'}</td>
-  </tr>`);
+    </td>`;
+  const contactCell = `<td class="m-cell" valign="middle" align="right" style="padding-left:24px;">${contact || '&nbsp;'}</td>`;
+
+  rows.push(`<tr>${right ? identityCell + contactCell + logoCell : logoCell + identityCell + contactCell}</tr>`);
 
   const socials = socialsRowHtml(s, d);
   if (socials) {
@@ -288,15 +287,14 @@ function splitRows(s, d) {
     rows.push(spacerHtml(16));
   }
   const logoContent = logoCellHtml(s, d);
+  const right = d.logoPosition === 'right';
   const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d);
   if (logoContent || identity) {
     const logoCell = logoContent
-      ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="left" style="padding:0 16px 0 0;">${logoContent}</td>`
+      ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="${right ? 'right' : 'left'}" style="${right ? 'padding:0 0 0 16px;' : 'padding:0 16px 0 0;'}">${logoContent}</td>`
       : '<td width="16" style="padding:0;font-size:0;line-height:0;">&nbsp;</td>';
-    rows.push(`<tr>
-    ${logoCell}
-    <td class="m-cell" valign="middle" align="left">${identity || '&nbsp;'}</td>
-  </tr>`);
+    const identityCell = `<td class="m-cell" valign="middle" align="left">${identity || '&nbsp;'}</td>`;
+    rows.push(`<tr>${right ? identityCell + logoCell : logoCell + identityCell}</tr>`);
   }
   const stack = contactStackHtml(s, d);
   if (stack) {

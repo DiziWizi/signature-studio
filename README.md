@@ -28,10 +28,12 @@ tracking. Works offline.
   reorderable by drag or buttons.
 - **Design controls** — accent/text/divider colours, divider style
   (solid/dashed/dotted), 4 font stacks, base font size, logo (URL or upload)
-  with width, banner image, divider, legal / disclaimer footer, social style
-  (icons / icons + labels / text links), contact labels on/off, and an
-  **initials monogram** that replaces the logo with a coloured initials
-  circle — no image needed. The Monogram template makes it the star.
+  with width and **position (left or right of your name)** in the Classic,
+  Compact and Split layouts, banner image, divider, legal / disclaimer
+  footer, social style (icons / icons + labels / text links), contact labels
+  on/off, and an **initials monogram** that replaces the logo with a coloured
+  initials circle — no image needed. The Monogram template makes it the star.
+  Imported signatures get the logo position guessed from the source HTML.
 - **Dark-mode friendly toggle** — adds `prefers-color-scheme` overrides for
   Gmail and Apple Mail dark mode, with a dark preview backdrop to check the
   result.

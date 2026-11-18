@@ -6,7 +6,8 @@ function parseSignatureHTML(html) {
   const out = { profile: {}, contact: {}, socials: [], customLines: [], design: {}, notes: [] };
 
   /* Images: first image = logo, widest large image = banner. */
-  const imgs = Array.from(doc.querySelectorAll('img')).map(i => {
+  const imgEls = Array.from(doc.querySelectorAll('img'));
+  const imgs = imgEls.map(i => {
     const w = parseInt(i.getAttribute('width') || (i.style && i.style.width) || '0', 10) || 0;
     return { src: i.getAttribute('src') || '', w };
   }).filter(i => i.src && !i.src.startsWith('data:image/'));
@@ -14,6 +15,19 @@ function parseSignatureHTML(html) {
     out.design.logoUrl = imgs[0].src;
     const banner = imgs.find(i => i.w >= 300);
     if (banner && banner.src !== imgs[0].src) out.design.bannerUrl = banner.src;
+    /* Heuristic: logo after the first text block → right position. */
+    try {
+      const walker = doc.createTreeWalker(doc.body || doc.documentElement, NodeFilter.SHOW_TEXT);
+      let firstTextEl = null;
+      while (walker.nextNode()) {
+        const t = (walker.currentNode.textContent || '').trim();
+        if (t) { firstTextEl = walker.currentNode.parentElement; break; }
+      }
+      if (firstTextEl && imgEls[0] &&
+          (firstTextEl.compareDocumentPosition(imgEls[0]) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+        out.design.logoPosition = 'right';
+      }
+    } catch (e) { /* ignore */ }
   }
 
   /* Links. */

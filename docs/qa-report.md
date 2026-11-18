@@ -144,3 +144,35 @@ divider styles, contact-labels toggle, initials monogram, signature name.
 - Media-query stacking is verified in Chromium; Gmail/Apple Mail honour the
   same `@media` mechanism but a one-off check on a real phone mail app is
   worthwhile. Outlook ignores the block by design (desktop client).
+
+---
+
+# v0.4.0 addendum
+
+Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
+Classic, Compact and Split; import-time position detection.
+
+## Issues found and fixed in this round
+
+| # | Severity | Issue | Fix |
+| --- | --- | --- | --- |
+| 1 | Low | Import position heuristic used the wrong `compareDocumentPosition` bit (`PRECEDING` = logo before text), so the detected side was inverted. | Use `DOCUMENT_POSITION_FOLLOWING` (logo after text → right). |
+| 2 | Low | Test-session only: `fetch(..., {cache:'no-store'})` does not bypass a service worker, so a "fresh" evaluation still ran cached code. | Verify via unregister + clear caches + re-navigate in one sequence; bitmask probe confirmed the fix on live code. |
+
+## Verification evidence (all passed)
+
+- Node vm suite: **67/67** — cell order for Classic/Compact/Split × both
+  positions (logo-first vs name-first), right-position padding marker,
+  monogram respects position, all 9 templates × both positions render
+  balanced/fluid/NaN-free, default `logoPosition` present.
+- Browser: Position select binds and re-renders (name before logo in
+  srcdoc when right); select disabled with hint on Centered/Roundel/Monogram
+  and re-enabled on Classic; live thumbnails reflect the position; import
+  detection returns right for text-then-logo and left for logo-then-text
+  (verified on live code after SW cache reset); full sweep zero console
+  errors; screenshot vision-verified (logo placeholder right of the name
+  block, text shifted left).
+
+## Residual risks (added)
+
+- None beyond the existing list.

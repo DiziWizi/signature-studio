@@ -35,6 +35,7 @@ function defaultState() {
       fontSize: 14,
       logoUrl: '',
       logoWidth: 72,
+      logoPosition: 'left',
       bannerUrl: '',
       showDivider: true,
       dividerStyle: 'solid',

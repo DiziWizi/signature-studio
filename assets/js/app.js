@@ -390,6 +390,18 @@ function updateTemplatePicker() {
   document.querySelectorAll('.tpl-btn').forEach(b => {
     b.setAttribute('aria-pressed', String(b.dataset.template === state.design.template));
   });
+  updateLogoPositionUI();
+}
+
+/* Logo position only matters for the side-logo layouts; disable it (with a
+   hint) on the fixed-placement ones. */
+function updateLogoPositionUI() {
+  const sel = $('#logo-position');
+  const hint = $('#logo-pos-hint');
+  if (!sel) return;
+  const relevant = ['classic', 'compact', 'split'].includes(state.design.template);
+  sel.disabled = !relevant;
+  if (hint) hint.hidden = relevant;
 }
 
 function updateSavedCount() {
@@ -561,6 +573,7 @@ function doImportApply() {
   if (p.socials.length) state.socials = p.socials;
   if (p.design.logoUrl) state.design.logoUrl = p.design.logoUrl;
   if (p.design.bannerUrl) state.design.bannerUrl = p.design.bannerUrl;
+  if (p.design.logoPosition) state.design.logoPosition = p.design.logoPosition;
   if (p.design.legalText) {
     state.design.showLegal = true;
     state.design.legalText = p.design.legalText;
