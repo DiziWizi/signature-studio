@@ -159,7 +159,10 @@ function finishDrag(type, beforeIndex) {
   const from = index;
   let to = beforeIndex;
   if (to > from) to -= 1;
-  if (to === from || to === from + 1) {
+  /* to === from means "dropped right below itself" — a genuine no-op.
+     Note to === from + 1 is a REAL one-slot-down move (beforeIndex was
+     from + 2 before the decrement) and must not be skipped. */
+  if (to === from) {
     renderBoth();
     renderPreview();
     return;
@@ -417,15 +420,19 @@ let wizardChoices = { theme: 'slate', photo: 'none', persona: '' };
 
 function renderWizard() {
   $('#wiz-themes').innerHTML = THEMES.map(t =>
-    `<button type="button" class="theme-swatch wiz-swatch${wizardChoices.theme === t.id ? ' active' : ''}" data-theme="${t.id}" title="${esc(t.name)}" style="background:linear-gradient(135deg, ${t.primary} 50%, ${t.text} 50%);"></button>`
+    `<button type="button" class="theme-swatch wiz-swatch${wizardChoices.theme === t.id ? ' active' : ''}" data-theme="${t.id}" title="${esc(t.name)}">
+       <span class="wiz-swatch-dot" style="background:linear-gradient(135deg, ${t.primary} 50%, ${t.text} 50%);"></span>
+       <span class="wiz-swatch-name">${esc(t.name)}</span>
+     </button>`
   ).join('');
   $('#wiz-personas').innerHTML = SAMPLE_PERSONAS.map(p =>
     `<button type="button" class="wiz-choice${wizardChoices.persona === p.id ? ' selected' : ''}" data-persona="${p.id}">
        <span class="wiz-choice-name">${esc(p.name)}</span>
+       <span class="wiz-choice-desc">${esc(p.desc)}</span>
      </button>`
   ).join('') + `<button type="button" class="wiz-choice${wizardChoices.persona === '' ? ' selected' : ''}" data-persona="">
-       <span class="wiz-choice-name">Just personal</span>
-       <span class="wiz-choice-desc">Start with an empty signature</span>
+       <span class="wiz-choice-name">Start clean</span>
+       <span class="wiz-choice-desc">Empty signature — fill everything in yourself</span>
      </button>`;
 }
 
@@ -434,6 +441,7 @@ function wizShowStep(n) {
     const step = $('#wiz-step-' + i);
     step.classList.toggle('hidden', i !== n);
   }
+  $('#wiz-step-label').textContent = `Step ${n} of 3`;
 }
 
 function openWizard() {
@@ -553,6 +561,9 @@ function collectWarnings(s) {
   }
   if (String(s.design.bannerUrl || '').startsWith('data:')) {
     w.push({ kind: 'warn', msg: 'Banner is embedded (data: image) — Outlook strips these. Host it and paste the URL.' });
+  }
+  if (!s.design.strictOutlook && (s.design.showCard || s.design.roundPhoto)) {
+    w.push({ kind: 'info', msg: 'Outlook desktop renders this without rounded corners — turn on Strict mode to preview that.' });
   }
   for (const soc of s.socials) {
     if (!String(soc.url || '').trim()) {

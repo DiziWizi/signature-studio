@@ -245,6 +245,36 @@ the upcoming Forgejo Pages demo.
 
 ---
 
+# v0.12.0 addendum (strict mode + wizard pass + drag-and-drop coverage)
+
+Date: 2026-11-19 · Scope: Outlook strict mode, wizard usability pass,
+one-slot-down DnD fix, real drag coverage in E2E.
+
+## Issues found and fixed in this round
+
+| # | Severity | Issue | Fix |
+| --- | --- | --- | --- |
+| 1 | Medium | `finishDrag` guard `to === from + 1` made every one-slot downward move a silent no-op — mouse drags AND the ▼ keyboard button on the first row. Found by the new DnD E2E tests. | Guard reduced to `to === from` (true no-op); the +1 case is a real move after the `to -= 1` decrement. |
+| 2 | Low | Wizard theme swatches had no visible names (title attr only) and personas had no descriptions — hard for a first-run user to choose. | Swatch names rendered under each swatch; persona + photo choices now carry descriptions. |
+| 3 | Low | Wizard step 3 copy said "or start clean" but the button said "Just personal". | Button renamed to "Start clean"; wording consistent. |
+| 4 | Low | Wizard gave no sense of position in the flow. | "Step N of 3" indicator under the title. |
+| 5 | Test-only | `.switch` checkboxes are visually hidden, so `page.check()` timed out. | `toggleSwitch()` clicks the label (native activation). |
+
+## Verification evidence (all passed)
+
+- Node vm: strict-mode suite 7/7 (card/badge/booking/chip/monogram radii
+  present in normal mode, all absent in strict mode, card border + tint
+  survive, toggle round-trips).
+- Browser: wizard opens with labelled swatches + step indicator, persona
+  descriptions render, "Start clean" present, freelancer applies; strict
+  toggle drops every `border-radius` from the preview srcdoc, checklist
+  hint appears when card/round are on without strict; zero console errors.
+- Playwright: **34/34 twice consecutively** locally (29 prior + strict + 4
+  real drag-path tests incl. the fixed one-slot-down gesture, asserted in
+  state, DOM and preview order); CI e2e job green on the tag run.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

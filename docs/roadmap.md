@@ -46,6 +46,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   all 10 templates, socials CRUD + reorder, checklist, square crop, import
   fixtures, exports incl. clipboard + downloads, undo/redo, presets, PWA
   offline) running in CI on every push and tag; repo made public
+- [x] v0.12.0 — Outlook strict mode (preview/export without rounded corners
+  so Word-engine Outlook matches what you see); wizard usability pass
+  (labelled theme swatches, persona descriptions, step indicator, consistent
+  "start clean" wording); fixed one-slot-down drag-and-drop no-op; E2E now
+  covers real mouse-path drags (4 tests) + strict mode (35 total)
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.

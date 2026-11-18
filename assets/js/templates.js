@@ -53,12 +53,19 @@ function contextLineHtml(s, d) {
   return `<span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d) })}">${esc(bits.join('  ·  '))}</span><br>`;
 }
 
+/* Strict mode: Word-engine Outlook ignores border-radius entirely, so
+   strictOutlook strips every radius from the output — preview and export
+   then show exactly what Outlook desktop renders. */
+function br(d, v) {
+  return d.strictOutlook ? '' : `border-radius:${v};`;
+}
+
 /* Availability / status badge (e.g. "Open to freelance work"). */
 function statusHtml(s, d) {
   const text = String(s.design.statusText || '').trim();
   if (!text) return '';
   return `<span style="display:inline-block;background-color:${s.design.statusColor || '#2f9e44'};color:#ffffff;` +
-    `border-radius:10px;padding:1px 9px;font-family:${stackOf(d)};font-size:${d.fontSize - 3}px;` +
+    `${br(d, '10px')}padding:1px 9px;font-family:${stackOf(d)};font-size:${d.fontSize - 3}px;` +
     `line-height:1.7;font-weight:bold;">${esc(text)}</span>`;
 }
 
@@ -69,7 +76,7 @@ function bookingHtml(s, d) {
   const href = normalizeUrl('custom', raw);
   const label = String(s.contact.bookingLabel || '').trim() || 'Book a call';
   return `<a href="${esc(href)}" style="display:inline-block;background-color:${d.primaryColor};color:#ffffff;` +
-    `border-radius:12px;padding:2px 13px;font-family:${stackOf(d)};font-size:${d.fontSize - 2}px;` +
+    `${br(d, '12px')}padding:2px 13px;font-family:${stackOf(d)};font-size:${d.fontSize - 2}px;` +
     `line-height:1.8;text-decoration:none;font-weight:bold;">${esc(label)}</a>`;
 }
 
@@ -145,9 +152,9 @@ function socialChipHtml(d, soc, withLabel) {
   const href = normalizeUrl(net.id, raw);
   const iconUrl = String(soc.iconUrl || '').trim();
   const chip = iconUrl
-    ? `<img src="${esc(iconUrl)}" width="22" height="22" alt="" style="display:inline-block;width:22px;height:22px;border:0;border-radius:11px;vertical-align:middle;">`
+    ? `<img src="${esc(iconUrl)}" width="22" height="22" alt="" style="display:inline-block;width:22px;height:22px;border:0;${br(d, '11px')}vertical-align:middle;">`
     : `<span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;` +
-      `background-color:${color};color:#ffffff;border-radius:11px;` +
+      `background-color:${color};color:#ffffff;${br(d, '11px')}` +
       `font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:bold;vertical-align:middle;">${esc(glyph)}</span>`;
   if (!withLabel) return `<a href="${esc(href)}" style="text-decoration:none;">${chip}</a>`;
   const clsAttr = d.darkModeFriendly ? ' class="dm-txt"' : '';
@@ -208,14 +215,14 @@ function monogramHtml(s, d) {
   if (!initials) return '';
   const size = d.logoWidth;
   return `<span style="display:inline-block;width:${size}px;height:${size}px;line-height:${size}px;text-align:center;` +
-    `background-color:${d.primaryColor};color:#ffffff;border-radius:50%;` +
+    `background-color:${d.primaryColor};color:#ffffff;${br(d, '50%')}` +
     `font-family:Arial,Helvetica,sans-serif;font-size:${Math.round(size * 0.38)}px;font-weight:bold;">${esc(initials)}</span>`;
 }
 
 /* Logo cell content: hosted logo, or the initials monogram when enabled.
    roundPhoto gives the side logo a circular crop. */
 function logoCellHtml(s, d) {
-  if (d.logoUrl) return imgTag(d.logoUrl, d.logoWidth, 'logo', d.roundPhoto ? 'border-radius:50%;' : '');
+  if (d.logoUrl) return imgTag(d.logoUrl, d.logoWidth, 'logo', d.roundPhoto ? br(d, '50%') : '');
   if (d.useMonogram) return monogramHtml(s, d);
   return '';
 }
@@ -362,7 +369,7 @@ function roundelRows(s, d) {
   if (logoContent) {
     const circle = d.logoUrl
       ? `<img src="${esc(d.logoUrl)}" width="${d.logoWidth}" alt="logo" ` +
-        `style="display:block;width:${d.logoWidth}px;max-width:${d.logoWidth}px;height:auto;border:0;border-radius:50%;">`
+        `style="display:block;width:${d.logoWidth}px;max-width:${d.logoWidth}px;height:auto;border:0;${br(d, '50%')}">`
       : monogramHtml(s, d);
     rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 12px 0;">${circle}</td></tr>`);
   }
@@ -554,7 +561,7 @@ function renderSignature(state) {
      Outlook keeps the background/border (ignores the radius, acceptable). */
   let bodyRows = inner;
   if (d.showCard) {
-    bodyRows = `<tr><td style="background-color:${d.cardColor || '#f6f8fa'};border:1px solid ${d.dividerColor};border-radius:12px;padding:16px 18px;">
+    bodyRows = `<tr><td style="background-color:${d.cardColor || '#f6f8fa'};border:1px solid ${d.dividerColor};${br(d, '12px')}padding:16px 18px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">${inner}</table>
     </td></tr>`;
   }

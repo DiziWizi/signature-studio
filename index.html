@@ -239,6 +239,8 @@
           </label>
           <label class="switch span2"><input type="checkbox" data-field="design.roundPhoto"><span class="sw"></span> Round photo (circular crop for the side logo)</label>
           <label class="switch span2"><input type="checkbox" data-field="design.showCard"><span class="sw"></span> Wrap the signature in a card (tint + border)</label>
+          <label class="switch span2"><input type="checkbox" data-field="design.strictOutlook"><span class="sw"></span> Strict mode — render as Outlook desktop shows it</label>
+          <span class="micro span2">Strict mode removes rounded corners from badges, chips, monograms, round photos and the card — Word-engine Outlook ignores them. What you preview is what Outlook users see, and exports match.</span>
           <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> Show legal / disclaimer line</label>
           <label class="field span2">Legal / disclaimer text
             <textarea rows="2" data-field="design.legalText" placeholder="This message and any attachments are confidential…"></textarea>
@@ -374,6 +376,7 @@
 <div class="overlay hidden" id="modal-wizard" role="dialog" aria-modal="true">
   <div class="modal">
     <h2 id="wizard-title">Let’s set you up</h2>
+    <p class="wiz-step-label" id="wiz-step-label">Step 1 of 3</p>
     <div class="wiz-step" id="wiz-step-1">
       <p>Pick a colour vibe — you can fine-tune every colour later.</p>
       <div class="wiz-themes" id="wiz-themes"></div>
@@ -398,6 +401,7 @@
         <button class="wiz-choice" data-photo="none" type="button">
           <span class="wiz-badge">—</span>
           <span class="wiz-choice-name">Nothing for now</span>
+          <span class="wiz-choice-desc">No image or monogram</span>
         </button>
       </div>
       <div class="modal-actions">

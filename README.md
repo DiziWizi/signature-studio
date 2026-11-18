@@ -32,11 +32,12 @@ tracking. Works offline.
   accent/text/divider/card colours, divider style (solid/dashed/dotted), 4
   font stacks, base font size, logo (URL or upload) with width, **position
   (left/right)** and a **round-photo** crop, banner image, divider,
-  **status badge**, **card wrapper** (tint + border), legal / disclaimer
-  footer, social style (icons / icons + labels / text links), contact labels
-  on/off, and an **initials monogram** that replaces the logo with a
-  coloured initials circle — no image needed. Imported signatures get the
-  logo position guessed from the source HTML.
+  **status badge**, **card wrapper** (tint + border), **strict mode** that
+  renders exactly as Word-engine Outlook will (no rounded corners), legal /
+  disclaimer footer, social style (icons / icons + labels / text links),
+  contact labels on/off, and an **initials monogram** that replaces the
+  logo with a coloured initials circle — no image needed. Imported
+  signatures get the logo position guessed from the source HTML.
 - **Dark-mode friendly toggle** — adds `prefers-color-scheme` overrides for
   Gmail and Apple Mail dark mode, with a dark preview backdrop to check the
   result.

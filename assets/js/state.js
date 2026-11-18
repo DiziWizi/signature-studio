@@ -68,17 +68,18 @@ function defaultState() {
       showCard: false,
       cardColor: '#f6f8fa',
       roundPhoto: false,
+      strictOutlook: false,
     },
     meta: { name: 'My signature' },
   };
 }
 
 const SAMPLE_PERSONAS = [
-  { id: 'default',    name: 'Corporate (Ada)' },
-  { id: 'freelancer', name: 'Freelancer' },
-  { id: 'designer',   name: 'Designer' },
-  { id: 'academic',   name: 'Academic' },
-  { id: 'developer',  name: 'Developer' },
+  { id: 'default',    name: 'Corporate (Ada)', desc: 'Role, team and contact details' },
+  { id: 'freelancer', name: 'Freelancer',      desc: 'Portfolio, booking link and open-to-work badge' },
+  { id: 'designer',   name: 'Designer',        desc: 'Portfolio, Dribbble and Behance' },
+  { id: 'academic',   name: 'Academic',        desc: 'Title, institution and office hours' },
+  { id: 'developer',  name: 'Developer',       desc: 'GitHub, Twitch and building-in-public badge' },
 ];
 
 function applyTheme(s, themeId) {

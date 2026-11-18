@@ -318,8 +318,21 @@ textarea { resize: vertical; min-height: 40px; }
 
 /* wizard */
 .wiz-step p { margin: 0 0 14px; }
+.wiz-step-label { margin: -6px 0 14px; color: var(--mut); font-size: 12px; }
 .wiz-themes { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
-.wiz-swatch { width: 38px; height: 38px; }
+.wiz-swatch {
+  width: 56px;
+  height: auto;
+  padding: 8px 4px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  border-radius: 10px;
+}
+.wiz-swatch-dot { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line2); display: block; }
+.wiz-swatch-name { font-size: 10.5px; line-height: 1.1; color: var(--mut); max-width: 52px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wiz-swatch.active .wiz-swatch-name { color: var(--text); }
 .wiz-choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 .wiz-choice {
   display: flex;
