@@ -74,6 +74,7 @@ function renderPreview() {
   );
   frame.srcdoc = html;
   renderThumbs();
+  updateConciseness();
 }
 
 /* Live template thumbnails: real renders of the current state per template,
@@ -367,6 +368,173 @@ function onCustomListClick(e) {
   renderCustoms();
   renderPreview();
   scheduleSave();
+}
+
+/* ── conciseness hint ─────────────────────────────────────────────────── */
+
+function updateConciseness() {
+  const el = $('#conciseness');
+  if (!el) return;
+  const s = state;
+  let lines = 0;
+  if (s.profile.displayName || s.profile.name) lines++;
+  if (s.profile.title || s.profile.department) lines++;
+  if (s.profile.company) lines++;
+  if (s.profile.location || s.profile.languages) lines++;
+  if (s.design.statusText) lines++;
+  lines += contactItems(s).length;
+  lines += s.customLines.filter(l => l.value).length;
+  if (s.contact.booking) lines++;
+  if (s.socials.some(x => String(x.url || '').trim())) lines++;
+  if (s.design.showLegal && s.design.legalText) lines++;
+  const cands = [
+    s.profile.displayName || s.profile.name,
+    [s.profile.title, s.profile.department].filter(Boolean).join(' · '),
+    s.profile.company,
+    [s.profile.location, s.profile.languages].filter(Boolean).join(' · '),
+    s.design.statusText,
+    s.contact.address,
+    ...contactItems(s).map(i => i.text),
+    ...s.customLines.map(l => `${l.label ? l.label + ': ' : ''}${l.value}`),
+    s.contact.bookingLabel || 'Book a call',
+    ...s.socials.map(x => networkById(x.network).name),
+    s.design.legalText,
+  ].filter(Boolean);
+  const longest = Math.max(0, ...cands.map(t => String(t).length));
+  let verdict, kind;
+  if (lines <= 5 && longest <= 60) { verdict = 'Nice and short — ideal for personal mail.'; kind = 'good'; }
+  else if (lines <= 9 && longest <= 90) { verdict = 'Fairly compact.'; kind = 'ok'; }
+  else { verdict = 'On the long side — consider trimming.'; kind = 'long'; }
+  el.textContent = `${lines} line${lines === 1 ? '' : 's'} · longest ~${longest} chars — ${verdict}`;
+  el.className = 'concise-' + kind;
+}
+
+/* ── wizard ───────────────────────────────────────────────────────────── */
+
+const WIZARD_DONE_KEY = 'sigstudio.wizard.done';
+let wizardChoices = { theme: 'slate', photo: 'none', persona: '' };
+
+function renderWizard() {
+  $('#wiz-themes').innerHTML = THEMES.map(t =>
+    `<button type="button" class="theme-swatch wiz-swatch${wizardChoices.theme === t.id ? ' active' : ''}" data-theme="${t.id}" title="${esc(t.name)}" style="background:linear-gradient(135deg, ${t.primary} 50%, ${t.text} 50%);"></button>`
+  ).join('');
+  $('#wiz-personas').innerHTML = SAMPLE_PERSONAS.map(p =>
+    `<button type="button" class="wiz-choice${wizardChoices.persona === p.id ? ' selected' : ''}" data-persona="${p.id}">
+       <span class="wiz-choice-name">${esc(p.name)}</span>
+     </button>`
+  ).join('') + `<button type="button" class="wiz-choice${wizardChoices.persona === '' ? ' selected' : ''}" data-persona="">
+       <span class="wiz-choice-name">Just personal</span>
+       <span class="wiz-choice-desc">Start with an empty signature</span>
+     </button>`;
+}
+
+function wizShowStep(n) {
+  for (const i of [1, 2, 3]) {
+    const step = $('#wiz-step-' + i);
+    step.classList.toggle('hidden', i !== n);
+  }
+}
+
+function openWizard() {
+  openOverlay('#modal-wizard');
+  wizShowStep(1);
+  renderWizard();
+}
+
+function finishWizard() {
+  pushHistory();
+  if (wizardChoices.persona) {
+    state = sampleState(wizardChoices.persona);
+  }
+  applyTheme(state, wizardChoices.theme);
+  if (wizardChoices.photo === 'initials') state.design.useMonogram = true;
+  closeOverlay('#modal-wizard');
+  try { localStorage.setItem(WIZARD_DONE_KEY, '1'); } catch (e) { /* ignore */ }
+  rebuildAll();
+  scheduleSave();
+  showToast('All set — make the fields yours.');
+}
+
+function initWizard() {
+  $('#btn-guide').addEventListener('click', openWizard);
+  $('#wiz-skip').addEventListener('click', () => {
+    closeOverlay('#modal-wizard');
+    try { localStorage.setItem(WIZARD_DONE_KEY, '1'); } catch (e) { /* ignore */ }
+  });
+  $('#wiz-themes').addEventListener('click', e => {
+    const b = e.target.closest('.theme-swatch');
+    if (!b) return;
+    wizardChoices.theme = b.dataset.theme;
+    renderWizard();
+  });
+  document.querySelectorAll('[data-wiz-next]').forEach(b =>
+    b.addEventListener('click', () => wizShowStep(Number(b.dataset.wizNext))));
+  document.querySelectorAll('[data-wiz-back]').forEach(b =>
+    b.addEventListener('click', () => wizShowStep(Number(b.dataset.wizBack))));
+  document.querySelectorAll('#wiz-step-2 .wiz-choice').forEach(b =>
+    b.addEventListener('click', () => {
+      wizardChoices.photo = b.dataset.photo;
+      document.querySelectorAll('#wiz-step-2 .wiz-choice').forEach(x => x.classList.toggle('selected', x === b));
+    }));
+  $('#wiz-personas').addEventListener('click', e => {
+    const b = e.target.closest('.wiz-choice');
+    if (!b) return;
+    wizardChoices.persona = b.dataset.persona || '';
+    renderWizard();
+  });
+  $('#wiz-finish').addEventListener('click', finishWizard);
+  /* First run: offer the wizard once. Synchronous — no timers, so it also
+     works in throttled/background contexts. */
+  try {
+    if (!localStorage.getItem(WIZARD_DONE_KEY)) openWizard();
+  } catch (e) { /* ignore */ }
+}
+
+/* ── quick-switch saved signatures ────────────────────────────────────── */
+
+function renderQuickMenu() {
+  const snaps = listSnapshots();
+  const menu = $('#quick-menu');
+  if (!snaps.length) {
+    menu.innerHTML = '<span class="menu-empty">No saved signatures yet — save one in the Saved panel.</span>';
+    return;
+  }
+  menu.innerHTML = snaps.slice(0, 6).map(snap => {
+    const d = new Date(snap.savedAt);
+    const when = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    return `<button role="menuitem" type="button" data-snap="${snap.id}">
+      <span class="qs-name">${esc(snap.name)}</span>
+      <span class="qs-date">${when}</span>
+    </button>`;
+  }).join('');
+}
+
+function initQuickSwitch() {
+  const menu = $('#quick-menu');
+  $('#btn-quick').addEventListener('click', e => {
+    e.stopPropagation();
+    renderQuickMenu();
+    menu.classList.toggle('hidden');
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#quick-wrap')) menu.classList.add('hidden');
+  });
+  menu.addEventListener('click', e => {
+    const b = e.target.closest('[data-snap]');
+    if (!b) return;
+    const loaded = loadSnapshot(b.dataset.snap);
+    if (loaded) {
+      pushHistory();
+      state = normalizeLoadedState(loaded);
+      menu.classList.add('hidden');
+      rebuildAll();
+      scheduleSave();
+      showToast('Switched signature.');
+    }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') menu.classList.add('hidden');
+  });
 }
 
 /* ── rebuild everything ───────────────────────────────────────────────── */
@@ -752,6 +920,10 @@ function init() {
   /* colour themes */
   $('#themes-row').addEventListener('click', onThemeClick);
 
+  /* wizard + quick-switch */
+  initWizard();
+  initQuickSwitch();
+
   /* preview chrome */
   $('#seg-width').addEventListener('change', e => {
     if (e.target.name === 'prevWidth' && e.target.checked) {
@@ -778,12 +950,15 @@ function init() {
   }
 
   /* topbar */
+  let sampleIdx = 0;
   $('#btn-sample').addEventListener('click', () => {
     pushHistory();
-    state = sampleState();
+    const persona = SAMPLE_PERSONAS[sampleIdx % SAMPLE_PERSONAS.length];
+    state = sampleState(persona.id);
+    sampleIdx++;
     rebuildAll();
     scheduleSave();
-    showToast('Sample data loaded — make it yours.');
+    showToast(`Sample: ${persona.name} — click again for another.`);
   });
   $('#btn-import').addEventListener('click', () => {
     openOverlay('#modal-import');

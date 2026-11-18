@@ -27,8 +27,13 @@
   </div>
   <nav class="top-actions">
     <button class="btn" id="btn-sample" type="button">Sample data</button>
+    <button class="btn" id="btn-guide" type="button" title="Step-by-step setup guide">Guide</button>
     <button class="btn" id="btn-import" type="button">Import HTML</button>
     <button class="btn" id="btn-saved" type="button">Saved <span class="pill" id="saved-count">0</span></button>
+    <div class="export-wrap" id="quick-wrap">
+      <button class="btn btn-icon" id="btn-quick" type="button" title="Switch between saved signatures">⇄</button>
+      <div class="menu hidden" id="quick-menu" role="menu"></div>
+    </div>
     <button class="btn btn-icon" id="btn-undo" type="button" title="Undo (Ctrl+Z)" disabled>↶</button>
     <button class="btn btn-icon" id="btn-redo" type="button" title="Redo (Ctrl+Shift+Z)" disabled>↷</button>
     <div class="export-wrap">
@@ -241,7 +246,7 @@
       </div>
     </div>
     <div class="stage" id="stage"><iframe id="preview-frame" title="Signature preview"></iframe></div>
-    <p class="micro preview-note">Live preview at real size — the dark backdrop simulates a dark-mode mail client. Everything stays in your browser and is autosaved locally.</p>
+    <p class="micro preview-note"><span id="conciseness" class="concise-ok"></span> · Live preview at real size — the dark backdrop simulates a dark-mode mail client. Everything stays in your browser and is autosaved locally.</p>
   </section>
 
 </main>
@@ -340,6 +345,52 @@
     <p class="note">The code contains this contact as a vCard — scan it with a phone camera to add it to the address book. Everything is generated locally, nothing is uploaded.</p>
     <div class="modal-actions">
       <button class="btn" data-close type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Wizard modal -->
+<div class="overlay hidden" id="modal-wizard" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2 id="wizard-title">Let’s set you up</h2>
+    <div class="wiz-step" id="wiz-step-1">
+      <p>Pick a colour vibe — you can fine-tune every colour later.</p>
+      <div class="wiz-themes" id="wiz-themes"></div>
+      <div class="modal-actions">
+        <button class="btn" id="wiz-skip" type="button">Skip</button>
+        <button class="btn btn-primary" data-wiz-next="2" type="button">Next</button>
+      </div>
+    </div>
+    <div class="wiz-step hidden" id="wiz-step-2">
+      <p>What should sit beside your name?</p>
+      <div class="wiz-choices">
+        <button class="wiz-choice" data-photo="initials" type="button">
+          <span class="wiz-badge" style="background:#5b7cfa;color:#fff;">AB</span>
+          <span class="wiz-choice-name">My initials</span>
+          <span class="wiz-choice-desc">Coloured monogram — no image needed</span>
+        </button>
+        <button class="wiz-choice" data-photo="photo" type="button">
+          <span class="wiz-badge">🖼</span>
+          <span class="wiz-choice-name">My photo or logo</span>
+          <span class="wiz-choice-desc">I’ll add an image URL in the editor</span>
+        </button>
+        <button class="wiz-choice" data-photo="none" type="button">
+          <span class="wiz-badge">—</span>
+          <span class="wiz-choice-name">Nothing for now</span>
+        </button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" data-wiz-back="1" type="button">Back</button>
+        <button class="btn btn-primary" data-wiz-next="3" type="button">Next</button>
+      </div>
+    </div>
+    <div class="wiz-step hidden" id="wiz-step-3">
+      <p>What do you do? Pick the closest starter — or start clean.</p>
+      <div class="wiz-choices" id="wiz-personas"></div>
+      <div class="modal-actions">
+        <button class="btn" data-wiz-back="2" type="button">Back</button>
+        <button class="btn btn-primary" id="wiz-finish" type="button">Finish</button>
+      </div>
     </div>
   </div>
 </div>

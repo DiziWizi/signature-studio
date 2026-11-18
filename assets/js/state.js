@@ -69,26 +69,96 @@ function defaultState() {
   };
 }
 
-function sampleState() {
+const SAMPLE_PERSONAS = [
+  { id: 'default',    name: 'Corporate (Ada)' },
+  { id: 'freelancer', name: 'Freelancer' },
+  { id: 'designer',   name: 'Designer' },
+  { id: 'academic',   name: 'Academic' },
+  { id: 'developer',  name: 'Developer' },
+];
+
+function applyTheme(s, themeId) {
+  const t = themeById(themeId);
+  if (!t) return;
+  s.design.primaryColor = t.primary;
+  s.design.textColor = t.text;
+  s.design.dividerColor = t.divider;
+}
+
+function sampleState(personaId = 'default') {
   const s = defaultState();
-  s.profile = { name: 'Ada Lovelace', title: 'Head of Analytics', department: 'Data Science', company: 'Analytical Engines Ltd', pronouns: 'she/her' };
-  s.contact = {
-    email: 'ada@example.com',
-    phone: '+44 20 7946 0958',
-    mobile: '+44 7700 900123',
-    website: 'analytical-engines.example',
-    websiteLabel: '',
-    address: '17 Analytical Lane\nLondon, United Kingdom',
-  };
-  s.socials = [
-    { network: 'linkedin', url: 'https://www.linkedin.com/in/adalovelace', glyph: '', color: '' },
-    { network: 'x', url: 'https://x.com/ada_l', glyph: '', color: '' },
-    { network: 'github', url: 'https://github.com/ada-l', glyph: '', color: '' },
-  ];
-  s.customLines = [{ label: 'Office hours', value: 'Mon–Fri, 9:00–17:00 GMT' }];
-  s.design.showLegal = true;
-  s.design.legalText = 'This message and any attachments are confidential and intended solely for the addressee. If you received it in error, please let us know and delete it.';
-  s.meta.name = 'Ada Lovelace — Analytical Engines';
+  if (personaId === 'freelancer') {
+    s.profile = { name: 'Maya Chen', displayName: 'Maya', title: 'Freelance Software Consultant', department: '', company: '', pronouns: 'she/her', location: 'Berlin, DE · UTC+1', languages: 'English · Deutsch' };
+    s.contact = { email: 'maya@example.com', phone: '', mobile: '', website: 'mayachen.dev', websiteLabel: 'mayachen.dev', booking: 'cal.com/mayachen', bookingLabel: 'Book a call', address: '' };
+    s.socials = [
+      { network: 'linkedin', url: 'https://www.linkedin.com/in/mayachen', glyph: '', color: '' },
+      { network: 'github', url: 'https://github.com/mayachen', glyph: '', color: '' },
+      { network: 'medium', url: 'https://medium.com/@mayachen', glyph: '', color: '' },
+      { network: 'kofi', url: 'https://ko-fi.com/mayachen', glyph: '', color: '' },
+    ];
+    s.customLines = [{ label: 'Projects', value: 'mayachen.dev/work' }];
+    s.design.statusText = 'Open to freelance work';
+    s.design.template = 'split';
+    applyTheme(s, 'ocean');
+    s.meta.name = 'Maya — freelance';
+  } else if (personaId === 'designer') {
+    s.profile = { name: 'Jonas Lindqvist', displayName: 'Jonas', title: 'Independent Product Designer', department: '', company: '', pronouns: 'he/him', location: 'Stockholm, SE · UTC+1', languages: 'English · Svenska' };
+    s.contact = { email: 'jonas@example.com', phone: '', mobile: '', website: 'jonaslindqvist.design', websiteLabel: 'jonaslindqvist.design', booking: 'cal.com/jonas-lindqvist', bookingLabel: 'Book an intro call', address: '' };
+    s.socials = [
+      { network: 'dribbble', url: 'https://dribbble.com/jonasl', glyph: '', color: '' },
+      { network: 'behance', url: 'https://www.behance.net/jonasl', glyph: '', color: '' },
+      { network: 'instagram', url: 'https://www.instagram.com/jonasl', glyph: '', color: '' },
+    ];
+    s.design.statusText = 'Available for projects';
+    s.design.useMonogram = true;
+    s.design.template = 'classic';
+    applyTheme(s, 'plum');
+    s.meta.name = 'Jonas — designer';
+  } else if (personaId === 'academic') {
+    s.profile = { name: 'Priya Nair', displayName: 'Priya', title: 'Associate Professor', department: 'Computer Science', company: 'State University', pronouns: 'she/her', location: 'Melbourne, AU · UTC+11', languages: 'English · हिन्दी' };
+    s.contact = { email: 'priya.nair@example.edu', phone: '+61 3 9000 0000', mobile: '', website: 'example.edu/~pnair', websiteLabel: 'Faculty page', booking: '', bookingLabel: '', address: 'Building 8, State University Campus' };
+    s.socials = [
+      { network: 'linkedin', url: 'https://www.linkedin.com/in/priyanair', glyph: '', color: '' },
+      { network: 'x', url: 'https://x.com/priya_nair', glyph: '', color: '' },
+    ];
+    s.customLines = [{ label: 'Office hours', value: 'Tue & Thu, 14:00–16:00' }];
+    s.design.template = 'classic';
+    applyTheme(s, 'ink');
+    s.meta.name = 'Priya — academic';
+  } else if (personaId === 'developer') {
+    s.profile = { name: 'Sam Okafor', displayName: 'Sam', title: 'Open-source developer', department: '', company: '', pronouns: 'they/them', location: 'Lagos, NG · WAT', languages: 'English' };
+    s.contact = { email: 'sam@example.com', phone: '', mobile: '', website: 'samokafor.dev', websiteLabel: 'samokafor.dev', booking: '', bookingLabel: '', address: '' };
+    s.socials = [
+      { network: 'github', url: 'https://github.com/samokafor', glyph: '', color: '' },
+      { network: 'twitch', url: 'https://www.twitch.tv/samokafor', glyph: '', color: '' },
+      { network: 'discord', url: 'https://discord.gg/samokafor', glyph: '', color: '' },
+    ];
+    s.design.statusText = 'Building in public';
+    s.design.statusColor = '#7048a8';
+    s.design.useMonogram = true;
+    s.design.template = 'compact';
+    applyTheme(s, 'mono');
+    s.meta.name = 'Sam — developer';
+  } else {
+    s.profile = { name: 'Ada Lovelace', title: 'Head of Analytics', department: 'Data Science', company: 'Analytical Engines Ltd', pronouns: 'she/her' };
+    s.contact = {
+      email: 'ada@example.com',
+      phone: '+44 20 7946 0958',
+      mobile: '+44 7700 900123',
+      website: 'analytical-engines.example',
+      websiteLabel: '',
+      address: '17 Analytical Lane\nLondon, United Kingdom',
+    };
+    s.socials = [
+      { network: 'linkedin', url: 'https://www.linkedin.com/in/adalovelace', glyph: '', color: '' },
+      { network: 'x', url: 'https://x.com/ada_l', glyph: '', color: '' },
+      { network: 'github', url: 'https://github.com/ada-l', glyph: '', color: '' },
+    ];
+    s.customLines = [{ label: 'Office hours', value: 'Mon–Fri, 9:00–17:00 GMT' }];
+    s.design.showLegal = true;
+    s.design.legalText = 'This message and any attachments are confidential and intended solely for the addressee. If you received it in error, please let us know and delete it.';
+    s.meta.name = 'Ada Lovelace — Analytical Engines';
+  }
   return s;
 }
 
