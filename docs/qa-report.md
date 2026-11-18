@@ -337,6 +337,33 @@ name-size boost, editor section counts and remembered open state.
 
 ---
 
+# v0.15.0 addendum (socials position + compose-window preview)
+
+Date: 2026-11-19 · Scope: socials placement control, realistic compose
+window around the live preview.
+
+## Issues found and fixed in this round
+
+| # | Severity | Issue | Fix |
+| --- | --- | --- | --- |
+| 1 | Test-only | Clicking the visually-hidden radio inputs in `.seg` groups timed out. | Click the wrapping label (`label:has(input[value=…])`), the established pattern. |
+| 2 | Test-only | The compose body background has a .2s transition; same-frame computed-style reads were still white, and background tabs freeze transitions entirely. | Test polls until the background settles. |
+
+## Verification evidence (all passed)
+
+- Node vm: socials position suite 25/25 (bottom/underName/inContact ×
+  classic/compact/split/minimal, plus default-state regression); default
+  renders unchanged.
+- Browser: compose window renders with header dots, To/Subject rows and
+  the signature below the separator; backdrop toggle moves the body
+  white→grey→dark (vision-verified screenshot); zero console errors.
+- Playwright: 44/44 twice consecutively (2 new preview tests: socials
+  position ordering in srcdoc, compose window + backdrop behaviour).
+- Release published with verified SHA-256 assets; CI check + e2e green on
+  the tag. README overview screenshot refreshed.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

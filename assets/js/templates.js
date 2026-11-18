@@ -35,6 +35,10 @@ const DENSITY = {
 };
 const densityOf = d => DENSITY[d.density] || DENSITY.regular;
 
+/* Socials placement: 'bottom' (default, legacy), 'underName' (right after
+   the identity block), 'inContact' (inside the contact stack). */
+const socialsPos = d => d.socialsPosition || 'bottom';
+
 /* Extra px on the name font size, on top of the per-layout baseline offset
    (+2 big / −2 small). Default 3 reproduces the classic +5/+1 today. */
 const nameExtraOf = d => {
@@ -157,7 +161,12 @@ function contactStackHtml(s, d, opts = {}) {
   const items = contactItems(s, d);
   if (!items.length) return '';
   const labels = opts.labels !== undefined ? opts.labels : d.showLabels !== false;
-  return items.map(it => contactLineHtml(d, it, { labels })).join('<br>');
+  let stack = items.map(it => contactLineHtml(d, it, { labels })).join('<br>');
+  if (socialsPos(d) === 'inContact') {
+    const socials = socialsRowHtml(s, d);
+    if (socials) stack += `<br>${socials}`;
+  }
+  return stack;
 }
 
 function contactInlineHtml(s, d, { labels = false } = {}) {
@@ -271,6 +280,17 @@ function classicRows(s, d, { center = false } = {}) {
     </td>`;
 
   rows.push(`<tr>${right ? identityCell + logoCell : logoCell + identityCell}</tr>`);
+
+  const socials = socialsRowHtml(s, d);
+  const emitSocials = (alignVal) => {
+    if (!socials) return;
+    const nested = center
+      ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`
+      : socials;
+    rows.push(`<tr><td colspan="2" align="${alignVal}">${nested}</td></tr>`);
+    rows.push(spacerHtml(4));
+  };
+  if (socialsPos(d) === 'underName') emitSocials(center ? 'center' : 'left');
   rows.push(dividerHtml(d));
 
   const stack = contactStackHtml(s, d);
@@ -283,14 +303,7 @@ function classicRows(s, d, { center = false } = {}) {
     rows.push(`<tr><td colspan="2" align="${align}">${booking}</td></tr>`);
     rows.push(spacerHtml(8));
   }
-  const socials = socialsRowHtml(s, d);
-  if (socials) {
-    const nested = center
-      ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`
-      : socials;
-    rows.push(`<tr><td colspan="2" align="${center ? 'center' : 'left'}">${nested}</td></tr>`);
-    rows.push(spacerHtml(4));
-  }
+  if (socialsPos(d) === 'bottom') emitSocials(center ? 'center' : 'left');
   rows.push(legalHtml(s, d));
   return rows.join('\n');
 }
@@ -309,15 +322,18 @@ function compactRows(s, d) {
     .map(it => contactLineHtml(d, it, { labels: false }))
     .join('<br>');
 
+  const socials = socialsRowHtml(s, d);
+  const pos = socialsPos(d);
+
   const identityCell = `<td class="m-cell" valign="middle" align="left">
-      ${nameHtml(s, d, { big: false })}${titleHtml(s, d)}${contextLineHtml(s, d)}${statusHtml(s, d)}
+      ${nameHtml(s, d, { big: false })}${titleHtml(s, d)}${contextLineHtml(s, d)}${statusHtml(s, d)}${pos === 'underName' && socials ? `<br>${socials}` : ''}
     </td>`;
-  const contactCell = `<td class="m-cell" valign="middle" align="right" style="padding-left:24px;">${contact || '&nbsp;'}</td>`;
+  const contactInner = pos === 'inContact' && socials ? `${contact}<br>${socials}` : contact;
+  const contactCell = `<td class="m-cell" valign="middle" align="right" style="padding-left:24px;">${contactInner || '&nbsp;'}</td>`;
 
   rows.push(`<tr>${right ? identityCell + contactCell + logoCell : logoCell + identityCell + contactCell}</tr>`);
 
-  const socials = socialsRowHtml(s, d);
-  if (socials) {
+  if (pos === 'bottom' && socials) {
     rows.push(spacerHtml(8, 3));
     rows.push(`<tr><td colspan="3" align="left">${socials}</td></tr>`);
   }
@@ -329,13 +345,17 @@ function minimalRows(s, d) {
   const rows = [];
   const first = [nameHtml(s, d, { big: true }), titleHtml(s, d), companyHtml(s, d), contextLineHtml(s, d), statusHtml(s, d)].join('');
   rows.push(`<tr><td colspan="2" align="left">${first}</td></tr>`);
+  const socials = socialsRowHtml(s, d);
+  if (socialsPos(d) === 'underName' && socials) {
+    rows.push(spacerHtml(6));
+    rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
+  }
   const stack = contactStackHtml(s, d, { labels: false });
   if (stack) {
     rows.push(spacerHtml(6));
     rows.push(`<tr><td colspan="2" align="left">${stack}</td></tr>`);
   }
-  const socials = socialsRowHtml(s, d);
-  if (socials) {
+  if (socialsPos(d) === 'bottom' && socials) {
     rows.push(spacerHtml(6));
     rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
   }
@@ -371,6 +391,11 @@ function splitRows(s, d) {
     const identityCell = `<td class="m-cell" valign="middle" align="left">${identity || '&nbsp;'}</td>`;
     rows.push(`<tr>${right ? identityCell + logoCell : logoCell + identityCell}</tr>`);
   }
+  const socials = socialsRowHtml(s, d);
+  if (socialsPos(d) === 'underName' && socials) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
+  }
   const stack = contactStackHtml(s, d);
   if (stack) {
     rows.push(spacerHtml(den.rowGap));
@@ -383,8 +408,7 @@ function splitRows(s, d) {
     rows.push(spacerHtml(den.rowGap));
     rows.push(`<tr><td colspan="2" align="left">${booking}</td></tr>`);
   }
-  const socials = socialsRowHtml(s, d);
-  if (socials) {
+  if (socialsPos(d) === 'bottom' && socials) {
     rows.push(spacerHtml(den.rowGap));
     rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
   }

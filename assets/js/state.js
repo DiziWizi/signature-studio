@@ -82,6 +82,7 @@ function defaultState() {
       showBooking: true,
       showStatus: true,
       showSocials: true,
+      socialsPosition: 'bottom',  // bottom | underName | inContact
       /* density + name size */
       density: 'regular',   // airy | regular | compact
       nameSizeExtra: 3,     // px added to the base font size for the name

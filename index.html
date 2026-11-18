@@ -210,6 +210,16 @@
             </div>
           </div>
 
+          <div class="field span2">
+            <span class="lbl">Socials position</span>
+            <div class="seg" id="seg-social-pos">
+              <label><input type="radio" name="socialsPosition" value="bottom" data-field="design.socialsPosition"><span>Bottom</span></label>
+              <label><input type="radio" name="socialsPosition" value="underName" data-field="design.socialsPosition"><span>Under the name</span></label>
+              <label><input type="radio" name="socialsPosition" value="inContact" data-field="design.socialsPosition"><span>With contact details</span></label>
+            </div>
+            <span class="micro">“Under the name” applies to Classic, Centered, Compact, Banner, Split and Minimal; other layouts keep them at the bottom.</span>
+          </div>
+
           <div class="field">
             <span class="lbl">Logo / photo URL</span>
             <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button">Upload</button></span>
@@ -300,7 +310,23 @@
       </div>
     </div>
     <div class="checklist" id="checklist"></div>
-    <div class="stage" id="stage"><iframe id="preview-frame" title="Signature preview"></iframe></div>
+    <div class="stage" id="stage">
+      <div class="compose" id="compose">
+        <div class="compose-head">
+          <span class="compose-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="compose-title">New message</span>
+          <span class="compose-chip">preview</span>
+        </div>
+        <div class="compose-row"><span class="compose-field">To</span><span class="compose-pill">Zoey &lt;zoey@example.com&gt;</span></div>
+        <div class="compose-row"><span class="compose-field">Subject</span><span class="compose-value">Quick question</span></div>
+        <div class="compose-body">
+          <p class="compose-msg">Hi Zoey,</p>
+          <p class="compose-msg">Hope you’re well — question below.</p>
+          <p class="compose-sig-note">— signature below —</p>
+          <div class="compose-sig"><iframe id="preview-frame" title="Signature preview"></iframe></div>
+        </div>
+      </div>
+    </div>
     <p class="micro preview-note"><span id="conciseness" class="concise-ok"></span> · Live preview at real size — the dark backdrop simulates a dark-mode mail client. Everything stays in your browser and is autosaved locally.</p>
   </section>
 

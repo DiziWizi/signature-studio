@@ -59,6 +59,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   location, every contact item, booking, status, socials — any layout);
   density presets (airy/regular/compact) and a name-size boost slider;
   editor section count badges + open/closed state remembered; E2E now 42
+- [x] v0.15.0 — socials position (bottom / under the name / with contact
+  details) across the main layouts; the preview now sits inside a realistic
+  email compose window (To/Subject rows, body, signature separator) whose
+  body follows the white/grey/dark backdrop toggle; E2E now 44
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.
