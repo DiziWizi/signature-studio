@@ -108,3 +108,39 @@ templates, live thumbnails, vCard/QR, image icons, PWA/offline.
   not with a phone camera.
 - Cache-first SW means stale content after upgrades until `VERSION` is bumped
   — documented in the README.
+
+---
+
+# v0.3.0 addendum
+
+Date: 2026-11-19 · Scope: mobile-friendly output, Monogram template, pronouns,
+divider styles, contact-labels toggle, initials monogram, signature name.
+
+## Issues found and fixed in this round
+
+| # | Severity | Issue | Fix |
+| --- | --- | --- | --- |
+| 1 | Medium | Generated signatures were fixed at 600 px (`style="width:600px"`): on phones they clipped instead of shrinking. | Inner table is now fluid: `width="600"` attribute (Outlook) + `style="width:100%;max-width:600px"` (modern clients). |
+| 2 | Medium | The full-size preview iframe is exactly 600 px wide, so a `max-width:600px` mobile breakpoint matched there and the desktop preview showed the stacked layout. | Breakpoint set to 599 px — identical behaviour in real clients (phones ≤ 480, desktop bodies wider), correct desktop preview. |
+| 3 | Low | Switching the preview width didn't re-sync the iframe height (srcdoc doesn't reload, so the media-query reflow left a scrollbar). | Explicit height re-sync after width changes. |
+| 4 | Low | Test-session lesson: the app re-registers the cache-first service worker on every load, so a filesystem change after the last precache left the test browser running stale code (a `Network.setCacheDisabled` doesn't bypass SWs). | Unregister + clear caches + reload in one sequence when files changed; SW VERSION bumped for the release. |
+
+## Verification evidence (all passed)
+
+- Node vm suite: **76/76** across 9 templates — structure, fluid width, mobile
+  media block on/off, m-cell markers, pronouns, labels off, divider
+  dashed/dotted, monogram fallback + template, empty-state renders.
+- Browser: inner table measured 600 px at Full and 325 px at Phone (shrinks,
+  no clipping); `m-cell` computed `table-cell` at 600 px and `block` at
+  340/460 px (stacking); stackMobile toggle restores table-cell at phone
+  width; monogram, divider style, labels, pronouns, signature name all bound
+  and rendered; preview height re-syncs 323 → 342 px on width change; 9
+  live thumbnails; full sweep zero console errors.
+- Screenshot pixel checks confirm the phone preview shows a narrow stacked
+  signature (vision-verified).
+
+## Residual risks (added)
+
+- Media-query stacking is verified in Chromium; Gmail/Apple Mail honour the
+  same `@media` mechanism but a one-off check on a real phone mail app is
+  worthwhile. Outlook ignores the block by design (desktop client).

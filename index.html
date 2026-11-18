@@ -56,6 +56,7 @@
       <summary>Profile</summary>
       <div class="body grid2">
         <label class="field">Name<input data-field="profile.name" placeholder="Ada Lovelace"></label>
+        <label class="field">Pronouns <span class="opt">(optional)</span><input data-field="profile.pronouns" placeholder="she/her"></label>
         <label class="field">Job title<input data-field="profile.title" placeholder="Head of Analytics"></label>
         <label class="field">Department<input data-field="profile.department" placeholder="Data Science"></label>
         <label class="field">Company<input data-field="profile.company" placeholder="Analytical Engines Ltd"></label>
@@ -138,12 +139,23 @@
             <span class="thumb"><iframe class="tthumb" data-tpl="masthead" title="Masthead preview" sandbox=""></iframe></span>
             <span class="tpl-name">Masthead</span>
           </button>
+          <button class="tpl-btn" data-template="monogram" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="monogram" title="Monogram preview" sandbox=""></iframe></span>
+            <span class="tpl-name">Monogram</span>
+          </button>
         </div>
 
         <div class="grid2">
           <label class="field">Accent colour<input type="color" data-field="design.primaryColor"></label>
           <label class="field">Text colour<input type="color" data-field="design.textColor"></label>
           <label class="field">Divider colour<input type="color" data-field="design.dividerColor"></label>
+          <label class="field">Divider style
+            <select data-field="design.dividerStyle">
+              <option value="solid">Solid</option>
+              <option value="dashed">Dashed</option>
+              <option value="dotted">Dotted</option>
+            </select>
+          </label>
           <label class="field">Font
             <select data-field="design.font">
               <option value="modern">Modern (system)</option>
@@ -177,9 +189,15 @@
 
           <label class="switch span2"><input type="checkbox" data-field="design.showDivider"><span class="sw"></span> Show divider line</label>
           <label class="switch span2"><input type="checkbox" data-field="design.darkModeFriendly"><span class="sw"></span> Dark-mode friendly (adds dark-theme colours for Gmail / Apple Mail)</label>
+          <label class="switch span2"><input type="checkbox" data-field="design.stackMobile"><span class="sw"></span> Stack columns on mobile (media query; ignored by Outlook)</label>
+          <label class="switch span2"><input type="checkbox" data-field="design.showLabels"><span class="sw"></span> Show contact labels (“Email:”, “Phone:”, …)</label>
+          <label class="switch span2"><input type="checkbox" data-field="design.useMonogram"><span class="sw"></span> Use initials monogram when no logo is set</label>
           <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> Show legal / disclaimer line</label>
           <label class="field span2">Legal / disclaimer text
             <textarea rows="2" data-field="design.legalText" placeholder="This message and any attachments are confidential…"></textarea>
+          </label>
+          <label class="field span2">Signature name <span class="opt">(used for file names and the Saved panel)</span>
+            <input data-field="meta.name" placeholder="My signature">
           </label>
         </div>
       </div>

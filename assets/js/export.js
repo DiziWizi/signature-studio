@@ -4,7 +4,7 @@
 function plainTextVersion(s) {
   const lines = [];
   const p = s.profile;
-  if (p.name) lines.push(p.name);
+  if (p.name) lines.push(p.pronouns ? `${p.name} (${p.pronouns})` : p.name);
   const bits = [p.title, p.department].filter(Boolean).join(' · ');
   if (bits) lines.push(bits);
   if (p.company) lines.push(p.company);

@@ -38,7 +38,10 @@ function dmCls(d, kind) {
 function nameHtml(s, d, { big = true } = {}) {
   if (!s.profile.name) return '';
   const style = textStyle(d, { size: big ? d.fontSize + 5 : d.fontSize + 1, weight: 'bold' });
-  return `<span${dmCls(d, 'txt')} style="${style}">${esc(s.profile.name)}</span><br>`;
+  const pronouns = s.profile.pronouns
+    ? ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: (big ? d.fontSize + 5 : d.fontSize + 1) - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
+    : '';
+  return `<span${dmCls(d, 'txt')} style="${style}">${esc(s.profile.name)}</span>${pronouns}<br>`;
 }
 
 function titleHtml(s, d) {
@@ -91,7 +94,8 @@ function contactLineHtml(d, item, { labels = true } = {}) {
 function contactStackHtml(s, d, opts = {}) {
   const items = contactItems(s);
   if (!items.length) return '';
-  return items.map(it => contactLineHtml(d, it, opts)).join('<br>');
+  const labels = opts.labels !== undefined ? opts.labels : d.showLabels !== false;
+  return items.map(it => contactLineHtml(d, it, { labels })).join('<br>');
 }
 
 function contactInlineHtml(s, d, { labels = false } = {}) {
@@ -149,7 +153,7 @@ function socialsRowHtml(s, d) {
 function dividerHtml(d, cols = 2) {
   if (!d.showDivider) return '';
   const cls = d.darkModeFriendly ? ' class="dm-div"' : '';
-  return `<tr><td colspan="${cols}"${cls} style="border-top:1px solid ${d.dividerColor};height:1px;line-height:1px;font-size:0;">&nbsp;</td></tr>` +
+  return `<tr><td colspan="${cols}"${cls} style="border-top:1px ${d.dividerStyle || 'solid'} ${d.dividerColor};height:1px;line-height:1px;font-size:0;">&nbsp;</td></tr>` +
     `<tr><td colspan="${cols}" height="12" style="height:12px;line-height:12px;font-size:0;">&nbsp;</td></tr>`;
 }
 
@@ -164,19 +168,39 @@ function spacerHtml(h, cols = 2) {
   return `<tr><td colspan="${cols}" height="${h}" style="height:${h}px;line-height:${h}px;font-size:0;">&nbsp;</td></tr>`;
 }
 
+/* Initials monogram: a coloured circle with the person's initials — a
+   professional avatar that needs no image file. Outlook shows a square,
+   which is acceptable. */
+function monogramHtml(s, d) {
+  const initials = String(s.profile.name || '').trim().split(/\s+/)
+    .map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  if (!initials) return '';
+  const size = d.logoWidth;
+  return `<span style="display:inline-block;width:${size}px;height:${size}px;line-height:${size}px;text-align:center;` +
+    `background-color:${d.primaryColor};color:#ffffff;border-radius:50%;` +
+    `font-family:Arial,Helvetica,sans-serif;font-size:${Math.round(size * 0.38)}px;font-weight:bold;">${esc(initials)}</span>`;
+}
+
+/* Logo cell content: hosted logo, or the initials monogram when enabled. */
+function logoCellHtml(s, d) {
+  if (d.logoUrl) return imgTag(d.logoUrl, d.logoWidth, 'logo');
+  if (d.useMonogram) return monogramHtml(s, d);
+  return '';
+}
+
 /* ── layouts ──────────────────────────────────────────────────────────── */
 
 function classicRows(s, d, { center = false } = {}) {
   const rows = [];
   const align = center ? 'center' : 'left';
-  const hasLogo = !!d.logoUrl;
-  const logoCell = hasLogo
-    ? `<td width="${d.logoWidth + 16}" valign="middle" align="${align}" style="padding:0 16px 0 0;">${imgTag(d.logoUrl, d.logoWidth, 'logo')}</td>`
+  const logoContent = logoCellHtml(s, d);
+  const logoCell = logoContent
+    ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="${align}" style="padding:0 16px 0 0;">${logoContent}</td>`
     : '';
 
   rows.push(`<tr>
     ${logoCell}
-    <td valign="middle" align="${align}">
+    <td class="m-cell" valign="middle" align="${align}">
       ${nameHtml(s, d)}${titleHtml(s, d)}${companyHtml(s, d)}
     </td>
   </tr>`);
@@ -201,9 +225,9 @@ function classicRows(s, d, { center = false } = {}) {
 
 function compactRows(s, d) {
   const rows = [];
-  const hasLogo = !!d.logoUrl;
-  const logoCell = hasLogo
-    ? `<td width="${d.logoWidth + 16}" valign="middle" align="left" style="padding:0 16px 0 0;">${imgTag(d.logoUrl, d.logoWidth, 'logo')}</td>`
+  const logoContent = logoCellHtml(s, d);
+  const logoCell = logoContent
+    ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="left" style="padding:0 16px 0 0;">${logoContent}</td>`
     : '';
 
   const contact = contactItems(s)
@@ -213,10 +237,10 @@ function compactRows(s, d) {
 
   rows.push(`<tr>
     ${logoCell}
-    <td valign="middle" align="left">
+    <td class="m-cell" valign="middle" align="left">
       ${nameHtml(s, d, { big: false })}${titleHtml(s, d)}
     </td>
-    <td valign="middle" align="right" style="padding-left:24px;">${contact || '&nbsp;'}</td>
+    <td class="m-cell" valign="middle" align="right" style="padding-left:24px;">${contact || '&nbsp;'}</td>
   </tr>`);
 
   const socials = socialsRowHtml(s, d);
@@ -263,21 +287,21 @@ function splitRows(s, d) {
     rows.push(`<tr><td colspan="2" align="center">${imgTag(d.bannerUrl, 600, 'banner')}</td></tr>`);
     rows.push(spacerHtml(16));
   }
-  const hasLogo = !!d.logoUrl;
+  const logoContent = logoCellHtml(s, d);
   const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d);
-  if (hasLogo || identity) {
-    const logoCell = hasLogo
-      ? `<td width="${d.logoWidth + 16}" valign="middle" align="left" style="padding:0 16px 0 0;">${imgTag(d.logoUrl, d.logoWidth, 'logo')}</td>`
+  if (logoContent || identity) {
+    const logoCell = logoContent
+      ? `<td class="m-cell" width="${d.logoWidth + 16}" valign="middle" align="left" style="padding:0 16px 0 0;">${logoContent}</td>`
       : '<td width="16" style="padding:0;font-size:0;line-height:0;">&nbsp;</td>';
     rows.push(`<tr>
     ${logoCell}
-    <td valign="middle" align="left">${identity || '&nbsp;'}</td>
+    <td class="m-cell" valign="middle" align="left">${identity || '&nbsp;'}</td>
   </tr>`);
   }
   const stack = contactStackHtml(s, d);
   if (stack) {
     rows.push(spacerHtml(10));
-    rows.push(`<tr><td colspan="2" align="left" style="background-color:#f6f8fa;border:1px solid ${d.dividerColor};padding:10px 14px;">
+    rows.push(`<tr><td colspan="2" align="left" class="m-cell" style="background-color:#f6f8fa;border:1px solid ${d.dividerColor};padding:10px 14px;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td style="padding:0;">${stack}</td></tr></table>
     </td></tr>`);
   }
@@ -291,13 +315,16 @@ function splitRows(s, d) {
   return rows.join('\n');
 }
 
-/* Roundel: circular logo, everything centred. */
+/* Roundel: circular logo (or initials monogram), everything centred. */
 function roundelRows(s, d) {
   const rows = [];
-  if (d.logoUrl) {
-    rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 12px 0;">` +
-      `<img src="${esc(d.logoUrl)}" width="${d.logoWidth}" alt="logo" ` +
-      `style="display:block;width:${d.logoWidth}px;max-width:${d.logoWidth}px;height:auto;border:0;border-radius:50%;"></td></tr>`);
+  const logoContent = logoCellHtml(s, d);
+  if (logoContent) {
+    const circle = d.logoUrl
+      ? `<img src="${esc(d.logoUrl)}" width="${d.logoWidth}" alt="logo" ` +
+        `style="display:block;width:${d.logoWidth}px;max-width:${d.logoWidth}px;height:auto;border:0;border-radius:50%;">`
+      : monogramHtml(s, d);
+    rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 12px 0;">${circle}</td></tr>`);
   }
   const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d);
   if (identity) {
@@ -355,6 +382,32 @@ function mastheadRows(s, d) {
   return rows.join('\n');
 }
 
+/* Monogram: initials avatar, centred — a complete signature with no images. */
+function monogramRows(s, d) {
+  const rows = [];
+  if (s.profile.name) {
+    rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 12px 0;">${monogramHtml(s, d)}</td></tr>`);
+  }
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d);
+  if (identity) {
+    rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
+  }
+  rows.push(dividerHtml(d));
+  const stack = contactStackHtml(s, d);
+  if (stack) {
+    rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
+    rows.push(spacerHtml(10));
+  }
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    const nested = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`;
+    rows.push(`<tr><td colspan="2" align="center">${nested}</td></tr>`);
+    rows.push(spacerHtml(4));
+  }
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
 /* ── document assembly ────────────────────────────────────────────────── */
 
 function darkStyleBlock(d) {
@@ -364,6 +417,22 @@ function darkStyleBlock(d) {
   .dm-txt { color:#e9ecf2 !important; }
   .dm-mut { color:#b3bac6 !important; }
   .dm-div { border-top-color:#3a414d !important; }
+}
+</style>`;
+}
+
+/* Progressive mobile stacking: columns become full-width blocks on narrow
+   screens. Gmail/Apple Mail honour media queries; Outlook ignores the block
+   and keeps the desktop layout, which is what you want there.
+   Breakpoint is 599px, not 600: the full-size preview iframe is exactly
+   600px wide and would otherwise trigger the mobile layout there. Real
+   clients are ≤480px (phones) or wider than 600 (desktop bodies). */
+function mobileStyleBlock(d) {
+  if (!d.stackMobile) return '';
+  return `<style type="text/css">
+@media (max-width:599px) {
+  .m-cell { display:block !important; width:100% !important; padding:0 0 10px 0 !important; text-align:left !important; }
+  .m-cell:last-child { padding-bottom:0 !important; }
 }
 </style>`;
 }
@@ -386,10 +455,11 @@ function renderSignature(state) {
     case 'split':    inner = splitRows(s, d); break;
     case 'roundel':  inner = roundelRows(s, d); break;
     case 'masthead': inner = mastheadRows(s, d); break;
+    case 'monogram': inner = monogramRows(s, d); break;
     default:         inner = classicRows(s, d);
   }
 
-  const outerAlign = (d.template === 'centered' || d.template === 'roundel') ? 'center' : 'left';
+  const outerAlign = ['centered', 'roundel', 'monogram'].includes(d.template) ? 'center' : 'left';
 
   const doc =
 `<!DOCTYPE html>
@@ -399,14 +469,14 @@ function renderSignature(state) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ${d.darkModeFriendly
   ? `<meta name="color-scheme" content="light dark">\n<meta name="supported-color-schemes" content="light dark">\n`
-  : ''}${darkStyleBlock(d)}
+  : ''}${darkStyleBlock(d)}${mobileStyleBlock(d)}
 <title>Email signature</title>
 </head>
 <body style="margin:0;padding:0;background-color:transparent;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
   <tr>
     <td align="${outerAlign}">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;border-collapse:collapse;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;border-collapse:collapse;">
 ${inner.split('\n').map(l => '        ' + l).join('\n')}
       </table>
     </td>

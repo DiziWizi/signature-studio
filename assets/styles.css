@@ -184,6 +184,7 @@ details[open] summary::before { transform: rotate(90deg); }
   letter-spacing: .06em;
 }
 .field .lbl { font-size: 11px; }
+.field .opt { font-weight: 400; text-transform: none; letter-spacing: normal; opacity: .8; }
 
 .field input[type="text"],
 .field input[type="email"],

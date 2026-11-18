@@ -16,6 +16,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.2.0 — vCard (.vcf) download + QR code (vendored MIT encoder)
 - [x] v0.2.0 — real image icons per social network
 - [x] v0.2.0 — PWA/offline (manifest, icons, cache-first service worker)
+- [x] v0.3.0 — mobile-friendly: fluid width + media-query column stacking
+  (toggleable), Phone preview shows the real mobile layout
+- [x] v0.3.0 — Monogram template + initials-monogram option for all layouts
+- [x] v0.3.0 — pronouns field, divider style (solid/dashed/dotted), contact
+  labels toggle, signature name field
 
 ## Suggested next steps
 

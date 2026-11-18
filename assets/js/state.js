@@ -17,11 +17,12 @@ const TEMPLATES = [
   { id: 'split',    name: 'Split',    desc: 'Logo and identity left, contact details in a card on the right.' },
   { id: 'roundel',  name: 'Roundel',  desc: 'Circular photo, centred text, inline socials.' },
   { id: 'masthead', name: 'Masthead', desc: 'Company name in a coloured brand band up top.' },
+  { id: 'monogram', name: 'Monogram', desc: 'Initials avatar, centred — no image needed.' },
 ];
 
 function defaultState() {
   return {
-    profile: { name: '', title: '', department: '', company: '' },
+    profile: { name: '', title: '', department: '', company: '', pronouns: '' },
     contact: { email: '', phone: '', mobile: '', website: '', websiteLabel: '', address: '' },
     socials: [],      // { network, url, glyph, color }
     customLines: [],  // { label, value }
@@ -36,10 +37,14 @@ function defaultState() {
       logoWidth: 72,
       bannerUrl: '',
       showDivider: true,
+      dividerStyle: 'solid',
       socialStyle: 'icons',   // icons | icons_labels | labels
       showLegal: false,
       legalText: '',
       darkModeFriendly: false,
+      stackMobile: true,
+      showLabels: true,
+      useMonogram: false,
     },
     meta: { name: 'My signature' },
   };
@@ -47,7 +52,7 @@ function defaultState() {
 
 function sampleState() {
   const s = defaultState();
-  s.profile = { name: 'Ada Lovelace', title: 'Head of Analytics', department: 'Data Science', company: 'Analytical Engines Ltd' };
+  s.profile = { name: 'Ada Lovelace', title: 'Head of Analytics', department: 'Data Science', company: 'Analytical Engines Ltd', pronouns: 'she/her' };
   s.contact = {
     email: 'ada@example.com',
     phone: '+44 20 7946 0958',

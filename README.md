@@ -8,11 +8,16 @@ tracking. Works offline.
 
 ## Features
 
-- **8 layout templates** — Classic, Centered, Compact, Banner, Minimal,
-  Split, Roundel, Masthead — with **live thumbnails** in the picker that
-  render your actual signature in each layout as you type.
-- **Profile & contact details** — name, title, department, company, email,
-  phone, mobile, website, multi-line address.
+- **9 layout templates** — Classic, Centered, Compact, Banner, Minimal,
+  Split, Roundel, Masthead, Monogram — with **live thumbnails** in the picker
+  that render your actual signature in each layout as you type.
+- **Mobile-friendly by default** — signatures use a fluid width (shrink to any
+  screen instead of clipping) and multi-column layouts stack into a single
+  column on phones via a media query that Outlook harmlessly ignores. The
+  Phone preview shows exactly what mobile recipients see, and the stacking
+  can be switched off per signature.
+- **Profile & contact details** — name, **pronouns**, title, department,
+  company, email, phone, mobile, website, multi-line address.
 - **Social links** — LinkedIn, X, Facebook, Instagram, GitHub, YouTube,
   TikTok, Mastodon, Bluesky, WhatsApp, Telegram, Signal, Xing, Pinterest, plus
   custom links with your own glyph and colour. Quick-add chips, drag-and-drop
@@ -21,9 +26,12 @@ tracking. Works offline.
   per network to use a real logo instead of the glyph chip.
 - **Custom lines** — office hours, direct line, anything else you need,
   reorderable by drag or buttons.
-- **Design controls** — accent/text/divider colours, 4 font stacks, base font
-  size, logo (URL or upload) with width, banner image, divider, legal /
-  disclaimer footer, social style (icons / icons + labels / text links).
+- **Design controls** — accent/text/divider colours, divider style
+  (solid/dashed/dotted), 4 font stacks, base font size, logo (URL or upload)
+  with width, banner image, divider, legal / disclaimer footer, social style
+  (icons / icons + labels / text links), contact labels on/off, and an
+  **initials monogram** that replaces the logo with a coloured initials
+  circle — no image needed. The Monogram template makes it the star.
 - **Dark-mode friendly toggle** — adds `prefers-color-scheme` overrides for
   Gmail and Apple Mail dark mode, with a dark preview backdrop to check the
   result.
@@ -51,6 +59,8 @@ tracking. Works offline.
 ![Saved signatures and dark-mode preview](docs/screenshots/03-saved-dark.png)
 
 ![vCard QR code](docs/screenshots/04-qr-vcard.png)
+
+![Mobile preview: stacked layout at phone width](docs/screenshots/05-mobile-stacked.png)
 
 ## The output is built for email clients
 
@@ -132,7 +142,7 @@ index.html              app shell (editor, preview, modals)
 assets/styles.css       app UI — never part of generated output
 assets/js/state.js      data model, defaults, sample data
 assets/js/socials.js    network catalogue (glyph, colour, URL prefix)
-assets/js/templates.js  signature renderer: state → HTML document (8 layouts)
+assets/js/templates.js  signature renderer: state → HTML document (9 layouts)
 assets/js/import.js     best-effort HTML signature importer
 assets/js/export.js     clipboard / download / plain-text export
 assets/js/storage.js    localStorage draft + saved snapshots

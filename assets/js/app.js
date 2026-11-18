@@ -703,6 +703,9 @@ function init() {
   $('#seg-width').addEventListener('change', e => {
     if (e.target.name === 'prevWidth' && e.target.checked) {
       $('#preview-frame').style.maxWidth = e.target.value + 'px';
+      /* The media-query layout changes with viewport width but srcdoc does
+         not re-load, so re-sync the iframe height manually. */
+      syncPreviewHeight();
     }
   });
   $('#seg-bg').addEventListener('change', e => {
@@ -712,12 +715,14 @@ function init() {
       if (e.target.value !== 'white') stage.classList.add(e.target.value);
     }
   });
-  $('#preview-frame').addEventListener('load', () => {
+  $('#preview-frame').addEventListener('load', syncPreviewHeight);
+
+  function syncPreviewHeight() {
     try {
       const doc = $('#preview-frame').contentDocument;
       $('#preview-frame').style.height = (doc.body.scrollHeight + 4) + 'px';
     } catch (e) { /* cross-origin: ignore */ }
-  });
+  }
 
   /* topbar */
   $('#btn-sample').addEventListener('click', () => {
