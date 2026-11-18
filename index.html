@@ -81,6 +81,8 @@
         <label class="field">Website label<input data-field="contact.websiteLabel" placeholder="Leave empty to use the URL"></label>
         <label class="field">Booking link <span class="opt">(Calendly, Cal.com…)</span><input data-field="contact.booking" placeholder="cal.com/you"></label>
         <label class="field">Booking label<input data-field="contact.bookingLabel" placeholder="Book a call"></label>
+        <label class="field">Portfolio URL <span class="opt">(creators, freelancers)</span><input data-field="contact.portfolio" placeholder="yourwork.example"></label>
+        <label class="field">Portfolio label<input data-field="contact.portfolioLabel" placeholder="Portfolio"></label>
         <label class="field span2">Address (one line or multiple)
           <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom"></textarea>
         </label>
@@ -153,6 +155,10 @@
             <span class="thumb"><iframe class="tthumb" data-tpl="monogram" title="Monogram preview" sandbox=""></iframe></span>
             <span class="tpl-name">Monogram</span>
           </button>
+          <button class="tpl-btn" data-template="photocard" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="photocard" title="Photo card preview" sandbox=""></iframe></span>
+            <span class="tpl-name">Photo card</span>
+          </button>
         </div>
 
         <div class="themes-row" id="themes-row">
@@ -163,6 +169,7 @@
           <label class="field">Accent colour<input type="color" data-field="design.primaryColor"></label>
           <label class="field">Text colour<input type="color" data-field="design.textColor"></label>
           <label class="field">Divider colour<input type="color" data-field="design.dividerColor"></label>
+          <label class="field">Card colour<input type="color" data-field="design.cardColor"></label>
           <label class="field">Divider style
             <select data-field="design.dividerStyle">
               <option value="solid">Solid</option>
@@ -219,6 +226,8 @@
               <input type="color" data-field="design.statusColor" title="Badge colour" class="mini-color">
             </span>
           </label>
+          <label class="switch span2"><input type="checkbox" data-field="design.roundPhoto"><span class="sw"></span> Round photo (circular crop for the side logo)</label>
+          <label class="switch span2"><input type="checkbox" data-field="design.showCard"><span class="sw"></span> Wrap the signature in a card (tint + border)</label>
           <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> Show legal / disclaimer line</label>
           <label class="field span2">Legal / disclaimer text
             <textarea rows="2" data-field="design.legalText" placeholder="This message and any attachments are confidential…"></textarea>

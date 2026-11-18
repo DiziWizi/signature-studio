@@ -147,6 +147,43 @@ divider styles, contact-labels toggle, initials monogram, signature name.
 
 ---
 
+# v0.5.0–v0.7.0 addendum (personal packs)
+
+Date: 2026-11-19 · Scope: themes, networks, status badge, identity fields,
+booking link (v0.5.0); wizard, personas, quick-switch, conciseness hint
+(v0.6.0); card wrapper, round photo, Photo card template, portfolio (v0.7.0).
+
+## Issues found and fixed in this round
+
+| # | Severity | Issue | Fix |
+| --- | --- | --- | --- |
+| 1 | Medium | First-run wizard auto-open used `setTimeout`, which background tabs throttle — the wizard never opened in testing. | Synchronous `openWizard()` on first run. |
+| 2 | Low | A fuzzy patch on `export.js` pushed the website/address lines directly to `lines` instead of the `contact` array, breaking the joined contact line. | Restored the array; booking gets its own line. |
+| 3 | Low | Conciseness verdict called a 10-short-line sample "on the long side". | Thresholds tuned (≤5 good, ≤9 compact). |
+| 4 | Low | Test assertions only: card-off check matched the booking chip's own `border-radius:12px`; Ko-fi test dispatched events on a detached row after a re-render. | Assertions corrected; no code change. |
+
+## Verification evidence (all passed)
+
+- Node vm: 65/65 (v0.5.0 pack), 22/22 (personas), 41/41 (v0.7.0 pack) —
+  themes, 27 networks, badge/context/booking in all layouts, display-name
+  in monogram/plain-text/vCard, card on/off and per-template, round photo,
+  photo card markers, portfolio in signature/plain text/vCard.
+- Browser: theme swatches apply + sync colour inputs; wizard full
+  walkthrough (auto-open, 3 steps, finish applies persona+theme+monogram,
+  done-flag, Guide re-opens, Skip); sample cycling across personas;
+  quick-switch save→switch round-trip; conciseness hint updates live; card
+  colour + round photo toggles; photo card tile + live thumbnail; portfolio
+  line; zero console errors across the flows.
+- Releases v0.5.0, v0.6.0, v0.7.0 published with verified SHA-256 assets;
+  CI green on each tag.
+
+## Residual risks (added)
+
+- Wizard/wording has not been seen by a non-technical user; the personas and
+  thresholds are sensible defaults, not usability-tested.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

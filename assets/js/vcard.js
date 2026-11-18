@@ -142,6 +142,12 @@ function buildVCard(state) {
       : (/^https?:/i.test(c.website) ? c.website : 'https://' + c.website);
     lines.push(vcardField('URL', null, href));
   }
+  if (c.portfolio) {
+    const ph = (typeof normalizeUrl === 'function')
+      ? normalizeUrl('custom', c.portfolio)
+      : (/^https?:/i.test(c.portfolio) ? c.portfolio : 'https://' + c.portfolio);
+    lines.push(vcardField('URL', ['TYPE=PORTFOLIO'], ph));
+  }
 
   const adr = adrComponents(c.address);
   if (adr) lines.push(vcardField('ADR', ['TYPE=WORK'], null, adr));

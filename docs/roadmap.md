@@ -25,6 +25,16 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   Split; position guessed on HTML import; monogram follows the position
 - [x] v0.4.1 — logo position enabled for the Banner layout too (its content
   renders through the Classic layout)
+- [x] v0.5.0 personal pack — 7 one-click colour themes; 14 personal/creator
+  networks (Medium, Substack, Behance, Dribbble, Twitch, Discord, Etsy,
+  Vimeo, Goodreads, Letterboxd, Spotify, Ko-fi); status badge; preferred
+  name + location + languages; booking-link chip
+- [x] v0.6.0 guidance pack — first-run setup wizard (Guide button re-opens);
+  sample data cycles 5 personas; quick-switch saved signatures; conciseness
+  hint with live line/width verdict
+- [x] v0.7.0 flair pack — card wrapper (tint + border), round-photo crop for
+  side logos, Photo card template (10 total), portfolio link split from
+  website (signature, plain text, vCard, import)
 
 ## Suggested next steps
 

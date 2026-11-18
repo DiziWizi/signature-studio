@@ -18,6 +18,7 @@ const TEMPLATES = [
   { id: 'roundel',  name: 'Roundel',  desc: 'Circular photo, centred text, inline socials.' },
   { id: 'masthead', name: 'Masthead', desc: 'Company name in a coloured brand band up top.' },
   { id: 'monogram', name: 'Monogram', desc: 'Initials avatar, centred — no image needed.' },
+  { id: 'photocard', name: 'Photo card', desc: 'Portrait photo left, big name — the personal profile.' },
 ];
 
 /* Curated colour themes: one click sets accent, text and divider together.
@@ -39,7 +40,7 @@ function themeById(id) {
 function defaultState() {
   return {
     profile: { name: '', displayName: '', title: '', department: '', company: '', pronouns: '', location: '', languages: '' },
-    contact: { email: '', phone: '', mobile: '', website: '', websiteLabel: '', booking: '', bookingLabel: '', address: '' },
+    contact: { email: '', phone: '', mobile: '', website: '', websiteLabel: '', booking: '', bookingLabel: '', portfolio: '', portfolioLabel: '', address: '' },
     socials: [],      // { network, url, glyph, color }
     customLines: [],  // { label, value }
     design: {
@@ -64,6 +65,9 @@ function defaultState() {
       useMonogram: false,
       statusText: '',
       statusColor: '#2f9e44',
+      showCard: false,
+      cardColor: '#f6f8fa',
+      roundPhoto: false,
     },
     meta: { name: 'My signature' },
   };

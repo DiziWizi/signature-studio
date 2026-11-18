@@ -9,15 +9,17 @@ tracking. Works offline.
 ## Features
 
 - **9 layout templates** — Classic, Centered, Compact, Banner, Minimal,
-  Split, Roundel, Masthead, Monogram — with **live thumbnails** in the picker
-  that render your actual signature in each layout as you type.
+  Split, Roundel, Masthead, Monogram, Photo card — with **live thumbnails**
+  in the picker that render your actual signature in each layout as you type.
 - **Mobile-friendly by default** — signatures use a fluid width (shrink to any
   screen instead of clipping) and multi-column layouts stack into a single
   column on phones via a media query that Outlook harmlessly ignores. The
   Phone preview shows exactly what mobile recipients see, and the stacking
   can be switched off per signature.
-- **Profile & contact details** — name, **pronouns**, title, department,
-  company, email, phone, mobile, website, multi-line address.
+- **Profile & contact details** — full and preferred name, **pronouns**,
+  **location and languages**, title, department, company, email, phone,
+  mobile, website, **portfolio**, **booking link (Calendly/Cal.com)**, and
+  multi-line address.
 - **Social links** — LinkedIn, X, Facebook, Instagram, GitHub, YouTube,
   TikTok, Mastodon, Bluesky, WhatsApp, Telegram, Signal, Xing, Pinterest, plus
   custom links with your own glyph and colour. Quick-add chips, drag-and-drop
@@ -26,14 +28,15 @@ tracking. Works offline.
   per network to use a real logo instead of the glyph chip.
 - **Custom lines** — office hours, direct line, anything else you need,
   reorderable by drag or buttons.
-- **Design controls** — accent/text/divider colours, divider style
-  (solid/dashed/dotted), 4 font stacks, base font size, logo (URL or upload)
-  with width and **position (left or right of your name)** in the Classic,
-  Compact, Split and Banner layouts, banner image, divider, legal / disclaimer
+- **Design controls** — **one-click colour themes** (7 curated palettes),
+  accent/text/divider/card colours, divider style (solid/dashed/dotted), 4
+  font stacks, base font size, logo (URL or upload) with width, **position
+  (left/right)** and a **round-photo** crop, banner image, divider,
+  **status badge**, **card wrapper** (tint + border), legal / disclaimer
   footer, social style (icons / icons + labels / text links), contact labels
-  on/off, and an **initials monogram** that replaces the logo with a coloured
-  initials circle — no image needed. The Monogram template makes it the star.
-  Imported signatures get the logo position guessed from the source HTML.
+  on/off, and an **initials monogram** that replaces the logo with a
+  coloured initials circle — no image needed. Imported signatures get the
+  logo position guessed from the source HTML.
 - **Dark-mode friendly toggle** — adds `prefers-color-scheme` overrides for
   Gmail and Apple Mail dark mode, with a dark preview backdrop to check the
   result.

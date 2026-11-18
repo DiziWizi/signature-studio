@@ -51,6 +51,8 @@ function parseSignatureHTML(html) {
       } else if (!out.contact.website && !text.startsWith('http') && text.length < 80) {
         out.contact.website = href;
         if (text && !/^www\./i.test(text) && text.length < 40) out.contact.websiteLabel = text;
+      } else if (!out.contact.portfolio && !text.startsWith('http') && text.length < 80) {
+        out.contact.portfolio = href;
       }
     }
   }

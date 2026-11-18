@@ -26,21 +26,22 @@ const mutedColor = d => mixColors(d.textColor, '#ffffff', 0.42);
 
 /* ── small pieces ─────────────────────────────────────────────────────── */
 
-function imgTag(url, width, alt) {
+function imgTag(url, width, alt, extra = '') {
   return `<img src="${esc(url)}" width="${width}" alt="${esc(alt)}" ` +
-    `style="display:block;width:${width}px;max-width:${width}px;height:auto;border:0;">`;
+    `style="display:block;width:${width}px;max-width:${width}px;height:auto;border:0;${extra}">`;
 }
 
 function dmCls(d, kind) {
   return d.darkModeFriendly ? ` class="dm-${kind}"` : '';
 }
 
-function nameHtml(s, d, { big = true } = {}) {
+function nameHtml(s, d, { big = true, size = 0 } = {}) {
   const shown = s.profile.displayName || s.profile.name;
   if (!shown) return '';
-  const style = textStyle(d, { size: big ? d.fontSize + 5 : d.fontSize + 1, weight: 'bold' });
+  const fs = size || (big ? d.fontSize + 5 : d.fontSize + 1);
+  const style = textStyle(d, { size: fs, weight: 'bold' });
   const pronouns = s.profile.pronouns
-    ? ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: (big ? d.fontSize + 5 : d.fontSize + 1) - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
+    ? ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
     : '';
   return `<span${dmCls(d, 'txt')} style="${style}">${esc(shown)}</span>${pronouns}<br>`;
 }
@@ -96,6 +97,7 @@ function contactItems(s) {
   if (c.phone) items.push({ key: 'phone', label: 'Phone', text: c.phone, href: 'tel:' + c.phone.replace(/[^\d+]/g, '') });
   if (c.mobile) items.push({ key: 'mobile', label: 'Mobile', text: c.mobile, href: 'tel:' + c.mobile.replace(/[^\d+]/g, '') });
   if (c.website) items.push({ key: 'website', label: c.websiteLabel || 'Web', text: c.websiteLabel || c.website, href: normalizeUrl('custom', c.website) });
+  if (c.portfolio) items.push({ key: 'portfolio', label: c.portfolioLabel || 'Portfolio', text: c.portfolioLabel || c.portfolio, href: normalizeUrl('custom', c.portfolio) });
   if (c.address) items.push({ key: 'address', label: '', text: c.address, multiline: true });
   for (const line of s.customLines) {
     if (line.value) items.push({ key: 'custom', label: line.label, text: line.value });
@@ -210,9 +212,10 @@ function monogramHtml(s, d) {
     `font-family:Arial,Helvetica,sans-serif;font-size:${Math.round(size * 0.38)}px;font-weight:bold;">${esc(initials)}</span>`;
 }
 
-/* Logo cell content: hosted logo, or the initials monogram when enabled. */
+/* Logo cell content: hosted logo, or the initials monogram when enabled.
+   roundPhoto gives the side logo a circular crop. */
 function logoCellHtml(s, d) {
-  if (d.logoUrl) return imgTag(d.logoUrl, d.logoWidth, 'logo');
+  if (d.logoUrl) return imgTag(d.logoUrl, d.logoWidth, 'logo', d.roundPhoto ? 'border-radius:50%;' : '');
   if (d.useMonogram) return monogramHtml(s, d);
   return '';
 }
@@ -460,6 +463,39 @@ function monogramRows(s, d) {
   return rows.join('\n');
 }
 
+/* Photo card: portrait photo (or monogram) left, big name, everything else
+   stacked — the personal-profile signature. */
+function photocardRows(s, d) {
+  const rows = [];
+  const logoContent = logoCellHtml(s, d);
+  const identity = nameHtml(s, d, { size: d.fontSize + 7 }) + titleHtml(s, d) +
+    companyHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
+  if (logoContent || identity) {
+    const logoCell = logoContent
+      ? `<td class="m-cell" width="${d.logoWidth + 20}" valign="top" align="left" style="padding:2px 20px 0 0;">${logoContent}</td>`
+      : '';
+    rows.push(`<tr>${logoCell}<td class="m-cell" valign="top" align="left">${identity || '&nbsp;'}</td></tr>`);
+  }
+  rows.push(dividerHtml(d));
+  const stack = contactStackHtml(s, d, { labels: false });
+  if (stack) {
+    rows.push(`<tr><td colspan="2" align="left">${stack}</td></tr>`);
+    rows.push(spacerHtml(10));
+  }
+  const booking = bookingHtml(s, d);
+  if (booking) {
+    rows.push(`<tr><td colspan="2" align="left">${booking}</td></tr>`);
+    rows.push(spacerHtml(8));
+  }
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
+    rows.push(spacerHtml(4));
+  }
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
 /* ── document assembly ────────────────────────────────────────────────── */
 
 function darkStyleBlock(d) {
@@ -508,10 +544,20 @@ function renderSignature(state) {
     case 'roundel':  inner = roundelRows(s, d); break;
     case 'masthead': inner = mastheadRows(s, d); break;
     case 'monogram': inner = monogramRows(s, d); break;
+    case 'photocard': inner = photocardRows(s, d); break;
     default:         inner = classicRows(s, d);
   }
 
   const outerAlign = ['centered', 'roundel', 'monogram'].includes(d.template) ? 'center' : 'left';
+
+  /* Optional card wrapper: soft tint + border around the whole signature.
+     Outlook keeps the background/border (ignores the radius, acceptable). */
+  let bodyRows = inner;
+  if (d.showCard) {
+    bodyRows = `<tr><td style="background-color:${d.cardColor || '#f6f8fa'};border:1px solid ${d.dividerColor};border-radius:12px;padding:16px 18px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">${inner}</table>
+    </td></tr>`;
+  }
 
   const doc =
 `<!DOCTYPE html>
@@ -529,7 +575,7 @@ ${d.darkModeFriendly
   <tr>
     <td align="${outerAlign}">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;border-collapse:collapse;">
-${inner.split('\n').map(l => '        ' + l).join('\n')}
+${bodyRows.split('\n').map(l => '        ' + l).join('\n')}
       </table>
     </td>
   </tr>

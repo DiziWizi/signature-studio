@@ -19,6 +19,7 @@ function plainTextVersion(s) {
   if (c.phone) contact.push(c.phone);
   if (c.mobile) contact.push(c.mobile);
   if (c.website) contact.push(c.websiteLabel || c.website);
+  if (c.portfolio) contact.push(c.portfolioLabel || c.portfolio);
   if (c.address) contact.push(c.address.replace(/\r?\n/g, ', '));
   for (const l of s.customLines) if (l.value) contact.push(`${l.label ? l.label + ': ' : ''}${l.value}`);
   if (contact.length) lines.push(contact.join(' | '));
