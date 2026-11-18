@@ -732,6 +732,17 @@ function doVCard() {
   showToast('vCard downloaded — send it to contacts or add it to your phone.');
 }
 
+function doVCard4() {
+  if (typeof buildVCard4 !== 'function') {
+    showToast('vCard 4.0 builder unavailable.', 'err');
+    return;
+  }
+  const vcf = buildVCard4(state);
+  const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
+  downloadBlob(blob, `${slugify(state.meta.name)}-v4.vcf`);
+  showToast('vCard 4.0 downloaded — modern contacts apps read it, including pronouns.');
+}
+
 function doShowQR() {
   const vcf = buildVCard(state);
   const canvas = $('#qr-canvas');
@@ -874,7 +885,22 @@ function doSaveSnapshot() {
 
 /* ── image uploads ────────────────────────────────────────────────────── */
 
-function bindImageUpload(btnId, fileId, fieldPath) {
+/* Centre-crop an image to a square and return a data URL. Falls back to
+   JPEG when the PNG would exceed the size guard. */
+function cropToSquare(img, maxBytes = 512 * 1024) {
+  const side = Math.min(img.naturalWidth, img.naturalHeight);
+  if (!side) return null;
+  const canvas = document.createElement('canvas');
+  canvas.width = side;
+  canvas.height = side;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, side, side);
+  let url = canvas.toDataURL('image/png');
+  if (url.length > maxBytes) url = canvas.toDataURL('image/jpeg', 0.92);
+  return url;
+}
+
+function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
   $(btnId).addEventListener('click', () => $(fileId).click());
   $(fileId).addEventListener('change', e => {
     const file = e.target.files && e.target.files[0];
@@ -885,13 +911,25 @@ function bindImageUpload(btnId, fileId, fieldPath) {
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => {
-      setPath(state, fieldPath, reader.result);
+    const applyUrl = (url) => {
+      setPath(state, fieldPath, url);
       const el = document.querySelector(`[data-field="${fieldPath}"]`);
-      if (el) el.value = reader.result;
+      if (el) el.value = url;
       renderPreview();
       scheduleSave();
       showToast('Embedded image — most mail clients block these. Host it and paste a URL for reliability.', 'warn');
+    };
+    reader.onload = () => {
+      if (!square) {
+        applyUrl(reader.result);
+        return;
+      }
+      /* Square crop for logos/avatars: portrait photos would otherwise
+         be stretched into the square slot. */
+      const img = new Image();
+      img.onload = () => applyUrl(cropToSquare(img) || reader.result);
+      img.onerror = () => applyUrl(reader.result);
+      img.src = reader.result;
     };
     reader.readAsDataURL(file);
   });
@@ -1036,6 +1074,7 @@ function init() {
   $('#x-preset-export').addEventListener('click', () => { menu.classList.add('hidden'); doExportPreset(); });
   $('#x-preset-import').addEventListener('click', () => { menu.classList.add('hidden'); $('#preset-file').click(); });
   $('#x-vcard').addEventListener('click', () => { menu.classList.add('hidden'); doVCard(); });
+  $('#x-vcard4').addEventListener('click', () => { menu.classList.add('hidden'); doVCard4(); });
   $('#x-qr').addEventListener('click', () => { menu.classList.add('hidden'); doShowQR(); });
 
   /* preset file input */
@@ -1103,7 +1142,7 @@ function init() {
   });
 
   /* image uploads */
-  bindImageUpload('#upload-logo', '#logo-file', 'design.logoUrl');
+  bindImageUpload('#upload-logo', '#logo-file', 'design.logoUrl', { square: true });
   bindImageUpload('#upload-banner', '#banner-file', 'design.bannerUrl');
 
   /* PWA: register the service worker for offline use */

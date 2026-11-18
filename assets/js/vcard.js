@@ -170,3 +170,82 @@ function buildVCard(state) {
   lines.push('END:VCARD');
   return lines.join('\r\n') + '\r\n';
 }
+
+/* Assemble one vCard 4.0 logical line: RFC 6350 drops line folding, so each
+   property is a single physical line. Values use the same escaping as 3.0. */
+function vcardField4(name, params, value, components) {
+  let line = name;
+  if (params && params.length) line += ';' + params.map(p => vcardEscape(p)).join(';');
+  line += ':' + (components ? components.map(vcardEscape).join(';') : vcardEscape(value));
+  return line;
+}
+
+/* Build a vCard 4.0 string (RFC 6350) from the Signature Studio state shape.
+   Mirrors buildVCard() but emits every property on a single line (no folding)
+   and adds PRONOUN (RFC 6715). */
+function buildVCard4(state) {
+  const s = state || {};
+  const p = s.profile || {};
+  const c = s.contact || {};
+  const d = s.design || {};
+  const socials = Array.isArray(s.socials) ? s.socials : [];
+  const customs = Array.isArray(s.customLines) ? s.customLines : [];
+  const lines = [];
+
+  lines.push('BEGIN:VCARD');
+  lines.push('VERSION:4.0');
+
+  const fullName = String(p.name || '').trim();
+  const displayName = String(p.displayName || '').trim() || fullName;
+  const name = splitName(fullName);
+  if (name.family || name.given) {
+    lines.push(vcardField4('FN', null, displayName));
+    lines.push(vcardField4('N', null, null, [name.family, name.given, '', '', '']));
+  }
+
+  const orgParts = [p.company, p.department]
+    .map(x => String(x || '').trim())
+    .filter(Boolean);
+  if (orgParts.length) lines.push(vcardField4('ORG', null, null, orgParts));
+  if (p.title) lines.push(vcardField4('TITLE', null, p.title));
+
+  if (c.email) lines.push(vcardField4('EMAIL', ['TYPE=INTERNET'], c.email));
+  if (c.phone) lines.push(vcardField4('TEL', ['TYPE=WORK'], c.phone));
+  if (c.mobile) lines.push(vcardField4('TEL', ['TYPE=CELL'], c.mobile));
+  if (c.website) {
+    const href = (typeof normalizeUrl === 'function')
+      ? normalizeUrl('custom', c.website)
+      : (/^https?:/i.test(c.website) ? c.website : 'https://' + c.website);
+    lines.push(vcardField4('URL', null, href));
+  }
+  if (c.portfolio) {
+    const ph = (typeof normalizeUrl === 'function')
+      ? normalizeUrl('custom', c.portfolio)
+      : (/^https?:/i.test(c.portfolio) ? c.portfolio : 'https://' + c.portfolio);
+    lines.push(vcardField4('URL', ['TYPE=portfolio'], ph));
+  }
+
+  const adr = adrComponents(c.address);
+  if (adr) lines.push(vcardField4('ADR', ['TYPE=WORK'], null, adr));
+
+  for (const sc of socials) {
+    const url = socialUrlFor(sc);
+    if (url) lines.push(vcardField4('X-SOCIALPROFILE', ['TYPE=' + (sc.network || 'custom')], url));
+  }
+
+  const noteParts = [];
+  for (const cl of customs) {
+    const val = String(cl.value || '').trim();
+    if (!val) continue;
+    const label = String(cl.label || '').trim();
+    noteParts.push(label ? label + ': ' + val : val);
+  }
+  if (d.showLegal && d.legalText) noteParts.push(String(d.legalText));
+  if (noteParts.length) lines.push(vcardField4('NOTE', null, noteParts.join('\n')));
+
+  const pronouns = String(p.pronouns || '').trim();
+  if (pronouns) lines.push(vcardField4('PRONOUN', null, pronouns));
+
+  lines.push('END:VCARD');
+  return lines.join('\r\n') + '\r\n';
+}
