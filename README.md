@@ -165,8 +165,11 @@ docs/                   design notes, QA report, screenshots, roadmap
 ## Development
 
 ```sh
-npm run serve    # or: python3 -m http.server 8137
-npm run check    # syntax-check all JS + publish script
+npm run serve       # or: python3 -m http.server 8137
+npm run check       # syntax-check all JS + publish script
+npm run test:e2e    # Playwright suite (29 tests: boot, templates, socials,
+                    # checklist, crop, fixtures, export, undo, preset, PWA…)
+                    # first run: npm install && npx playwright install chromium
 ```
 
 The service worker is **cache-first**: after you change any file, bump
@@ -174,8 +177,9 @@ The service worker is **cache-first**: after you change any file, bump
 serving the old copy.
 
 CI (Forgejo Actions) runs the checks and a static smoke test on every push to
-`main`; pushes of `v*` tags additionally build source archives and publish
-them as a release when the `RELEASE_TOKEN` repo secret is set.
+`main`, followed by the full Playwright E2E suite; pushes of `v*` tags
+additionally build source archives and publish them as a release when the
+`RELEASE_TOKEN` repo secret is set.
 
 ## Privacy
 

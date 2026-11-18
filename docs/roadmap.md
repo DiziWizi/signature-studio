@@ -42,6 +42,14 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.10.0 — real-world import fixtures (Gmail, Gmail+image, Outlook
   desktop with pt sizes, Apple Mail) as a browser-side test suite;
   importer accepts pt font sizes for legal-line detection
+- [x] v0.11.0 — Playwright E2E suite (29 tests: boot/wizard, persona cycle,
+  all 10 templates, socials CRUD + reorder, checklist, square crop, import
+  fixtures, exports incl. clipboard + downloads, undo/redo, presets, PWA
+  offline) running in CI on every push and tag; repo made public
+- [ ] Forgejo Pages live demo — repo is public; blocked on the instance-level
+  `[pages] ENABLED` switch (no Pages API in this build, vhost not serving).
+  Once enabled: repo Settings → Pages → branch `main`, demo at
+  https://slopware.forgejo.dizi.dev/signature-studio/
 
 ## Suggested next steps
 

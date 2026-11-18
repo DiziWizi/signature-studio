@@ -220,6 +220,31 @@ square photo crop + vCard 4.0 (v0.9.0), real-world import fixtures (v0.10.0).
 
 ---
 
+# v0.11.0 addendum (Playwright E2E suite + public repo)
+
+Date: 2026-11-19 · Scope: full browser E2E suite in CI; repo made public for
+the upcoming Forgejo Pages demo.
+
+## Notes
+
+- 29 Playwright tests in `e2e/` cover boot/wizard, persona cycling, all 10
+  templates via unique srcdoc markers, socials CRUD + reorder, checklist,
+  square crop (decoded PNG dimensions), import fixtures (4/4), exports
+  (clipboard text/html, .html download, vCard 3.0 + 4.0 downloads, QR
+  modal), undo/redo, preset round-trip, PWA offline reload, and HTML import.
+- Verified 3× locally (29/29 each, ~6.5 s) and by the parent agent; CI runs
+  the suite on every push and tag with `npm ci` + `playwright install
+  --with-deps chromium` on the ubuntu-24.04 runner.
+- One benign console pattern is documented in `e2e/helper.js`: Playwright's
+  injected instrumentation script is blocked by the app's sandboxed
+  thumbnail iframes; a boot test asserts that this pattern is the ONLY
+  console error the app produces.
+- No app bugs surfaced by the suite. Repo made public after a secret scan
+  (env-var references only); `publish_release.py` token path is now
+  overridable via `FORGEJO_TOKEN_FILE`.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

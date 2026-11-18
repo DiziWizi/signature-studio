@@ -1,0 +1,110 @@
+/* Signature Studio — shared E2E helpers. */
+'use strict';
+
+const { expect } = require('@playwright/test');
+
+const BASE_URL = 'http://127.0.0.1:8137';
+
+/* BENIGN CONSOLE NOISE (documented, not silently swallowed):
+   The app renders its 10 template-thumbnail iframes with sandbox="" and
+   static HTML (index.html: <iframe class="tthumb" sandbox="">). Playwright's
+   test runner injects an instrumentation script into every frame; Chromium
+   blocks that injection in sandboxed frames and logs this exact console
+   error. It is an artifact of the harness, not the app — the app injects no
+   scripts into those frames, and the message never appears in a real
+   browser. Anything that does NOT match this pattern still fails. */
+const SANDBOX_INSTRUMENTATION_NOISE =
+  /^Blocked script execution in 'about:(blank|srcdoc)' because the document's frame is sandboxed and the 'allow-scripts' permission is not set\.$/;
+
+/**
+ * Boot the app into a clean, deterministic state and return a handle.
+ *
+ * The handle collects pageerror + console.error entries and exposes them
+ * (expectNoErrors below asserts on them — zero errors expected by default;
+ * any benign error must be documented in the spec that allowlists it).
+ *
+ * Sequence:
+ *  1. First visit (cache-busted) — lets the app register its service worker.
+ *  2. Wait for the SW to be active, then unregister it, wipe caches,
+ *     localStorage and sessionStorage.
+ *  3. Second visit with a fresh cache-buster — boots on clean storage, so the
+ *     first-run wizard opens; skip it.
+ */
+async function freshPage(page) {
+  const handle = {
+    page,
+    pageErrors: [],
+    consoleErrors: [],
+    wizardShown: false,
+  };
+  page.on('pageerror', err => handle.pageErrors.push(String((err && err.stack) || err)));
+  page.on('console', msg => {
+    if (msg.type() === 'error') handle.consoleErrors.push(msg.text());
+  });
+
+  await page.goto(`${BASE_URL}/?sw=purge&t=${Date.now()}`, { waitUntil: 'load' });
+  await page.evaluate(async () => {
+    try {
+      if ('serviceWorker' in navigator) {
+        /* ready() never settles if no registration succeeds — bound the wait. */
+        await Promise.race([
+          navigator.serviceWorker.ready,
+          new Promise(resolve => setTimeout(resolve, 2000)),
+        ]);
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
+      }
+    } catch (e) { /* ignore */ }
+    if (window.caches) {
+      try {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      } catch (e) { /* ignore */ }
+    }
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+
+  await page.goto(`${BASE_URL}/?t=${Date.now()}`, { waitUntil: 'load' });
+
+  /* The first-run wizard opens on fresh storage. Dismiss it. */
+  handle.wizardShown = await page
+    .locator('#modal-wizard')
+    .evaluate(el => !el.classList.contains('hidden'));
+  if (handle.wizardShown) await page.click('#wiz-skip');
+
+  return handle;
+}
+
+/**
+ * Assert zero page errors and zero console errors so far.
+ * The only tolerated entries are Playwright-instrumentation noise from the
+ * app's sandboxed thumbnail iframes — see SANDBOX_INSTRUMENTATION_NOISE.
+ * Page errors (pageerror) always fail.
+ */
+function rawErrors(handle) {
+  return [...handle.pageErrors, ...handle.consoleErrors];
+}
+
+async function expectNoErrors(handle) {
+  const errors = rawErrors(handle).filter(e => !SANDBOX_INSTRUMENTATION_NOISE.test(e));
+  expect(
+    errors,
+    'expected zero page/console errors (sandboxed-thumbnail instrumentation noise excluded):\n' +
+      errors.map(e => `  - ${e}`).join('\n')
+  ).toEqual([]);
+}
+
+/** Current srcdoc of the preview iframe ('' while unset). */
+async function previewSrcdoc(page) {
+  return (await page.locator('#preview-frame').getAttribute('srcdoc')) || '';
+}
+
+module.exports = {
+  BASE_URL,
+  freshPage,
+  expectNoErrors,
+  rawErrors,
+  SANDBOX_INSTRUMENTATION_NOISE,
+  previewSrcdoc,
+};
