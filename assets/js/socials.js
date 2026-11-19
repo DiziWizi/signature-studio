@@ -31,6 +31,11 @@ const NETWORKS = [
   { id: 'matrix',    name: 'Matrix',      glyph: 'M',  color: '#0f8a5f', prefix: 'https://matrix.to/#/',        placeholder: '@user:server or full URL' },
   { id: 'keybase',   name: 'Keybase',     glyph: 'K',  color: '#33a0ff', prefix: 'https://keybase.io/',           placeholder: 'username or full URL' },
   { id: 'threads',   name: 'Threads',     glyph: 'T',  color: '#000000', prefix: 'https://www.threads.net/@',     placeholder: 'username or full URL' },
+  { id: 'paypal',    name: 'PayPal',      glyph: 'P',  color: '#003087', prefix: 'https://paypal.me/',             placeholder: 'username or full URL' },
+  { id: 'venmo',     name: 'Venmo',       glyph: 'V',  color: '#3d95ce', prefix: 'https://venmo.com/',              placeholder: 'username or full URL' },
+  { id: 'cashapp',   name: 'Cash App',    glyph: '$',  color: '#00d632', prefix: 'https://cash.app/',               placeholder: '$cashtag or full URL' },
+  { id: 'revolut',   name: 'Revolut',     glyph: 'R',  color: '#0075eb', prefix: 'https://revolut.me/',             placeholder: 'username or full URL' },
+  { id: 'monzo',     name: 'Monzo',       glyph: 'M',  color: '#14233c', prefix: 'https://monzo.me/',               placeholder: 'username or full URL' },
   { id: 'custom',    name: 'Custom link…',glyph: '↗',  color: '#5b6472', prefix: '',                          placeholder: 'https://…' },
 ];
 
@@ -73,6 +78,11 @@ const SOCIAL_HOST_PATTERNS = [
   [/mastodon/, 'mastodon'],
   [/keybase\.io$/, 'keybase'],
   [/threads\.net$/, 'threads'],
+  [/paypal(\.me)?$/, 'paypal'],
+  [/venmo\.com$/, 'venmo'],
+  [/cash\.app$/, 'cashapp'],
+  [/revolut(\.me)?$/, 'revolut'],
+  [/monzo\.me$/, 'monzo'],
 ];
 
 function detectNetwork(hostname) {

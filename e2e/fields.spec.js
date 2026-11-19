@@ -100,3 +100,21 @@ test('new privacy networks are available in the picker and render', async ({ pag
 
   await expectNoErrors(h);
 });
+
+test('payment networks are available and render their chips', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+
+  await page.click('#add-social');
+  const row = page.locator('.social-row').last();
+  const options = await row.locator('.soc-net option').evaluateAll(els => els.map(e => e.value));
+  for (const net of ['paypal', 'venmo', 'cashapp', 'revolut', 'monzo']) {
+    expect(options, `network ${net} present`).toContain(net);
+  }
+
+  await row.locator('.soc-net').selectOption('paypal');
+  await row.locator('.soc-url').fill('paypal.me/ada');
+  await expect.poll(() => previewSrcdoc(page)).toContain('paypal.me/ada');
+
+  await expectNoErrors(h);
+});

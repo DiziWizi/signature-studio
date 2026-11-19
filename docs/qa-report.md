@@ -541,6 +541,21 @@ Date: 2026-11-19 · Scope: banner campaign links and configurable width.
 
 ---
 
+# v0.23.0 addendum (payment networks)
+
+Date: 2026-11-19 · Scope: tip/payment links for creators and freelancers.
+
+## Notes
+
+- Five networks added to NETWORKS: PayPal, Venmo, Cash App, Revolut,
+  Monzo (with prefixes and placeholders) + SOCIAL_HOST_PATTERNS entries so
+  HTML import guesses them. Done in-parent (no subagent — single-file
+  change).
+- E2E: payment networks present in the picker and the PayPal chip renders
+  with its normalized URL. 67/67 twice locally; CI green on the tag.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

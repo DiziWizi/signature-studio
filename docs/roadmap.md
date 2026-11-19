@@ -92,6 +92,8 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.22.0 — clickable banner (bannerLink wraps the banner image in
   Banner and Split layouts, javascript: schemes refused) and a signature
   width slider (400–600, drives the inner table width); E2E now 66
+- [x] v0.23.0 — payment networks: PayPal, Venmo, Cash App, Revolut, Monzo
+  (chips, quick-add dropdown, URL detection); E2E now 67
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.
