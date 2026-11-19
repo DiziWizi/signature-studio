@@ -12,6 +12,10 @@ module.exports = defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
+  /* CI runners are small: cap workers and give slow specs breathing room
+     (a crowded runner was observed to fail the suite at default workers). */
+  workers: process.env.CI ? 4 : undefined,
+  timeout: process.env.CI ? 60_000 : 30_000,
   reporter: [
     ['list'],
     ['html', { open: 'never' }],
