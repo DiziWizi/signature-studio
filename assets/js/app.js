@@ -69,9 +69,21 @@ function updateUndoButtons() {
 
 /* ── preview ──────────────────────────────────────────────────────────── */
 
-/* Synchronous preview: no timers, so it stays reliable even in browsers
-   that throttle background tabs. Rendering is cheap (a few KB of HTML). */
+/* Coalesced preview: at most one render per animation frame. Typing bursts
+   in a single frame collapse to one srcdoc swap instead of N, and the
+   thumbnail pass below is throttled further. rAF simply does not fire in
+   background tabs (no input happens there either), so reliability keeps. */
+let previewQueued = false;
 function renderPreview() {
+  if (previewQueued) return;
+  previewQueued = true;
+  requestAnimationFrame(() => {
+    previewQueued = false;
+    renderPreviewNow();
+  });
+}
+
+function renderPreviewNow() {
   const frame = $('#preview-frame');
   const html = renderSignature(state).replace(
     '</body>',
@@ -85,8 +97,29 @@ function renderPreview() {
 
 /* Live template thumbnails: real renders of the current state per template,
    scaled down 0.13× in the picker. Embedded data: images are stripped so
-   typing never re-decodes them across all thumbnails. */
+   typing never re-decodes them across all thumbnails. Two gates on top:
+   (a) the whole pass is skipped while the Design section is closed, and
+   (b) when open it runs at most every 400ms with a trailing re-run — 17
+   srcdoc parses per keystroke is the heaviest cost in the editor. */
+let thumbsTimer = 0;
+let thumbsTrailing = false;
+let thumbsNeedsRebuild = true;
 function renderThumbs() {
+  const sec = document.querySelector('details[data-sec="design"]');
+  if (!sec || !sec.open) { thumbsNeedsRebuild = true; return; }
+  const now = Date.now();
+  if (now - lastThumbsAt < 400) {
+    thumbsTrailing = true;
+    if (!thumbsTimer) {
+      thumbsTimer = setTimeout(() => {
+        thumbsTimer = 0;
+        if (thumbsTrailing) { thumbsTrailing = false; renderThumbs(); }
+      }, 450);
+    }
+    return;
+  }
+  lastThumbsAt = now;
+  thumbsNeedsRebuild = false;
   const thumbs = document.querySelectorAll('.tthumb');
   if (!thumbs.length) return;
   const base = clone(state);
@@ -97,6 +130,7 @@ function renderThumbs() {
     iframe.srcdoc = html;
   }
 }
+let lastThumbsAt = 0;
 
 /* Time-throttled autosave: at most one write per second, plus a flush on
    unload. No setTimeout — same background-throttling reason as above. */
@@ -1586,6 +1620,7 @@ function init() {
           cur[id] = d.open;
           localStorage.setItem(SECTIONS_KEY, JSON.stringify(cur));
         } catch (e) { /* ignore */ }
+        if (id === 'design' && d.open && thumbsNeedsRebuild) renderThumbs();
       });
     });
   } catch (e) { /* ignore */ }

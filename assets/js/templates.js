@@ -339,22 +339,28 @@ function logoCellHtml(s, d) {
 function qrTableHtml(s, d) {
   if (!d.showQr) return '';
   if (typeof buildVCard !== 'function' || typeof qrcode !== 'function') return '';
-  let qr;
-  try {
-    qr = qrcode(0, 'M');
-    qr.addData(buildVCard(s));
-    qr.make();
-  } catch (e) {
-    return '';
-  }
-  const n = qr.getModuleCount();
-  if (!n) return '';
   const raw = String(d.qrSize ?? '').trim();
   const target = (() => {
     if (raw === '') return 60;
     const num = Number(raw);
     return Number.isFinite(num) ? Math.min(96, Math.max(32, num)) : 60;
   })();
+  /* The matrix + cell table are pure functions of (vCard, size): cache the
+     built table so keystrokes never re-encode an 11k-cell grid. */
+  const vcard = buildVCard(s);
+  const key = `${vcard}|${target}`;
+  const cached = qrTableCache.get(key);
+  if (cached) return cached;
+  let qr;
+  try {
+    qr = qrcode(0, 'M');
+    qr.addData(vcard);
+    qr.make();
+  } catch (e) {
+    return '';
+  }
+  const n = qr.getModuleCount();
+  if (!n) return '';
   const c = Math.max(1, Math.round(target / n));
   const width = n * c;
   const rows = [];
@@ -367,8 +373,13 @@ function qrTableHtml(s, d) {
     rows.push(`<tr>${cells.join('')}</tr>`);
   }
   const table = `<table role="presentation" width="${width}" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">${rows.join('')}</table>`;
-  return spacerHtml(8) + '\n' + `<tr><td colspan="2" align="left">${table}</td></tr>`;
+  const out = spacerHtml(8) + '\n' + `<tr><td colspan="2" align="left">${table}</td></tr>`;
+  if (qrTableCache.size >= 3) qrTableCache.delete(qrTableCache.keys().next().value);
+  qrTableCache.set(key, out);
+  return out;
 }
+
+const qrTableCache = new Map();
 
 /* ── layouts ──────────────────────────────────────────────────────────── */
 
