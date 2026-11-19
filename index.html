@@ -45,9 +45,9 @@
     <button class="btn btn-icon" id="btn-undo" type="button" data-i18n-title="topbar.undoTitle" data-i18n-aria="topbar.undoAria" title="Undo (Ctrl+Z)" aria-label="Undo (Ctrl+Z)" disabled>↶</button>
     <button class="btn btn-icon" id="btn-redo" type="button" data-i18n-title="topbar.redoTitle" data-i18n-aria="topbar.redoAria" title="Redo (Ctrl+Shift+Z)" aria-label="Redo (Ctrl+Shift+Z)" disabled>↷</button>
     <div class="export-wrap">
-      <button class="btn btn-primary" id="btn-export" type="button" data-i18n="topbar.export">Export ▾</button>
+      <button class="btn btn-primary" id="btn-export" type="button" data-i18n="topbar.export" data-i18n-title="topbar.exportShortcut" title="Export (Ctrl+Shift+E)">Export ▾</button>
       <div class="menu hidden" id="export-menu" role="menu">
-        <button role="menuitem" id="x-copy" type="button" data-i18n="topbar.copy">Copy to clipboard</button>
+        <button role="menuitem" id="x-copy" type="button" data-i18n="topbar.copy" data-i18n-title="topbar.copyShortcut" title="Copy to clipboard (Ctrl+Enter)">Copy to clipboard</button>
         <button role="menuitem" id="x-copy-fragment" type="button" data-i18n="topbar.copyFragment">Copy table fragment (for CMS)</button>
         <button role="menuitem" id="x-apple-mail" type="button" data-i18n="topbar.appleMail">Download for Apple Mail (.mailsignature)</button>
         <button role="menuitem" id="x-thunderbird" type="button" data-i18n="topbar.thunderbird">Download for Thunderbird (.html)</button>
@@ -484,9 +484,15 @@
 <div class="overlay hidden" id="modal-import" role="dialog" aria-modal="true" aria-labelledby="import-title">
   <div class="modal">
     <h2 id="import-title" data-i18n="import.title">Import an existing signature</h2>
-    <p class="hint" data-i18n="import.hint">Paste the HTML of a signature you already use. Signature Studio will try to recover the name, contact details, links and images. It’s best-effort — always review the result.</p>
+    <div class="seg" id="seg-import-mode" role="radiogroup" aria-label="Import source">
+      <label><input type="radio" name="importMode" value="html" checked><span data-i18n="import.modeHtml">HTML</span></label>
+      <label><input type="radio" name="importMode" value="vcard"><span data-i18n="import.modeVcard">vCard (.vcf)</span></label>
+    </div>
+    <p class="hint" id="import-hint" data-i18n="import.hint">Paste the HTML of a signature you already use. Signature Studio will try to recover the name, contact details, links and images. It’s best-effort — always review the result.</p>
     <textarea id="import-src" rows="7" data-autofocus placeholder="&lt;table&gt;…&lt;/table&gt; or a full HTML document"></textarea>
+    <input type="file" id="vcard-file" accept=".vcf,text/vcard,text/x-vcard" hidden>
     <div class="modal-actions">
+      <button class="btn btn-sm hidden" id="btn-vcard-file" type="button" data-i18n="import.vcardFile">Choose .vcf file…</button>
       <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
       <button class="btn btn-primary" id="import-parse" type="button" data-i18n="import.parse">Parse</button>
     </div>
@@ -747,6 +753,7 @@
 <script src="assets/js/audit.js"></script>
 <script src="assets/js/zip.js"></script>
 <script src="assets/js/bulk.js"></script>
+<script src="assets/js/vcard-import.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

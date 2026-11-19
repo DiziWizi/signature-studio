@@ -1120,7 +1120,47 @@ function summarizeParsed(p) {
   return parts.join('<br>');
 }
 
+/* vCard mode: parse the pasted .vcf into a field set and offer a merge. */
+function doVCardParse() {
+  const raw = $('#import-src').value;
+  const v = parseVCard(raw);
+  const summary = $('#import-summary');
+  const applyRow = $('#import-apply-row');
+  summary.classList.remove('hidden');
+  if (v.error) {
+    summary.innerHTML = t('import.vcardNothing');
+    applyRow.classList.add('hidden');
+    lastParsedImport = null;
+    return;
+  }
+  const found = [];
+  if (v.profile.name) found.push(t('field.name'));
+  if (v.contact.email) found.push(t('field.email'));
+  if (v.contact.phone) found.push(t('field.phone'));
+  if (v.contact.mobile) found.push(t('field.mobile'));
+  if (v.profile.title) found.push(t('field.title'));
+  if (v.profile.company) found.push(t('field.company'));
+  if (v.contact.website) found.push(t('field.website'));
+  if (v.profile.pronouns) found.push(t('field.pronouns'));
+  if (v.contact.pgpKey) found.push(t('field.pgp'));
+  if (!found.length) {
+    summary.innerHTML = t('import.vcardNothing');
+    applyRow.classList.add('hidden');
+    lastParsedImport = null;
+    return;
+  }
+  summary.innerHTML = t('import.vcardSummary', { fields: found.join(', ') }) +
+    (v.photoIgnored ? ` <span class="micro">${t('import.vcardPhotoIgnored')}</span>` : '');
+  applyRow.classList.remove('hidden');
+  lastParsedImport = { kind: 'vcard', vcard: v };
+}
+
 function doImportParse() {
+  const mode = (document.querySelector('input[name="importMode"]:checked') || {}).value || 'html';
+  if (mode === 'vcard') {
+    doVCardParse();
+    return;
+  }
   const raw = $('#import-src').value;
   const p = parseSignatureHTML(raw);
   const summary = $('#import-summary');
@@ -1144,6 +1184,32 @@ function doImportApply() {
   if (!lastParsedImport) return;
   const p = lastParsedImport;
   pushHistory();
+  if (p.kind === 'vcard') {
+    /* Merge-only: absent fields keep their current values. */
+    const v = p.vcard;
+    const pick = (a, b) => a === undefined || a === '' ? b : a;
+    state.profile.name = pick(v.profile.name, state.profile.name);
+    state.profile.title = pick(v.profile.title, state.profile.title);
+    state.profile.company = pick(v.profile.company, state.profile.company);
+    state.profile.department = pick(v.profile.department, state.profile.department);
+    state.profile.pronouns = pick(v.profile.pronouns, state.profile.pronouns);
+    state.profile.birthday = pick(v.profile.birthday, state.profile.birthday);
+    state.profile.languages = pick(v.profile.languages, state.profile.languages);
+    state.profile.honorificPrefix = pick(v.profile.honorificPrefix, state.profile.honorificPrefix);
+    state.profile.honorificSuffix = pick(v.profile.honorificSuffix, state.profile.honorificSuffix);
+    state.contact.email = pick(v.contact.email, state.contact.email);
+    state.contact.phone = pick(v.contact.phone, state.contact.phone);
+    state.contact.mobile = pick(v.contact.mobile, state.contact.mobile);
+    state.contact.website = pick(v.contact.website, state.contact.website);
+    state.contact.address = pick(v.contact.address, state.contact.address);
+    state.contact.pgpKey = pick(v.contact.pgpKey, state.contact.pgpKey);
+    closeOverlay('#modal-import');
+    rebuildAll();
+    scheduleSave();
+    showToast(t('toast.imported'), '', { key: 'toast.imported' });
+    lastParsedImport = null;
+    return;
+  }
   if (p.profile.name) state.profile.name = p.profile.name;
   if (p.profile.title) state.profile.title = p.profile.title;
   if (p.profile.department) state.profile.department = p.profile.department;
@@ -1445,6 +1511,25 @@ function init() {
     $('#import-apply-row').classList.add('hidden');
     lastParsedImport = null;
   });
+  /* Import mode switch: HTML vs vCard. */
+  document.querySelectorAll('input[name="importMode"]').forEach(r => r.addEventListener('change', () => {
+    const vcard = document.querySelector('input[name="importMode"]:checked').value === 'vcard';
+    $('#import-hint').textContent = vcard ? t('import.hintVcard') : t('import.hint');
+    $('#btn-vcard-file').classList.toggle('hidden', !vcard);
+    $('#import-src').placeholder = vcard ? 'BEGIN:VCARD…' : '<table>…</table> or a full HTML document';
+    lastParsedImport = null;
+    $('#import-summary').classList.add('hidden');
+    $('#import-apply-row').classList.add('hidden');
+  }));
+  $('#btn-vcard-file').addEventListener('click', () => $('#vcard-file').click());
+  $('#vcard-file').addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => { $('#import-src').value = reader.result; doVCardParse(); };
+    reader.readAsText(file);
+  });
   $('#btn-saved').addEventListener('click', openSavedPanel);
   $('#btn-reset').addEventListener('click', () => {
     showConfirm(t('confirm.startOverTitle'), t('confirm.startOverBody'), () => {
@@ -1461,6 +1546,22 @@ function init() {
   $('#btn-export').addEventListener('click', e => {
     e.stopPropagation();
     menu.classList.toggle('hidden');
+  });
+
+  /* Keyboard shortcuts: Ctrl+Enter copies, Ctrl+Shift+E opens the export
+     menu. Both work from anywhere in the editor. */
+  document.addEventListener('keydown', e => {
+    if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (k === 'enter') {
+      e.preventDefault();
+      guardOutlookExport(() => doCopy());
+      return;
+    }
+    if (k === 'e' && e.shiftKey) {
+      e.preventDefault();
+      document.getElementById('btn-export').click();
+    }
   });
   document.addEventListener('click', e => {
     if (!e.target.closest('.export-wrap')) menu.classList.add('hidden');
