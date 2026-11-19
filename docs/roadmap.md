@@ -141,6 +141,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   base64 modes untouched; bulk ZIP gains a manifest.json + extracted
   image assets when CID is on; checklist warns about hand-pasting;
   E2E now 134
+- [x] v0.49.0 — image optimisation on export: bulk CID assets are
+  downscaled to their display size and re-encoded (JPEG 0.85 for
+  photos, PNG for transparency, keeps whichever is smaller); the audit
+  now recommends the right image strategy; E2E now 137
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

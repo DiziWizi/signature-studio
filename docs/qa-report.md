@@ -794,6 +794,28 @@ mail-pipeline deployments, with the bulk manifest.
 
 ---
 
+# v0.49.0 addendum (export image optimisation + audit strategy advice)
+
+Date: 2026-11-19 · Scope: per-message weight for CID deployments.
+
+## Notes
+
+- bulkAssetsAsync replaces the synchronous manifest step: data-URI
+  assets are decoded, downscaled to their display slot (logo width,
+  600px banner, 96px footer, chip-size socials) and re-encoded —
+  JPEG 0.85 when fully opaque, PNG when any pixel is transparent.
+  The optimiser keeps the RAW payload when re-encoding would be
+  bigger (tiny or solid-colour PNGs compress better than JPEG).
+- Manifest entries gain width/height/optimized.
+- Audit: CID mode gets an info line naming the manifest/pipeline;
+  normal-mode data-URI images get an info line pointing at hosting
+  or CID.
+- E2E: noise-image test proves 512px→72px JPEG conversion and ZIP
+  shrinkage; transparent-image test pins PNG retention; audit test
+  covers both advisories. Suite 137/137 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

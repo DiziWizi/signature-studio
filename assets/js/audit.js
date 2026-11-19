@@ -72,6 +72,16 @@ function buildAudit(state) {
     items.push({ kind: 'warn', text: t('audit.customHtml') });
   }
 
+  /* Image strategy: point the user at the right mode for their setup. */
+  if (s.imageMode === 'cid') {
+    items.push({ kind: 'info', text: t('audit.cidModeInfo') });
+  } else {
+    const dataUriImages = [s.logoUrl, s.bannerUrl, s.footerLeftImg, s.footerCenterImg, s.footerRightImg]
+      .concat((state.socials || []).map(x => x.iconUrl))
+      .filter(v => String(v || '').startsWith('data:'));
+    if (dataUriImages.length) items.push({ kind: 'info', text: t('audit.dataUriInfo') });
+  }
+
   if (!items.length) items.push({ kind: 'ok', text: t('audit.allGood') });
 
   const warns = items.filter(i => i.kind === 'warn').length;

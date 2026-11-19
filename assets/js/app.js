@@ -1160,7 +1160,7 @@ function openBulk() {
   setTimeout(() => $('#bulk-csv').focus(), 30);
 }
 
-function runBulk() {
+async function runBulk() {
   const csv = $('#bulk-csv').value;
   const res = bulkGenerate(state, csv);
   const line = $('#bulk-result');
@@ -1172,7 +1172,16 @@ function runBulk() {
     line.textContent = t('bulk.noRows');
     return;
   }
-  const zip = zipStore(res.files);
+  const files = res.files.slice();
+  if (state.design && state.design.imageMode === 'cid') {
+    line.textContent = t('bulk.optimizing');
+    const m = await bulkAssetsAsync(state);
+    if (m) {
+      files.push({ name: 'manifest.json', data: JSON.stringify(m.manifest, null, 2) });
+      for (const a of m.assets) files.push({ name: a.name, data: a.data });
+    }
+  }
+  const zip = zipStore(files);
   const blob = new Blob([zip], { type: 'application/zip' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);

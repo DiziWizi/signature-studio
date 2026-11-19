@@ -66,9 +66,74 @@ function bulkColumnMap(header) {
 
 /* CID mode: map every signature image to its deterministic Content-ID
    (sigstudio-logo, sigstudio-banner, sigstudio-footer-left/…). Data-URI
-   assets are decoded to real files the zip carries; hosted URLs are
-   listed by reference so a mailer can fetch them. */
-function bulkManifest(state) {
+   assets are decoded, downscaled to their display size and re-encoded
+   (JPEG 0.85 for opaque photos, PNG for transparency) so attached parts
+   cost the least possible per message; hosted URLs are listed by
+   reference so a mailer can fetch them. */
+function dataUriBytes(uri) {
+  const m = String(uri || '').match(/^data:[^,]+,(.*)$/s);
+  if (!m) return 0;
+  return Math.round((m[1].replace(/\s+/g, '').length * 3) / 4);
+}
+
+function rawAsset(dataUri, key, mime) {
+  const m = String(dataUri).match(/^data:[^,]+,(.*)$/s);
+  const bin = m ? atob(m[1]) : '';
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  let ext = (mime || 'image/png').split('/')[1].replace(/\+.*/, '');
+  if (ext === 'jpeg') ext = 'jpg';
+  return { cid: `sigstudio-${key}`, file: `images/sigstudio-${key}.${ext}`, bytes, mime: mime || 'image/png', width: 0, height: 0, optimized: false };
+}
+
+function optimizeImage(dataUri, targetWidth) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const scale = Math.min(1, targetWidth / img.naturalWidth);
+        const w = Math.max(1, Math.round(img.naturalWidth * scale));
+        const h = Math.max(1, Math.round(img.naturalHeight * scale));
+        const c = document.createElement('canvas');
+        c.width = w;
+        c.height = h;
+        const x = c.getContext('2d');
+        x.drawImage(img, 0, 0, w, h);
+        const data = x.getImageData(0, 0, w, h).data;
+        let transparent = false;
+        for (let i = 3; i < data.length; i += 4) {
+          if (data[i] < 250) { transparent = true; break; }
+        }
+        const mime = transparent ? 'image/png' : 'image/jpeg';
+        const dataUrl = c.toDataURL(mime, mime === 'image/jpeg' ? 0.85 : undefined);
+        const b64 = dataUrl.split(',')[1];
+        const bin = atob(b64);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        resolve({ bytes, mime, width: w, height: h, optimized: true });
+      } catch (e) {
+        resolve(null); /* caller falls back to the raw payload */
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = dataUri;
+  });
+}
+
+/* Display widths the optimiser targets (px). */
+function bulkTargetWidth(state, key) {
+  const d = state.design || {};
+  if (key === 'logo') return Math.min(300, Math.max(20, Number(d.logoWidth) || 72));
+  if (key === 'banner') return 600;
+  if (key.startsWith('footer-')) return 96;
+  if (key.startsWith('social-')) {
+    const n = Number(d.socialSize);
+    return Number.isFinite(n) ? Math.min(28, Math.max(16, n)) : 22;
+  }
+  return 600;
+}
+
+async function bulkAssetsAsync(state) {
   const d = state.design || {};
   const fields = [
     ['logo', d.logoUrl],
@@ -87,15 +152,27 @@ function bulkManifest(state) {
     if (!v) continue;
     const m = v.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/s);
     if (m) {
-      const mime = m[1];
-      let ext = mime.split('/')[1].replace(/\+.*/, '');
-      if (ext === 'jpeg') ext = 'jpg';
-      const file = `images/sigstudio-${key}.${ext}`;
-      const bin = atob(m[2]);
-      const bytes = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-      assets.push({ name: file, data: bytes });
-      manifest.images.push({ cid: `sigstudio-${key}`, file, mime });
+      const sourceMime = m[1];
+      const originalBytes = dataUriBytes(v);
+      const opt = await optimizeImage(v, bulkTargetWidth(state, key));
+      const entry = { cid: `sigstudio-${key}` };
+      if (opt && opt.bytes.length < originalBytes) {
+        let ext = opt.mime.split('/')[1].replace(/\+.*/, '');
+        if (ext === 'jpeg') ext = 'jpg';
+        entry.file = `images/sigstudio-${key}.${ext}`;
+        entry.mime = opt.mime;
+        entry.width = opt.width;
+        entry.height = opt.height;
+        entry.optimized = true;
+        assets.push({ name: entry.file, data: opt.bytes });
+      } else {
+        const raw = rawAsset(v, key, sourceMime);
+        entry.file = raw.file;
+        entry.mime = raw.mime;
+        entry.optimized = false;
+        assets.push({ name: raw.file, data: raw.bytes });
+      }
+      manifest.images.push(entry);
     } else {
       manifest.images.push({ cid: `sigstudio-${key}`, url: v });
     }
@@ -138,13 +215,6 @@ function bulkGenerate(state, csvText) {
     }
     out.files.push({ name: `${slugify(name)}.html`, data: renderSignature(clone) });
     out.generated += 1;
-  }
-  if (state.design && state.design.imageMode === 'cid') {
-    const m = bulkManifest(state);
-    if (m) {
-      out.files.push({ name: 'manifest.json', data: JSON.stringify(m.manifest, null, 2) });
-      for (const a of m.assets) out.files.push(a);
-    }
   }
   return out;
 }
