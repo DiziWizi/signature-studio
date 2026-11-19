@@ -81,7 +81,8 @@ async function freshPage(page) {
       elements: true,
     }));
     localStorage.setItem('sigstudio.tour.done', '1');
-  });
+    localStorage.setItem('sigstudio.mode', 'advanced');
+    });
 
   await page.goto(`${BASE_URL}/?t=${Date.now()}`, { waitUntil: 'load' });
 

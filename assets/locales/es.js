@@ -504,6 +504,8 @@ window.SIG_LOCALES.es = {
   'audit.allGood': "Nada que informar.",
   'audit.summaryClean': "Sin avisos — esta firma está limpia.",
   'audit.summaryWarn': "{n} aviso(s) encontrados.",
+  'mode.simple': "Simple",
+  'mode.advanced': "Avanzado",
   'menu.mailFormats': "Apps de correo y formatos",
   'menu.powerTools': "Herramientas avanzadas",
   'manualCopy.title': "Cópielo usted mismo",

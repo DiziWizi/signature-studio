@@ -1610,6 +1610,62 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
   });
 }
 
+/* ── simple / advanced editor mode ────────────────────────────────────── */
+
+/* Simple mode hides every [data-advanced] control (expert sections,
+   fine-tuning, power tools) via CSS — state is never touched, so
+   switching back restores everything exactly. */
+const MODE_KEY = 'sigstudio.mode';
+let editorMode = 'simple';
+
+function draftHasAdvanced(d) {
+  if (!d) return false;
+  const s = d.design || {};
+  return Boolean(
+    String(s.customHtml || '').trim() ||
+    String(s.supportChatUrl || '').trim() ||
+    String(s.supportTitle || '').trim() ||
+    String(s.footerLeftImg || '').trim() ||
+    String(s.footerCenterImg || '').trim() ||
+    String(s.footerRightImg || '').trim() ||
+    String(s.rowGap ?? '').trim() || String(s.cellPad ?? '').trim() ||
+    String(s.lineHeight ?? '').trim() || String(s.textAlign ?? '').trim() ||
+    String(s.linkColor || '').trim() || String(s.nameColor || '').trim() ||
+    String(s.customFont || '').trim() ||
+    (Array.isArray(s.blockOrder) && s.blockOrder.join(',') !== DEFAULT_BLOCK_ORDER.join(','))
+  );
+}
+
+function applyMode() {
+  document.documentElement.classList.toggle('mode-simple', editorMode === 'simple');
+  const s = $('#mode-simple');
+  const a = $('#mode-advanced');
+  if (s) s.setAttribute('aria-pressed', String(editorMode === 'simple'));
+  if (a) a.setAttribute('aria-pressed', String(editorMode === 'advanced'));
+}
+
+function setMode(m) {
+  editorMode = m;
+  try { localStorage.setItem(MODE_KEY, m); } catch (e) { /* ignore */ }
+  applyMode();
+}
+
+function initMode() {
+  try {
+    const stored = localStorage.getItem(MODE_KEY);
+    if (stored === 'simple' || stored === 'advanced') {
+      editorMode = stored;
+    } else {
+      /* No preference: existing advanced content keeps its user in
+         Advanced; everyone else starts Simple. */
+      editorMode = draftHasAdvanced(loadDraft()) ? 'advanced' : 'simple';
+    }
+  } catch (e) { editorMode = 'simple'; }
+  applyMode();
+  $('#mode-simple').addEventListener('click', () => setMode('simple'));
+  $('#mode-advanced').addEventListener('click', () => setMode('advanced'));
+}
+
 /* "Update available" pill: a new service worker took over mid-session. */
 function showUpdatePill() {
   $('#update-pill').classList.remove('hidden');
@@ -2027,6 +2083,7 @@ function init() {
   }
   $('#update-reload').addEventListener('click', () => location.reload());
 
+  initMode();
   rebuildAll();
   updateUndoButtons();
 

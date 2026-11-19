@@ -506,6 +506,8 @@ window.SIG_LOCALES.en = {
   'audit.allGood': "Nothing to report.",
   'audit.summaryClean': "No warnings — this signature is clean.",
   'audit.summaryWarn': "{n} warning(s) found.",
+  'mode.simple': "Simple",
+  'mode.advanced': "Advanced",
   'menu.mailFormats': "Mail apps & formats",
   'menu.powerTools': "Power tools",
   'manualCopy.title': "Copy it yourself",

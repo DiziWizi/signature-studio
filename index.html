@@ -30,6 +30,10 @@
   <nav class="top-actions">
     <button class="btn" id="btn-sample" type="button" data-i18n="topbar.sample">Sample data</button>
     <button class="btn" id="btn-guide" type="button" data-i18n-title="topbar.guideTitle" data-i18n="topbar.guide">Guide</button>
+    <div class="seg mode-seg" id="seg-mode" role="group" aria-label="Editor mode">
+      <button type="button" id="mode-simple" data-mode="simple" data-i18n="mode.simple" aria-pressed="true">Simple</button>
+      <button type="button" id="mode-advanced" data-mode="advanced" data-i18n="mode.advanced" aria-pressed="false">Advanced</button>
+    </div>
     <select class="btn" id="lang-select" data-i18n-aria="topbar.language" aria-label="Language">
       <option value="en" data-i18n="topbar.langEn">English</option>
       <option value="de" data-i18n="topbar.langDe">Deutsch</option>
@@ -58,14 +62,14 @@
         <button role="menuitem" id="x-vcard4" type="button" data-i18n="topbar.vcard4">Download vCard 4.0 (.vcf)</button>
         <button role="menuitem" id="x-qr" type="button" data-i18n="topbar.qr">Show QR code</button>
         <hr class="sep">
-        <span class="menu-group" role="presentation" data-i18n="menu.powerTools">Power tools</span>
-        <button role="menuitem" id="x-copy-fragment" type="button" data-i18n="topbar.copyFragment">Copy table fragment (for CMS)</button>
-        <button role="menuitem" id="x-preset-export" type="button" data-i18n="topbar.presetExport">Export preset (.json)</button>
-        <button role="menuitem" id="x-preset-import" type="button" data-i18n="topbar.presetImport">Import preset (.json)</button>
-        <button role="menuitem" id="x-share" type="button" data-i18n="topbar.share">Copy share link</button>
-        <button role="menuitem" id="x-json" type="button" data-i18n="topbar.jsonEdit">Edit as JSON…</button>
-        <button role="menuitem" id="x-audit" type="button" data-i18n="topbar.audit">Audit signature…</button>
-        <button role="menuitem" id="x-bulk" type="button" data-i18n="topbar.bulk">Bulk generate (CSV)…</button>
+        <span class="menu-group" role="presentation" data-i18n="menu.powerTools" data-advanced>Power tools</span>
+        <button role="menuitem" id="x-copy-fragment" data-advanced type="button" data-i18n="topbar.copyFragment">Copy table fragment (for CMS)</button>
+        <button role="menuitem" id="x-preset-export" data-advanced type="button" data-i18n="topbar.presetExport">Export preset (.json)</button>
+        <button role="menuitem" id="x-preset-import" data-advanced type="button" data-i18n="topbar.presetImport">Import preset (.json)</button>
+        <button role="menuitem" id="x-share" data-advanced type="button" data-i18n="topbar.share">Copy share link</button>
+        <button role="menuitem" id="x-json" data-advanced type="button" data-i18n="topbar.jsonEdit">Edit as JSON…</button>
+        <button role="menuitem" id="x-audit" data-advanced type="button" data-i18n="topbar.audit">Audit signature…</button>
+        <button role="menuitem" id="x-bulk" data-advanced type="button" data-i18n="topbar.bulk">Bulk generate (CSV)…</button>
       </div>
     </div>
     <button class="btn btn-icon" id="btn-reset" type="button" data-i18n-title="topbar.resetTitle" data-i18n-aria="topbar.resetAria" title="Start over" aria-label="Start over">↺</button>
@@ -121,7 +125,7 @@
       </div>
     </details>
 
-    <details open data-sec="org">
+    <details open data-sec="org" data-advanced>
       <summary data-i18n="sec.org">Organisation</summary>
       <div class="body grid2">
         <label class="field span2"><span data-i18n="field.supportTitle">Support module title</span> <span class="opt" data-i18n="opt.emptyHidesBox">(empty hides the box)</span><input data-field="design.supportTitle" placeholder="IT Support"></label>
@@ -174,7 +178,7 @@
       </div>
     </details>
 
-    <details open data-sec="customs">
+    <details open data-sec="customs" data-advanced>
       <summary><span data-i18n="sec.customs">Custom lines</span> <span class="sec-count" id="count-customs">0</span></summary>
       <div class="body">
         <p class="hint" data-i18n="customs.hint">Extra rows like “Office hours”, “Direct line”, or anything else you need.</p>
@@ -274,13 +278,13 @@
           <label class="field"><span data-i18n="design.accent">Accent colour</span><input type="color" data-field="design.primaryColor"></label>
           <label class="field"><span data-i18n="design.textColour">Text colour</span><input type="color" data-field="design.textColor"></label>
           <label class="field"><span data-i18n="design.dividerColour">Divider colour</span><input type="color" data-field="design.dividerColor"></label>
-          <label class="field"><span data-i18n="design.linkColour">Link colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = accent)</span><input data-field="design.linkColor" placeholder="#2f6fed"></label>
-          <label class="field"><span data-i18n="design.nameColour">Name colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = text colour)</span><input data-field="design.nameColor" placeholder="#3a3f47"></label>
-          <label class="field"><span data-i18n="design.mutedColour">Muted text colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = derived)</span><input data-field="design.mutedColor" placeholder="#8a90a0"></label>
+          <label class="field" data-advanced><span data-i18n="design.linkColour">Link colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = accent)</span><input data-field="design.linkColor" placeholder="#2f6fed"></label>
+          <label class="field" data-advanced><span data-i18n="design.nameColour">Name colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = text colour)</span><input data-field="design.nameColor" placeholder="#3a3f47"></label>
+          <label class="field" data-advanced><span data-i18n="design.mutedColour">Muted text colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = derived)</span><input data-field="design.mutedColor" placeholder="#8a90a0"></label>
           <label class="field"><span data-i18n="design.cardColour">Card colour</span><input type="color" data-field="design.cardColor"></label>
           <label class="field"><span data-i18n="design.background">Signature background</span> <span class="opt" data-i18n="opt.fullWidthBand">(full-width band)</span><input data-field="design.background" placeholder="#f0f2f5 — empty = transparent"></label>
 
-          <div class="field span2">
+          <div class="field span2" data-advanced>
             <span class="lbl" data-i18n="field.customHtml">Custom HTML block (advanced)</span>
             <textarea data-field="design.customHtml" rows="3" placeholder="Paste raw HTML here — empty = off"></textarea>
             <span class="micro" data-i18n="field.customHtmlHint">Embedded exactly as written, after the layout — no safety checks apply.</span>
@@ -321,14 +325,14 @@
             </select>
           </label>
           <label class="field"><span data-i18n="design.fontSize">Base font size (px)</span><input type="number" min="10" max="18" step="1" data-field="design.fontSize"></label>
-          <label class="field"><span data-i18n="field.customFont">Custom font stack</span> <span class="opt" data-i18n="opt.customFontOpt">(overrides the font above)</span><input data-field="design.customFont" placeholder="'Segoe UI', Roboto, sans-serif"></label>
-          <label class="field"><span data-i18n="field.taglineWeight">Tagline weight</span>
+          <label class="field" data-advanced><span data-i18n="field.customFont">Custom font stack</span> <span class="opt" data-i18n="opt.customFontOpt">(overrides the font above)</span><input data-field="design.customFont" placeholder="'Segoe UI', Roboto, sans-serif"></label>
+          <label class="field" data-advanced><span data-i18n="field.taglineWeight">Tagline weight</span>
             <select data-field="design.taglineWeight">
               <option value="" data-i18n="design.weightNormal">Normal</option>
               <option value="bold" data-i18n="design.weightBold">Bold</option>
             </select>
           </label>
-          <span class="range-row"><span class="lbl" data-i18n="field.nameSpacing">Name letter-spacing</span><input type="range" min="0" max="4" step="1" data-field="design.nameSpacing"><output id="name-spacing-out">0 px</output></span>
+          <span class="range-row" data-advanced><span class="lbl" data-i18n="field.nameSpacing">Name letter-spacing</span><input type="range" min="0" max="4" step="1" data-field="design.nameSpacing"><output id="name-spacing-out">0 px</output></span>
 
           <label class="field"><span data-i18n="design.density">Density</span>
             <select data-field="design.density">
@@ -338,12 +342,12 @@
             </select>
           </label>
 
-          <span class="hint span2" data-i18n="design.fineTuneHint">Fine-tuning — leave empty to follow the density preset</span>
-          <label class="field"><span data-i18n="design.rowGap">Section gap (px)</span><input type="number" min="0" max="40" step="1" data-field="design.rowGap" placeholder="auto"></label>
-          <label class="field"><span data-i18n="design.cellPad">Cell padding (px)</span><input type="number" min="0" max="48" step="1" data-field="design.cellPad" placeholder="auto"></label>
-          <label class="field"><span data-i18n="design.socialGap">Social chip gap (px)</span><input type="number" min="0" max="24" step="1" data-field="design.socialGap" placeholder="auto"></label>
-          <label class="field"><span data-i18n="design.lineHeight">Line height (×)</span><input type="number" min="1" max="2" step="0.1" data-field="design.lineHeight" placeholder="1.5"></label>
-          <label class="field"><span data-i18n="design.textAlign">Text alignment</span>
+          <span class="hint span2" data-advanced data-i18n="design.fineTuneHint">Fine-tuning — leave empty to follow the density preset</span>
+          <label class="field" data-advanced><span data-i18n="design.rowGap">Section gap (px)</span><input type="number" min="0" max="40" step="1" data-field="design.rowGap" placeholder="auto"></label>
+          <label class="field" data-advanced><span data-i18n="design.cellPad">Cell padding (px)</span><input type="number" min="0" max="48" step="1" data-field="design.cellPad" placeholder="auto"></label>
+          <label class="field" data-advanced><span data-i18n="design.socialGap">Social chip gap (px)</span><input type="number" min="0" max="24" step="1" data-field="design.socialGap" placeholder="auto"></label>
+          <label class="field" data-advanced><span data-i18n="design.lineHeight">Line height (×)</span><input type="number" min="1" max="2" step="0.1" data-field="design.lineHeight" placeholder="1.5"></label>
+          <label class="field" data-advanced><span data-i18n="design.textAlign">Text alignment</span>
             <select data-field="design.textAlign">
               <option value="" data-i18n="design.alignAuto">Template default</option>
               <option value="left" data-i18n="design.alignLeft">Left</option>
@@ -376,8 +380,8 @@
             <span class="range-row"><input type="range" min="16" max="28" step="1" data-field="design.socialSize"><output id="social-size-out">22 px</output></span>
           </div>
 
-          <label class="switch span2"><input type="checkbox" data-field="design.showQr"><span class="sw"></span> <span data-i18n="design.showQr">Embed a scannable vCard QR (Classic + Enterprise)</span></label>
-          <div class="field">
+          <label class="switch span2" data-advanced><input type="checkbox" data-field="design.showQr"><span class="sw"></span> <span data-i18n="design.showQr">Embed a scannable vCard QR (Classic + Enterprise)</span></label>
+          <div class="field" data-advanced>
             <span class="lbl" data-i18n="design.qrSize">QR size</span>
             <span class="range-row"><input type="range" min="32" max="96" step="4" data-field="design.qrSize"><output id="qr-size-out">60 px</output></span>
             <span class="micro" data-i18n="design.qrMicro">Target size — the QR grows a little when your contact data is long (scannability wins). Rendered as an Outlook-safe grid; Gmail and Apple Mail scan fine.</span>

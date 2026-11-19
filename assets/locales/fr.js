@@ -505,6 +505,8 @@ window.SIG_LOCALES.fr = {
   'audit.allGood': "Rien à signaler.",
   'audit.summaryClean': "Aucun avertissement — cette signature est propre.",
   'audit.summaryWarn': "{n} avertissement(s) trouvé(s).",
+  'mode.simple': "Simple",
+  'mode.advanced': "Avancé",
   'menu.mailFormats': "Apps de messagerie et formats",
   'menu.powerTools': "Outils avancés",
   'manualCopy.title': "Copiez vous-même",

@@ -726,6 +726,25 @@ Date: 2026-11-19 · Scope: first-session approachability.
 
 ---
 
+# v0.45.0 addendum (Simple / Advanced mode)
+
+Date: 2026-11-19 · Scope: progressive disclosure of expert controls.
+
+## Notes
+
+- A topbar Simple|Advanced toggle. Simple hides every [data-advanced]
+  control via CSS (.mode-simple [data-advanced] { display:none }):
+  the org + custom-lines sections, fine-tuning, advanced colours,
+  custom font/HTML, QR controls and the export menu's Power tools
+  group. State is never touched — switching restores everything.
+- Boot default: stored preference wins; otherwise a draft containing
+  advanced content keeps the user in Advanced, everyone else starts
+  Simple. e2e/helper.js seeds 'advanced' so all existing specs run as
+  power users; mode.spec (3 tests) covers the fresh-visitor default,
+  reveal-and-preserve, and reload persistence.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

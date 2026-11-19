@@ -128,6 +128,9 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.44.0 — welcome pass: essentials-first first visit, empty-state
   preview guide, live Outlook-safe trust badge, 4-step pointer tour after
   the wizard; E2E now 124
+- [x] v0.45.0 — Simple/Advanced editor mode: new visitors start Simple
+  (expert sections, fine-tuning and power tools hidden, state preserved);
+  existing advanced drafts keep Advanced; choice persists; E2E now 127
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

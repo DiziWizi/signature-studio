@@ -1058,6 +1058,20 @@ textarea { resize: vertical; min-height: 40px; }
 
 /* Update pill: appears when a new service worker takes control of an
    already-open session (an update was installed in the background). */
+/* Simple mode: expert controls vanish (state is preserved) */
+.mode-simple [data-advanced] { display: none !important; }
+.mode-seg { display: flex; border: 1px solid var(--line2); border-radius: 8px; overflow: hidden; }
+.mode-seg button {
+  background: transparent;
+  border: 0;
+  color: var(--mut);
+  font: inherit;
+  font-size: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.mode-seg button[aria-pressed="true"] { background: var(--acc); color: #fff; }
+
 .update-pill {
   position: fixed;
   left: 50%;

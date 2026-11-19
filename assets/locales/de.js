@@ -504,6 +504,8 @@ window.SIG_LOCALES.de = {
   'audit.allGood': "Nichts zu melden.",
   'audit.summaryClean': "Keine Warnungen — diese Signatur ist sauber.",
   'audit.summaryWarn': "{n} Warnung(en) gefunden.",
+  'mode.simple': "Einfach",
+  'mode.advanced': "Erweitert",
   'menu.mailFormats': "Mail-Apps & Formate",
   'menu.powerTools': "Profifunktionen",
   'manualCopy.title': "Selbst kopieren",
