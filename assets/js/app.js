@@ -1745,6 +1745,15 @@ function init() {
     renderCustoms();
     scheduleSave();
   });
+  $('#add-custom-hours').addEventListener('click', () => {
+    pushHistory();
+    state.customLines.push({ label: t('customs.officeHoursLabel'), value: 'Mon–Fri, 9:00–17:00' });
+    renderCustoms();
+    scheduleSave();
+    const sec = document.querySelector('details[data-sec="customs"]');
+    if (sec && !sec.open) sec.open = true;
+    showToast(t('customs.officeHoursToast'), '', { key: 'customs.officeHoursToast' });
+  });
 
   /* templates */
   $('#tpl-picker').addEventListener('click', e => {

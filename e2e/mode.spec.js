@@ -22,9 +22,10 @@ test('new visitors start in Simple mode with expert controls hidden', async ({ p
   await freshBoot(page);
   await expect(page.locator('html')).toHaveClass(/mode-simple/);
 
-  /* Sections hidden, fields intact. */
+  /* Expert sections hidden, fields intact. Custom lines stay: they carry
+     everyday things like office hours. */
   await expect(page.locator('details[data-sec="org"]')).toBeHidden();
-  await expect(page.locator('details[data-sec="customs"]')).toBeHidden();
+  await expect(page.locator('details[data-sec="customs"]')).toBeVisible();
   await expect(page.locator('[data-field="design.customHtml"]')).toBeHidden();
   await expect(page.locator('[data-field="design.rowGap"]')).toBeHidden();
 
@@ -52,6 +53,27 @@ test('switching to Advanced reveals controls and preserves state', async ({ page
 
   await page.click('#mode-advanced');
   await expect(page.locator('[data-field="design.supportTitle"]')).toHaveValue('IT Helpdesk');
+
+  await expectNoErrors(h);
+});
+
+test('Office hours quick-add drops a ready-made custom line', async ({ page }) => {
+  const h = await freshPage(page); /* seeded advanced */
+  await page.click('#btn-sample');
+
+  await page.click('#add-custom-hours');
+  const row = page.locator('#custom-list .custom-row').last();
+  await expect(row.locator('.line-label')).toHaveValue('Office hours');
+  await expect(row.locator('.line-value')).toHaveValue(/9:00/);
+
+  /* And the preview renders the line. */
+  await expect
+    .poll(async () => {
+      const frame = page.locator('#preview-frame');
+      const doc = await frame.evaluate(el => el.srcdoc || '');
+      return doc;
+    })
+    .toContain('Office hours');
 
   await expectNoErrors(h);
 });
