@@ -94,6 +94,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   width slider (400–600, drives the inner table width); E2E now 66
 - [x] v0.23.0 — payment networks: PayPal, Venmo, Cash App, Revolut, Monzo
   (chips, quick-add dropdown, URL detection); E2E now 67
+- [x] v0.24.0 — Enterprise template (15 total) + organisational field set:
+  team/initiative line, boxed IT-support module (title, chat chip, tagline,
+  local/international phones, alternate instructions), recognise link line,
+  purpose statement, land acknowledgement, three-slot brand footer; 22 new
+  optional fields, all sections hidden when empty; E2E now 70
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.

@@ -556,6 +556,33 @@ Date: 2026-11-19 · Scope: tip/payment links for creators and freelancers.
 
 ---
 
+# v0.24.0 addendum (Enterprise template + organisational fields)
+
+Date: 2026-11-19 · Scope: a template able to hold an organisational
+signature: support module, recognise link, purpose, land acknowledgement,
+brand footer. Built from a user-provided signature's STRUCTURE only — no
+real data, icons or personal details were used anywhere.
+
+## Notes
+
+- 22 new optional fields: profile.team; design.supportTitle/
+  supportChatUrl/supportChatLabel/supportButtonLabel/supportTagline/
+  supportPhoneLocal/supportPhoneIntl/supportAltText; recogniseText/
+  recogniseUrl/recogniseLabel; purposeText; landAcknowledgement +
+  showAcknowledgement; footerLeft/Center/Right × Img/Text.
+- enterpriseRows renders each section only when its fields are set
+  (empty render = identity + contact), in a fixed order; support box uses
+  its own tint (#f2f4f7) and strict-mode-aware radius; the footer is a
+  nested 3-cell table (width="33%", Outlook-safe); land acknowledgement is
+  small + muted, deliberately non-italic (italic is the Quote template's
+  exclusive marker).
+- Subagent harness 20/20: sha256 byte-identity for all prior templates,
+  section ordering per the E2E, hostile-input escaping, marker
+  exclusivity, strictOutlook, plus a 16-variant matrix. E2E 70/70 twice
+  locally; CI green on the tag.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
