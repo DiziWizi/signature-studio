@@ -767,6 +767,33 @@ Dark Mode Friendly.
 
 ---
 
+# v0.48.0 addendum (CID image mode)
+
+Date: 2026-11-19 · Scope: inline Content-ID image references for
+mail-pipeline deployments, with the bulk manifest.
+
+## Notes
+
+- design.imageMode: '' (normal — hosted URLs and base64 data URIs
+  behave exactly as before) | 'cid'. In CID mode every image is
+  emitted as cid:sigstudio-<key> — logo, banner, footer-left/-center/
+  -right, social-<network> — while the stored value remains the
+  asset's source of truth (switching back restores it byte-exactly).
+- Verified against a real corporate .eml supplied by the user: CBA's
+  pipeline attaches six PNGs as Content-Disposition:inline parts with
+  per-message UUID Content-IDs. The mode mirrors that pattern for
+  programmatic deployments.
+- Bulk generator: in CID mode the ZIP also carries manifest.json
+  (version 1, cid → file/url + mime) plus decoded image files for
+  data-URI assets (hosted URLs listed by reference); zipStore accepts
+  binary Uint8Array payloads (PNG magic verified in the E2E).
+- Checklist warns that hand-pasted CID signatures show broken images.
+- e2e/helper.js allowlists the preview's expected
+  ERR_UNKNOWN_URL_SCHEME noise for cid: refs. 3 new tests in
+  cid-mode.spec; suite 134/134 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

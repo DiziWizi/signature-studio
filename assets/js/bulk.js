@@ -64,6 +64,45 @@ function bulkColumnMap(header) {
   return map;
 }
 
+/* CID mode: map every signature image to its deterministic Content-ID
+   (sigstudio-logo, sigstudio-banner, sigstudio-footer-left/…). Data-URI
+   assets are decoded to real files the zip carries; hosted URLs are
+   listed by reference so a mailer can fetch them. */
+function bulkManifest(state) {
+  const d = state.design || {};
+  const fields = [
+    ['logo', d.logoUrl],
+    ['banner', d.bannerUrl],
+    ['footer-left', d.footerLeftImg],
+    ['footer-center', d.footerCenterImg],
+    ['footer-right', d.footerRightImg],
+  ];
+  (state.socials || []).forEach(soc => {
+    if (soc.iconUrl) fields.push(['social-' + soc.network, soc.iconUrl]);
+  });
+  const manifest = { version: 1, mode: 'cid', images: [] };
+  const assets = [];
+  for (const [key, value] of fields) {
+    const v = String(value || '').trim();
+    if (!v) continue;
+    const m = v.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/s);
+    if (m) {
+      const mime = m[1];
+      let ext = mime.split('/')[1].replace(/\+.*/, '');
+      if (ext === 'jpeg') ext = 'jpg';
+      const file = `images/sigstudio-${key}.${ext}`;
+      const bin = atob(m[2]);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      assets.push({ name: file, data: bytes });
+      manifest.images.push({ cid: `sigstudio-${key}`, file, mime });
+    } else {
+      manifest.images.push({ cid: `sigstudio-${key}`, url: v });
+    }
+  }
+  return manifest.images.length ? { assets, manifest } : null;
+}
+
 /* Returns { files: [{name, data}], generated, skipped }. */
 function bulkGenerate(state, csvText) {
   const rows = parseCsv(csvText);
@@ -99,6 +138,13 @@ function bulkGenerate(state, csvText) {
     }
     out.files.push({ name: `${slugify(name)}.html`, data: renderSignature(clone) });
     out.generated += 1;
+  }
+  if (state.design && state.design.imageMode === 'cid') {
+    const m = bulkManifest(state);
+    if (m) {
+      out.files.push({ name: 'manifest.json', data: JSON.stringify(m.manifest, null, 2) });
+      for (const a of m.assets) out.files.push(a);
+    }
   }
   return out;
 }

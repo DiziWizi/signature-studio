@@ -402,6 +402,13 @@
             <span class="lbl" data-i18n="design.logoUrl">Logo / photo URL</span>
             <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button" data-i18n="design.upload">Upload</button><button class="btn btn-sm" id="recrop-btn" type="button" data-i18n-title="design.recropTitle" data-i18n="design.recrop">Re-crop</button></span>
             <input data-field="design.logoAlt" placeholder="Alt text — e.g. “Maya’s portrait”">
+            <label class="field span2"><span data-i18n="design.imageMode">Image reference mode</span>
+              <select data-field="design.imageMode">
+                <option value="" data-i18n="design.imageModeNormal">Normal — as entered (hosted URL or embedded)</option>
+                <option value="cid" data-i18n="design.imageModeCid">Inline CID — for mail systems that attach images</option>
+              </select>
+              <span class="micro" data-i18n="design.imageModeHint">CID mode writes cid:sigstudio-logo, -banner, -footer-left/-center/-right, -social-&lt;network&gt; and pairs with the bulk generator’s manifest. Hand-pasted CID signatures show broken images — your mail pipeline must attach the parts.</span>
+            </label>
             <input type="file" id="logo-file" accept="image/*" hidden>
             <span class="range-row"><input type="range" min="40" max="160" step="4" data-field="design.logoWidth" id="logo-width"><output id="logo-width-out"></output></span>
             <span class="field-inline"><span data-i18n="design.position">Position</span>

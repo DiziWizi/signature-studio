@@ -16,6 +16,12 @@ const BASE_URL = 'http://127.0.0.1:8137';
 const SANDBOX_INSTRUMENTATION_NOISE =
   /^Blocked script execution in 'about:(blank|srcdoc)' because the document's frame is sandboxed and the 'allow-scripts' permission is not set\.$/;
 
+/* CID image mode: the preview iframe legitimately tries to load cid: refs,
+   which Chromium cannot resolve (they only resolve inside mail clients).
+   The error is expected when the mode is on — the eml pipeline attaches
+   the parts, not the browser. */
+const CID_UNKNOWN_SCHEME_NOISE = /^Failed to load resource: net::ERR_UNKNOWN_URL_SCHEME$/;
+
 /**
  * Boot the app into a clean, deterministic state and return a handle.
  *
@@ -106,7 +112,9 @@ function rawErrors(handle) {
 }
 
 async function expectNoErrors(handle) {
-  const errors = rawErrors(handle).filter(e => !SANDBOX_INSTRUMENTATION_NOISE.test(e));
+  const errors = rawErrors(handle)
+    .filter(e => !SANDBOX_INSTRUMENTATION_NOISE.test(e))
+    .filter(e => !CID_UNKNOWN_SCHEME_NOISE.test(e));
   expect(
     errors,
     'expected zero page/console errors (sandboxed-thumbnail instrumentation noise excluded):\n' +

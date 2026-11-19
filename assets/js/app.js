@@ -826,6 +826,12 @@ function collectWarnings(s) {
   if (s.design.customHtml && String(s.design.customHtml).trim()) {
     w.push({ kind: 'warn', msg: t('check.customHtml') });
   }
+  if (s.design.imageMode === 'cid') {
+    const hasImg = s.design.logoUrl || s.design.bannerUrl || s.design.footerLeftImg ||
+      s.design.footerCenterImg || s.design.footerRightImg ||
+      (s.socials || []).some(x => String(x.iconUrl || '').trim());
+    if (hasImg) w.push({ kind: 'warn', msg: t('check.cidImages') });
+  }
   for (const soc of s.socials) {
     if (!String(soc.url || '').trim()) {
       w.push({ kind: 'info', msg: t('check.networkNoLink', { net: esc(networkById(soc.network).name) }) });

@@ -6,6 +6,15 @@
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+/* CID image mode: every image is emitted as cid:sigstudio-<key> so a
+   mail pipeline can attach parts with matching Content-IDs. The stored
+   value (hosted URL or data URI) stays the asset's source of truth and
+   is restored when the mode switches back. */
+const imgSrcOf = (d, key, stored) => {
+  if (d.imageMode === 'cid' && stored && String(stored).trim()) return `cid:sigstudio-${key}`;
+  return stored;
+};
+
 const stackOf = d => {
   const custom = String(d.customFont || '').trim();
   if (custom) {
@@ -290,7 +299,7 @@ function socialChipHtml(d, soc, withLabel, size = 22) {
   const href = normalizeUrl(net.id, raw);
   const iconUrl = String(soc.iconUrl || '').trim();
   const chip = iconUrl
-    ? `<img src="${esc(iconUrl)}" width="${size}" height="${size}" alt="${esc(net.name)}" style="display:inline-block;width:${size}px;height:${size}px;border:0;${br(d, '11px')}vertical-align:middle;">`
+    ? `<img src="${esc(imgSrcOf(d, `social-${net.id}`, iconUrl))}" width="${size}" height="${size}" alt="${esc(net.name)}" style="display:inline-block;width:${size}px;height:${size}px;border:0;${br(d, '11px')}vertical-align:middle;">`
     : `<span style="display:inline-block;width:${size}px;height:${size}px;line-height:${size}px;text-align:center;` +
       `background-color:${color};color:#ffffff;${br(d, '11px')}` +
       `font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:bold;vertical-align:middle;">${esc(glyph)}</span>`;
@@ -377,7 +386,7 @@ function logoCellHtml(s, d) {
   if (d.logoUrl) {
     const shape = photoShapeOfDesign(d);
     const radius = shape === 'circle' ? br(d, '50%') : shape === 'rounded' ? br(d, '10px') : '';
-    return imgTag(d.logoUrl, d.logoWidth, String(s.design.logoAlt || 'logo'), radius);
+    return imgTag(imgSrcOf(d, 'logo', d.logoUrl), d.logoWidth, String(s.design.logoAlt || 'logo'), radius);
   }
   if (d.useMonogram) return monogramHtml(s, d);
   return '';
@@ -552,7 +561,7 @@ function minimalRows(s, d) {
    (the banner simply renders unlinked). Empty bannerLink → byte-identical
    output, no wrapper. */
 function bannerImgHtml(s, d) {
-  const img = imgTag(d.bannerUrl, 600, String(s.design.bannerAlt || 'banner'));
+  const img = imgTag(imgSrcOf(d, 'banner', d.bannerUrl), 600, String(s.design.bannerAlt || 'banner'));
   const raw = String(d.bannerLink || '').trim();
   if (!raw) return img;
   const href = normalizeUrl('custom', raw);
@@ -621,7 +630,7 @@ function roundelRows(s, d) {
   const logoContent = logoCellHtml(s, d);
   if (logoContent) {
     const circle = d.logoUrl
-      ? `<img src="${esc(d.logoUrl)}" width="${d.logoWidth}" alt="${esc(String(s.design.logoAlt || 'logo'))}" ` +
+      ? `<img src="${esc(imgSrcOf(d, 'logo', d.logoUrl))}" width="${d.logoWidth}" alt="${esc(String(s.design.logoAlt || 'logo'))}" ` +
         `style="display:block;width:${d.logoWidth}px;max-width:${d.logoWidth}px;height:auto;border:0;${br(d, '50%')}">`
       : monogramHtml(s, d);
     rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.dividerMargin}px 0;">${circle}</td></tr>`);
@@ -1028,7 +1037,10 @@ function footerCellHtml(d, imgField, textField, align) {
   const img = String(d[imgField] || '').trim();
   const text = String(d[textField] || '').trim();
   let inner = '';
-  if (img) inner += imgTag(img, 96, 'logo');
+  if (img) {
+    const keyMap = { footerLeftImg: 'footer-left', footerCenterImg: 'footer-center', footerRightImg: 'footer-right' };
+    inner += imgTag(imgSrcOf(d, keyMap[imgField] || 'footer', img), 96, 'logo');
+  }
   if (text) {
     if (inner) inner += '<br>';
     inner += `<span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 2, color: mutedColor(d) })}">${esc(text)}</span>`;

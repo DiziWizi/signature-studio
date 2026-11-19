@@ -136,6 +136,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.47.0 — dark-mode fix: support-module title was white-on-white
   when Dark Mode Friendly was on; card wrapper gets scoped dark colours;
   E2E now 131
+- [x] v0.48.0 — CID image mode: every image emitted as
+  cid:sigstudio-<key> (logo/banner/footer×3/socials) with hosted-URL and
+  base64 modes untouched; bulk ZIP gains a manifest.json + extracted
+  image assets when CID is on; checklist warns about hand-pasting;
+  E2E now 134
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

@@ -31,7 +31,7 @@ function zipStore(files) {
 
   for (const f of files) {
     const nameBytes = enc.encode(f.name);
-    const dataBytes = enc.encode(String(f.data));
+    const dataBytes = f.data instanceof Uint8Array ? f.data : enc.encode(String(f.data));
     const crc = zipCrc32(dataBytes);
 
     const local = [

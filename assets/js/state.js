@@ -130,6 +130,7 @@ function defaultState() {
       textAlign: '',        // '' = layout default | left | center | right
       cardPadding: '',      // px override for card padding ('' = 16x18)
       cardBorderWidth: '',  // px override for the card border ('' = 1)
+      imageMode: '',        // '' = as stored (hosted URL / data URI) | 'cid' = cid:sigstudio-<key> refs
       blockOrder: ['identity', 'divider', 'contact', 'socials', 'banner', 'footer', 'qr', 'custom'], // custom template section order
       nameSizeExtra: 3,     // px added to the base font size for the name
       showQr: false,        // inline vCard QR in Classic + Enterprise
