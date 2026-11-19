@@ -745,6 +745,28 @@ Date: 2026-11-19 · Scope: progressive disclosure of expert controls.
 
 ---
 
+# v0.47.0 addendum (dark-mode fixes on light surfaces)
+
+Date: 2026-11-19 · Scope: support module + card wrapper under
+Dark Mode Friendly.
+
+## Notes
+
+- Bug (user-reported, screenshots): the Organisation > Support Module
+  title rendered white-on-white with Dark Mode Friendly on — the box
+  keeps its light #f2f4f7 tint in dark clients while the dm stylesheet
+  forced #e9ecf2 on the title's dm-txt class. Fix: support-box content
+  carries no dm-* classes; inline colours stay dark on the light box.
+- Same root cause fixed for the card wrapper: it also stays light, so
+  darkStyleBlock now emits td[data-card="1"] scoped overrides resolving
+  dm classes back to dark readable colours when showCard is on.
+- Verified live under emulated prefers-color-scheme: dark — title
+  computed rgb(58,63,71) (~8:1) on rgb(242,244,247). Default renders
+  byte-identical (dmCls returns '' when the flag is off).
+- 3 new E2E tests in dm-fix.spec; suite 131/131 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

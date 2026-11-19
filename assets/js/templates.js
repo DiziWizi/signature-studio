@@ -972,10 +972,13 @@ function supportBoxHtml(s, d) {
   const altText = String(d.supportAltText || '').trim();
   if (!title && !chatUrl && !phoneLocal && !phoneIntl && !altText) return '';
   const muted = textStyle(d, { size: d.fontSize, color: mutedColor(d) });
-  const mut = dmCls(d, 'mut');
+  /* Deliberately NO dm-* classes inside the box: the box keeps its light
+     #f2f4f7 tint in dark clients, so dm text classes (white !important)
+     would render the title white-on-white. Inline colours stay dark and
+     readable on the light surface. */
   const parts = [];
   if (title) {
-    parts.push(`<span${dmCls(d, 'txt')} style="${textStyle(d, { size: d.fontSize + 1, weight: 'bold' })}">${esc(title)}</span><br>`);
+    parts.push(`<span style="${textStyle(d, { size: d.fontSize + 1, weight: 'bold' })}">${esc(title)}</span><br>`);
   }
   if (chatUrl) {
     const href = normalizeUrl('custom', chatUrl);
@@ -984,13 +987,13 @@ function supportBoxHtml(s, d) {
     if (chatLabel) chat.push(`<a href="${esc(href)}" style="${muted};text-decoration:none;">${esc(chatLabel)}</a>`);
     chat.push(supportCtaHtml(s, d));
     const line = chat.filter(Boolean).join('&nbsp;&nbsp;');
-    if (line) parts.push(`<span${mut} style="${muted};">${line}</span><br>`);
+    if (line) parts.push(`<span style="${muted};">${line}</span><br>`);
   }
   const tagline = String(d.supportTagline || '').trim();
-  if (tagline) parts.push(`<span${mut} style="${muted};">${esc(tagline)}</span><br>`);
-  if (phoneLocal) parts.push(`<span${mut} style="${muted};">Local: ${esc(phoneLocal)}</span><br>`);
-  if (phoneIntl) parts.push(`<span${mut} style="${muted};">International: ${esc(phoneIntl)}</span><br>`);
-  if (altText) parts.push(`<span${mut} style="${muted};">${esc(altText)}</span><br>`);
+  if (tagline) parts.push(`<span style="${muted};">${esc(tagline)}</span><br>`);
+  if (phoneLocal) parts.push(`<span style="${muted};">Local: ${esc(phoneLocal)}</span><br>`);
+  if (phoneIntl) parts.push(`<span style="${muted};">International: ${esc(phoneIntl)}</span><br>`);
+  if (altText) parts.push(`<span style="${muted};">${esc(altText)}</span><br>`);
   return parts.join('');
 }
 
@@ -1380,11 +1383,16 @@ function letterheadRows(s, d) {
 
 function darkStyleBlock(d) {
   if (!d.darkModeFriendly) return '';
+  /* The card wrapper keeps its light tint in dark clients too, so dm
+     classes inside it must resolve back to dark readable colours. */
+  const cardFix = d.showCard ? `
+  td[data-card="1"] .dm-txt { color:${d.textColor} !important; }
+  td[data-card="1"] .dm-mut { color:${mutedColor(d)} !important; }` : '';
   return `<style type="text/css">
 @media (prefers-color-scheme: dark) {
   .dm-txt { color:#e9ecf2 !important; }
   .dm-mut { color:#b3bac6 !important; }
-  .dm-div { border-top-color:#3a414d !important; }
+  .dm-div { border-top-color:#3a414d !important; }${cardFix}
 }
 </style>`;
 }
@@ -1459,7 +1467,7 @@ function renderInner(state) {
   if (d.showCard) {
     const cardPad = String(d.cardPadding ?? '').trim() === '' ? '16px 18px' : `${clampNum(d.cardPadding, 8, 40, 16)}px`;
     const cardBorder = String(d.cardBorderWidth ?? '').trim() === '' ? 1 : clampNum(d.cardBorderWidth, 0, 4, 1);
-    bodyRows = `<tr><td style="background-color:${d.cardColor || '#f6f8fa'};border:${cardBorder}px solid ${d.dividerColor};${br(d, '12px')}padding:${cardPad};">
+    bodyRows = `<tr><td data-card="1" style="background-color:${d.cardColor || '#f6f8fa'};border:${cardBorder}px solid ${d.dividerColor};${br(d, '12px')}padding:${cardPad};">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">${inner}</table>
     </td></tr>`;
   }

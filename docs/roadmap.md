@@ -131,6 +131,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.45.0 — Simple/Advanced editor mode: new visitors start Simple
   (expert sections, fine-tuning and power tools hidden, state preserved);
   existing advanced drafts keep Advanced; choice persists; E2E now 127
+- [x] v0.46.0 — Office-hours quick-add; Custom lines visible in Simple
+  mode; E2E now 128
+- [x] v0.47.0 — dark-mode fix: support-module title was white-on-white
+  when Dark Mode Friendly was on; card wrapper gets scoped dark colours;
+  E2E now 131
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
