@@ -1250,6 +1250,91 @@ function letterheadDepartmentHtml(s, serif, d) {
 }
 
 /* Letterhead: centred serif identity between two hairline rules. */
+/* Custom: the block-builder layout. Sections render in the user's chosen
+   order (design.blockOrder); empty blocks collapse without a trace. Built
+   entirely from the shared helpers, so every block matches its behaviour
+   in the fixed templates. */
+const DEFAULT_BLOCK_ORDER = ['identity', 'divider', 'contact', 'socials', 'banner', 'footer', 'qr', 'custom'];
+
+function customRows(s, d) {
+  const den = densityOf(d);
+  const rows = [];
+  const order = (Array.isArray(d.blockOrder) && d.blockOrder.length) ? d.blockOrder : DEFAULT_BLOCK_ORDER;
+
+  for (const block of order) {
+    switch (block) {
+      case 'identity': {
+        const logo = logoCellHtml(s, d);
+        const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) +
+          taglineHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
+        if (!logo && !identity) break;
+        if (logo) {
+          rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.rowGap}px 0;">${logo}</td></tr>`);
+        }
+        if (identity) rows.push(`<tr><td colspan="2" align="left">${identity}</td></tr>`);
+        break;
+      }
+      case 'divider': {
+        const dv = dividerHtml(d);
+        if (dv) {
+          rows.push(spacerHtml(den.rowGap));
+          rows.push(dv);
+        }
+        break;
+      }
+      case 'contact': {
+        const stack = contactStackHtml(s, d);
+        if (stack) {
+          rows.push(spacerHtml(den.rowGap));
+          rows.push(`<tr><td colspan="2" align="left">${stack}</td></tr>`);
+        }
+        break;
+      }
+      case 'socials': {
+        const soc = socialsRowHtml(s, d);
+        if (soc) {
+          rows.push(spacerHtml(den.rowGap));
+          rows.push(`<tr><td colspan="2" align="left">${soc}</td></tr>`);
+        }
+        break;
+      }
+      case 'banner': {
+        if (d.bannerUrl) {
+          rows.push(spacerHtml(den.rowGap));
+          rows.push(`<tr><td colspan="2" align="center">${bannerImgHtml(s, d)}</td></tr>`);
+        }
+        break;
+      }
+      case 'footer': {
+        const f = footerRowHtml(s, d);
+        if (f) {
+          rows.push(spacerHtml(den.rowGap));
+          rows.push(f);
+        }
+        break;
+      }
+      case 'qr': {
+        const qr = qrTableHtml(s, d);
+        if (qr) {
+          rows.push(spacerHtml(den.rowGap));
+          rows.push(qr);
+        }
+        break;
+      }
+      case 'custom': {
+        if (d.customHtml && String(d.customHtml).trim()) {
+          rows.push(spacerHtml(den.rowGap));
+          rows.push(`<tr><td colspan="2" align="left">\n${String(d.customHtml)}\n</td></tr>`);
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+  return rows.join('\n');
+}
+
 function letterheadRows(s, d) {
   const den = densityOf(d);
   /* Layout-level serif override — design.font itself is never touched. */
@@ -1351,6 +1436,7 @@ function renderInner(state) {
     case 'enterprise': inner = enterpriseRows(s, d); break;
     case 'night':      inner = nightRows(s, d); break;
     case 'letterhead': inner = letterheadRows(s, d); break;
+    case 'custom':     inner = customRows(s, d); break;
     default:          inner = classicRows(s, d);
   }
 

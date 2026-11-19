@@ -33,7 +33,8 @@ const TEMPLATES = [
   { id: 'quote',    name: 'Quote',    desc: 'A favourite line above your name — personal and warm.' },
   { id: 'enterprise', name: 'Enterprise', desc: 'Identity, support box, purpose, acknowledgement and brand footer.' },
   { id: 'night', name: 'Night', desc: 'Dark background, light text — a signature that stands out.' },
-  { id: 'letterhead', name: 'Letterhead', desc: 'Centred serif letterhead with hairline rules.' },
+  { id: 'letterhead', name: 'Letterhead', desc: 'Centred serif with hairlines.' },
+  { id: 'custom',     name: 'Custom',      desc: 'Your layout, your order — drag the blocks.' },
 ];
 
 /* Curated colour themes: one click sets accent, text and divider together.
@@ -129,6 +130,7 @@ function defaultState() {
       textAlign: '',        // '' = layout default | left | center | right
       cardPadding: '',      // px override for card padding ('' = 16x18)
       cardBorderWidth: '',  // px override for the card border ('' = 1)
+      blockOrder: ['identity', 'divider', 'contact', 'socials', 'banner', 'footer', 'qr', 'custom'], // custom template section order
       nameSizeExtra: 3,     // px added to the base font size for the name
       showQr: false,        // inline vCard QR in Classic + Enterprise
       qrSize: 60,           // QR size in px (32-96)

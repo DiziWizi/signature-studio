@@ -744,10 +744,56 @@ function rebuildAll() {
   renderPreview();
 }
 
+/* Custom template: the section-order editor (drag + arrows). */
+function renderBlockList() {
+  const list = $('#blocks-list');
+  if (!list) return;
+  const order = state.design.blockOrder || DEFAULT_BLOCK_ORDER;
+  list.textContent = '';
+  order.forEach((b, i) => {
+    const row = document.createElement('div');
+    row.className = 'block-row';
+    row.draggable = true;
+    row.dataset.block = b;
+    row.innerHTML = `<span class="drag" aria-hidden="true">⠿</span><span class="block-name">${esc(t('custom.block' + b.charAt(0).toUpperCase() + b.slice(1)))}</span>` +
+      `<button type="button" class="btn btn-sm row-btn" data-move="${i}" data-dir="-1" data-i18n-aria="custom.moveUp" aria-label="Move up">▲</button>` +
+      `<button type="button" class="btn btn-sm row-btn" data-move="${i}" data-dir="1" data-i18n-aria="custom.moveDown" aria-label="Move down">▼</button>`;
+    row.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', String(i)); });
+    row.addEventListener('dragover', e => { e.preventDefault(); });
+    row.addEventListener('drop', e => {
+      e.preventDefault();
+      const from = Number(e.dataTransfer.getData('text/plain'));
+      if (!Number.isFinite(from) || from === i) return;
+      moveBlock(from, i);
+    });
+    list.appendChild(row);
+  });
+  list.querySelectorAll('[data-move]').forEach(btn => btn.addEventListener('click', () => {
+    const i = Number(btn.dataset.move);
+    const to = i + Number(btn.dataset.dir);
+    if (to < 0 || to >= order.length) return;
+    moveBlock(i, to);
+  }));
+}
+
+function moveBlock(from, to) {
+  pushHistory();
+  const order = (state.design.blockOrder || DEFAULT_BLOCK_ORDER).slice();
+  const [b] = order.splice(from, 1);
+  order.splice(to, 0, b);
+  state.design.blockOrder = order;
+  renderBlockList();
+  renderPreview();
+  scheduleSave();
+}
+
 function updateTemplatePicker() {
   document.querySelectorAll('.tpl-btn').forEach(b => {
     b.setAttribute('aria-pressed', String(b.dataset.template === state.design.template));
   });
+  const isCustom = state.design.template === 'custom';
+  $('#custom-blocks').classList.toggle('hidden', !isCustom);
+  if (isCustom) renderBlockList();
   updateLogoPositionUI();
 }
 

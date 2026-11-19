@@ -113,6 +113,14 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   E2E now 101
 - [x] v0.38.0 — idle-rendered template thumbnails, service-worker update
   pill with reload, compact topbar under 480px; E2E now 103
+- [x] v0.39.0 — style depth: email-safe font picker + custom stacks, link/
+  name/muted colour controls, tagline weight, name letter-spacing, five
+  new palettes; E2E now 108
+- [x] v0.40.0 — fine-tuning: spacing/line-height/alignment overrides on
+  the density presets, card padding + border controls; E2E now 111
+- [x] v0.41.0 — the Custom template: drag-to-reorder section blocks
+  (identity, divider, contact, socials, banner, footer, QR, custom HTML);
+  E2E now 114
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

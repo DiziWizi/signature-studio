@@ -672,6 +672,32 @@ thumbnail scheduling, narrow-screen topbar.
 
 ---
 
+# v0.39.0–v0.41.0 addendum (customisation depth)
+
+Date: 2026-11-19 · Scope: fonts, advanced colours, palettes, fine-tuning
+overrides, the Custom block-reorder template.
+
+## Notes
+
+- Email-safe fonts: 8 new presets (Arial, Calibri, Georgia, Verdana,
+  Trebuchet MS, Tahoma, Times New Roman, Segoe UI) + a custom stack
+  override sanitised to font-safe characters (quotes/parens/semicolons
+  stripped — E2E proves url() injection dies).
+- Colours: link (company link), name and muted-text overrides,
+  hex-validated with silent fallback; empty = byte-identical defaults.
+- Fine-tuning: section gap, cell padding, social chip gap, line-height
+  multiplier (1.0–2.0), global text alignment, card padding (8–40px)
+  and card border width (0–4px). All overrides are '' = follow the
+  density preset, so every prior render stays byte-identical.
+- Custom template (18 total): 8 reorderable blocks built entirely from
+  the shared helpers — identity (logo top + name stack), divider,
+  contact, socials, banner, footer, QR, custom HTML. Drag-and-drop plus
+  arrow buttons, order persisted in state (undo-able, autosaved);
+  empty blocks collapse. E2E covers default order, reorder, reload
+  persistence and empty-block collapse.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

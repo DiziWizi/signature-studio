@@ -945,6 +945,23 @@ textarea { resize: vertical; min-height: 40px; }
   #lang-select { max-width: 96px; padding: 5px 6px; font-size: 12px; }
 }
 
+/* custom template block order */
+.block-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  margin: 4px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel2);
+  font-size: 13px;
+  cursor: grab;
+}
+.block-row:active { cursor: grabbing; }
+.block-row .drag { color: var(--mut); font-size: 12px; }
+.block-row .block-name { flex: 1; }
+
 /* Update pill: appears when a new service worker takes control of an
    already-open session (an update was installed in the background). */
 .update-pill {
