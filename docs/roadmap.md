@@ -77,6 +77,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   hosted logo URL); privacy networks Matrix, Keybase, Threads added
   (Signal/Telegram/Mastodon/BlueSky already existed) with URL detection;
   E2E now 57
+- [x] v0.19.0 — vCard completeness: NICKNAME (display name), TZ, LANG and
+  BDAY properties in both cards; stable deterministic UID (no more
+  duplicate contacts on re-import) + REV timestamps; birthday and timezone
+  fields in the editor; E2E now 58
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.

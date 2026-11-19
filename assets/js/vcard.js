@@ -106,6 +106,28 @@ function socialUrlFor(social) {
   return raw;
 }
 
+/* Deterministic vCard UID seed: the lowercased email, or the full name when
+   there is no email. */
+function vcardUidSeed(state) {
+  const p = state.profile || {};
+  const c = state.contact || {};
+  const email = String(c.email || '').trim().toLowerCase();
+  return email || String(p.name || '').trim();
+}
+
+/* Deterministic urn:uuid from a seed string: 64-bit djb2 (hash = hash*33 +
+   char). The 64-bit result (16 hex chars) is laid into the UUID's 8-4-4-4-12
+   hex layout left-aligned; groups beyond the hash are zero-padded to their
+   width. Same seed → same UID. */
+function vcardUid(seed) {
+  let h = 5381n;
+  for (let i = 0; i < seed.length; i++) {
+    h = (h * 33n + BigInt(seed.charCodeAt(i))) & 0xFFFFFFFFFFFFFFFFn;
+  }
+  const hex = h.toString(16).padStart(16, '0').padEnd(32, '0');
+  return 'urn:uuid:' + [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20, 32)].join('-');
+}
+
 /* Build a vCard 3.0 string from the Signature Studio state shape. */
 function buildVCard(state) {
   const s = state || {};
@@ -173,6 +195,16 @@ function buildVCard(state) {
   }
   if (d.showLegal && d.legalText) noteParts.push(String(d.legalText));
   if (noteParts.length) lines.push(vcardField('NOTE', null, noteParts.join('\n')));
+
+  /* NICKNAME: displayName, when set and different from the given name. */
+  const givenName = fullName.split(/\s+/)[0] || '';
+  const nickname = String(p.displayName || '').trim();
+  if (nickname && nickname !== givenName) lines.push(vcardField('NICKNAME', null, nickname));
+  if (p.timezone) lines.push(vcardField('TZ', null, p.timezone));
+  if (p.languages) lines.push(vcardField('LANG', null, p.languages));
+  if (p.birthday) lines.push(vcardField('BDAY', null, p.birthday));
+  lines.push(vcardField('UID', null, vcardUid(vcardUidSeed(s))));
+  lines.push(vcardField('REV', null, new Date().toISOString()));
 
   lines.push('END:VCARD');
   return lines.join('\r\n') + '\r\n';
@@ -261,6 +293,16 @@ function buildVCard4(state) {
 
   const pronouns = String(p.pronouns || '').trim();
   if (pronouns) lines.push(vcardField4('PRONOUN', null, pronouns));
+
+  /* NICKNAME: displayName, when set and different from the given name. */
+  const givenName = fullName.split(/\s+/)[0] || '';
+  const nickname = String(p.displayName || '').trim();
+  if (nickname && nickname !== givenName) lines.push(vcardField4('NICKNAME', null, nickname));
+  if (p.timezone) lines.push(vcardField4('TZ', null, p.timezone));
+  if (p.languages) lines.push(vcardField4('LANG', null, p.languages));
+  if (p.birthday) lines.push(vcardField4('BDAY', null, p.birthday));
+  lines.push(vcardField4('UID', null, vcardUid(vcardUidSeed(s))));
+  lines.push(vcardField4('REV', null, new Date().toISOString()));
 
   lines.push('END:VCARD');
   return lines.join('\r\n') + '\r\n';

@@ -462,6 +462,26 @@ plain text and both vCards.
 
 ---
 
+# v0.19.0 addendum (vCard NICKNAME / TZ / LANG / BDAY / UID / REV)
+
+Date: 2026-11-19 · Scope: vCard completeness properties + editor fields.
+
+## Notes
+
+- NICKNAME from the preferred name, omitted when it equals the full name's
+  first word; TZ/LANG/BDAY emitted only when set (raw values); new
+  birthday (date) and timezone fields in the Profile section.
+- Stable UID: deterministic urn:uuid (djb2 over lowercased email, else
+  full name) in both cards — re-importing an updated vCard updates the
+  existing contact instead of duplicating it. REV: ISO timestamp.
+- Subagent harness 69/69 incl. byte-delta proof (cards minus the new
+  property lines are byte-identical to pre-edit captures) and signature
+  render byte-identity. Full E2E 58/58 twice locally; CI green on the tag.
+- Note: sample personas replace the whole profile object and therefore
+  don't carry birthday/timezone — builders skip unset values.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

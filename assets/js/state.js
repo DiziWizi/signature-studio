@@ -43,7 +43,7 @@ function themeById(id) {
 
 function defaultState() {
   return {
-    profile: { name: '', displayName: '', honorificPrefix: '', honorificSuffix: '', title: '', department: '', company: '', pronouns: '', location: '', languages: '' },
+    profile: { name: '', displayName: '', honorificPrefix: '', honorificSuffix: '', title: '', department: '', company: '', pronouns: '', location: '', languages: '', birthday: '', timezone: '' },
     contact: { email: '', phone: '', mobile: '', website: '', websiteLabel: '', booking: '', bookingLabel: '', portfolio: '', portfolioLabel: '', pgpKey: '', address: '' },
     socials: [],      // { network, url, glyph, color }
     customLines: [],  // { label, value }
