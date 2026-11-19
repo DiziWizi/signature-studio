@@ -23,6 +23,7 @@ const TEMPLATES = [
   { id: 'line',     name: 'Line',     desc: 'One casual line: name, a few details, tiny socials.' },
   { id: 'duotone',  name: 'Duotone',  desc: 'A bold accent panel behind your photo and name.' },
   { id: 'quote',    name: 'Quote',    desc: 'A favourite line above your name — personal and warm.' },
+  { id: 'enterprise', name: 'Enterprise', desc: 'Identity, support box, purpose, acknowledgement and brand footer.' },
 ];
 
 /* Curated colour themes: one click sets accent, text and divider together.
@@ -43,7 +44,7 @@ function themeById(id) {
 
 function defaultState() {
   return {
-    profile: { name: '', displayName: '', honorificPrefix: '', honorificSuffix: '', title: '', department: '', company: '', tagline: '', pronouns: '', location: '', languages: '', birthday: '', timezone: '' },
+    profile: { name: '', displayName: '', honorificPrefix: '', honorificSuffix: '', title: '', department: '', team: '', company: '', tagline: '', pronouns: '', location: '', languages: '', birthday: '', timezone: '' },
     contact: { email: '', email2: '', emailLabel: '', email2Label: '', phone: '', phoneLabel: '', mobile: '', mobileLabel: '', website: '', websiteLabel: '', booking: '', bookingLabel: '', portfolio: '', portfolioLabel: '', pgpKey: '', address: '', addressLabel: '' },
     socials: [],      // { network, url, glyph, color }
     customLines: [],  // { label, value }
@@ -97,6 +98,27 @@ function defaultState() {
       /* density + name size */
       density: 'regular',   // airy | regular | compact
       nameSizeExtra: 3,     // px added to the base font size for the name
+      /* enterprise template — organisational field set */
+      supportTitle: '',       // support box heading (empty box title hides nothing by itself — box shows when any support field is set)
+      supportChatUrl: '',     // support chat link target
+      supportChatLabel: '',   // chat link text
+      supportButtonLabel: '', // accent chip label (chip renders with a chat URL)
+      supportTagline: '',
+      supportPhoneLocal: '',
+      supportPhoneIntl: '',
+      supportAltText: '',     // e.g. "Or reach us on Teams"
+      recogniseText: '',      // intro sentence for the recognition link
+      recogniseUrl: '',
+      recogniseLabel: '',
+      purposeText: '',        // rendered as "Our purpose: …"
+      landAcknowledgement: '',
+      showAcknowledgement: false,
+      footerLeftImg: '',
+      footerLeftText: '',
+      footerCenterImg: '',
+      footerCenterText: '',
+      footerRightImg: '',
+      footerRightText: '',
     },
     meta: { name: 'My signature' },
   };

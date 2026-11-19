@@ -86,6 +86,11 @@ const MARKERS = {
     setup: 'quote',
     has: ['font-style:italic'],
   },
+  /* enterpriseRows: the three-slot brand footer uses percent widths. */
+  enterprise: {
+    setup: 'org',
+    has: ['width="33%"'],
+  },
 };
 
 for (const [template, marker] of Object.entries(MARKERS)) {
@@ -102,6 +107,10 @@ for (const [template, marker] of Object.entries(MARKERS)) {
       await page.fill('[data-field="design.logoUrl"]', DATA_URI);
     } else if (marker.setup === 'quote') {
       await page.fill('[data-field="design.quoteText"]', 'Small team, big care.');
+    } else if (marker.setup === 'org') {
+      await page.fill('[data-field="design.footerLeftText"]', 'Left tagline');
+      await page.fill('[data-field="design.footerCenterText"]', 'Centre tagline');
+      await page.fill('[data-field="design.footerRightText"]', 'Right tagline');
     }
 
     await page.click(`.tpl-btn[data-template="${template}"]`);

@@ -801,6 +801,176 @@ function quoteRows(s, d) {
   return rows.join('\n');
 }
 
+/* ── enterprise ───────────────────────────────────────────────────────── */
+
+/* Secondary affiliation line (team / initiative): a muted line right after
+   the title, same style as the personal context line. */
+function teamHtml(s, d) {
+  if (d.showTeam === false) return '';
+  const team = String(s.profile.team || '').trim();
+  if (!team) return '';
+  return `<span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d) })}">${esc(team)}</span><br>`;
+}
+
+/* Support chat chip: mirrors bookingHtml's accent chip, labelled with the
+   button label and linking the chat URL. */
+function supportCtaHtml(s, d) {
+  const raw = String(d.supportChatUrl || '').trim();
+  if (!raw) return '';
+  const label = String(d.supportButtonLabel || '').trim();
+  if (!label) return '';
+  const href = normalizeUrl('custom', raw);
+  return `<a href="${esc(href)}" style="display:inline-block;background-color:${d.primaryColor};color:#ffffff;` +
+    `${br(d, '12px')}padding:2px 13px;font-family:${stackOf(d)};font-size:${d.fontSize - 2}px;` +
+    `line-height:1.8;text-decoration:none;font-weight:bold;">${esc(label)}</a>`;
+}
+
+/* Support module: title, chat link + CTA chip, tagline, phone numbers and
+   alternative instructions. Rendered inside the bordered box row. */
+function supportBoxHtml(s, d) {
+  const title = String(d.supportTitle || '').trim();
+  const chatUrl = String(d.supportChatUrl || '').trim();
+  const phoneLocal = String(d.supportPhoneLocal || '').trim();
+  const phoneIntl = String(d.supportPhoneIntl || '').trim();
+  const altText = String(d.supportAltText || '').trim();
+  if (!title && !chatUrl && !phoneLocal && !phoneIntl && !altText) return '';
+  const muted = textStyle(d, { size: d.fontSize, color: mutedColor(d) });
+  const mut = dmCls(d, 'mut');
+  const parts = [];
+  if (title) {
+    parts.push(`<span${dmCls(d, 'txt')} style="${textStyle(d, { size: d.fontSize + 1, weight: 'bold' })}">${esc(title)}</span><br>`);
+  }
+  if (chatUrl) {
+    const href = normalizeUrl('custom', chatUrl);
+    const chat = [];
+    const chatLabel = String(d.supportChatLabel || '').trim();
+    if (chatLabel) chat.push(`<a href="${esc(href)}" style="${muted};text-decoration:none;">${esc(chatLabel)}</a>`);
+    chat.push(supportCtaHtml(s, d));
+    const line = chat.filter(Boolean).join('&nbsp;&nbsp;');
+    if (line) parts.push(`<span${mut} style="${muted};">${line}</span><br>`);
+  }
+  const tagline = String(d.supportTagline || '').trim();
+  if (tagline) parts.push(`<span${mut} style="${muted};">${esc(tagline)}</span><br>`);
+  if (phoneLocal) parts.push(`<span${mut} style="${muted};">Local: ${esc(phoneLocal)}</span><br>`);
+  if (phoneIntl) parts.push(`<span${mut} style="${muted};">International: ${esc(phoneIntl)}</span><br>`);
+  if (altText) parts.push(`<span${mut} style="${muted};">${esc(altText)}</span><br>`);
+  return parts.join('');
+}
+
+/* Recognition line: intro sentence, then a muted link (contact-line link
+   styling) labelled recogniseLabel or the URL itself. */
+function recogniseLineHtml(s, d) {
+  const text = String(d.recogniseText || '').trim();
+  if (!text) return '';
+  const style = textStyle(d, { size: d.fontSize, color: mutedColor(d) });
+  const raw = String(d.recogniseUrl || '').trim();
+  let link = '';
+  if (raw) {
+    const href = normalizeUrl('custom', raw);
+    const label = String(d.recogniseLabel || '').trim() || raw;
+    link = ` <a href="${esc(href)}" style="${style};text-decoration:none;">${esc(label)}</a>`;
+  }
+  return `<span${dmCls(d, 'mut')} style="${style};">${esc(text)}${link}</span><br>`;
+}
+
+/* Purpose statement: "Our purpose: " bold lead, statement muted after it. */
+function purposeLineHtml(s, d) {
+  const text = String(d.purposeText || '').trim();
+  if (!text) return '';
+  const style = textStyle(d, { size: d.fontSize, color: mutedColor(d) });
+  const lead = textStyle(d, { size: d.fontSize, color: mutedColor(d), weight: 'bold' });
+  return `<span${dmCls(d, 'mut')} style="${style};"><span style="${lead};">Our purpose: </span>${esc(text)}</span><br>`;
+}
+
+/* One slot of the three-slot brand footer: optional image (capped at 96px)
+   above an optional small muted text line. */
+function footerCellHtml(d, imgField, textField, align) {
+  const img = String(d[imgField] || '').trim();
+  const text = String(d[textField] || '').trim();
+  let inner = '';
+  if (img) inner += imgTag(img, 96, 'logo');
+  if (text) {
+    if (inner) inner += '<br>';
+    inner += `<span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 2, color: mutedColor(d) })}">${esc(text)}</span>`;
+  }
+  return `<td width="33%" align="${align}" valign="top">${inner || '&nbsp;'}</td>`;
+}
+
+/* Brand footer: a three-cell row inside a full-width nested table (keeps the
+   main two-column grid intact for Outlook). */
+function footerRowHtml(s, d) {
+  const fields = ['footerLeftImg', 'footerLeftText', 'footerCenterImg', 'footerCenterText',
+    'footerRightImg', 'footerRightText'];
+  if (!fields.some(f => String(d[f] || '').trim())) return '';
+  const row = footerCellHtml(d, 'footerLeftImg', 'footerLeftText', 'left') +
+    footerCellHtml(d, 'footerCenterImg', 'footerCenterText', 'center') +
+    footerCellHtml(d, 'footerRightImg', 'footerRightText', 'right');
+  return `<tr><td colspan="2"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>${row}</tr></table></td></tr>`;
+}
+
+/* Enterprise: identity, contact details, a support module, organisational
+   statements (recognise / purpose / land acknowledgement) and a three-slot
+   brand footer — the corporate-communications signature. Every section is
+   omitted when its fields are empty. */
+function enterpriseRows(s, d) {
+  const rows = [];
+  const den = densityOf(d);
+  const logoContent = logoCellHtml(s, d);
+  const right = d.logoPosition === 'right';
+  const logoCell = logoContent
+    ? `<td class="m-cell" width="${d.logoWidth + den.cellPad}" valign="middle" align="${right ? 'right' : 'left'}" style="${right ? `padding:0 0 0 ${den.cellPad}px;` : `padding:0 ${den.cellPad}px 0 0;`}">${logoContent}</td>`
+    : '';
+  const identityCell = `<td class="m-cell" valign="middle" align="left">
+      ${nameHtml(s, d)}${titleHtml(s, d)}${teamHtml(s, d)}${companyHtml(s, d)}${contextLineHtml(s, d)}${statusHtml(s, d)}
+    </td>`;
+  rows.push(`<tr>${right ? identityCell + logoCell : logoCell + identityCell}</tr>`);
+
+  const stack = contactStackHtml(s, d);
+  if (stack) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="left">${stack}</td></tr>`);
+  }
+
+  const support = supportBoxHtml(s, d);
+  if (support) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" style="background-color:#f2f4f7;border:1px solid ${d.dividerColor};${br(d, '8px')}padding:${den.rowGap}px ${den.cellPad - 2}px;">${support}</td></tr>`);
+  }
+
+  const recognise = recogniseLineHtml(s, d);
+  if (recognise) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="left">${recognise}</td></tr>`);
+  }
+
+  const purpose = purposeLineHtml(s, d);
+  if (purpose) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="left">${purpose}</td></tr>`);
+  }
+
+  const acknowledgement = String(d.landAcknowledgement || '').trim();
+  if (d.showAcknowledgement && acknowledgement) {
+    rows.push(dividerHtml(d));
+    rows.push(`<tr><td colspan="2" align="left"><span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 2, color: mutedColor(d) })}">${esc(acknowledgement)}</span></td></tr>`);
+  }
+
+  const socials = socialsPos(d) === 'inContact' ? '' : socialsRowHtml(s, d);
+  if (socials) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
+  }
+
+  const footer = footerRowHtml(s, d);
+  if (footer) {
+    rows.push(dividerHtml(d));
+    rows.push(footer);
+  }
+
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
 /* ── document assembly ────────────────────────────────────────────────── */
 
 function darkStyleBlock(d) {
@@ -854,6 +1024,7 @@ function renderSignature(state) {
     case 'line':      inner = lineRows(s, d); break;
     case 'duotone':   inner = duotoneRows(s, d); break;
     case 'quote':     inner = quoteRows(s, d); break;
+    case 'enterprise': inner = enterpriseRows(s, d); break;
     default:          inner = classicRows(s, d);
   }
 

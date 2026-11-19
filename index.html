@@ -74,6 +74,7 @@
         <label class="field">Job title<input data-field="profile.title" placeholder="Head of Analytics"></label>
         <label class="field">Languages <span class="opt">(optional)</span><input data-field="profile.languages" placeholder="English · Deutsch"></label>
         <label class="field">Department<input data-field="profile.department" placeholder="Data Science"></label>
+        <label class="field">Team / initiative <span class="opt">(secondary line)</span><input data-field="profile.team" placeholder="Experience Platform"></label>
         <label class="field">Company<input data-field="profile.company" placeholder="Analytical Engines Ltd"></label>
         <label class="field">Company tagline <span class="opt">(optional)</span><input data-field="profile.tagline" placeholder="Data you can trust"></label>
       </div>
@@ -101,6 +102,39 @@
           <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom"></textarea>
         </label>
         <label class="field span2">Address label <span class="opt">(default “Address” — shown only when labels are on)</span><input data-field="contact.addressLabel" placeholder="Address"></label>
+      </div>
+    </details>
+
+    <details open data-sec="org">
+      <summary>Organisation</summary>
+      <div class="body grid2">
+        <label class="field span2">Support module title <span class="opt">(empty hides the box)</span><input data-field="design.supportTitle" placeholder="IT Support"></label>
+        <label class="field">Support chat link<input data-field="design.supportChatUrl" placeholder="https://chat.example"></label>
+        <label class="field">Support button label<input data-field="design.supportButtonLabel" placeholder="Try first"></label>
+        <label class="field">Support chat label <span class="opt">(link text)</span><input data-field="design.supportChatLabel" placeholder="Chat with us"></label>
+        <label class="field span2">Support tagline<input data-field="design.supportTagline" placeholder="The fastest way to get help"></label>
+        <label class="field">Support phone — local<input data-field="design.supportPhoneLocal" placeholder="+61 …"></label>
+        <label class="field">Support phone — international<input data-field="design.supportPhoneIntl" placeholder="+61 …"></label>
+        <label class="field span2">Alternative support instructions <span class="opt">(e.g. MS Teams)</span><input data-field="design.supportAltText" placeholder="Or reach us on Teams"></label>
+
+        <label class="field span2">Recognise line <span class="opt">(intro sentence)</span><input data-field="design.recogniseText" placeholder="See someone living our values?"></label>
+        <label class="field">Recognise link<input data-field="design.recogniseUrl" placeholder="https://recognise.example"></label>
+        <label class="field">Recognise link label<input data-field="design.recogniseLabel" placeholder="Recognise them now"></label>
+
+        <label class="field span2">Purpose statement <span class="opt">(rendered as “Our purpose: …”)</span><input data-field="design.purposeText" placeholder="We exist to…"></label>
+
+        <label class="switch span2"><input type="checkbox" data-field="design.showAcknowledgement"><span class="sw"></span> Show land acknowledgement</label>
+        <label class="field span2">Land acknowledgement
+          <textarea rows="2" data-field="design.landAcknowledgement" placeholder="We acknowledge the Traditional Owners…"></textarea>
+        </label>
+
+        <span class="hint span2">Brand footer — three slots (image + text)</span>
+        <label class="field">Left image<input data-field="design.footerLeftImg" placeholder="https://…/left.png"></label>
+        <label class="field">Left text<input data-field="design.footerLeftText" placeholder="Tagline"></label>
+        <label class="field">Centre image<input data-field="design.footerCenterImg" placeholder="https://…/centre.png"></label>
+        <label class="field">Centre text<input data-field="design.footerCenterText" placeholder="Tagline"></label>
+        <label class="field">Right image<input data-field="design.footerRightImg" placeholder="https://…/right.png"></label>
+        <label class="field">Right text<input data-field="design.footerRightText" placeholder="Tagline"></label>
       </div>
     </details>
 
@@ -192,6 +226,10 @@
           <button class="tpl-btn" data-template="quote" type="button" aria-pressed="false">
             <span class="thumb"><iframe class="tthumb" data-tpl="quote" title="Quote preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
             <span class="tpl-name">Quote</span>
+          </button>
+          <button class="tpl-btn" data-template="enterprise" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="enterprise" title="Enterprise preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name">Enterprise</span>
           </button>
         </div>
 
