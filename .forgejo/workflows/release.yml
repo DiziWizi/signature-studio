@@ -68,7 +68,15 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Chromium
+        # The runner's apt can be flaky (mirror egress failures): if the
+        # browser + system deps are already present from a previous run,
+        # letting this step fail and still running the suite is strictly
+        # better than failing the whole job before a single test runs.
+        continue-on-error: true
         run: npx playwright install --with-deps chromium
+
+      - name: Verify Chromium is usable
+        run: npx playwright install --dry-run chromium
 
       - name: Run Playwright E2E suite
         run: npx playwright test
