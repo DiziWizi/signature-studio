@@ -89,6 +89,9 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   that shows it, plain text too); logo/banner alt text fields; photo shape
   (square/rounded/circle, superseding the round toggle with legacy-state
   migration); name weight (bold/semibold/normal); E2E now 64
+- [x] v0.22.0 — clickable banner (bannerLink wraps the banner image in
+  Banner and Split layouts, javascript: schemes refused) and a signature
+  width slider (400–600, drives the inner table width); E2E now 66
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.

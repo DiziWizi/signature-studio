@@ -523,6 +523,24 @@ Date: 2026-11-19 · Scope: identity polish fields.
 
 ---
 
+# v0.22.0 addendum (clickable banner + signature width)
+
+Date: 2026-11-19 · Scope: banner campaign links and configurable width.
+
+## Notes
+
+- bannerLink wraps the banner image in a styled anchor in both Banner and
+  Split layouts; bare domains get https://; empty link = byte-identical
+  unwrapped output. Security: only http/https/mailto/tel hrefs are emitted
+  — a javascript: value renders the banner unlinked instead.
+- signatureWidth (400–600, default 600) drives the inner table's width
+  attribute and max-width style; out-of-range/invalid values clamp.
+- Subagent harness 143/143 incl. 20 sha256-identical baseline renders and
+  all 14 E2E template markers. Full E2E 66/66 twice locally; CI green on
+  the tag.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

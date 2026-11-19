@@ -233,6 +233,11 @@
             <span class="range-row"><input type="range" min="0" max="10" step="1" data-field="design.nameSizeExtra"><output id="name-size-out">+3 px</output></span>
             <span class="micro">Added to the base font size for your name.</span>
           </div>
+          <div class="field">
+            <span class="lbl">Signature width</span>
+            <span class="range-row"><input type="range" min="400" max="600" step="10" data-field="design.signatureWidth"><output id="width-out">600 px</output></span>
+            <span class="micro">Narrower widths suit small client panes and short layouts.</span>
+          </div>
 
           <div class="field span2">
             <span class="lbl">Social link style</span>
@@ -281,6 +286,7 @@
           <label class="field">Banner URL (banner template)
             <span class="url-row"><input data-field="design.bannerUrl" placeholder="https://…/banner.png"><button class="btn btn-sm" id="upload-banner" type="button">Upload</button></span>
             <input data-field="design.bannerAlt" placeholder="Alt text — e.g. “Analytical Engines logo”">
+            <input data-field="design.bannerLink" placeholder="Click-through link (optional)">
             <input type="file" id="banner-file" accept="image/*" hidden>
           </label>
 

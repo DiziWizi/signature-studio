@@ -49,6 +49,15 @@ const nameExtraOf = d => {
 /* Name font weight. Default 'bold' reproduces today's output byte-for-byte. */
 const nameWeightOf = d => d.nameWeight || 'bold';
 
+/* Signature canvas width (px) for the inner table. Clamp user values to
+   400–600; empty/invalid falls back to the classic 600. */
+const widthOf = d => {
+  const raw = String(d.signatureWidth ?? '').trim();
+  if (raw === '') return 600;
+  const n = Number(raw);
+  return Number.isFinite(n) ? Math.min(600, Math.max(400, n)) : 600;
+};
+
 /* Photo shape for side/top logos: 'square' (default), 'rounded' or 'circle'.
    roundPhoto (legacy) still maps to 'circle' when photoShape is unset.
    (Named photoShapeOfDesign: app.js owns photoShapeOf(s) at global scope.) */
@@ -399,10 +408,25 @@ function minimalRows(s, d) {
   return rows.join('\n');
 }
 
+/* Clickable banner: wrap the banner image in a link when design.bannerLink
+   is set. Same normalizeUrl + esc pipeline as every other link, plus a
+   scheme guard — only http(s)/mailto/tel hrefs are emitted, so a hostile
+   javascript:/data:/vbscript: value can never become a clickable href
+   (the banner simply renders unlinked). Empty bannerLink → byte-identical
+   output, no wrapper. */
+function bannerImgHtml(s, d) {
+  const img = imgTag(d.bannerUrl, 600, String(s.design.bannerAlt || 'banner'));
+  const raw = String(d.bannerLink || '').trim();
+  if (!raw) return img;
+  const href = normalizeUrl('custom', raw);
+  if (!/^(https?:|mailto:|tel:)/i.test(href)) return img;
+  return `<a href="${esc(href)}" style="text-decoration:none;display:block;">${img}</a>`;
+}
+
 function bannerRows(s, d) {
   const rows = [];
   if (d.bannerUrl) {
-    rows.push(`<tr><td colspan="2" align="center">${imgTag(d.bannerUrl, 600, String(s.design.bannerAlt || 'banner'))}</td></tr>`);
+    rows.push(`<tr><td colspan="2" align="center">${bannerImgHtml(s, d)}</td></tr>`);
     rows.push(spacerHtml(16));
   }
   rows.push(classicRows(s, d));
@@ -413,7 +437,7 @@ function bannerRows(s, d) {
 function splitRows(s, d) {
   const rows = [];
   if (d.bannerUrl) {
-    rows.push(`<tr><td colspan="2" align="center">${imgTag(d.bannerUrl, 600, String(s.design.bannerAlt || 'banner'))}</td></tr>`);
+    rows.push(`<tr><td colspan="2" align="center">${bannerImgHtml(s, d)}</td></tr>`);
     rows.push(spacerHtml(16));
   }
   const logoContent = logoCellHtml(s, d);
@@ -859,7 +883,7 @@ ${d.darkModeFriendly
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
   <tr>
     <td align="${outerAlign}">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;border-collapse:collapse;">
+      <table role="presentation" width="${widthOf(d)}" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${widthOf(d)}px;border-collapse:collapse;">
 ${bodyRows.split('\n').map(l => '        ' + l).join('\n')}
       </table>
     </td>

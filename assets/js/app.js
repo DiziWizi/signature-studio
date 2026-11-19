@@ -133,6 +133,10 @@ function onFieldInput(e) {
     const o = $('#name-size-out');
     if (o) o.textContent = `+${v} px`;
   }
+  if (el.dataset.field === 'design.signatureWidth') {
+    const o = $('#width-out');
+    if (o) o.textContent = `${v} px`;
+  }
   renderPreview();
   scheduleSave();
 }
@@ -643,6 +647,8 @@ function rebuildAll() {
   updateLogoWidthOut();
   const nso = $('#name-size-out');
   if (nso) nso.textContent = `+${state.design.nameSizeExtra ?? 3} px`;
+  const wo = $('#width-out');
+  if (wo) wo.textContent = `${state.design.signatureWidth ?? 600} px`;
   updateSavedCount();
   renderThemes();
   renderPreview();

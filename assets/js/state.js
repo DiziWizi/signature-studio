@@ -57,9 +57,11 @@ function defaultState() {
       logoUrl: '',
       logoAlt: '',
       logoWidth: 72,
+      signatureWidth: 600,   // canvas width in px — renderer clamps to 400–600
       logoPosition: 'left',
       bannerUrl: '',
       bannerAlt: '',
+      bannerLink: '',        // optional click-through link for a clickable banner
       showDivider: true,
       dividerStyle: 'solid',
       socialStyle: 'icons',   // icons | icons_labels | labels
