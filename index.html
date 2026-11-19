@@ -59,6 +59,7 @@
         <button role="menuitem" id="x-share" type="button" data-i18n="topbar.share">Copy share link</button>
         <button role="menuitem" id="x-json" type="button" data-i18n="topbar.jsonEdit">Edit as JSON…</button>
         <button role="menuitem" id="x-audit" type="button" data-i18n="topbar.audit">Audit signature…</button>
+        <button role="menuitem" id="x-bulk" type="button" data-i18n="topbar.bulk">Bulk generate (CSV)…</button>
         <button role="menuitem" id="x-vcard" type="button" data-i18n="topbar.vcard">Download vCard (.vcf)</button>
         <button role="menuitem" id="x-vcard4" type="button" data-i18n="topbar.vcard4">Download vCard 4.0 (.vcf)</button>
         <button role="menuitem" id="x-qr" type="button" data-i18n="topbar.qr">Show QR code</button>
@@ -657,6 +658,20 @@
   </div>
 </div>
 
+<!-- Bulk modal -->
+<div class="overlay hidden" id="modal-bulk" role="dialog" aria-modal="true" aria-labelledby="bulk-title">
+  <div class="modal">
+    <h2 id="bulk-title" data-i18n="bulk.title">Bulk generate from CSV</h2>
+    <p class="micro" data-i18n="bulk.micro">Paste CSV with a header row — columns are matched by name. Each row with a name and email becomes one signature in a ZIP.</p>
+    <textarea id="bulk-csv" rows="8" spellcheck="false" style="width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;" placeholder="name,email,title,company,phone&#10;Ada Lovelace,ada@example.com,Head of Analytics,Analytical Engines Ltd,+44 20 7946 0958"></textarea>
+    <p id="bulk-result" class="micro" role="status"></p>
+    <div class="modal-actions">
+      <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
+      <button class="btn btn-primary" id="bulk-generate" type="button" data-i18n="bulk.generate">Generate ZIP</button>
+    </div>
+  </div>
+</div>
+
 <!-- Audit modal -->
 <div class="overlay hidden" id="modal-audit" role="dialog" aria-modal="true" aria-labelledby="audit-title">
   <div class="modal">
@@ -730,6 +745,8 @@
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/lzw.js"></script>
 <script src="assets/js/audit.js"></script>
+<script src="assets/js/zip.js"></script>
+<script src="assets/js/bulk.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

@@ -894,6 +894,35 @@ async function doShareLink() {
   }
 }
 
+function openBulk() {
+  $('#bulk-result').textContent = '';
+  openOverlay('#modal-bulk');
+  setTimeout(() => $('#bulk-csv').focus(), 30);
+}
+
+function runBulk() {
+  const csv = $('#bulk-csv').value;
+  const res = bulkGenerate(state, csv);
+  const line = $('#bulk-result');
+  if (res.noEmailColumn) {
+    line.textContent = t('bulk.noEmail');
+    return;
+  }
+  if (!res.files.length) {
+    line.textContent = t('bulk.noRows');
+    return;
+  }
+  const zip = zipStore(res.files);
+  const blob = new Blob([zip], { type: 'application/zip' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${slugify(state.meta.name)}-signatures.zip`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  line.textContent = t('bulk.result', { n: res.generated, m: res.skipped });
+}
+
 function openAudit() {
   const r = buildAudit(state);
   const list = $('#audit-list');
@@ -1417,6 +1446,8 @@ function init() {
   $('#x-share').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink(); });
   $('#x-json').addEventListener('click', () => { menu.classList.add('hidden'); openJsonEditor(); });
   $('#x-audit').addEventListener('click', () => { menu.classList.add('hidden'); openAudit(); });
+  $('#x-bulk').addEventListener('click', () => { menu.classList.add('hidden'); openBulk(); });
+  $('#bulk-generate').addEventListener('click', runBulk);
   $('#audit-download').addEventListener('click', downloadAudit);
   $('#json-apply').addEventListener('click', applyJsonEditor);
   $('#x-download').addEventListener('click', () => {

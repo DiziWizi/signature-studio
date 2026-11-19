@@ -505,4 +505,11 @@ window.SIG_LOCALES.fr = {
   'audit.allGood': "Rien à signaler.",
   'audit.summaryClean': "Aucun avertissement — cette signature est propre.",
   'audit.summaryWarn': "{n} avertissement(s) trouvé(s).",
+  'topbar.bulk': "Générer en lot (CSV)…",
+  'bulk.title': "Génération par lots depuis CSV",
+  'bulk.micro': "Collez un CSV avec ligne d’en-tête — les colonnes sont reconnues par leur nom. Chaque ligne avec nom et e-mail devient une signature du ZIP.",
+  'bulk.generate': "Générer le ZIP",
+  'bulk.result': "{n} générées, {m} ignorées.",
+  'bulk.noEmail': "Aucune colonne e-mail — ajoutez un en-tête comme name,email,title.",
+  'bulk.noRows': "Rien à générer — collez au moins une ligne avec nom et e-mail.",
 };

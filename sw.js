@@ -2,7 +2,7 @@
    to invalidate the cache and ship a new precache set. */
 'use strict';
 
-const VERSION = 'sigstudio-v0.32.0';
+const VERSION = 'sigstudio-v0.33.0';
 
 const PRECACHE = [
   './',
@@ -18,6 +18,8 @@ const PRECACHE = [
   'assets/js/i18n.js',
   'assets/js/lzw.js',
   'assets/js/audit.js',
+  'assets/js/zip.js',
+  'assets/js/bulk.js',
   'assets/locales/en.js',
   'assets/locales/de.js',
   'assets/locales/es.js',

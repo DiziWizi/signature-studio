@@ -504,4 +504,11 @@ window.SIG_LOCALES.de = {
   'audit.allGood': "Nichts zu melden.",
   'audit.summaryClean': "Keine Warnungen — diese Signatur ist sauber.",
   'audit.summaryWarn': "{n} Warnung(en) gefunden.",
+  'topbar.bulk': "Massen-Export (CSV)…",
+  'bulk.title': "Massen-Export aus CSV",
+  'bulk.micro': "CSV mit Kopfzeile einfügen — Spalten werden nach Namen zugeordnet. Jede Zeile mit Name und E-Mail wird eine Signatur im ZIP.",
+  'bulk.generate': "ZIP erzeugen",
+  'bulk.result': "{n} erzeugt, {m} übersprungen.",
+  'bulk.noEmail': "Keine E-Mail-Spalte gefunden — fügen Sie eine Kopfzeile wie name,email,title hinzu.",
+  'bulk.noRows': "Nichts zu erzeugen — fügen Sie mindestens eine Datenzeile mit Name und E-Mail ein.",
 };

@@ -504,4 +504,11 @@ window.SIG_LOCALES.es = {
   'audit.allGood': "Nada que informar.",
   'audit.summaryClean': "Sin avisos — esta firma está limpia.",
   'audit.summaryWarn': "{n} aviso(s) encontrados.",
+  'topbar.bulk': "Generar en lote (CSV)…",
+  'bulk.title': "Generación por lotes desde CSV",
+  'bulk.micro': "Pegue CSV con fila de encabezado — las columnas se asignan por nombre. Cada fila con nombre y correo se convierte en una firma del ZIP.",
+  'bulk.generate': "Generar ZIP",
+  'bulk.result': "{n} generadas, {m} omitidas.",
+  'bulk.noEmail': "No se encontró columna de correo — añada un encabezado como name,email,title.",
+  'bulk.noRows': "Nada que generar — pegue al menos una fila con nombre y correo.",
 };

@@ -506,4 +506,11 @@ window.SIG_LOCALES.en = {
   'audit.allGood': "Nothing to report.",
   'audit.summaryClean': "No warnings — this signature is clean.",
   'audit.summaryWarn': "{n} warning(s) found.",
+  'topbar.bulk': "Bulk generate (CSV)…",
+  'bulk.title': "Bulk generate from CSV",
+  'bulk.micro': "Paste CSV with a header row — columns are matched by name. Each row with a name and email becomes one signature in a ZIP.",
+  'bulk.generate': "Generate ZIP",
+  'bulk.result': "{n} generated, {m} skipped.",
+  'bulk.noEmail': "No email column found — add a header like name,email,title.",
+  'bulk.noRows': "Nothing to generate — paste at least one data row with a name and email.",
 };
