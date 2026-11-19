@@ -65,6 +65,24 @@ async function freshPage(page) {
     sessionStorage.clear();
   });
 
+  /* Returning-user seed (BEFORE the app boots): every editor section open,
+     so the essentials-first first-visit pass (which collapses most of them
+     when the sections map is absent) never fires for existing specs. The
+     pointer tour is marked taken for the same reason. Matches the real
+     data-sec values in index.html. */
+  await page.evaluate(() => {
+    localStorage.setItem('sigstudio.sections', JSON.stringify({
+      profile: true,
+      contact: true,
+      org: true,
+      socials: true,
+      customs: true,
+      design: true,
+      elements: true,
+    }));
+    localStorage.setItem('sigstudio.tour.done', '1');
+  });
+
   await page.goto(`${BASE_URL}/?t=${Date.now()}`, { waitUntil: 'load' });
 
   /* The first-run wizard opens on fresh storage. Dismiss it. */

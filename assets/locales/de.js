@@ -562,4 +562,18 @@ window.SIG_LOCALES.de = {
   'bulk.result': "{n} erzeugt, {m} übersprungen.",
   'bulk.noEmail': "Keine E-Mail-Spalte gefunden — fügen Sie eine Kopfzeile wie name,email,title hinzu.",
   'bulk.noRows': "Nichts zu erzeugen — fügen Sie mindestens eine Datenzeile mit Name und E-Mail ein.",
+
+  'empty.title': "Geben Sie Ihren Namen ein, um Ihre Signatur zu sehen",
+  'empty.cta': "Mit Ihrem Namen starten",
+
+  'badge.ok': "Outlook-sicher",
+  'badge.fix': "{n} Dinge zu beheben",
+  'badge.fixOne': "1 Sache zu beheben",
+
+  'tour.step1': "Ihre Signatur entsteht hier, während Sie tippen",
+  'tour.step2': "Beginnen Sie mit Ihrem Namen",
+  'tour.step3': "Wenn alles passt: Exportieren > In die Zwischenablage kopieren",
+  'tour.step4': "Diese Liste zeigt Ihnen, ob etwas fehlt",
+  'tour.next': "Weiter",
+  'tour.skip': "Überspringen",
 };

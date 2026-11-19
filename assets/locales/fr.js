@@ -563,4 +563,18 @@ window.SIG_LOCALES.fr = {
   'bulk.result': "{n} générées, {m} ignorées.",
   'bulk.noEmail': "Aucune colonne e-mail — ajoutez un en-tête comme name,email,title.",
   'bulk.noRows': "Rien à générer — collez au moins une ligne avec nom et e-mail.",
+
+  'empty.title': "Saisissez votre nom pour voir votre signature",
+  'empty.cta': "Commencer par votre nom",
+
+  'badge.ok': "Compatible Outlook",
+  'badge.fix': "{n} choses à corriger",
+  'badge.fixOne': "1 chose à corriger",
+
+  'tour.step1': "Votre signature se construit ici au fil de la saisie",
+  'tour.step2': "Commencez par votre nom",
+  'tour.step3': "Quand tout est bon : Exporter > Copier dans le presse-papiers",
+  'tour.step4': "Cette liste signale ce qui manque",
+  'tour.next': "Suivant",
+  'tour.skip': "Passer",
 };

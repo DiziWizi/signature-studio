@@ -503,8 +503,9 @@
         <label><input type="radio" name="prevBg" value="grey"><span data-i18n="preview.grey">Grey</span></label>
         <label><input type="radio" name="prevBg" value="dark"><span data-i18n="preview.dark">Dark</span></label>
       </div>
+      <button class="trust-badge warn" id="trust-badge" type="button"></button>
     </div>
-    <div class="checklist" id="checklist"></div>
+    <div class="checklist" id="checklist" tabindex="-1"></div>
     <div class="stage" id="stage">
       <div class="compose" id="compose">
         <div class="compose-head" aria-hidden="true">
@@ -520,6 +521,10 @@
           <p class="compose-sig-note">— signature below —</p>
           <div class="compose-sig"><iframe id="preview-frame" title="Signature preview"></iframe></div>
         </div>
+      </div>
+      <div class="empty-guide hidden" id="empty-guide">
+        <p data-i18n="empty.title">Type your name to see your signature</p>
+        <button class="btn btn-primary" id="empty-guide-btn" type="button" data-i18n="empty.cta">Start with your name</button>
       </div>
     </div>
     <p class="micro preview-note"><span id="conciseness" class="concise-ok"></span><span data-i18n="preview.note"> · Live preview at real size — the dark backdrop simulates a dark-mode mail client. Everything stays in your browser and is autosaved locally.</span></p>
@@ -798,6 +803,20 @@
 </aside>
 
 <div id="toasts" role="status" aria-live="polite"></div>
+
+<!-- First-run pointer tour: spotlight ring over live UI, shown once after
+     the wizard. Not an .overlay — it dims the page but never traps focus
+     or blocks the highlighted control. -->
+<div class="tour hidden" id="tour-overlay" role="dialog" aria-modal="true" aria-label="Quick tour">
+  <div class="tour-spot" id="tour-spot" aria-hidden="true"></div>
+  <div class="tour-tip" id="tour-tip">
+    <p class="tour-text" id="tour-text"></p>
+    <div class="tour-actions">
+      <button class="btn" id="tour-skip" type="button" data-i18n="tour.skip">Skip</button>
+      <button class="btn btn-primary" id="tour-next" type="button" data-i18n="tour.next">Next</button>
+    </div>
+  </div>
+</div>
 
 <input type="file" id="preset-file" accept=".json,application/json" hidden>
 

@@ -562,4 +562,18 @@ window.SIG_LOCALES.es = {
   'bulk.result': "{n} generadas, {m} omitidas.",
   'bulk.noEmail': "No se encontró columna de correo — añada un encabezado como name,email,title.",
   'bulk.noRows': "Nada que generar — pegue al menos una fila con nombre y correo.",
+
+  'empty.title': "Escriba su nombre para ver su firma",
+  'empty.cta': "Empiece por su nombre",
+
+  'badge.ok': "Compatible con Outlook",
+  'badge.fix': "{n} cosas por corregir",
+  'badge.fixOne': "1 cosa por corregir",
+
+  'tour.step1': "Su firma se construye aquí mientras escribe",
+  'tour.step2': "Empiece por su nombre",
+  'tour.step3': "Cuando se vea bien: Exportar > Copiar al portapapeles",
+  'tour.step4': "Esta lista le dice si falta algo",
+  'tour.next': "Siguiente",
+  'tour.skip': "Omitir",
 };

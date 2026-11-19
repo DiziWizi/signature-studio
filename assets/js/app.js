@@ -93,6 +93,7 @@ function renderPreviewNow() {
   renderThumbs();
   updateConciseness();
   updateChecklist();
+  updateEmptyGuide();
 }
 
 /* Live template thumbnails: real renders of the current state per template,
@@ -516,6 +517,10 @@ function updateConciseness() {
 const WIZARD_DONE_KEY = 'sigstudio.wizard.done';
 let wizardChoices = { theme: 'slate', photo: 'none', persona: '' };
 let wizardStep = 1;
+/* Whether a draft existed when the wizard opened. The tour only plays for
+   genuinely new users — if a draft was already there, this is a returning
+   visitor re-running the Guide, not a first impression. */
+let wizardHadDraft = false;
 
 function renderWizard() {
   $('#wiz-themes').innerHTML = THEMES.map(t =>
@@ -566,7 +571,21 @@ function wizShowStep(n) {
   $('#wiz-step-label').textContent = t('wiz.stepOf', { n });
 }
 
+function draftHasContent(d) {
+  /* A bare default draft flushed by an unload is not a returning user —
+     only actual content marks one. */
+  if (!d) return false;
+  return Boolean(
+    String((d.profile && d.profile.name) || '').trim() ||
+    String((d.profile && d.profile.title) || '').trim() ||
+    String((d.profile && d.profile.company) || '').trim() ||
+    String((d.contact && d.contact.email) || '').trim() ||
+    (d.socials || []).length
+  );
+}
+
 function openWizard() {
+  wizardHadDraft = draftHasContent(loadDraft());
   wizShowStep(1);
   renderWizard();
   openOverlay('#modal-wizard');
@@ -584,6 +603,7 @@ function finishWizard() {
   rebuildAll();
   scheduleSave();
   showToast(t('toast.allSet'), '', { key: 'toast.allSet' });
+  maybeStartTour();
 }
 
 function initWizard() {
@@ -591,6 +611,7 @@ function initWizard() {
   $('#wiz-skip').addEventListener('click', () => {
     closeOverlay('#modal-wizard');
     try { localStorage.setItem(WIZARD_DONE_KEY, '1'); } catch (e) { /* ignore */ }
+    maybeStartTour();
   });
   $('#wiz-themes').addEventListener('click', e => {
     const b = e.target.closest('.theme-swatch');
@@ -623,6 +644,114 @@ function initWizard() {
       openWizard();
     }
   } catch (e) { /* ignore */ }
+}
+
+/* ── pointer tour ─────────────────────────────────────────────────────── */
+
+/* Four-step spotlight over the live UI, played once right after the
+   first-run wizard for genuinely new users (no pre-existing draft). The
+   whole overlay is click-through except the tooltip, so the highlighted
+   control stays usable while the dim ring focuses attention. */
+const TOUR_DONE_KEY = 'sigstudio.tour.done';
+const TOUR_STEPS = [
+  { sel: '#stage', key: 'tour.step1' },
+  { sel: '[data-field="profile.name"]', key: 'tour.step2' },
+  { sel: '#btn-export', key: 'tour.step3' },
+  { sel: '#checklist', key: 'tour.step4' },
+];
+let tourStep = 0;
+let tourReturnFocus = null;
+
+function maybeStartTour() {
+  try {
+    if (localStorage.getItem(TOUR_DONE_KEY)) return;
+  } catch (e) { return; }
+  if (wizardHadDraft) return; /* a draft already existed → returning user */
+  openTour();
+}
+
+function openTour() {
+  const overlay = $('#tour-overlay');
+  if (!overlay) return;
+  tourReturnFocus = document.activeElement;
+  /* Unhide first: focus() is a no-op on display:none subtrees, and the
+     first step focuses the Next button. */
+  overlay.classList.remove('hidden');
+  tourShowStep(0);
+}
+
+function tourShowStep(n) {
+  tourStep = n;
+  const overlay = $('#tour-overlay');
+  if (!overlay) return;
+  const step = TOUR_STEPS[n];
+  if (!step) { closeTour(); return; }
+  /* If the target lives in a collapsed editor section, unfold it first —
+     a spotlight on a hidden element would point at nothing. Then bring it
+     into view: a target below the fold (narrow window, stacked layout)
+     would leave the hole and tooltip off-screen. */
+  const target = document.querySelector(step.sel);
+  const host = target && target.closest('details[data-sec]');
+  if (host && !host.open) host.open = true;
+  if (target) target.scrollIntoView({ block: 'center', behavior: 'auto' });
+  $('#tour-text').textContent = t(step.key);
+  overlay.dataset.step = String(n + 1);
+  positionTour();
+  $('#tour-next').focus();
+}
+
+function positionTour() {
+  const spot = $('#tour-spot');
+  const tip = $('#tour-tip');
+  const step = TOUR_STEPS[tourStep];
+  const target = document.querySelector(step.sel);
+  const rect = target ? target.getBoundingClientRect() : null;
+  if (!rect || !rect.width || !rect.height) return;
+  /* Pad the hole a little so the element sits comfortably inside the ring. */
+  const pad = 6;
+  spot.style.top = `${rect.top - pad}px`;
+  spot.style.left = `${rect.left - pad}px`;
+  spot.style.width = `${rect.width + pad * 2}px`;
+  spot.style.height = `${rect.height + pad * 2}px`;
+  /* Tooltip under the hole, flipping above when the viewport runs out. */
+  const tipRect = tip.getBoundingClientRect();
+  let top = rect.bottom + 14;
+  if (top + tipRect.height > window.innerHeight - 12) {
+    top = Math.max(8, rect.top - tipRect.height - 14);
+  }
+  const left = Math.min(
+    Math.max(8, rect.left + rect.width / 2 - tipRect.width / 2),
+    window.innerWidth - tipRect.width - 8
+  );
+  tip.style.top = `${top}px`;
+  tip.style.left = `${left}px`;
+}
+
+function closeTour() {
+  const overlay = $('#tour-overlay');
+  if (overlay) overlay.classList.add('hidden');
+  try { localStorage.setItem(TOUR_DONE_KEY, '1'); } catch (e) { /* ignore */ }
+  if (tourReturnFocus && tourReturnFocus.isConnected && tourReturnFocus.getClientRects().length) {
+    tourReturnFocus.focus();
+  }
+  tourReturnFocus = null;
+}
+
+function initTour() {
+  $('#tour-next').addEventListener('click', () => {
+    if (tourStep + 1 >= TOUR_STEPS.length) closeTour();
+    else tourShowStep(tourStep + 1);
+  });
+  $('#tour-skip').addEventListener('click', closeTour);
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const overlay = $('#tour-overlay');
+    if (overlay && !overlay.classList.contains('hidden')) closeTour();
+  });
+  window.addEventListener('resize', () => {
+    const overlay = $('#tour-overlay');
+    if (overlay && !overlay.classList.contains('hidden')) positionTour();
+  });
 }
 
 /* ── quick-switch saved signatures ────────────────────────────────────── */
@@ -711,9 +840,45 @@ function updateChecklist() {
   const w = collectWarnings(state);
   if (!w.length) {
     el.innerHTML = '<div class="check-ok">' + t('check.ready') + '</div>';
-    return;
+  } else {
+    el.innerHTML = w.map(x => `<div class="check-item check-${x.kind}">${x.msg}</div>`).join('');
   }
-  el.innerHTML = w.map(x => `<div class="check-item check-${x.kind}">${x.msg}</div>`).join('');
+  updateTrustBadge();
+}
+
+/* ── empty-state preview guide ────────────────────────────────────────── */
+
+/* A callout over the preview stage until a name exists: the single most
+   valuable next action on a blank editor. Toggled on every preview pass. */
+function updateEmptyGuide() {
+  const guide = $('#empty-guide');
+  if (!guide) return;
+  const named = Boolean(
+    String(state.profile.name || '').trim() ||
+    String(state.profile.displayName || '').trim()
+  );
+  guide.classList.toggle('hidden', named);
+}
+
+/* ── live trust badge ─────────────────────────────────────────────────── */
+
+/* One glance at the preview column header: green when buildAudit reports
+   nothing to warn about, amber with a count otherwise. Re-computed on
+   every checklist pass, so it tracks the editor keystroke-for-keystroke. */
+function updateTrustBadge() {
+  const badge = $('#trust-badge');
+  if (!badge) return;
+  let warns = 0;
+  try {
+    warns = buildAudit(state).items.filter(i => i.kind === 'warn').length;
+  } catch (e) { /* keep the previous verdict if the audit throws */ }
+  if (warns === 0) {
+    badge.textContent = t('badge.ok');
+    badge.className = 'trust-badge ok';
+  } else {
+    badge.textContent = warns === 1 ? t('badge.fixOne') : t('badge.fix', { n: warns });
+    badge.className = 'trust-badge warn';
+  }
 }
 
 /* ── rebuild everything ───────────────────────────────────────────────── */
@@ -1542,6 +1707,7 @@ function init() {
   /* wizard + quick-switch */
   initWizard();
   initQuickSwitch();
+  initTour();
 
   /* preview chrome */
   $('#seg-width').addEventListener('change', e => {
@@ -1558,6 +1724,25 @@ function init() {
       stage.classList.remove('grey', 'dark');
       if (e.target.value !== 'white') stage.classList.add(e.target.value);
     }
+  });
+
+  /* trust badge: jump to the checklist (unfolding its section, if any) */
+  $('#trust-badge').addEventListener('click', () => {
+    const list = $('#checklist');
+    const host = list && list.closest('details[data-sec]');
+    if (host) host.open = true;
+    if (list) {
+      list.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      list.focus({ preventScroll: true });
+    }
+  });
+
+  /* empty-state guide: straight to the one field that matters */
+  $('#empty-guide-btn').addEventListener('click', () => {
+    const sec = document.querySelector('details[data-sec="profile"]');
+    if (sec) sec.open = true;
+    const nameField = document.querySelector('[data-field="profile.name"]');
+    if (nameField) nameField.focus();
   });
   $('#preview-frame').addEventListener('load', syncPreviewHeight);
 
@@ -1784,12 +1969,32 @@ function init() {
 
   /* editor section open/close state survives reloads */
   const SECTIONS_KEY = 'sigstudio.sections';
+  /* Essentials-first: on a genuine first visit (no saved map yet) only
+     Profile and Design start open — the rest unfolds on demand. Returning
+     users (key present) are untouched. The open attributes are removed
+     before the toggle listeners below exist, but browsers dispatch the
+     toggle event asynchronously — the queued events land after the
+     listeners are attached. programmaticClose marks each section so the
+     listener ignores exactly that first queued event: the collapse is a
+     fresh-visit default, not a recorded user choice. */
+  let firstVisit = true;
+  try { firstVisit = localStorage.getItem(SECTIONS_KEY) === null; } catch (e) { /* ignore */ }
+  const programmaticClose = new WeakSet();
+  if (firstVisit) {
+    document.querySelectorAll('details[data-sec]').forEach(d => {
+      if (d.dataset.sec !== 'profile' && d.dataset.sec !== 'design') {
+        programmaticClose.add(d);
+        d.removeAttribute('open');
+      }
+    });
+  }
   try {
     const saved = JSON.parse(localStorage.getItem(SECTIONS_KEY) || '{}');
     document.querySelectorAll('details[data-sec]').forEach(d => {
       const id = d.dataset.sec;
       if (saved[id] === false) d.open = false;
       d.addEventListener('toggle', () => {
+        if (programmaticClose.has(d)) { programmaticClose.delete(d); return; }
         try {
           const cur = JSON.parse(localStorage.getItem(SECTIONS_KEY) || '{}');
           cur[id] = d.open;

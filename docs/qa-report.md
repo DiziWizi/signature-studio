@@ -698,6 +698,34 @@ overrides, the Custom block-reorder template.
 
 ---
 
+# v0.44.0 addendum (welcome pass)
+
+Date: 2026-11-19 · Scope: first-session approachability.
+
+## Notes
+
+- Essentials-first: a genuine first visit opens only Profile + Design;
+  the section map is written only on real user toggles (a WeakSet guard
+  skips the async toggle events the programmatic collapse fires).
+- Empty-state guide: a callout over the preview until a name exists;
+  CTA opens Profile and focuses the name field.
+- Trust badge: recomputed from buildAudit on every checklist pass —
+  green 'Outlook-safe' or amber 'N things to fix'; click focuses the
+  checklist.
+- Pointer tour: 4 spotlight steps after the wizard (preview, name,
+  export, checklist), Esc/Skip/finish sets sigstudio.tour.done, focus
+  managed, resize-aware. A draft with CONTENT marks a returning user —
+  a bare default draft flushed by a mid-wizard reload does not (found
+  and fixed during parent verification: the unload-flush wrote an
+  empty draft, which the original trigger counted as a returning user,
+  silently killing the tour after any reload; E2E covers the case).
+- e2e/helper.js seeds all sections open + tour done so the 117
+  pre-existing tests run as returning users; welcome.spec adds 7 tests
+  (first-visit collapse, guide, badge, tour walkthrough/skip/Esc,
+  reload-flush tour). 124/124 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

@@ -564,4 +564,18 @@ window.SIG_LOCALES.en = {
   'bulk.result': "{n} generated, {m} skipped.",
   'bulk.noEmail': "No email column found — add a header like name,email,title.",
   'bulk.noRows': "Nothing to generate — paste at least one data row with a name and email.",
+
+  'empty.title': "Type your name to see your signature",
+  'empty.cta': "Start with your name",
+
+  'badge.ok': "Outlook-safe",
+  'badge.fix': "{n} things to fix",
+  'badge.fixOne': "1 thing to fix",
+
+  'tour.step1': "Your signature builds here as you type",
+  'tour.step2': "Start with your name",
+  'tour.step3': "When it looks right: Export > Copy to clipboard",
+  'tour.step4': "This list tells you if anything is missing",
+  'tour.next': "Next",
+  'tour.skip': "Skip",
 };
