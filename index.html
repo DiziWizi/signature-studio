@@ -65,6 +65,8 @@
       <div class="body grid2">
         <label class="field">Full name<input data-field="profile.name" placeholder="Ada Lovelace"></label>
         <label class="field">Preferred name <span class="opt">(shown in the signature)</span><input data-field="profile.displayName" placeholder="Ada"></label>
+        <label class="field">Honorific <span class="opt">(before the name)</span><input data-field="profile.honorificPrefix" placeholder="Dr., Prof."></label>
+        <label class="field">Post-nominals <span class="opt">(after the name)</span><input data-field="profile.honorificSuffix" placeholder="PhD, PMP"></label>
         <label class="field">Pronouns <span class="opt">(optional)</span><input data-field="profile.pronouns" placeholder="she/her"></label>
         <label class="field">Location <span class="opt">(city, timezone)</span><input data-field="profile.location" placeholder="Melbourne, AU · UTC+11"></label>
         <label class="field">Job title<input data-field="profile.title" placeholder="Head of Analytics"></label>
@@ -86,6 +88,7 @@
         <label class="field">Booking label<input data-field="contact.bookingLabel" placeholder="Book a call"></label>
         <label class="field">Portfolio URL <span class="opt">(creators, freelancers)</span><input data-field="contact.portfolio" placeholder="yourwork.example"></label>
         <label class="field">Portfolio label<input data-field="contact.portfolioLabel" placeholder="Portfolio"></label>
+        <label class="field">PGP public key <span class="opt">(fingerprint or URL)</span><input data-field="contact.pgpKey" placeholder="0x1234… or https://keys.example/ada.asc"></label>
         <label class="field span2">Address (one line or multiple)
           <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom"></textarea>
         </label>
@@ -103,6 +106,9 @@
           <button class="chip-btn" data-net="instagram" title="Instagram" aria-label="Add Instagram" type="button" style="background:#e4405f;color:#fff;border-color:transparent;">◉</button>
           <button class="chip-btn" data-net="youtube" title="YouTube" aria-label="Add YouTube" type="button" style="background:#ff0000;color:#fff;border-color:transparent;">▶</button>
           <button class="chip-btn" data-net="whatsapp" title="WhatsApp" aria-label="Add WhatsApp" type="button" style="background:#25d366;color:#fff;border-color:transparent;">✆</button>
+          <button class="chip-btn" data-net="signal" title="Signal" aria-label="Add Signal" type="button" style="background:#3a76f0;color:#fff;border-color:transparent;">S</button>
+          <button class="chip-btn" data-net="telegram" title="Telegram" aria-label="Add Telegram" type="button" style="background:#26a5e4;color:#fff;border-color:transparent;">T</button>
+          <button class="chip-btn" data-net="mastodon" title="Mastodon" aria-label="Add Mastodon" type="button" style="background:#6364ff;color:#fff;border-color:transparent;">M</button>
         </div>
         <div id="socials-list"></div>
         <button class="btn btn-ghost" id="add-social" type="button">+ Add social link</button>

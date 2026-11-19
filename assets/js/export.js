@@ -5,7 +5,13 @@ function plainTextVersion(s) {
   const lines = [];
   const p = s.profile;
   const shown = p.displayName || p.name;
-  if (shown) lines.push(p.pronouns ? `${shown} (${p.pronouns})` : shown);
+  if (shown) {
+    const honorificPrefix = String(p.honorificPrefix || '').trim();
+    const honorificSuffix = String(p.honorificSuffix || '').trim();
+    const shownWithHonorifics = (honorificPrefix ? honorificPrefix + ' ' : '') + shown +
+      (honorificSuffix ? ', ' + honorificSuffix : '');
+    lines.push(p.pronouns ? `${shownWithHonorifics} (${p.pronouns})` : shownWithHonorifics);
+  }
   const bits = [p.title, p.department].filter(Boolean).join(' · ');
   if (bits) lines.push(bits);
   if (p.company) lines.push(p.company);
@@ -23,6 +29,8 @@ function plainTextVersion(s) {
   if (c.address) contact.push(c.address.replace(/\r?\n/g, ', '));
   for (const l of s.customLines) if (l.value) contact.push(`${l.label ? l.label + ': ' : ''}${l.value}`);
   if (contact.length) lines.push(contact.join(' | '));
+  const pgpKey = String(c.pgpKey || '').trim();
+  if (pgpKey) lines.push('PGP: ' + (/^http/i.test(pgpKey) ? 'Public key ' + pgpKey : pgpKey));
   if (c.booking) lines.push(`${c.bookingLabel || 'Book a call'}: ${c.booking}`);
   const socials = s.socials.filter(x => String(x.url || '').trim())
     .map(x => {

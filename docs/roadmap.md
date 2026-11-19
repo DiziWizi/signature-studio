@@ -71,6 +71,12 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   accent strip), Line (casual one-liner with tiny socials), Duotone
   (creative accent panel with white identity text), Quote (personal,
   optional italic favourite quote via the new quoteText field); E2E now 53
+- [x] v0.18.0 — honorifics + post-nominals (signature, plain text, vCard
+  3.0 N components, 4.0 HONORIFIC-PREFIX/SUFFIX); PGP public key line in
+  the signature and KEY;TYPE=PGP in both vCards; vCard photo (PHOTO from a
+  hosted logo URL); privacy networks Matrix, Keybase, Threads added
+  (Signal/Telegram/Mastodon/BlueSky already existed) with URL detection;
+  E2E now 57
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.

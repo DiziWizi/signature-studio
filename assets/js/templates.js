@@ -60,13 +60,17 @@ function dmCls(d, kind) {
 function nameHtml(s, d, { big = true, size = 0 } = {}) {
   const shown = s.profile.displayName || s.profile.name;
   if (!shown) return '';
+  const honorificPrefix = String(s.profile.honorificPrefix || '').trim();
+  const honorificSuffix = String(s.profile.honorificSuffix || '').trim();
+  const shownWithHonorifics = (honorificPrefix ? honorificPrefix + ' ' : '') + shown +
+    (honorificSuffix ? ', ' + honorificSuffix : '');
   const extra = nameExtraOf(d);
   const fs = size || (big ? d.fontSize + 2 + extra : d.fontSize - 2 + extra);
   const style = textStyle(d, { size: fs, weight: 'bold' });
   const pronouns = s.profile.pronouns
     ? ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
     : '';
-  return `<span${dmCls(d, 'txt')} style="${style}">${esc(shown)}</span>${pronouns}<br>`;
+  return `<span${dmCls(d, 'txt')} style="${style}">${esc(shownWithHonorifics)}</span>${pronouns}<br>`;
 }
 
 /* Personal context line: location · languages, muted under the title. */
@@ -134,6 +138,15 @@ function contactItems(s, d = {}) {
   if (c.mobile && d.showMobile !== false) items.push({ key: 'mobile', label: 'Mobile', text: c.mobile, href: 'tel:' + c.mobile.replace(/[^\d+]/g, '') });
   if (c.website && d.showWebsite !== false) items.push({ key: 'website', label: c.websiteLabel || 'Web', text: c.websiteLabel || c.website, href: normalizeUrl('custom', c.website) });
   if (c.portfolio) items.push({ key: 'portfolio', label: c.portfolioLabel || 'Portfolio', text: c.portfolioLabel || c.portfolio, href: normalizeUrl('custom', c.portfolio) });
+  if (c.pgpKey) {
+    const pgp = String(c.pgpKey).trim();
+    if (pgp) {
+      const isUrl = /^http/i.test(pgp);
+      const item = { key: 'pgp', label: 'PGP', text: isUrl ? 'Public key' : (pgp.length > 24 ? pgp.slice(0, 24) + '…' : pgp) };
+      if (isUrl) item.href = pgp;
+      items.push(item);
+    }
+  }
   if (c.address && d.showAddress !== false) items.push({ key: 'address', label: '', text: c.address, multiline: true });
   for (const line of s.customLines) {
     if (line.value) items.push({ key: 'custom', label: line.label, text: line.value });
@@ -654,13 +667,17 @@ function duotoneRows(s, d) {
 
   const logoContent = logoCellHtml(s, d);
   const shown = String(s.profile.displayName || s.profile.name || '').trim();
+  const duotonePrefix = String(s.profile.honorificPrefix || '').trim();
+  const duotoneSuffix = String(s.profile.honorificSuffix || '').trim();
+  const duotoneShown = (duotonePrefix ? duotonePrefix + ' ' : '') + shown +
+    (duotoneSuffix ? ', ' + duotoneSuffix : '');
 
   const leftParts = [];
   if (logoContent) {
     leftParts.push(`<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td align="center" style="padding:0 0 ${den.rowGap}px 0;">${logoContent}</td></tr></table>`);
   }
   if (shown) {
-    leftParts.push(`<span style="${textStyle(d, { size: d.fontSize + nameExtraOf(d), color: '#ffffff', weight: 'bold' })}">${esc(shown)}</span><br>`);
+    leftParts.push(`<span style="${textStyle(d, { size: d.fontSize + nameExtraOf(d), color: '#ffffff', weight: 'bold' })}">${esc(duotoneShown)}</span><br>`);
   }
   if (d.showTitle !== false) {
     const bits = [

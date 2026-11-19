@@ -432,6 +432,36 @@ optional `quoteText` design field.
 
 ---
 
+# v0.18.0 addendum (honorifics, PGP, privacy networks, vCard photo)
+
+Date: 2026-11-19 · Scope: new optional fields flowing through signature,
+plain text and both vCards.
+
+## Notes
+
+- Honorifics: honorificPrefix/honorificSuffix render around the name in
+  every layout (incl. the duotone white name), the plain-text export, the
+  vCard 3.0 N components (Family;Given;;Prefix;Suffix) and vCard 4.0
+  HONORIFIC-PREFIX/SUFFIX. FN and monogram initials deliberately exclude
+  them.
+- PGP: contact.pgpKey renders a PGP line in every layout's contact stack
+  (fingerprint truncated to 20 chars + …, or a "Public key" link for URLs)
+  and KEY;TYPE=PGP in both vCards.
+- vCard photo: design.logoUrl is emitted as PHOTO when hosted (http);
+  data: URLs are skipped.
+- Networks: Matrix, Keybase and Threads were actually new — Signal,
+  Telegram, Mastodon and BlueSky already existed from the personal pack,
+  so the subagent appended only the three and aligned the Telegram/BlueSky
+  glyphs with the quick-add chips. detectNetwork gains the new domains.
+- Verification: subagent harness 57 semantic + 44 byte-identity checks
+  (default renders/vCards/plain text sha256-identical); full E2E 57/57
+  twice locally; CI green on the tag. Test-side fixes: PGP truncation is
+  20 chars (contract was ≤24); the vCard 3.0 PHOTO line folds at 75 chars
+  so the test unfolds before asserting; the photo URL in tests is a real
+  gravatar so the preview iframe makes no failed-request noise.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

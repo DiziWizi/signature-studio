@@ -17,10 +17,12 @@ tracking. Works offline.
   column on phones via a media query that Outlook harmlessly ignores. The
   Phone preview shows exactly what mobile recipients see, and the stacking
   can be switched off per signature.
-- **Profile & contact details** — full and preferred name, **pronouns**,
+- **Profile & contact details** — full and preferred name, **honorific and
+  post-nominals** (Dr., PhD), **pronouns**,
   **location and languages**, title, department, company, email, phone,
-  mobile, website, **portfolio**, **booking link (Calendly/Cal.com)**, and
-  multi-line address.
+  mobile, website, **portfolio**, **booking link (Calendly/Cal.com)**,
+  **PGP public key** (fingerprint or URL — rendered in the signature and
+  embedded in your vCard), and multi-line address.
 - **Social links** — LinkedIn, X, Facebook, Instagram, GitHub, YouTube,
   TikTok, Mastodon, Bluesky, WhatsApp, Telegram, Signal, Xing, Pinterest, plus
   custom links with your own glyph and colour. Quick-add chips, drag-and-drop

@@ -10,9 +10,9 @@ const NETWORKS = [
   { id: 'youtube',   name: 'YouTube',     glyph: '▶',  color: '#ff0000', prefix: 'https://www.youtube.com/@', placeholder: 'channel or full URL' },
   { id: 'tiktok',    name: 'TikTok',      glyph: '♫',  color: '#111111', prefix: 'https://www.tiktok.com/@',  placeholder: 'username or full URL' },
   { id: 'mastodon',  name: 'Mastodon',    glyph: 'M',  color: '#6364ff', prefix: '',                          placeholder: 'https://instance/@user' },
-  { id: 'bluesky',   name: 'Bluesky',     glyph: '✹',  color: '#1185fe', prefix: 'https://bsky.app/profile/', placeholder: 'handle or full URL' },
+  { id: 'bluesky',   name: 'BlueSky',     glyph: 'B',  color: '#0085ff', prefix: 'https://bsky.app/profile/', placeholder: 'handle or full URL' },
   { id: 'whatsapp',  name: 'WhatsApp',    glyph: '✆',  color: '#25d366', prefix: 'https://wa.me/',           placeholder: 'number incl. country code' },
-  { id: 'telegram',  name: 'Telegram',    glyph: '✈',  color: '#26a5e4', prefix: 'https://t.me/',             placeholder: 'username or full URL' },
+  { id: 'telegram',  name: 'Telegram',    glyph: 'T',  color: '#26a5e4', prefix: 'https://t.me/',             placeholder: 'username or full URL' },
   { id: 'signal',    name: 'Signal',      glyph: 'S',  color: '#3a76f0', prefix: 'https://signal.me/#p/',     placeholder: 'number or full URL' },
   { id: 'xing',      name: 'Xing',        glyph: 'X',  color: '#006567', prefix: 'https://www.xing.com/profile/', placeholder: 'profile id or full URL' },
   { id: 'pinterest', name: 'Pinterest',   glyph: 'P',  color: '#bd081c', prefix: 'https://www.pinterest.com/',placeholder: 'username or full URL' },
@@ -28,6 +28,9 @@ const NETWORKS = [
   { id: 'letterboxd',name: 'Letterboxd',  glyph: 'L',  color: '#00a84c', prefix: 'https://letterboxd.com/',    placeholder: 'username or full URL' },
   { id: 'spotify',   name: 'Spotify',     glyph: '♪',  color: '#1db954', prefix: 'https://open.spotify.com/user/', placeholder: 'user id or full URL' },
   { id: 'kofi',      name: 'Ko-fi',       glyph: '☕',  color: '#ff5e5b', prefix: 'https://ko-fi.com/',         placeholder: 'username or full URL' },
+  { id: 'matrix',    name: 'Matrix',      glyph: 'M',  color: '#0f8a5f', prefix: 'https://matrix.to/#/',        placeholder: '@user:server or full URL' },
+  { id: 'keybase',   name: 'Keybase',     glyph: 'K',  color: '#33a0ff', prefix: 'https://keybase.io/',           placeholder: 'username or full URL' },
+  { id: 'threads',   name: 'Threads',     glyph: 'T',  color: '#000000', prefix: 'https://www.threads.net/@',     placeholder: 'username or full URL' },
   { id: 'custom',    name: 'Custom link…',glyph: '↗',  color: '#5b6472', prefix: '',                          placeholder: 'https://…' },
 ];
 
@@ -65,6 +68,11 @@ const SOCIAL_HOST_PATTERNS = [
   [/signal\.me$/, 'signal'],
   [/xing\.com$/, 'xing'],
   [/pinterest\.com$/, 'pinterest'],
+  [/telegram\.me$/, 'telegram'],
+  [/matrix\.to$/, 'matrix'],
+  [/mastodon/, 'mastodon'],
+  [/keybase\.io$/, 'keybase'],
+  [/threads\.net$/, 'threads'],
 ];
 
 function detectNetwork(hostname) {

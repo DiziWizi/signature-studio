@@ -122,10 +122,14 @@ function buildVCard(state) {
   const fullName = String(p.name || '').trim();
   const displayName = String(p.displayName || '').trim() || fullName;
   const name = splitName(fullName);
+  const honorificPrefix = String(p.honorificPrefix || '').trim();
+  const honorificSuffix = String(p.honorificSuffix || '').trim();
   if (name.family || name.given) {
     lines.push(vcardField('FN', null, displayName));
-    lines.push(vcardField('N', null, null, [name.family, name.given, '', '', '']));
+    lines.push(vcardField('N', null, null, [name.family, name.given, '', honorificPrefix, honorificSuffix]));
   }
+  const logoUrl = String(d.logoUrl || '').trim();
+  if (/^http/i.test(logoUrl)) lines.push(vcardField('PHOTO', ['VALUE=URI'], logoUrl));
 
   const orgParts = [p.company, p.department]
     .map(x => String(x || '').trim())
@@ -156,6 +160,9 @@ function buildVCard(state) {
     const url = socialUrlFor(sc);
     if (url) lines.push(vcardField('X-SOCIALPROFILE', ['TYPE=' + (sc.network || 'custom')], url));
   }
+
+  const pgpKey = String(c.pgpKey || '').trim();
+  if (pgpKey) lines.push(vcardField('KEY', ['TYPE=PGP'], pgpKey));
 
   const noteParts = [];
   for (const cl of customs) {
@@ -198,10 +205,16 @@ function buildVCard4(state) {
   const fullName = String(p.name || '').trim();
   const displayName = String(p.displayName || '').trim() || fullName;
   const name = splitName(fullName);
+  const honorificPrefix = String(p.honorificPrefix || '').trim();
+  const honorificSuffix = String(p.honorificSuffix || '').trim();
   if (name.family || name.given) {
     lines.push(vcardField4('FN', null, displayName));
     lines.push(vcardField4('N', null, null, [name.family, name.given, '', '', '']));
   }
+  if (honorificPrefix) lines.push(vcardField4('HONORIFIC-PREFIX', null, honorificPrefix));
+  if (honorificSuffix) lines.push(vcardField4('HONORIFIC-SUFFIX', null, honorificSuffix));
+  const logoUrl = String(d.logoUrl || '').trim();
+  if (/^http/i.test(logoUrl)) lines.push(vcardField4('PHOTO', null, logoUrl));
 
   const orgParts = [p.company, p.department]
     .map(x => String(x || '').trim())
@@ -232,6 +245,9 @@ function buildVCard4(state) {
     const url = socialUrlFor(sc);
     if (url) lines.push(vcardField4('X-SOCIALPROFILE', ['TYPE=' + (sc.network || 'custom')], url));
   }
+
+  const pgpKey = String(c.pgpKey || '').trim();
+  if (pgpKey) lines.push(vcardField4('KEY', ['TYPE=PGP'], pgpKey));
 
   const noteParts = [];
   for (const cl of customs) {

@@ -43,8 +43,8 @@ function themeById(id) {
 
 function defaultState() {
   return {
-    profile: { name: '', displayName: '', title: '', department: '', company: '', pronouns: '', location: '', languages: '' },
-    contact: { email: '', phone: '', mobile: '', website: '', websiteLabel: '', booking: '', bookingLabel: '', portfolio: '', portfolioLabel: '', address: '' },
+    profile: { name: '', displayName: '', honorificPrefix: '', honorificSuffix: '', title: '', department: '', company: '', pronouns: '', location: '', languages: '' },
+    contact: { email: '', phone: '', mobile: '', website: '', websiteLabel: '', booking: '', bookingLabel: '', portfolio: '', portfolioLabel: '', pgpKey: '', address: '' },
     socials: [],      // { network, url, glyph, color }
     customLines: [],  // { label, value }
     design: {
@@ -160,6 +160,8 @@ function sampleState(personaId = 'default') {
       { network: 'github', url: 'https://github.com/samokafor', glyph: '', color: '' },
       { network: 'twitch', url: 'https://www.twitch.tv/samokafor', glyph: '', color: '' },
       { network: 'discord', url: 'https://discord.gg/samokafor', glyph: '', color: '' },
+      { network: 'signal', url: 'https://signal.me/#eu/samokafor', glyph: '', color: '' },
+      { network: 'matrix', url: 'https://matrix.to/#/@samokafor:matrix.org', glyph: '', color: '' },
     ];
     s.design.statusText = 'Building in public';
     s.design.statusColor = '#7048a8';
