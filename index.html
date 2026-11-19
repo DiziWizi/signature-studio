@@ -49,6 +49,8 @@
       <div class="menu hidden" id="export-menu" role="menu">
         <button role="menuitem" id="x-copy" type="button" data-i18n="topbar.copy">Copy to clipboard</button>
         <button role="menuitem" id="x-copy-fragment" type="button" data-i18n="topbar.copyFragment">Copy table fragment (for CMS)</button>
+        <button role="menuitem" id="x-apple-mail" type="button" data-i18n="topbar.appleMail">Download for Apple Mail (.mailsignature)</button>
+        <button role="menuitem" id="x-thunderbird" type="button" data-i18n="topbar.thunderbird">Download for Thunderbird (.html)</button>
         <button role="menuitem" id="x-download" type="button" data-i18n="topbar.download">Download .html file</button>
         <button role="menuitem" id="x-instructions" type="button" data-i18n="topbar.instructions">Install in your mail client…</button>
         <hr class="sep">
@@ -260,6 +262,12 @@
           <label class="field"><span data-i18n="design.dividerColour">Divider colour</span><input type="color" data-field="design.dividerColor"></label>
           <label class="field"><span data-i18n="design.cardColour">Card colour</span><input type="color" data-field="design.cardColor"></label>
           <label class="field"><span data-i18n="design.background">Signature background</span> <span class="opt" data-i18n="opt.fullWidthBand">(full-width band)</span><input data-field="design.background" placeholder="#f0f2f5 — empty = transparent"></label>
+
+          <div class="field span2">
+            <span class="lbl" data-i18n="field.customHtml">Custom HTML block (advanced)</span>
+            <textarea data-field="design.customHtml" rows="3" placeholder="Paste raw HTML here — empty = off"></textarea>
+            <span class="micro" data-i18n="field.customHtmlHint">Embedded exactly as written, after the layout — no safety checks apply.</span>
+          </div>
           <label class="field"><span data-i18n="design.dividerStyle">Divider style</span>
             <select data-field="design.dividerStyle">
               <option value="solid" data-i18n="design.dividerSolid">Solid</option>

@@ -34,6 +34,8 @@ window.SIG_LOCALES.de = {
   'topbar.qr': 'QR-Code anzeigen',
   'topbar.share': 'Freigabe-Link kopieren',
   'topbar.jsonEdit': 'Als JSON bearbeiten…',
+  'topbar.appleMail': 'Für Apple Mail herunterladen (.mailsignature)',
+  'topbar.thunderbird': 'Für Thunderbird herunterladen (.html)',
   'topbar.resetTitle': 'Neu beginnen',
   'topbar.resetAria': 'Neu beginnen',
   'topbar.language': 'Sprache',
@@ -459,6 +461,9 @@ window.SIG_LOCALES.de = {
   'check.bannerEmbedded': 'Banner ist eingebettet (data:-Bild) — Outlook entfernt diese. Hosten Sie es und fügen Sie die URL ein.',
   'check.roundedOutlook': 'Outlook Desktop rendert dies ohne abgerundete Ecken — aktivieren Sie den Strikt-Modus für die Vorschau.',
   'check.embeddedQr': 'Der eingebettete QR-Code ist ein Tabellenraster, kein Bild — Outlook-Empfänger sehen den Block, können ihn aber nicht scannen; Gmail und Apple Mail scannen problemlos.',
+  'check.customHtml': 'Eigener HTML-Code wird exakt wie eingegeben eingebettet - ohne Sicherheitsprüfung.',
+  'field.customHtml': 'Eigener HTML-Block (fortgeschritten)',
+  'field.customHtmlHint': 'Wird exakt wie eingegeben nach dem Layout eingebettet - ohne Sicherheitsprüfung.',
   'check.networkNoLink': '{net} hat noch keinen Link — er erscheint nicht in der Signatur.',
 
   'concise.summary': '{lines} {lineWord} · längste ~{longest} Zeichen — {verdict}',

@@ -1309,6 +1309,13 @@ function renderInner(state) {
     </td></tr>`;
   }
 
+  /* Optional raw-HTML block: embedded verbatim (power-user escape hatch).
+     No escaping or validation — the user asked for it, so it goes in as
+     written. Empty by default, keeping output byte-identical. */
+  if (d.customHtml && String(d.customHtml).trim()) {
+    bodyRows += `\n<tr><td colspan="2" align="left">\n${String(d.customHtml)}\n</td></tr>`;
+  }
+
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
   <tr>
     <td align="${outerAlign}"${bgStyle ? ` style="${bgStyle}"` : ''}>

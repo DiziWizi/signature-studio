@@ -102,3 +102,31 @@ function renderFragment(state) {
   if (typeof renderInner !== 'function') return '';
   return renderInner(state);
 }
+
+/* Apple Mail stores signatures as .mailsignature files: the HTML fragment
+   prefixed with a Content-Type meta tag (Mail expects UTF-8 declared in
+   the file itself). Users drop the file into the MailData/Signatures
+   folder inside their Mail library; filenames there are UUIDs. */
+function appleMailSignature(state) {
+  const fragment = renderFragment(state);
+  return '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n' + fragment;
+}
+
+/* Thunderbird takes the bare fragment in a plain .html file. */
+function thunderbirdSignature(state) {
+  return renderFragment(state);
+}
+
+/* Download a raw payload under a custom extension (no .html suffix). */
+function downloadRawFile(content, filename, mime) {
+  const blob = new Blob([content], { type: mime });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    URL.revokeObjectURL(a.href);
+    a.remove();
+  }, 4000);
+}

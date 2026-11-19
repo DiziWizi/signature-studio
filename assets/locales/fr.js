@@ -34,6 +34,8 @@ window.SIG_LOCALES.fr = {
   'topbar.qr': 'Afficher le code QR',
   'topbar.share': 'Copier le lien de partage',
   'topbar.jsonEdit': 'Modifier en JSON…',
+  'topbar.appleMail': 'Télécharger pour Apple Mail (.mailsignature)',
+  'topbar.thunderbird': 'Télécharger pour Thunderbird (.html)',
   'topbar.resetTitle': 'Recommencer',
   'topbar.resetAria': 'Recommencer',
   'topbar.language': 'Langue',
@@ -459,6 +461,10 @@ window.SIG_LOCALES.fr = {
   'check.bannerEmbedded': 'Le bandeau est intégré (image data:) — Outlook les supprime. Hébergez-le et collez l’URL.',
   'check.roundedOutlook': 'Outlook Desktop affiche ceci sans coins arrondis — activez le mode strict pour le prévisualiser.',
   'check.embeddedQr': 'Le QR intégré est une grille de tableau, pas une image — les destinataires Outlook voient le bloc mais ne peuvent pas le scanner ; Gmail et Apple Mail le scannent très bien.',
+  'check.customHtml': 'Le HTML personnalisé est intégré tel quel - aucun contrôle de sécurité.',
+  'field.customHtml': 'Bloc HTML personnalisé (avancé)',
+  'field.customHtmlHint': "Intégré exactement tel qu'écrit, après la mise en page - aucun contrôle de sécurité.",
+
   'check.networkNoLink': '{net} n’a pas encore de lien — il n’apparaîtra pas dans la signature.',
 
   'concise.summary': '{lines} {lineWord} · la plus longue ~{longest} caractères — {verdict}',

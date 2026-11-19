@@ -106,6 +106,7 @@ function defaultState() {
       nameSizeExtra: 3,     // px added to the base font size for the name
       showQr: false,        // inline vCard QR in Classic + Enterprise
       qrSize: 60,           // QR size in px (32-96)
+      customHtml: '',       // raw HTML embedded verbatim after the layout
       /* enterprise template — organisational field set */
       supportTitle: '',       // support box heading (empty box title hides nothing by itself — box shows when any support field is set)
       supportChatUrl: '',     // support chat link target

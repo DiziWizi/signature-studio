@@ -655,6 +655,9 @@ function collectWarnings(s) {
   if (s.design.showQr) {
     w.push({ kind: 'info', msg: t('check.embeddedQr') });
   }
+  if (s.design.customHtml && String(s.design.customHtml).trim()) {
+    w.push({ kind: 'warn', msg: t('check.customHtml') });
+  }
   for (const soc of s.socials) {
     if (!String(soc.url || '').trim()) {
       w.push({ kind: 'info', msg: t('check.networkNoLink', { net: esc(networkById(soc.network).name) }) });
@@ -1383,6 +1386,16 @@ function init() {
   });
   $('#x-copy').addEventListener('click', () => { menu.classList.add('hidden'); guardOutlookExport(() => doCopy()); });
   $('#x-copy-fragment').addEventListener('click', () => { menu.classList.add('hidden'); doCopyFragment(); });
+  $('#x-apple-mail').addEventListener('click', () => {
+    menu.classList.add('hidden');
+    downloadRawFile(appleMailSignature(state), `${slugify(state.meta.name)}.mailsignature`, 'text/html');
+    showToast(t('toast.appleMail'), 'ok', { key: 'toast.appleMail' });
+  });
+  $('#x-thunderbird').addEventListener('click', () => {
+    menu.classList.add('hidden');
+    downloadRawFile(thunderbirdSignature(state), `${slugify(state.meta.name)}-thunderbird.html`, 'text/html');
+    showToast(t('toast.thunderbird'), 'ok', { key: 'toast.thunderbird' });
+  });
   $('#x-share').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink(); });
   $('#x-json').addEventListener('click', () => { menu.classList.add('hidden'); openJsonEditor(); });
   $('#json-apply').addEventListener('click', applyJsonEditor);

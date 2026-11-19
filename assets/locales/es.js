@@ -34,6 +34,8 @@ window.SIG_LOCALES.es = {
   'topbar.qr': 'Mostrar código QR',
   'topbar.share': 'Copiar enlace compartido',
   'topbar.jsonEdit': 'Editar como JSON…',
+  'topbar.appleMail': 'Descargar para Apple Mail (.mailsignature)',
+  'topbar.thunderbird': 'Descargar para Thunderbird (.html)',
   'topbar.resetTitle': 'Empezar de nuevo',
   'topbar.resetAria': 'Empezar de nuevo',
   'topbar.language': 'Idioma',
@@ -459,6 +461,9 @@ window.SIG_LOCALES.es = {
   'check.bannerEmbedded': 'El banner está incrustado (imagen data:) — Outlook las elimina. Alójelo y pegue la URL.',
   'check.roundedOutlook': 'Outlook de escritorio renderiza esto sin esquinas redondeadas — active el modo estricto para verlo.',
   'check.embeddedQr': 'El QR incrustado es una cuadrícula de tabla, no una imagen — los destinatarios de Outlook ven el bloque pero no pueden escanearlo; Gmail y Apple Mail lo escanean bien.',
+  'check.customHtml': 'El HTML personalizado se inserta exactamente como está escrito - sin comprobaciones de seguridad.',
+  'field.customHtml': 'Bloque HTML personalizado (avanzado)',
+  'field.customHtmlHint': 'Se inserta exactamente como está escrito, después del diseño - sin comprobaciones de seguridad.',
   'check.networkNoLink': '{net} aún no tiene enlace — no aparecerá en la firma.',
 
   'concise.summary': '{lines} {lineWord} · la más larga ~{longest} caracteres — {verdict}',

@@ -36,6 +36,8 @@ window.SIG_LOCALES.en = {
   'topbar.qr': 'Show QR code',
   'topbar.share': 'Copy share link',
   'topbar.jsonEdit': 'Edit as JSON…',
+  'topbar.appleMail': 'Download for Apple Mail (.mailsignature)',
+  'topbar.thunderbird': 'Download for Thunderbird (.html)',
   'topbar.resetTitle': 'Start over',
   'topbar.resetAria': 'Start over',
   'topbar.language': 'Language',
@@ -461,6 +463,9 @@ window.SIG_LOCALES.en = {
   'check.bannerEmbedded': 'Banner is embedded (data: image) — Outlook strips these. Host it and paste the URL.',
   'check.roundedOutlook': 'Outlook desktop renders this without rounded corners — turn on Strict mode to preview that.',
   'check.embeddedQr': 'The embedded QR is a table grid, not an image — Outlook recipients see the block but cannot scan it; Gmail and Apple Mail scan fine.',
+  'check.customHtml': 'Custom HTML is embedded exactly as written - no safety checks apply.',
+  'field.customHtml': 'Custom HTML block (advanced)',
+  'field.customHtmlHint': 'Embedded exactly as written, after the layout - no safety checks apply.',
   'check.networkNoLink': '{net} has no link yet — it won’t show in the signature.',
 
   'concise.summary': '{lines} {lineWord} · longest ~{longest} chars — {verdict}',
