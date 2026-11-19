@@ -1,6 +1,6 @@
 {
   "name": "signature-studio",
-  "version": "0.28.0",
+  "version": "0.29.0",
   "description": "Web-based HTML email signature builder and editor. Static, dependency-free.",
   "scripts": {
     "serve": "python3 -m http.server 8137",

@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Signature Studio — build and edit HTML email signatures in the browser. Templates, social links, contact details, live preview, one-click export. No account, everything stays local.">
+<meta name="description" content="Signature Studio — build and edit HTML email signatures in the browser. Templates, social links, contact details, live preview, one-click export. No account, everything stays local." data-i18n="meta.description">
 <meta name="theme-color" content="#0d1017">
-<title>Signature Studio — HTML email signature builder</title>
+<title data-i18n="meta.title">Signature Studio — HTML email signature builder</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
 
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
 
 <header class="topbar">
   <div class="brand">
@@ -24,381 +24,387 @@
       <path d="M45 13 19 39l9 2 2 9 26-26z" fill="#ffffff" opacity=".95"/>
       <circle cx="26" cy="45" r="3.5" fill="#ffffff"/>
     </svg>
-    <span class="brand-name">Signature Studio</span>
-    <span class="brand-tag">HTML email signatures, built locally</span>
+    <span class="brand-name" data-i18n="brand.name">Signature Studio</span>
+    <span class="brand-tag" data-i18n="brand.tag">HTML email signatures, built locally</span>
   </div>
   <nav class="top-actions">
-    <button class="btn" id="btn-sample" type="button">Sample data</button>
-    <button class="btn" id="btn-guide" type="button" title="Step-by-step setup guide">Guide</button>
-    <button class="btn" id="btn-import" type="button">Import HTML</button>
-    <button class="btn" id="btn-saved" type="button">Saved <span class="pill" id="saved-count">0</span></button>
+    <button class="btn" id="btn-sample" type="button" data-i18n="topbar.sample">Sample data</button>
+    <button class="btn" id="btn-guide" type="button" data-i18n-title="topbar.guideTitle" data-i18n="topbar.guide">Guide</button>
+    <select class="btn" id="lang-select" data-i18n-aria="topbar.language" aria-label="Language">
+      <option value="en" data-i18n="topbar.langEn">English</option>
+      <option value="de" data-i18n="topbar.langDe">Deutsch</option>
+      <option value="es" data-i18n="topbar.langEs">Español</option>
+      <option value="fr" data-i18n="topbar.langFr">Français</option>
+    </select>
+    <button class="btn" id="btn-import" type="button" data-i18n="topbar.import">Import HTML</button>
+    <button class="btn" id="btn-saved" type="button"><span data-i18n="topbar.saved">Saved</span> <span class="pill" id="saved-count">0</span></button>
     <div class="export-wrap" id="quick-wrap">
-      <button class="btn btn-icon" id="btn-quick" type="button" title="Switch between saved signatures" aria-label="Switch saved signature">⇄</button>
+      <button class="btn btn-icon" id="btn-quick" type="button" data-i18n-title="topbar.switchTitle" data-i18n-aria="topbar.switchAria" title="Switch between saved signatures" aria-label="Switch saved signature">⇄</button>
       <div class="menu hidden" id="quick-menu" role="menu"></div>
     </div>
-    <button class="btn btn-icon" id="btn-undo" type="button" title="Undo (Ctrl+Z)" aria-label="Undo (Ctrl+Z)" disabled>↶</button>
-    <button class="btn btn-icon" id="btn-redo" type="button" title="Redo (Ctrl+Shift+Z)" aria-label="Redo (Ctrl+Shift+Z)" disabled>↷</button>
+    <button class="btn btn-icon" id="btn-undo" type="button" data-i18n-title="topbar.undoTitle" data-i18n-aria="topbar.undoAria" title="Undo (Ctrl+Z)" aria-label="Undo (Ctrl+Z)" disabled>↶</button>
+    <button class="btn btn-icon" id="btn-redo" type="button" data-i18n-title="topbar.redoTitle" data-i18n-aria="topbar.redoAria" title="Redo (Ctrl+Shift+Z)" aria-label="Redo (Ctrl+Shift+Z)" disabled>↷</button>
     <div class="export-wrap">
-      <button class="btn btn-primary" id="btn-export" type="button">Export ▾</button>
+      <button class="btn btn-primary" id="btn-export" type="button" data-i18n="topbar.export">Export ▾</button>
       <div class="menu hidden" id="export-menu" role="menu">
-        <button role="menuitem" id="x-copy" type="button">Copy to clipboard</button>
-        <button role="menuitem" id="x-copy-fragment" type="button">Copy table fragment (for CMS)</button>
-        <button role="menuitem" id="x-download" type="button">Download .html file</button>
-        <button role="menuitem" id="x-instructions" type="button">Install in your mail client…</button>
+        <button role="menuitem" id="x-copy" type="button" data-i18n="topbar.copy">Copy to clipboard</button>
+        <button role="menuitem" id="x-copy-fragment" type="button" data-i18n="topbar.copyFragment">Copy table fragment (for CMS)</button>
+        <button role="menuitem" id="x-download" type="button" data-i18n="topbar.download">Download .html file</button>
+        <button role="menuitem" id="x-instructions" type="button" data-i18n="topbar.instructions">Install in your mail client…</button>
         <hr class="sep">
-        <button role="menuitem" id="x-preset-export" type="button">Export preset (.json)</button>
-        <button role="menuitem" id="x-preset-import" type="button">Import preset (.json)</button>
-        <button role="menuitem" id="x-vcard" type="button">Download vCard (.vcf)</button>
-        <button role="menuitem" id="x-vcard4" type="button">Download vCard 4.0 (.vcf)</button>
-        <button role="menuitem" id="x-qr" type="button">Show QR code</button>
+        <button role="menuitem" id="x-preset-export" type="button" data-i18n="topbar.presetExport">Export preset (.json)</button>
+        <button role="menuitem" id="x-preset-import" type="button" data-i18n="topbar.presetImport">Import preset (.json)</button>
+        <button role="menuitem" id="x-vcard" type="button" data-i18n="topbar.vcard">Download vCard (.vcf)</button>
+        <button role="menuitem" id="x-vcard4" type="button" data-i18n="topbar.vcard4">Download vCard 4.0 (.vcf)</button>
+        <button role="menuitem" id="x-qr" type="button" data-i18n="topbar.qr">Show QR code</button>
       </div>
     </div>
-    <button class="btn btn-icon" id="btn-reset" type="button" title="Start over" aria-label="Start over">↺</button>
+    <button class="btn btn-icon" id="btn-reset" type="button" data-i18n-title="topbar.resetTitle" data-i18n-aria="topbar.resetAria" title="Start over" aria-label="Start over">↺</button>
   </nav>
 </header>
 
 <main class="layout" id="main" tabindex="-1">
 
-  <section class="editor" aria-label="Signature editor">
+  <section class="editor" aria-label="Signature editor" data-i18n-aria="sec.editorAria">
 
     <details open data-sec="profile">
-      <summary>Profile</summary>
+      <summary data-i18n="sec.profile">Profile</summary>
       <div class="body grid2">
-        <label class="field">Full name<input data-field="profile.name" placeholder="Ada Lovelace"></label>
-        <label class="field">Preferred name <span class="opt">(shown in the signature)</span><input data-field="profile.displayName" placeholder="Ada"></label>
-        <label class="field">Honorific <span class="opt">(before the name)</span><input data-field="profile.honorificPrefix" placeholder="Dr., Prof."></label>
-        <label class="field">Post-nominals <span class="opt">(after the name)</span><input data-field="profile.honorificSuffix" placeholder="PhD, PMP"></label>
-        <label class="field">Pronouns <span class="opt">(optional)</span><input data-field="profile.pronouns" placeholder="she/her"></label>
-        <label class="field">Birthday <span class="opt">(vCard only)</span><input type="date" data-field="profile.birthday"></label>
-        <label class="field">Timezone <span class="opt">(vCard only)</span><input data-field="profile.timezone" placeholder="Europe/Berlin or UTC+1"></label>
-        <label class="field">Location <span class="opt">(city, timezone)</span><input data-field="profile.location" placeholder="Melbourne, AU · UTC+11"></label>
-        <label class="field">Job title<input data-field="profile.title" placeholder="Head of Analytics"></label>
-        <label class="field">Languages <span class="opt">(optional)</span><input data-field="profile.languages" placeholder="English · Deutsch"></label>
-        <label class="field">Department<input data-field="profile.department" placeholder="Data Science"></label>
-        <label class="field">Team / initiative <span class="opt">(secondary line)</span><input data-field="profile.team" placeholder="Experience Platform"></label>
-        <label class="field">Company<input data-field="profile.company" placeholder="Analytical Engines Ltd"></label>
-        <label class="field">Company tagline <span class="opt">(optional)</span><input data-field="profile.tagline" placeholder="Data you can trust"></label>
+        <label class="field"><span data-i18n="field.name">Full name</span><input data-field="profile.name" placeholder="Ada Lovelace"></label>
+        <label class="field"><span data-i18n="field.displayName">Preferred name</span> <span class="opt" data-i18n="opt.shownInSignature">(shown in the signature)</span><input data-field="profile.displayName" placeholder="Ada"></label>
+        <label class="field"><span data-i18n="field.honorificPrefix">Honorific</span> <span class="opt" data-i18n="opt.beforeName">(before the name)</span><input data-field="profile.honorificPrefix" placeholder="Dr., Prof."></label>
+        <label class="field"><span data-i18n="field.honorificSuffix">Post-nominals</span> <span class="opt" data-i18n="opt.afterName">(after the name)</span><input data-field="profile.honorificSuffix" placeholder="PhD, PMP"></label>
+        <label class="field"><span data-i18n="field.pronouns">Pronouns</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.pronouns" placeholder="she/her"></label>
+        <label class="field"><span data-i18n="field.birthday">Birthday</span> <span class="opt" data-i18n="opt.vcardOnly">(vCard only)</span><input type="date" data-field="profile.birthday"></label>
+        <label class="field"><span data-i18n="field.timezone">Timezone</span> <span class="opt" data-i18n="opt.vcardOnly">(vCard only)</span><input data-field="profile.timezone" placeholder="Europe/Berlin or UTC+1"></label>
+        <label class="field"><span data-i18n="field.location">Location</span> <span class="opt" data-i18n="opt.cityTimezone">(city, timezone)</span><input data-field="profile.location" placeholder="Melbourne, AU · UTC+11"></label>
+        <label class="field"><span data-i18n="field.title">Job title</span><input data-field="profile.title" placeholder="Head of Analytics"></label>
+        <label class="field"><span data-i18n="field.languages">Languages</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.languages" placeholder="English · Deutsch"></label>
+        <label class="field"><span data-i18n="field.department">Department</span><input data-field="profile.department" placeholder="Data Science"></label>
+        <label class="field"><span data-i18n="field.team">Team / initiative</span> <span class="opt" data-i18n="opt.secondaryLine">(secondary line)</span><input data-field="profile.team" placeholder="Experience Platform"></label>
+        <label class="field"><span data-i18n="field.company">Company</span><input data-field="profile.company" placeholder="Analytical Engines Ltd"></label>
+        <label class="field"><span data-i18n="field.tagline">Company tagline</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.tagline" placeholder="Data you can trust"></label>
       </div>
     </details>
 
     <details open data-sec="contact">
-      <summary>Contact details</summary>
+      <summary data-i18n="sec.contact">Contact details</summary>
       <div class="body grid2">
-        <label class="field">Email<input type="email" data-field="contact.email" placeholder="ada@example.com"></label>
-        <label class="field">Email label <span class="opt">(default “Email”)</span><input data-field="contact.emailLabel" placeholder="Email"></label>
-        <label class="field">Secondary email <span class="opt">(optional)</span><input type="email" data-field="contact.email2" placeholder="ada.personal@example.com"></label>
-        <label class="field">Secondary email label <span class="opt">(default “Email 2”)</span><input data-field="contact.email2Label" placeholder="Email 2"></label>
-        <label class="field">Phone<input data-field="contact.phone" placeholder="+44 20 7946 0958"></label>
-        <label class="field">Phone label <span class="opt">(default “Phone”)</span><input data-field="contact.phoneLabel" placeholder="Phone"></label>
-        <label class="field">Mobile<input data-field="contact.mobile" placeholder="+44 7700 900123"></label>
-        <label class="field">Mobile label <span class="opt">(default “Mobile”)</span><input data-field="contact.mobileLabel" placeholder="Mobile"></label>
-        <label class="field">Website<input data-field="contact.website" placeholder="example.com"></label>
-        <label class="field">Website label<input data-field="contact.websiteLabel" placeholder="Leave empty to use the URL"></label>
-        <label class="field">Booking link <span class="opt">(Calendly, Cal.com…)</span><input data-field="contact.booking" placeholder="cal.com/you"></label>
-        <label class="field">Booking label<input data-field="contact.bookingLabel" placeholder="Book a call"></label>
-        <label class="field">Portfolio URL <span class="opt">(creators, freelancers)</span><input data-field="contact.portfolio" placeholder="yourwork.example"></label>
-        <label class="field">Portfolio label<input data-field="contact.portfolioLabel" placeholder="Portfolio"></label>
-        <label class="field">PGP public key <span class="opt">(fingerprint or URL)</span><input data-field="contact.pgpKey" placeholder="0x1234… or https://keys.example/ada.asc"></label>
-        <label class="field span2">Address (one line or multiple)
+        <label class="field"><span data-i18n="field.email">Email</span><input type="email" data-field="contact.email" placeholder="ada@example.com"></label>
+        <label class="field"><span data-i18n="field.emailLabel">Email label</span> <span class="opt" data-i18n="opt.defaultEmail">(default “Email”)</span><input data-field="contact.emailLabel" placeholder="Email"></label>
+        <label class="field"><span data-i18n="field.email2">Secondary email</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input type="email" data-field="contact.email2" placeholder="ada.personal@example.com"></label>
+        <label class="field"><span data-i18n="field.email2Label">Secondary email label</span> <span class="opt" data-i18n="opt.defaultEmail2">(default “Email 2”)</span><input data-field="contact.email2Label" placeholder="Email 2"></label>
+        <label class="field"><span data-i18n="field.phone">Phone</span><input data-field="contact.phone" placeholder="+44 20 7946 0958"></label>
+        <label class="field"><span data-i18n="field.phoneLabel">Phone label</span> <span class="opt" data-i18n="opt.defaultPhone">(default “Phone”)</span><input data-field="contact.phoneLabel" placeholder="Phone"></label>
+        <label class="field"><span data-i18n="field.mobile">Mobile</span><input data-field="contact.mobile" placeholder="+44 7700 900123"></label>
+        <label class="field"><span data-i18n="field.mobileLabel">Mobile label</span> <span class="opt" data-i18n="opt.defaultMobile">(default “Mobile”)</span><input data-field="contact.mobileLabel" placeholder="Mobile"></label>
+        <label class="field"><span data-i18n="field.website">Website</span><input data-field="contact.website" placeholder="example.com"></label>
+        <label class="field"><span data-i18n="field.websiteLabel">Website label</span><input data-field="contact.websiteLabel" placeholder="Leave empty to use the URL"></label>
+        <label class="field"><span data-i18n="field.booking">Booking link</span> <span class="opt" data-i18n="opt.calendly">(Calendly, Cal.com…)</span><input data-field="contact.booking" placeholder="cal.com/you"></label>
+        <label class="field"><span data-i18n="field.bookingLabel">Booking label</span><input data-field="contact.bookingLabel" placeholder="Book a call"></label>
+        <label class="field"><span data-i18n="field.portfolio">Portfolio URL</span> <span class="opt" data-i18n="opt.creators">(creators, freelancers)</span><input data-field="contact.portfolio" placeholder="yourwork.example"></label>
+        <label class="field"><span data-i18n="field.portfolioLabel">Portfolio label</span><input data-field="contact.portfolioLabel" placeholder="Portfolio"></label>
+        <label class="field"><span data-i18n="field.pgp">PGP public key</span> <span class="opt" data-i18n="opt.fingerprint">(fingerprint or URL)</span><input data-field="contact.pgpKey" placeholder="0x1234… or https://keys.example/ada.asc"></label>
+        <label class="field span2"><span data-i18n="field.address">Address (one line or multiple)</span>
           <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom"></textarea>
         </label>
-        <label class="field span2">Address label <span class="opt">(default “Address” — shown only when labels are on)</span><input data-field="contact.addressLabel" placeholder="Address"></label>
+        <label class="field span2"><span data-i18n="field.addressLabel">Address label</span> <span class="opt" data-i18n="opt.defaultAddress">(default “Address” — shown only when labels are on)</span><input data-field="contact.addressLabel" placeholder="Address"></label>
       </div>
     </details>
 
     <details open data-sec="org">
-      <summary>Organisation</summary>
+      <summary data-i18n="sec.org">Organisation</summary>
       <div class="body grid2">
-        <label class="field span2">Support module title <span class="opt">(empty hides the box)</span><input data-field="design.supportTitle" placeholder="IT Support"></label>
-        <label class="field">Support chat link<input data-field="design.supportChatUrl" placeholder="https://chat.example"></label>
-        <label class="field">Support button label<input data-field="design.supportButtonLabel" placeholder="Try first"></label>
-        <label class="field">Support chat label <span class="opt">(link text)</span><input data-field="design.supportChatLabel" placeholder="Chat with us"></label>
-        <label class="field span2">Support tagline<input data-field="design.supportTagline" placeholder="The fastest way to get help"></label>
-        <label class="field">Support phone — local<input data-field="design.supportPhoneLocal" placeholder="+61 …"></label>
-        <label class="field">Support phone — international<input data-field="design.supportPhoneIntl" placeholder="+61 …"></label>
-        <label class="field span2">Alternative support instructions <span class="opt">(e.g. MS Teams)</span><input data-field="design.supportAltText" placeholder="Or reach us on Teams"></label>
+        <label class="field span2"><span data-i18n="field.supportTitle">Support module title</span> <span class="opt" data-i18n="opt.emptyHidesBox">(empty hides the box)</span><input data-field="design.supportTitle" placeholder="IT Support"></label>
+        <label class="field"><span data-i18n="field.supportChat">Support chat link</span><input data-field="design.supportChatUrl" placeholder="https://chat.example"></label>
+        <label class="field"><span data-i18n="field.supportButtonLabel">Support button label</span><input data-field="design.supportButtonLabel" placeholder="Try first"></label>
+        <label class="field"><span data-i18n="field.supportChatLabel">Support chat label</span> <span class="opt" data-i18n="opt.linkText">(link text)</span><input data-field="design.supportChatLabel" placeholder="Chat with us"></label>
+        <label class="field span2"><span data-i18n="field.supportTagline">Support tagline</span><input data-field="design.supportTagline" placeholder="The fastest way to get help"></label>
+        <label class="field"><span data-i18n="field.supportPhoneLocal">Support phone — local</span><input data-field="design.supportPhoneLocal" placeholder="+61 …"></label>
+        <label class="field"><span data-i18n="field.supportPhoneIntl">Support phone — international</span><input data-field="design.supportPhoneIntl" placeholder="+61 …"></label>
+        <label class="field span2"><span data-i18n="field.supportAltText">Alternative support instructions</span> <span class="opt" data-i18n="opt.egTeams">(e.g. MS Teams)</span><input data-field="design.supportAltText" placeholder="Or reach us on Teams"></label>
 
-        <label class="field span2">Recognise line <span class="opt">(intro sentence)</span><input data-field="design.recogniseText" placeholder="See someone living our values?"></label>
-        <label class="field">Recognise link<input data-field="design.recogniseUrl" placeholder="https://recognise.example"></label>
-        <label class="field">Recognise link label<input data-field="design.recogniseLabel" placeholder="Recognise them now"></label>
+        <label class="field span2"><span data-i18n="field.recogniseText">Recognise line</span> <span class="opt" data-i18n="opt.introSentence">(intro sentence)</span><input data-field="design.recogniseText" placeholder="See someone living our values?"></label>
+        <label class="field"><span data-i18n="field.recogniseUrl">Recognise link</span><input data-field="design.recogniseUrl" placeholder="https://recognise.example"></label>
+        <label class="field"><span data-i18n="field.recogniseLabel">Recognise link label</span><input data-field="design.recogniseLabel" placeholder="Recognise them now"></label>
 
-        <label class="field span2">Purpose statement <span class="opt">(rendered as “Our purpose: …”)</span><input data-field="design.purposeText" placeholder="We exist to…"></label>
+        <label class="field span2"><span data-i18n="field.purposeText">Purpose statement</span> <span class="opt" data-i18n="opt.renderedOurPurpose">(rendered as “Our purpose: …”)</span><input data-field="design.purposeText" placeholder="We exist to…"></label>
 
-        <label class="switch span2"><input type="checkbox" data-field="design.showAcknowledgement"><span class="sw"></span> Show land acknowledgement</label>
-        <label class="field span2">Land acknowledgement
+        <label class="switch span2"><input type="checkbox" data-field="design.showAcknowledgement"><span class="sw"></span> <span data-i18n="field.showAcknowledgement">Show land acknowledgement</span></label>
+        <label class="field span2"><span data-i18n="field.landAcknowledgement">Land acknowledgement</span>
           <textarea rows="2" data-field="design.landAcknowledgement" placeholder="We acknowledge the Traditional Owners…"></textarea>
         </label>
 
-        <span class="hint span2">Brand footer — three slots (image + text)</span>
-        <label class="field">Left image<input data-field="design.footerLeftImg" placeholder="https://…/left.png"></label>
-        <label class="field">Left text<input data-field="design.footerLeftText" placeholder="Tagline"></label>
-        <label class="field">Centre image<input data-field="design.footerCenterImg" placeholder="https://…/centre.png"></label>
-        <label class="field">Centre text<input data-field="design.footerCenterText" placeholder="Tagline"></label>
-        <label class="field">Right image<input data-field="design.footerRightImg" placeholder="https://…/right.png"></label>
-        <label class="field">Right text<input data-field="design.footerRightText" placeholder="Tagline"></label>
+        <span class="hint span2" data-i18n="field.footerHint">Brand footer — three slots (image + text)</span>
+        <label class="field"><span data-i18n="field.footerLeftImg">Left image</span><input data-field="design.footerLeftImg" placeholder="https://…/left.png"></label>
+        <label class="field"><span data-i18n="field.footerLeftText">Left text</span><input data-field="design.footerLeftText" placeholder="Tagline"></label>
+        <label class="field"><span data-i18n="field.footerCenterImg">Centre image</span><input data-field="design.footerCenterImg" placeholder="https://…/centre.png"></label>
+        <label class="field"><span data-i18n="field.footerCenterText">Centre text</span><input data-field="design.footerCenterText" placeholder="Tagline"></label>
+        <label class="field"><span data-i18n="field.footerRightImg">Right image</span><input data-field="design.footerRightImg" placeholder="https://…/right.png"></label>
+        <label class="field"><span data-i18n="field.footerRightText">Right text</span><input data-field="design.footerRightText" placeholder="Tagline"></label>
       </div>
     </details>
 
     <details open data-sec="socials">
-      <summary>Social links <span class="sec-count" id="count-socials">0</span></summary>
+      <summary><span data-i18n="sec.socials">Social links</span> <span class="sec-count" id="count-socials">0</span></summary>
       <div class="body">
         <div class="quick" id="quick-socials">
-          <span class="hint">Quick add:</span>
-          <button class="chip-btn" data-net="linkedin" title="LinkedIn" aria-label="Add LinkedIn" type="button" style="background:#0a66c2;color:#fff;border-color:transparent;">in</button>
-          <button class="chip-btn" data-net="x" title="X / Twitter" aria-label="Add X / Twitter" type="button" style="background:#000;color:#fff;border-color:transparent;">𝕏</button>
-          <button class="chip-btn" data-net="github" title="GitHub" aria-label="Add GitHub" type="button" style="background:#24292f;color:#fff;border-color:transparent;">gh</button>
-          <button class="chip-btn" data-net="instagram" title="Instagram" aria-label="Add Instagram" type="button" style="background:#e4405f;color:#fff;border-color:transparent;">◉</button>
-          <button class="chip-btn" data-net="youtube" title="YouTube" aria-label="Add YouTube" type="button" style="background:#ff0000;color:#fff;border-color:transparent;">▶</button>
-          <button class="chip-btn" data-net="whatsapp" title="WhatsApp" aria-label="Add WhatsApp" type="button" style="background:#25d366;color:#fff;border-color:transparent;">✆</button>
-          <button class="chip-btn" data-net="signal" title="Signal" aria-label="Add Signal" type="button" style="background:#3a76f0;color:#fff;border-color:transparent;">S</button>
-          <button class="chip-btn" data-net="telegram" title="Telegram" aria-label="Add Telegram" type="button" style="background:#26a5e4;color:#fff;border-color:transparent;">T</button>
-          <button class="chip-btn" data-net="mastodon" title="Mastodon" aria-label="Add Mastodon" type="button" style="background:#6364ff;color:#fff;border-color:transparent;">M</button>
+          <span class="hint" data-i18n="socials.quickAdd">Quick add:</span>
+          <button class="chip-btn" data-net="linkedin" data-i18n-title="socials.titleLinkedIn" data-i18n-aria="socials.addLinkedIn" title="LinkedIn" aria-label="Add LinkedIn" type="button" style="background:#0a66c2;color:#fff;border-color:transparent;">in</button>
+          <button class="chip-btn" data-net="x" data-i18n-title="socials.titleX" data-i18n-aria="socials.addX" title="X / Twitter" aria-label="Add X / Twitter" type="button" style="background:#000;color:#fff;border-color:transparent;">𝕏</button>
+          <button class="chip-btn" data-net="github" data-i18n-title="socials.titleGitHub" data-i18n-aria="socials.addGitHub" title="GitHub" aria-label="Add GitHub" type="button" style="background:#24292f;color:#fff;border-color:transparent;">gh</button>
+          <button class="chip-btn" data-net="instagram" data-i18n-title="socials.titleInstagram" data-i18n-aria="socials.addInstagram" title="Instagram" aria-label="Add Instagram" type="button" style="background:#e4405f;color:#fff;border-color:transparent;">◉</button>
+          <button class="chip-btn" data-net="youtube" data-i18n-title="socials.titleYouTube" data-i18n-aria="socials.addYouTube" title="YouTube" aria-label="Add YouTube" type="button" style="background:#ff0000;color:#fff;border-color:transparent;">▶</button>
+          <button class="chip-btn" data-net="whatsapp" data-i18n-title="socials.titleWhatsApp" data-i18n-aria="socials.addWhatsApp" title="WhatsApp" aria-label="Add WhatsApp" type="button" style="background:#25d366;color:#fff;border-color:transparent;">✆</button>
+          <button class="chip-btn" data-net="signal" data-i18n-title="socials.titleSignal" data-i18n-aria="socials.addSignal" title="Signal" aria-label="Add Signal" type="button" style="background:#3a76f0;color:#fff;border-color:transparent;">S</button>
+          <button class="chip-btn" data-net="telegram" data-i18n-title="socials.titleTelegram" data-i18n-aria="socials.addTelegram" title="Telegram" aria-label="Add Telegram" type="button" style="background:#26a5e4;color:#fff;border-color:transparent;">T</button>
+          <button class="chip-btn" data-net="mastodon" data-i18n-title="socials.titleMastodon" data-i18n-aria="socials.addMastodon" title="Mastodon" aria-label="Add Mastodon" type="button" style="background:#6364ff;color:#fff;border-color:transparent;">M</button>
         </div>
         <div id="socials-list"></div>
-        <button class="btn btn-ghost" id="add-social" type="button">+ Add social link</button>
+        <button class="btn btn-ghost" id="add-social" type="button" data-i18n="socials.addButton">+ Add social link</button>
       </div>
     </details>
 
     <details open data-sec="customs">
-      <summary>Custom lines <span class="sec-count" id="count-customs">0</span></summary>
+      <summary><span data-i18n="sec.customs">Custom lines</span> <span class="sec-count" id="count-customs">0</span></summary>
       <div class="body">
-        <p class="hint">Extra rows like “Office hours”, “Direct line”, or anything else you need.</p>
+        <p class="hint" data-i18n="customs.hint">Extra rows like “Office hours”, “Direct line”, or anything else you need.</p>
         <div id="custom-list"></div>
-        <button class="btn btn-ghost" id="add-custom" type="button">+ Add custom line</button>
+        <button class="btn btn-ghost" id="add-custom" type="button" data-i18n="customs.addButton">+ Add custom line</button>
       </div>
     </details>
 
     <details open data-sec="design">
-      <summary>Design</summary>
+      <summary data-i18n="sec.design">Design</summary>
       <div class="body">
         <div class="tpl-picker" id="tpl-picker">
           <button class="tpl-btn" data-template="classic" type="button" aria-pressed="true">
-            <span class="thumb"><iframe class="tthumb" data-tpl="classic" title="Classic preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Classic</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="classic" data-i18n-title="tpl.classicPreview" title="Classic preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.classic">Classic</span>
           </button>
           <button class="tpl-btn" data-template="centered" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="centered" title="Centered preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Centered</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="centered" data-i18n-title="tpl.centeredPreview" title="Centered preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.centered">Centered</span>
           </button>
           <button class="tpl-btn" data-template="compact" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="compact" title="Compact preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Compact</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="compact" data-i18n-title="tpl.compactPreview" title="Compact preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.compact">Compact</span>
           </button>
           <button class="tpl-btn" data-template="banner" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="banner" title="Banner preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Banner</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="banner" data-i18n-title="tpl.bannerPreview" title="Banner preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.banner">Banner</span>
           </button>
           <button class="tpl-btn" data-template="minimal" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="minimal" title="Minimal preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Minimal</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="minimal" data-i18n-title="tpl.minimalPreview" title="Minimal preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.minimal">Minimal</span>
           </button>
           <button class="tpl-btn" data-template="split" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="split" title="Split preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Split</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="split" data-i18n-title="tpl.splitPreview" title="Split preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.split">Split</span>
           </button>
           <button class="tpl-btn" data-template="roundel" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="roundel" title="Roundel preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Roundel</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="roundel" data-i18n-title="tpl.roundelPreview" title="Roundel preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.roundel">Roundel</span>
           </button>
           <button class="tpl-btn" data-template="masthead" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="masthead" title="Masthead preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Masthead</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="masthead" data-i18n-title="tpl.mastheadPreview" title="Masthead preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.masthead">Masthead</span>
           </button>
           <button class="tpl-btn" data-template="monogram" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="monogram" title="Monogram preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Monogram</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="monogram" data-i18n-title="tpl.monogramPreview" title="Monogram preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.monogram">Monogram</span>
           </button>
           <button class="tpl-btn" data-template="photocard" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="photocard" title="Photo card preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Photo card</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="photocard" data-i18n-title="tpl.photocardPreview" title="Photo card preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.photocard">Photo card</span>
           </button>
           <button class="tpl-btn" data-template="postcard" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="postcard" title="Postcard preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Postcard</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="postcard" data-i18n-title="tpl.postcardPreview" title="Postcard preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.postcard">Postcard</span>
           </button>
           <button class="tpl-btn" data-template="line" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="line" title="Line preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Line</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="line" data-i18n-title="tpl.linePreview" title="Line preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.line">Line</span>
           </button>
           <button class="tpl-btn" data-template="duotone" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="duotone" title="Duotone preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Duotone</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="duotone" data-i18n-title="tpl.duotonePreview" title="Duotone preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.duotone">Duotone</span>
           </button>
           <button class="tpl-btn" data-template="quote" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="quote" title="Quote preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Quote</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="quote" data-i18n-title="tpl.quotePreview" title="Quote preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.quote">Quote</span>
           </button>
           <button class="tpl-btn" data-template="enterprise" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="enterprise" title="Enterprise preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Enterprise</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="enterprise" data-i18n-title="tpl.enterprisePreview" title="Enterprise preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.enterprise">Enterprise</span>
           </button>
           <button class="tpl-btn" data-template="night" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="night" title="Night preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Night</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="night" data-i18n-title="tpl.nightPreview" title="Night preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.night">Night</span>
           </button>
           <button class="tpl-btn" data-template="letterhead" type="button" aria-pressed="false">
-            <span class="thumb"><iframe class="tthumb" data-tpl="letterhead" title="Letterhead preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
-            <span class="tpl-name">Letterhead</span>
+            <span class="thumb"><iframe class="tthumb" data-tpl="letterhead" data-i18n-title="tpl.letterheadPreview" title="Letterhead preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.letterhead">Letterhead</span>
           </button>
         </div>
 
         <div class="themes-row" id="themes-row">
-          <span class="hint">Colour themes:</span>
+          <span class="hint" data-i18n="design.colourThemes">Colour themes:</span>
         </div>
 
         <div class="grid2">
-          <label class="field">Accent colour<input type="color" data-field="design.primaryColor"></label>
-          <label class="field">Text colour<input type="color" data-field="design.textColor"></label>
-          <label class="field">Divider colour<input type="color" data-field="design.dividerColor"></label>
-          <label class="field">Card colour<input type="color" data-field="design.cardColor"></label>
-          <label class="field">Signature background <span class="opt">(full-width band)</span><input data-field="design.background" placeholder="#f0f2f5 — empty = transparent"></label>
-          <label class="field">Divider style
+          <label class="field"><span data-i18n="design.accent">Accent colour</span><input type="color" data-field="design.primaryColor"></label>
+          <label class="field"><span data-i18n="design.textColour">Text colour</span><input type="color" data-field="design.textColor"></label>
+          <label class="field"><span data-i18n="design.dividerColour">Divider colour</span><input type="color" data-field="design.dividerColor"></label>
+          <label class="field"><span data-i18n="design.cardColour">Card colour</span><input type="color" data-field="design.cardColor"></label>
+          <label class="field"><span data-i18n="design.background">Signature background</span> <span class="opt" data-i18n="opt.fullWidthBand">(full-width band)</span><input data-field="design.background" placeholder="#f0f2f5 — empty = transparent"></label>
+          <label class="field"><span data-i18n="design.dividerStyle">Divider style</span>
             <select data-field="design.dividerStyle">
-              <option value="solid">Solid</option>
-              <option value="dashed">Dashed</option>
-              <option value="dotted">Dotted</option>
+              <option value="solid" data-i18n="design.dividerSolid">Solid</option>
+              <option value="dashed" data-i18n="design.dividerDashed">Dashed</option>
+              <option value="dotted" data-i18n="design.dividerDotted">Dotted</option>
             </select>
           </label>
-          <label class="field">Divider length
+          <label class="field"><span data-i18n="design.dividerLength">Divider length</span>
             <select data-field="design.dividerLength">
-              <option value="full">Full width</option>
-              <option value="short">Short</option>
+              <option value="full" data-i18n="design.dividerFull">Full width</option>
+              <option value="short" data-i18n="design.dividerShort">Short</option>
             </select>
           </label>
-          <label class="field">Divider position
+          <label class="field"><span data-i18n="design.dividerPosition">Divider position</span>
             <select data-field="design.dividerPosition">
-              <option value="belowName">Under the name</option>
-              <option value="belowContact">Under contact details</option>
+              <option value="belowName" data-i18n="design.dividerBelowName">Under the name</option>
+              <option value="belowContact" data-i18n="design.dividerBelowContact">Under contact details</option>
             </select>
           </label>
-          <label class="field">Font
+          <label class="field"><span data-i18n="design.font">Font</span>
             <select data-field="design.font">
-              <option value="modern">Modern (system)</option>
-              <option value="classic">Serif (Georgia)</option>
-              <option value="clean">Arial</option>
-              <option value="mono">Monospace</option>
+              <option value="modern" data-i18n="design.fontModern">Modern (system)</option>
+              <option value="classic" data-i18n="design.fontClassic">Serif (Georgia)</option>
+              <option value="clean" data-i18n="design.fontClean">Arial</option>
+              <option value="mono" data-i18n="design.fontMono">Monospace</option>
             </select>
           </label>
-          <label class="field">Base font size (px)<input type="number" min="10" max="18" step="1" data-field="design.fontSize"></label>
+          <label class="field"><span data-i18n="design.fontSize">Base font size (px)</span><input type="number" min="10" max="18" step="1" data-field="design.fontSize"></label>
 
-          <label class="field">Density
+          <label class="field"><span data-i18n="design.density">Density</span>
             <select data-field="design.density">
-              <option value="airy">Airy</option>
-              <option value="regular">Regular</option>
-              <option value="compact">Compact</option>
+              <option value="airy" data-i18n="design.densityAiry">Airy</option>
+              <option value="regular" data-i18n="design.densityRegular">Regular</option>
+              <option value="compact" data-i18n="design.densityCompact">Compact</option>
             </select>
           </label>
           <div class="field">
-            <span class="lbl">Name size boost</span>
+            <span class="lbl" data-i18n="design.nameSizeBoost">Name size boost</span>
             <span class="range-row"><input type="range" min="0" max="10" step="1" data-field="design.nameSizeExtra"><output id="name-size-out">+3 px</output></span>
-            <span class="micro">Added to the base font size for your name.</span>
+            <span class="micro" data-i18n="design.nameSizeMicro">Added to the base font size for your name.</span>
           </div>
           <div class="field">
-            <span class="lbl">Signature width</span>
+            <span class="lbl" data-i18n="design.width">Signature width</span>
             <span class="range-row"><input type="range" min="400" max="600" step="10" data-field="design.signatureWidth"><output id="width-out">600 px</output></span>
-            <span class="micro">Narrower widths suit small client panes and short layouts.</span>
+            <span class="micro" data-i18n="design.widthMicro">Narrower widths suit small client panes and short layouts.</span>
           </div>
 
           <div class="field span2">
-            <span class="lbl">Social link style</span>
+            <span class="lbl" data-i18n="design.socialStyle">Social link style</span>
             <div class="seg" id="seg-social-style">
-              <label><input type="radio" name="socialStyle" value="icons" data-field="design.socialStyle"><span>Icons</span></label>
-              <label><input type="radio" name="socialStyle" value="icons_labels" data-field="design.socialStyle"><span>Icons + labels</span></label>
-              <label><input type="radio" name="socialStyle" value="labels" data-field="design.socialStyle"><span>Text links</span></label>
+              <label><input type="radio" name="socialStyle" value="icons" data-field="design.socialStyle"><span data-i18n="design.socialStyleIcons">Icons</span></label>
+              <label><input type="radio" name="socialStyle" value="icons_labels" data-field="design.socialStyle"><span data-i18n="design.socialStyleIconsLabels">Icons + labels</span></label>
+              <label><input type="radio" name="socialStyle" value="labels" data-field="design.socialStyle"><span data-i18n="design.socialStyleText">Text links</span></label>
             </div>
           </div>
 
           <div class="field">
-            <span class="lbl">Social icon size</span>
+            <span class="lbl" data-i18n="design.socialSize">Social icon size</span>
             <span class="range-row"><input type="range" min="16" max="28" step="1" data-field="design.socialSize"><output id="social-size-out">22 px</output></span>
           </div>
 
-          <label class="switch span2"><input type="checkbox" data-field="design.showQr"><span class="sw"></span> Embed a scannable vCard QR (Classic + Enterprise)</label>
+          <label class="switch span2"><input type="checkbox" data-field="design.showQr"><span class="sw"></span> <span data-i18n="design.showQr">Embed a scannable vCard QR (Classic + Enterprise)</span></label>
           <div class="field">
-            <span class="lbl">QR size</span>
+            <span class="lbl" data-i18n="design.qrSize">QR size</span>
             <span class="range-row"><input type="range" min="32" max="96" step="4" data-field="design.qrSize"><output id="qr-size-out">60 px</output></span>
-            <span class="micro">Target size — the QR grows a little when your contact data is long (scannability wins). Rendered as an Outlook-safe grid; Gmail and Apple Mail scan fine.</span>
+            <span class="micro" data-i18n="design.qrMicro">Target size — the QR grows a little when your contact data is long (scannability wins). Rendered as an Outlook-safe grid; Gmail and Apple Mail scan fine.</span>
           </div>
 
           <div class="field span2">
-            <span class="lbl">Socials position</span>
+            <span class="lbl" data-i18n="design.socialsPosition">Socials position</span>
             <div class="seg" id="seg-social-pos">
-              <label><input type="radio" name="socialsPosition" value="bottom" data-field="design.socialsPosition"><span>Bottom</span></label>
-              <label><input type="radio" name="socialsPosition" value="underName" data-field="design.socialsPosition"><span>Under the name</span></label>
-              <label><input type="radio" name="socialsPosition" value="inContact" data-field="design.socialsPosition"><span>With contact details</span></label>
+              <label><input type="radio" name="socialsPosition" value="bottom" data-field="design.socialsPosition"><span data-i18n="design.socialsPosBottom">Bottom</span></label>
+              <label><input type="radio" name="socialsPosition" value="underName" data-field="design.socialsPosition"><span data-i18n="design.socialsPosUnderName">Under the name</span></label>
+              <label><input type="radio" name="socialsPosition" value="inContact" data-field="design.socialsPosition"><span data-i18n="design.socialsPosInContact">With contact details</span></label>
             </div>
-            <span class="micro">“Under the name” applies to Classic, Centered, Compact, Banner, Split and Minimal; other layouts keep them at the bottom.</span>
+            <span class="micro" data-i18n="design.socialsPosMicro">“Under the name” applies to Classic, Centered, Compact, Banner, Split and Minimal; other layouts keep them at the bottom.</span>
           </div>
 
           <div class="field">
-            <span class="lbl">Logo / photo URL</span>
-            <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button">Upload</button><button class="btn btn-sm" id="recrop-btn" type="button" title="Re-crop the uploaded photo (kept for this session)">Re-crop</button></span>
+            <span class="lbl" data-i18n="design.logoUrl">Logo / photo URL</span>
+            <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button" data-i18n="design.upload">Upload</button><button class="btn btn-sm" id="recrop-btn" type="button" data-i18n-title="design.recropTitle" data-i18n="design.recrop">Re-crop</button></span>
             <input data-field="design.logoAlt" placeholder="Alt text — e.g. “Maya’s portrait”">
             <input type="file" id="logo-file" accept="image/*" hidden>
             <span class="range-row"><input type="range" min="40" max="160" step="4" data-field="design.logoWidth" id="logo-width"><output id="logo-width-out"></output></span>
-            <span class="field-inline">Position
+            <span class="field-inline"><span data-i18n="design.position">Position</span>
               <select data-field="design.logoPosition" id="logo-position">
-                <option value="left">Left of name</option>
-                <option value="right">Right of name</option>
+                <option value="left" data-i18n="design.logoPosLeft">Left of name</option>
+                <option value="right" data-i18n="design.logoPosRight">Right of name</option>
               </select>
             </span>
-            <span class="micro" id="logo-pos-hint" hidden>Position applies to the Classic, Compact, Split and Banner layouts — Centered, Roundel and Monogram place it top-centre by design.</span>
+            <span class="micro" id="logo-pos-hint" hidden data-i18n="design.logoPosHint">Position applies to the Classic, Compact, Split and Banner layouts — Centered, Roundel and Monogram place it top-centre by design.</span>
             <details class="host-help">
-              <summary class="micro">Where can I host my image?</summary>
+              <summary class="micro" data-i18n="design.hostHelp">Where can I host my image?</summary>
               <ul class="micro host-list">
-                <li>Your own website or CMS — upload and copy the URL.</li>
-                <li>GitHub repo — use the raw file URL.</li>
-                <li>Imgur or Cloudinary (free tiers).</li>
-                <li>Keep the URL stable — changing it breaks already-sent emails.</li>
+                <li data-i18n="design.hostHelp1">Your own website or CMS — upload and copy the URL.</li>
+                <li data-i18n="design.hostHelp2">GitHub repo — use the raw file URL.</li>
+                <li data-i18n="design.hostHelp3">Imgur or Cloudinary (free tiers).</li>
+                <li data-i18n="design.hostHelp4">Keep the URL stable — changing it breaks already-sent emails.</li>
               </ul>
             </details>
-            <span class="micro">Most clients block embedded (data:) images — host the file and paste its URL for reliable delivery.</span>
+            <span class="micro" data-i18n="design.hostMicro">Most clients block embedded (data:) images — host the file and paste its URL for reliable delivery.</span>
           </div>
 
-          <label class="field">Banner URL (banner template)
-            <span class="url-row"><input data-field="design.bannerUrl" placeholder="https://…/banner.png"><button class="btn btn-sm" id="upload-banner" type="button">Upload</button></span>
+          <label class="field"><span data-i18n="design.bannerUrl">Banner URL (banner template)</span>
+            <span class="url-row"><input data-field="design.bannerUrl" placeholder="https://…/banner.png"><button class="btn btn-sm" id="upload-banner" type="button" data-i18n="design.upload">Upload</button></span>
             <input data-field="design.bannerAlt" placeholder="Alt text — e.g. “Analytical Engines logo”">
             <input data-field="design.bannerLink" placeholder="Click-through link (optional)">
             <input type="file" id="banner-file" accept="image/*" hidden>
           </label>
 
-          <label class="switch span2"><input type="checkbox" data-field="design.showDivider"><span class="sw"></span> Show divider line</label>
-          <label class="switch span2"><input type="checkbox" data-field="design.darkModeFriendly"><span class="sw"></span> Dark-mode friendly (adds dark-theme colours for Gmail / Apple Mail)</label>
-          <label class="switch span2"><input type="checkbox" data-field="design.stackMobile"><span class="sw"></span> Stack columns on mobile (media query; ignored by Outlook)</label>
-          <label class="switch span2"><input type="checkbox" data-field="design.showLabels"><span class="sw"></span> Show contact labels (“Email:”, “Phone:”, …)</label>
-          <label class="switch span2"><input type="checkbox" data-field="design.useMonogram"><span class="sw"></span> Use initials monogram when no logo is set</label>
-          <label class="field span2">Status badge <span class="opt">(e.g. “Open to freelance work” — leave empty to hide)</span>
+          <label class="switch span2"><input type="checkbox" data-field="design.showDivider"><span class="sw"></span> <span data-i18n="design.showDivider">Show divider line</span></label>
+          <label class="switch span2"><input type="checkbox" data-field="design.darkModeFriendly"><span class="sw"></span> <span data-i18n="design.darkModeFriendly">Dark-mode friendly (adds dark-theme colours for Gmail / Apple Mail)</span></label>
+          <label class="switch span2"><input type="checkbox" data-field="design.stackMobile"><span class="sw"></span> <span data-i18n="design.stackMobile">Stack columns on mobile (media query; ignored by Outlook)</span></label>
+          <label class="switch span2"><input type="checkbox" data-field="design.showLabels"><span class="sw"></span> <span data-i18n="design.showLabels">Show contact labels (“Email:”, “Phone:”, …)</span></label>
+          <label class="switch span2"><input type="checkbox" data-field="design.useMonogram"><span class="sw"></span> <span data-i18n="design.useMonogram">Use initials monogram when no logo is set</span></label>
+          <label class="field span2"><span data-i18n="design.statusBadge">Status badge</span> <span class="opt" data-i18n="opt.statusBadge">(e.g. “Open to freelance work” — leave empty to hide)</span>
             <span class="url-row">
               <input data-field="design.statusText" placeholder="Open to freelance work">
-              <input type="color" data-field="design.statusColor" title="Badge colour" aria-label="Badge colour" class="mini-color">
+              <input type="color" data-field="design.statusColor" data-i18n-title="row.badgeColour" data-i18n-aria="row.badgeColour" title="Badge colour" aria-label="Badge colour" class="mini-color">
             </span>
           </label>
-          <label class="switch span2"><input type="checkbox" data-field="design.showCard"><span class="sw"></span> Wrap the signature in a card (tint + border)</label>
-          <label class="switch span2"><input type="checkbox" data-field="design.strictOutlook"><span class="sw"></span> Strict mode — render as Outlook desktop shows it</label>
-          <span class="micro span2">Strict mode removes rounded corners from badges, chips, monograms, round photos and the card — Word-engine Outlook ignores them. What you preview is what Outlook users see, and exports match.</span>
+          <label class="switch span2"><input type="checkbox" data-field="design.showCard"><span class="sw"></span> <span data-i18n="design.showCard">Wrap the signature in a card (tint + border)</span></label>
+          <label class="switch span2"><input type="checkbox" data-field="design.strictOutlook"><span class="sw"></span> <span data-i18n="design.strictOutlook">Strict mode — render as Outlook desktop shows it</span></label>
+          <span class="micro span2" data-i18n="design.strictMicro">Strict mode removes rounded corners from badges, chips, monograms, round photos and the card — Word-engine Outlook ignores them. What you preview is what Outlook users see, and exports match.</span>
           <div class="field span2">
-            <span class="lbl">Photo shape (side logo)</span>
+            <span class="lbl" data-i18n="design.photoShape">Photo shape (side logo)</span>
             <div class="seg" id="seg-photo-shape">
-              <label><input type="radio" name="photoShape" value="square" data-field="design.photoShape"><span>Square</span></label>
-              <label><input type="radio" name="photoShape" value="rounded" data-field="design.photoShape"><span>Rounded</span></label>
-              <label><input type="radio" name="photoShape" value="circle" data-field="design.photoShape"><span>Circle</span></label>
+              <label><input type="radio" name="photoShape" value="square" data-field="design.photoShape"><span data-i18n="design.photoSquare">Square</span></label>
+              <label><input type="radio" name="photoShape" value="rounded" data-field="design.photoShape"><span data-i18n="design.photoRounded">Rounded</span></label>
+              <label><input type="radio" name="photoShape" value="circle" data-field="design.photoShape"><span data-i18n="design.photoCircle">Circle</span></label>
             </div>
           </div>
-          <label class="field span2">Name weight
+          <label class="field span2"><span data-i18n="design.nameWeight">Name weight</span>
             <select data-field="design.nameWeight">
-              <option value="bold">Bold</option>
-              <option value="semibold">Semibold</option>
-              <option value="normal">Normal</option>
+              <option value="bold" data-i18n="design.nameWeightBold">Bold</option>
+              <option value="semibold" data-i18n="design.nameWeightSemibold">Semibold</option>
+              <option value="normal" data-i18n="design.nameWeightNormal">Normal</option>
             </select>
           </label>
-          <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> Show legal / disclaimer line</label>
-          <label class="field span2">Legal / disclaimer text
+          <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> <span data-i18n="design.showLegal">Show legal / disclaimer line</span></label>
+          <label class="field span2"><span data-i18n="design.legalText">Legal / disclaimer text</span>
             <textarea rows="2" data-field="design.legalText" placeholder="This message and any attachments are confidential…"></textarea>
           </label>
-          <label class="field span2">Favourite quote <span class="opt">(used by the Quote template — leave empty to skip)</span>
+          <label class="field span2"><span data-i18n="design.quoteText">Favourite quote</span> <span class="opt" data-i18n="opt.usedByQuote">(used by the Quote template — leave empty to skip)</span>
             <input data-field="design.quoteText" placeholder="Small team, big care.">
           </label>
-          <label class="field span2">Signature name <span class="opt">(used for file names and the Saved panel)</span>
+          <label class="field span2"><span data-i18n="design.signatureName">Signature name</span> <span class="opt" data-i18n="opt.fileNames">(used for file names and the Saved panel)</span>
             <input data-field="meta.name" placeholder="My signature">
           </label>
         </div>
@@ -406,37 +412,37 @@
     </details>
 
     <details open data-sec="elements">
-      <summary>Show / hide</summary>
+      <summary data-i18n="sec.elements">Show / hide</summary>
       <div class="body grid2">
-        <label class="switch"><input type="checkbox" data-field="design.showTitle"><span class="sw"></span> Job title</label>
-        <label class="switch"><input type="checkbox" data-field="design.showCompany"><span class="sw"></span> Company</label>
-        <label class="switch"><input type="checkbox" data-field="design.showDepartment"><span class="sw"></span> Department</label>
-        <label class="switch"><input type="checkbox" data-field="design.showLocation"><span class="sw"></span> Location &amp; languages</label>
-        <label class="switch"><input type="checkbox" data-field="design.showEmail"><span class="sw"></span> Email</label>
-        <label class="switch"><input type="checkbox" data-field="design.showPhone"><span class="sw"></span> Phone</label>
-        <label class="switch"><input type="checkbox" data-field="design.showMobile"><span class="sw"></span> Mobile</label>
-        <label class="switch"><input type="checkbox" data-field="design.showWebsite"><span class="sw"></span> Website</label>
-        <label class="switch"><input type="checkbox" data-field="design.showAddress"><span class="sw"></span> Address</label>
-        <label class="switch"><input type="checkbox" data-field="design.showBooking"><span class="sw"></span> Booking button</label>
-        <label class="switch"><input type="checkbox" data-field="design.showStatus"><span class="sw"></span> Status badge</label>
-        <label class="switch"><input type="checkbox" data-field="design.showSocials"><span class="sw"></span> Social links</label>
-        <span class="micro span2">Hide anything you don’t need — the preview rebuilds instantly.</span>
+        <label class="switch"><input type="checkbox" data-field="design.showTitle"><span class="sw"></span> <span data-i18n="elements.jobTitle">Job title</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showCompany"><span class="sw"></span> <span data-i18n="elements.company">Company</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showDepartment"><span class="sw"></span> <span data-i18n="elements.department">Department</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showLocation"><span class="sw"></span> <span data-i18n="elements.location">Location &amp; languages</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showEmail"><span class="sw"></span> <span data-i18n="elements.email">Email</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showPhone"><span class="sw"></span> <span data-i18n="elements.phone">Phone</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showMobile"><span class="sw"></span> <span data-i18n="elements.mobile">Mobile</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showWebsite"><span class="sw"></span> <span data-i18n="elements.website">Website</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showAddress"><span class="sw"></span> <span data-i18n="elements.address">Address</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showBooking"><span class="sw"></span> <span data-i18n="elements.booking">Booking button</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showStatus"><span class="sw"></span> <span data-i18n="elements.status">Status badge</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showSocials"><span class="sw"></span> <span data-i18n="elements.socials">Social links</span></label>
+        <span class="micro span2" data-i18n="elements.micro">Hide anything you don’t need — the preview rebuilds instantly.</span>
       </div>
     </details>
 
   </section>
 
-  <section class="preview-col" aria-label="Live preview">
+  <section class="preview-col" aria-label="Live preview" data-i18n-aria="sec.previewAria">
     <div class="preview-toolbar">
       <div class="seg" id="seg-width">
-        <label><input type="radio" name="prevWidth" value="600" checked><span>Full</span></label>
-        <label><input type="radio" name="prevWidth" value="460"><span>Medium</span></label>
-        <label><input type="radio" name="prevWidth" value="340"><span>Phone</span></label>
+        <label><input type="radio" name="prevWidth" value="600" checked><span data-i18n="preview.full">Full</span></label>
+        <label><input type="radio" name="prevWidth" value="460"><span data-i18n="preview.medium">Medium</span></label>
+        <label><input type="radio" name="prevWidth" value="340"><span data-i18n="preview.phone">Phone</span></label>
       </div>
       <div class="seg" id="seg-bg">
-        <label><input type="radio" name="prevBg" value="white" checked><span>White</span></label>
-        <label><input type="radio" name="prevBg" value="grey"><span>Grey</span></label>
-        <label><input type="radio" name="prevBg" value="dark"><span>Dark</span></label>
+        <label><input type="radio" name="prevBg" value="white" checked><span data-i18n="preview.white">White</span></label>
+        <label><input type="radio" name="prevBg" value="grey"><span data-i18n="preview.grey">Grey</span></label>
+        <label><input type="radio" name="prevBg" value="dark"><span data-i18n="preview.dark">Dark</span></label>
       </div>
     </div>
     <div class="checklist" id="checklist"></div>
@@ -457,7 +463,7 @@
         </div>
       </div>
     </div>
-    <p class="micro preview-note"><span id="conciseness" class="concise-ok"></span> · Live preview at real size — the dark backdrop simulates a dark-mode mail client. Everything stays in your browser and is autosaved locally.</p>
+    <p class="micro preview-note"><span id="conciseness" class="concise-ok"></span><span data-i18n="preview.note"> · Live preview at real size — the dark backdrop simulates a dark-mode mail client. Everything stays in your browser and is autosaved locally.</span></p>
   </section>
 
 </main>
@@ -465,17 +471,17 @@
 <!-- Import modal -->
 <div class="overlay hidden" id="modal-import" role="dialog" aria-modal="true" aria-labelledby="import-title">
   <div class="modal">
-    <h2 id="import-title">Import an existing signature</h2>
-    <p class="hint">Paste the HTML of a signature you already use. Signature Studio will try to recover the name, contact details, links and images. It’s best-effort — always review the result.</p>
+    <h2 id="import-title" data-i18n="import.title">Import an existing signature</h2>
+    <p class="hint" data-i18n="import.hint">Paste the HTML of a signature you already use. Signature Studio will try to recover the name, contact details, links and images. It’s best-effort — always review the result.</p>
     <textarea id="import-src" rows="7" data-autofocus placeholder="&lt;table&gt;…&lt;/table&gt; or a full HTML document"></textarea>
     <div class="modal-actions">
-      <button class="btn" data-close type="button">Cancel</button>
-      <button class="btn btn-primary" id="import-parse" type="button">Parse</button>
+      <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
+      <button class="btn btn-primary" id="import-parse" type="button" data-i18n="import.parse">Parse</button>
     </div>
     <div id="import-summary" class="hidden"></div>
     <div class="modal-actions hidden" id="import-apply-row">
-      <button class="btn" data-close type="button">Cancel</button>
-      <button class="btn btn-primary" id="import-apply" type="button">Apply to editor</button>
+      <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
+      <button class="btn btn-primary" id="import-apply" type="button" data-i18n="import.apply">Apply to editor</button>
     </div>
   </div>
 </div>
@@ -483,66 +489,66 @@
 <!-- Instructions modal -->
 <div class="overlay hidden" id="modal-instructions" role="dialog" aria-modal="true" aria-labelledby="instructions-title">
   <div class="modal modal-wide">
-    <h2 id="instructions-title">Install in your mail client</h2>
+    <h2 id="instructions-title" data-i18n="instr.title">Install in your mail client</h2>
     <div class="tabs" id="instr-tabs">
-      <button class="itab active" data-tab="gmail" type="button" aria-pressed="true">Gmail</button>
-      <button class="itab" data-tab="outlook" type="button" aria-pressed="false">Outlook (Windows)</button>
-      <button class="itab" data-tab="outlookmac" type="button" aria-pressed="false">Outlook (Mac)</button>
-      <button class="itab" data-tab="applemail" type="button" aria-pressed="false">Apple Mail</button>
-      <button class="itab" data-tab="thunderbird" type="button" aria-pressed="false">Thunderbird</button>
-      <button class="itab" data-tab="webmail" type="button" aria-pressed="false">Other webmail</button>
+      <button class="itab active" data-tab="gmail" type="button" aria-pressed="true" data-i18n="instr.gmail">Gmail</button>
+      <button class="itab" data-tab="outlook" type="button" aria-pressed="false" data-i18n="instr.outlook">Outlook (Windows)</button>
+      <button class="itab" data-tab="outlookmac" type="button" aria-pressed="false" data-i18n="instr.outlookmac">Outlook (Mac)</button>
+      <button class="itab" data-tab="applemail" type="button" aria-pressed="false" data-i18n="instr.applemail">Apple Mail</button>
+      <button class="itab" data-tab="thunderbird" type="button" aria-pressed="false" data-i18n="instr.thunderbird">Thunderbird</button>
+      <button class="itab" data-tab="webmail" type="button" aria-pressed="false" data-i18n="instr.webmail">Other webmail</button>
     </div>
     <div class="ipane active" id="pane-gmail">
       <ol>
-        <li>Choose <b>Export ▸ Copy to clipboard</b> above.</li>
-        <li>Gmail → ⚙ Settings → <b>See all settings</b> → General → <b>Signature</b>.</li>
-        <li>Create a new signature, click in the edit box and paste (Ctrl/Cmd+V).</li>
-        <li>Under <b>Signature defaults</b>, select it for new emails and replies. Save changes.</li>
+        <li data-i18n-html="instr.gmail1">Choose <b>Export ▸ Copy to clipboard</b> above.</li>
+        <li data-i18n-html="instr.gmail2">Gmail → ⚙ Settings → <b>See all settings</b> → General → <b>Signature</b>.</li>
+        <li data-i18n="instr.gmail3">Create a new signature, click in the edit box and paste (Ctrl/Cmd+V).</li>
+        <li data-i18n-html="instr.gmail4">Under <b>Signature defaults</b>, select it for new emails and replies. Save changes.</li>
       </ol>
-      <p class="note">Gmail simplifies some formatting. If images vanish, use a hosted image URL (not an uploaded one) and paste again.</p>
+      <p class="note" data-i18n="instr.gmailNote">Gmail simplifies some formatting. If images vanish, use a hosted image URL (not an uploaded one) and paste again.</p>
     </div>
     <div class="ipane" id="pane-outlook">
       <ol>
-        <li>Choose <b>Export ▸ Copy to clipboard</b>.</li>
-        <li>File → Options → Mail → <b>Signatures…</b> → New.</li>
-        <li>Click in the signature editor and paste with <b>right-click → Keep Source Formatting</b> (or Ctrl+V).</li>
-        <li>Set the defaults for <b>New messages</b> and <b>Replies/forwards</b>, then OK.</li>
+        <li data-i18n-html="instr.outlook1">Choose <b>Export ▸ Copy to clipboard</b>.</li>
+        <li data-i18n-html="instr.outlook2">File → Options → Mail → <b>Signatures…</b> → New.</li>
+        <li data-i18n-html="instr.outlook3">Click in the signature editor and paste with <b>right-click → Keep Source Formatting</b> (or Ctrl+V).</li>
+        <li data-i18n-html="instr.outlook4">Set the defaults for <b>New messages</b> and <b>Replies/forwards</b>, then OK.</li>
       </ol>
-      <p class="note">Outlook renders signatures with the Word engine — these templates are built for it, but tiny differences are normal. Test once by sending yourself an email.</p>
+      <p class="note" data-i18n="instr.outlookNote">Outlook renders signatures with the Word engine — these templates are built for it, but tiny differences are normal. Test once by sending yourself an email.</p>
     </div>
     <div class="ipane" id="pane-outlookmac">
       <ol>
-        <li>Choose <b>Export ▸ Copy to clipboard</b>.</li>
-        <li>Outlook → Settings (⌘+,) → <b>Signatures</b>.</li>
-        <li>Click <b>+</b>, paste (⌘V), then set the signature for your account.</li>
+        <li data-i18n-html="instr.outlookmac1">Choose <b>Export ▸ Copy to clipboard</b>.</li>
+        <li data-i18n-html="instr.outlookmac2">Outlook → Settings (⌘+,) → <b>Signatures</b>.</li>
+        <li data-i18n-html="instr.outlookmac3">Click <b>+</b>, paste (⌘V), then set the signature for your account.</li>
       </ol>
     </div>
     <div class="ipane" id="pane-applemail">
       <ol>
-        <li>Choose <b>Export ▸ Copy to clipboard</b>.</li>
-        <li>Mail → Settings (⌘+,) → <b>Signatures</b> → select your account → <b>+</b>.</li>
-        <li>Paste (⌘V) and close. The signature syncs to iPhone/iPad if your account uses iCloud sync.</li>
+        <li data-i18n-html="instr.applemail1">Choose <b>Export ▸ Copy to clipboard</b>.</li>
+        <li data-i18n-html="instr.applemail2">Mail → Settings (⌘+,) → <b>Signatures</b> → select your account → <b>+</b>.</li>
+        <li data-i18n="instr.applemail3">Paste (⌘V) and close. The signature syncs to iPhone/iPad if your account uses iCloud sync.</li>
       </ol>
     </div>
     <div class="ipane" id="pane-thunderbird">
       <ol>
-        <li>Choose <b>Export ▸ Copy to clipboard</b>.</li>
-        <li>Account Settings → select the account → <b>Signature text</b>.</li>
-        <li>Tick <b>Use HTML</b>, paste (Ctrl/Cmd+V) and close the dialog.</li>
+        <li data-i18n-html="instr.thunderbird1">Choose <b>Export ▸ Copy to clipboard</b>.</li>
+        <li data-i18n-html="instr.thunderbird2">Account Settings → select the account → <b>Signature text</b>.</li>
+        <li data-i18n-html="instr.thunderbird3">Tick <b>Use HTML</b>, paste (Ctrl/Cmd+V) and close the dialog.</li>
       </ol>
     </div>
     <div class="ipane" id="pane-webmail">
       <ol>
-        <li>Choose <b>Export ▸ Copy to clipboard</b>.</li>
-        <li>Proton: Settings → Identity and addresses → Signature → paste.</li>
-        <li>Outlook on the web: Settings → Mail → Compose and reply → signature → paste.</li>
-        <li>Fastmail: Settings → Accounts → your account → Signature → paste.</li>
-        <li>Any other client with a rich-text signature box: paste with formatting intact.</li>
+        <li data-i18n-html="instr.webmail1">Choose <b>Export ▸ Copy to clipboard</b>.</li>
+        <li data-i18n="instr.webmail2">Proton: Settings → Identity and addresses → Signature → paste.</li>
+        <li data-i18n="instr.webmail3">Outlook on the web: Settings → Mail → Compose and reply → signature → paste.</li>
+        <li data-i18n="instr.webmail4">Fastmail: Settings → Accounts → your account → Signature → paste.</li>
+        <li data-i18n="instr.webmail5">Any other client with a rich-text signature box: paste with formatting intact.</li>
       </ol>
-      <p class="note">Not every client keeps every style. Keep signatures ≤ 600 px wide, use hosted images, and test in the client your recipients actually use.</p>
+      <p class="note" data-i18n="instr.webmailNote">Not every client keeps every style. Keep signatures ≤ 600 px wide, use hosted images, and test in the client your recipients actually use.</p>
     </div>
     <div class="modal-actions">
-      <button class="btn" data-close type="button">Close</button>
+      <button class="btn" data-close type="button" data-i18n="instr.close">Close</button>
     </div>
   </div>
 </div>
@@ -550,12 +556,12 @@
 <!-- QR modal -->
 <div class="overlay hidden" id="modal-qr" role="dialog" aria-modal="true" aria-labelledby="qr-title">
   <div class="modal modal-narrow">
-    <h2 id="qr-title">QR code</h2>
+    <h2 id="qr-title" data-i18n="qr.title">QR code</h2>
     <canvas id="qr-canvas" width="264" height="264"></canvas>
     <p id="qr-caption" class="qr-caption"></p>
-    <p class="note">The code contains this contact as a vCard — scan it with a phone camera to add it to the address book. Everything is generated locally, nothing is uploaded.</p>
+    <p class="note" data-i18n="qr.note">The code contains this contact as a vCard — scan it with a phone camera to add it to the address book. Everything is generated locally, nothing is uploaded.</p>
     <div class="modal-actions">
-      <button class="btn" data-close type="button">Close</button>
+      <button class="btn" data-close type="button" data-i18n="instr.close">Close</button>
     </div>
   </div>
 </div>
@@ -563,46 +569,46 @@
 <!-- Wizard modal -->
 <div class="overlay hidden" id="modal-wizard" role="dialog" aria-modal="true" aria-labelledby="wizard-title">
   <div class="modal">
-    <h2 id="wizard-title">Let’s set you up</h2>
+    <h2 id="wizard-title" data-i18n="wiz.title">Let’s set you up</h2>
     <p class="wiz-step-label" id="wiz-step-label" aria-live="polite">Step 1 of 3</p>
     <div class="wiz-step" id="wiz-step-1">
-      <p>Pick a colour vibe — you can fine-tune every colour later.</p>
+      <p data-i18n="wiz.step1Text">Pick a colour vibe — you can fine-tune every colour later.</p>
       <div class="wiz-themes" id="wiz-themes"></div>
       <div class="modal-actions">
-        <button class="btn" id="wiz-skip" type="button">Skip</button>
-        <button class="btn btn-primary" data-wiz-next="2" type="button">Next</button>
+        <button class="btn" id="wiz-skip" type="button" data-i18n="wiz.skip">Skip</button>
+        <button class="btn btn-primary" data-wiz-next="2" type="button" data-i18n="wiz.next">Next</button>
       </div>
     </div>
     <div class="wiz-step hidden" id="wiz-step-2">
-      <p>What should sit beside your name?</p>
+      <p data-i18n="wiz.step2Text">What should sit beside your name?</p>
       <div class="wiz-choices">
         <button class="wiz-choice" data-photo="initials" type="button">
           <span class="wiz-badge" style="background:#5b7cfa;color:#fff;">AB</span>
-          <span class="wiz-choice-name">My initials</span>
-          <span class="wiz-choice-desc">Coloured monogram — no image needed</span>
+          <span class="wiz-choice-name" data-i18n="wiz.initials">My initials</span>
+          <span class="wiz-choice-desc" data-i18n="wiz.initialsDesc">Coloured monogram — no image needed</span>
         </button>
         <button class="wiz-choice" data-photo="photo" type="button">
           <span class="wiz-badge">🖼</span>
-          <span class="wiz-choice-name">My photo or logo</span>
-          <span class="wiz-choice-desc">I’ll add an image URL in the editor</span>
+          <span class="wiz-choice-name" data-i18n="wiz.photo">My photo or logo</span>
+          <span class="wiz-choice-desc" data-i18n="wiz.photoDesc">I’ll add an image URL in the editor</span>
         </button>
         <button class="wiz-choice" data-photo="none" type="button">
           <span class="wiz-badge">—</span>
-          <span class="wiz-choice-name">Nothing for now</span>
-          <span class="wiz-choice-desc">No image or monogram</span>
+          <span class="wiz-choice-name" data-i18n="wiz.none">Nothing for now</span>
+          <span class="wiz-choice-desc" data-i18n="wiz.noneDesc">No image or monogram</span>
         </button>
       </div>
       <div class="modal-actions">
-        <button class="btn" data-wiz-back="1" type="button">Back</button>
-        <button class="btn btn-primary" data-wiz-next="3" type="button">Next</button>
+        <button class="btn" data-wiz-back="1" type="button" data-i18n="wiz.back">Back</button>
+        <button class="btn btn-primary" data-wiz-next="3" type="button" data-i18n="wiz.next">Next</button>
       </div>
     </div>
     <div class="wiz-step hidden" id="wiz-step-3">
-      <p>What do you do? Pick the closest starter — or start clean.</p>
+      <p data-i18n="wiz.step3Text">What do you do? Pick the closest starter — or start clean.</p>
       <div class="wiz-choices" id="wiz-personas"></div>
       <div class="modal-actions">
-        <button class="btn" data-wiz-back="2" type="button">Back</button>
-        <button class="btn btn-primary" id="wiz-finish" type="button">Finish</button>
+        <button class="btn" data-wiz-back="2" type="button" data-i18n="wiz.back">Back</button>
+        <button class="btn btn-primary" id="wiz-finish" type="button" data-i18n="wiz.finish">Finish</button>
       </div>
     </div>
   </div>
@@ -611,11 +617,11 @@
 <!-- Confirm modal -->
 <div class="overlay hidden" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
   <div class="modal">
-    <h2 id="confirm-title">Are you sure?</h2>
+    <h2 id="confirm-title" data-i18n="confirm.title">Are you sure?</h2>
     <p id="confirm-body"></p>
     <div class="modal-actions">
-      <button class="btn" data-close type="button">Cancel</button>
-      <button class="btn btn-danger" id="confirm-ok" type="button">Yes, do it</button>
+      <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok" type="button" data-i18n="confirm.ok">Yes, do it</button>
     </div>
   </div>
 </div>
@@ -623,19 +629,19 @@
 <!-- Re-crop modal -->
 <div class="overlay hidden" id="modal-recrop" role="dialog" aria-modal="true" aria-labelledby="recrop-title">
   <div class="modal">
-    <h2 id="recrop-title">Re-crop your photo</h2>
-    <p class="micro">The square crop is taken from your original upload.</p>
+    <h2 id="recrop-title" data-i18n="recrop.title">Re-crop your photo</h2>
+    <p class="micro" data-i18n="recrop.micro">The square crop is taken from your original upload.</p>
     <canvas id="recrop-canvas" width="220" height="110" style="max-width:100%;background:#fff;border:1px solid var(--line);border-radius:8px;"></canvas>
     <div class="modal-actions">
-      <label class="field">Crop from
+      <label class="field"><span data-i18n="recrop.cropFrom">Crop from</span>
         <select id="recrop-align">
-          <option value="center">Centre</option>
-          <option value="left">Left</option>
-          <option value="right">Right</option>
+          <option value="center" data-i18n="recrop.center">Centre</option>
+          <option value="left" data-i18n="recrop.left">Left</option>
+          <option value="right" data-i18n="recrop.right">Right</option>
         </select>
       </label>
-      <button class="btn" data-close type="button">Cancel</button>
-      <button class="btn btn-primary" id="recrop-apply" type="button">Apply crop</button>
+      <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
+      <button class="btn btn-primary" id="recrop-apply" type="button" data-i18n="recrop.apply">Apply crop</button>
     </div>
   </div>
 </div>
@@ -643,27 +649,27 @@
 <!-- Outlook export warning -->
 <div class="overlay hidden" id="modal-outlook" role="dialog" aria-modal="true" aria-labelledby="outlook-title">
   <div class="modal">
-    <h2 id="outlook-title">Export with rounded corners?</h2>
+    <h2 id="outlook-title" data-i18n="outlook.title">Export with rounded corners?</h2>
     <p id="outlook-issues"></p>
-    <p class="micro">Word-engine Outlook ignores rounded corners, so recipients on Outlook desktop see square shapes. Strict mode makes the preview and export match that.</p>
+    <p class="micro" data-i18n="outlook.micro">Word-engine Outlook ignores rounded corners, so recipients on Outlook desktop see square shapes. Strict mode makes the preview and export match that.</p>
     <div class="modal-actions">
-      <button class="btn" data-close type="button">Cancel</button>
-      <button class="btn" id="outlook-anyway" type="button">Export anyway</button>
-      <button class="btn btn-primary" id="outlook-strict" type="button">Use strict mode &amp; export</button>
+      <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
+      <button class="btn" id="outlook-anyway" type="button" data-i18n="outlook.anyway">Export anyway</button>
+      <button class="btn btn-primary" id="outlook-strict" type="button" data-i18n="outlook.strict">Use strict mode &amp; export</button>
     </div>
   </div>
 </div>
 
 <!-- Saved signatures panel -->
 <div class="scrim hidden" id="scrim"></div>
-<aside class="panel" id="saved-panel" aria-label="Saved signatures">
+<aside class="panel" id="saved-panel" aria-label="Saved signatures" data-i18n-aria="sec.savedAria">
   <div class="panel-head">
-    <h2>Saved signatures</h2>
-    <button class="btn btn-icon" id="saved-close" type="button" title="Close" aria-label="Close saved panel">×</button>
+    <h2 data-i18n="saved.title">Saved signatures</h2>
+    <button class="btn btn-icon" id="saved-close" type="button" data-i18n-title="saved.closeTitle" data-i18n-aria="saved.closeAria" title="Close" aria-label="Close saved panel">×</button>
   </div>
   <div class="save-row">
     <input id="save-name" placeholder="Name this signature…" maxlength="60">
-    <button class="btn btn-primary" id="save-now" type="button">Save current</button>
+    <button class="btn btn-primary" id="save-now" type="button" data-i18n="saved.saveCurrent">Save current</button>
   </div>
   <div id="saved-list"></div>
 </aside>
@@ -680,6 +686,11 @@
 <script src="assets/js/storage.js"></script>
 <script src="assets/js/vcard.js"></script>
 <script src="assets/js/qrcode.js"></script>
+<script src="assets/locales/en.js"></script>
+<script src="assets/locales/de.js"></script>
+<script src="assets/locales/es.js"></script>
+<script src="assets/locales/fr.js"></script>
+<script src="assets/js/i18n.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

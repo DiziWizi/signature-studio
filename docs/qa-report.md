@@ -583,6 +583,42 @@ real data, icons or personal details were used anywhere.
 
 ---
 
+# v0.28.0 addendum (photo re-crop)
+
+Date: 2026-11-19 · Scope: re-cropping an uploaded photo.
+
+## Notes
+
+- Re-crop button beside the logo upload: centre/left/right square crop
+  from the original (kept in memory for the session only — originals are
+  never persisted; after a reload a fresh upload enables it again).
+  Pixel-verified E2E (200×100 red/blue image → left crop corner red).
+
+---
+
+# v0.29.0 addendum (i18n)
+
+Date: 2026-11-19 · Scope: dependency-free internationalisation layer.
+
+## Notes
+
+- t(key, params) + data-i18n / data-i18n-html / data-i18n-title /
+  data-i18n-aria extraction across the whole editor UI; 435 keys in
+  en/de/es/fr (Sie/usted/vous register), key-fallback so nothing can
+  render empty; template names translate, placeholders/compose mock/
+  proper nouns stay English by design.
+- Auto-detect from navigator.language, topbar switcher, persisted choice,
+  html[lang] synced; onLangChange re-renders toasts, checklist,
+  conciseness, wizard (only when open).
+- English default byte-equivalent to pre-edit DOM (verified) — all 81
+  prior tests unchanged; 5 new i18n tests (defaults, de switch +
+  persistence, back to en, non-empty audit, de-DE auto-detect).
+- sw.js precaches the new files, VERSION bumped.
+- One pre-existing environmental flake (sw.js ERR_EMPTY_RESPONSE under
+  full parallel load) reproduced on pristine v0.28.0 — unrelated.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

@@ -47,7 +47,7 @@ function doUndo() {
   rebuildAll();
   scheduleSave();
   updateUndoButtons();
-  showToast('Undone.');
+  showToast(t('toast.undone'), '', { key: 'toast.undone' });
 }
 
 function doRedo() {
@@ -57,7 +57,7 @@ function doRedo() {
   rebuildAll();
   scheduleSave();
   updateUndoButtons();
-  showToast('Redone.');
+  showToast(t('toast.redone'), '', { key: 'toast.redone' });
 }
 
 function updateUndoButtons() {
@@ -104,7 +104,7 @@ function scheduleSave() {
   const now = Date.now();
   if (now - lastSaveAt < 1000) return;
   lastSaveAt = now;
-  if (!saveDraft(state)) showToast('Could not autosave — local storage is full or blocked.', 'warn');
+  if (!saveDraft(state)) showToast(t('toast.autosaveFail'), 'warn', { key: 'toast.autosaveFail' });
 }
 
 function flushSave() {
@@ -246,7 +246,7 @@ function socialRowHtml(soc, i) {
   const extra = isCustom
     ? `<div class="soc-extra">
          <input type="text" class="soc-glyph" maxlength="3" placeholder="Glyph (1–3 chars)" value="${esc(soc.glyph || '')}">
-         <input type="color" class="soc-color" value="${esc(soc.color || '#5b6472')}" title="Brand colour">
+         <input type="color" class="soc-color" value="${esc(soc.color || '#5b6472')}" title="${t('row.brandColour')}">
        </div>`
     : '';
   const iconRow = iconOn
@@ -255,13 +255,13 @@ function socialRowHtml(soc, i) {
        </div>`
     : '';
   return `<div class="social-row" data-i="${i}">
-    <button class="row-btn row-drag" title="Drag to reorder" type="button" draggable="true" aria-label="Drag to reorder">⠿</button>
+    <button class="row-btn row-drag" title="${t('row.drag')}" type="button" draggable="true" aria-label="${t('row.drag')}">⠿</button>
     <select class="soc-net">${options}</select>
     <input type="text" class="soc-url" placeholder="${esc(net.placeholder || 'https://…')}" value="${esc(soc.url)}">
-    <button class="row-btn soc-img${iconOn ? ' on' : ''}" title="Use an image icon instead of the glyph" aria-label="Use an image icon instead of the glyph" type="button">🖼</button>
-    <button class="row-btn soc-up" title="Move up" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>▲</button>
-    <button class="row-btn soc-down" title="Move down" aria-label="Move down" ${i === state.socials.length - 1 ? 'disabled' : ''}>▼</button>
-    <button class="row-btn del soc-del" title="Remove" aria-label="Remove">×</button>
+    <button class="row-btn soc-img${iconOn ? ' on' : ''}" title="${t('row.useImageIcon')}" aria-label="${t('row.useImageIcon')}" type="button">🖼</button>
+    <button class="row-btn soc-up" title="${t('row.moveUp')}" aria-label="${t('row.moveUp')}" ${i === 0 ? 'disabled' : ''}>▲</button>
+    <button class="row-btn soc-down" title="${t('row.moveDown')}" aria-label="${t('row.moveDown')}" ${i === state.socials.length - 1 ? 'disabled' : ''}>▼</button>
+    <button class="row-btn del soc-del" title="${t('row.remove')}" aria-label="${t('row.remove')}">×</button>
     ${extra}
     ${iconRow}
   </div>`;
@@ -277,7 +277,7 @@ function updateSectionCounts() {
 function renderSocials() {
   const list = $('#socials-list');
   list.innerHTML = state.socials.map((s, i) => socialRowHtml(s, i)).join('') ||
-    '<p class="hint">No social links yet — use the quick-add chips or the button below.</p>';
+    '<p class="hint">' + t('socials.empty') + '</p>';
   updateSectionCounts();
 }
 
@@ -355,12 +355,12 @@ function onSocialListClick(e) {
 
 function customRowHtml(line, i) {
   return `<div class="custom-row" data-i="${i}">
-    <button class="row-btn row-drag" title="Drag to reorder" type="button" draggable="true" aria-label="Drag to reorder">⠿</button>
+    <button class="row-btn row-drag" title="${t('row.drag')}" type="button" draggable="true" aria-label="${t('row.drag')}">⠿</button>
     <input type="text" class="line-label" placeholder="Label" value="${esc(line.label)}">
     <input type="text" class="line-value" placeholder="Value" value="${esc(line.value)}">
-    <button class="row-btn line-up" title="Move up" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>▲</button>
-    <button class="row-btn line-down" title="Move down" aria-label="Move down" ${i === state.customLines.length - 1 ? 'disabled' : ''}>▼</button>
-    <button class="row-btn del line-del" title="Remove" aria-label="Remove">×</button>
+    <button class="row-btn line-up" title="${t('row.moveUp')}" aria-label="${t('row.moveUp')}" ${i === 0 ? 'disabled' : ''}>▲</button>
+    <button class="row-btn line-down" title="${t('row.moveDown')}" aria-label="${t('row.moveDown')}" ${i === state.customLines.length - 1 ? 'disabled' : ''}>▼</button>
+    <button class="row-btn del line-del" title="${t('row.remove')}" aria-label="${t('row.remove')}">×</button>
   </div>`;
 }
 
@@ -404,6 +404,34 @@ function onCustomListClick(e) {
   scheduleSave();
 }
 
+/* ── i18n ─────────────────────────────────────────────────────────────── */
+
+/* Language-switch hook, called by applyI18n() after the static data-i18n
+   targets are refreshed. Re-renders every dynamic piece of UI that embeds
+   translated strings, and re-translates toasts that are still visible. */
+window.onLangChange = function onLangChange() {
+  if (!state) return; /* i18n.js boots before app.js initialises state */
+  /* The wizard only needs a live re-render when it is actually open —
+     re-rendering its five persona thumbnails on every language switch
+     would otherwise burn CPU for nothing. */
+  const wizard = $('#modal-wizard');
+  if (wizard && !wizard.classList.contains('hidden')) {
+    renderWizard();
+    wizShowStep(wizardStep);
+  }
+  renderSocials();
+  renderCustoms();
+  renderThemes();
+  updateChecklist();
+  updateConciseness();
+  renderSavedList();
+  document.querySelectorAll('#toasts .toast[data-i18n-key]').forEach(toastEl => {
+    let params = null;
+    try { params = JSON.parse(toastEl.dataset.i18nParams || 'null'); } catch (e) { /* ignore */ }
+    toastEl.textContent = t(toastEl.dataset.i18nKey, params);
+  });
+};
+
 /* ── conciseness hint ─────────────────────────────────────────────────── */
 
 function updateConciseness() {
@@ -430,16 +458,17 @@ function updateConciseness() {
     s.contact.address,
     ...contactItems(s).map(i => i.text),
     ...s.customLines.map(l => `${l.label ? l.label + ': ' : ''}${l.value}`),
-    s.contact.bookingLabel || 'Book a call',
+    s.contact.bookingLabel || t('preview.bookACall'),
     ...s.socials.map(x => networkById(x.network).name),
     s.design.legalText,
   ].filter(Boolean);
   const longest = Math.max(0, ...cands.map(t => String(t).length));
   let verdict, kind;
-  if (lines <= 5 && longest <= 60) { verdict = 'Nice and short — ideal for personal mail.'; kind = 'good'; }
-  else if (lines <= 9 && longest <= 90) { verdict = 'Fairly compact.'; kind = 'ok'; }
-  else { verdict = 'On the long side — consider trimming.'; kind = 'long'; }
-  el.textContent = `${lines} line${lines === 1 ? '' : 's'} · longest ~${longest} chars — ${verdict}`;
+  if (lines <= 5 && longest <= 60) { verdict = t('concise.good'); kind = 'good'; }
+  else if (lines <= 9 && longest <= 90) { verdict = t('concise.fairlyCompact'); kind = 'ok'; }
+  else { verdict = t('concise.long'); kind = 'long'; }
+  const lineWord = t(lines === 1 ? 'concise.lineWord.one' : 'concise.lineWord.many');
+  el.textContent = t('concise.summary', { lines, lineWord, longest, verdict });
   el.className = 'concise-' + kind;
 }
 
@@ -447,6 +476,7 @@ function updateConciseness() {
 
 const WIZARD_DONE_KEY = 'sigstudio.wizard.done';
 let wizardChoices = { theme: 'slate', photo: 'none', persona: '' };
+let wizardStep = 1;
 
 function renderWizard() {
   $('#wiz-themes').innerHTML = THEMES.map(t =>
@@ -462,8 +492,8 @@ function renderWizard() {
        <span class="wiz-choice-desc">${esc(p.desc)}</span>
      </button>`
   ).join('') + `<button type="button" class="wiz-choice${wizardChoices.persona === '' ? ' selected' : ''}" data-persona="">
-       <span class="wiz-choice-name">Start clean</span>
-       <span class="wiz-choice-desc">Empty signature — fill everything in yourself</span>
+       <span class="wiz-choice-name">${esc(t('wiz.startClean'))}</span>
+       <span class="wiz-choice-desc">${esc(t('wiz.startCleanDesc'))}</span>
      </button>`;
   renderWizardThumbs();
 }
@@ -489,11 +519,12 @@ function renderWizardThumbs() {
 }
 
 function wizShowStep(n) {
+  wizardStep = n;
   for (const i of [1, 2, 3]) {
     const step = $('#wiz-step-' + i);
     step.classList.toggle('hidden', i !== n);
   }
-  $('#wiz-step-label').textContent = `Step ${n} of 3`;
+  $('#wiz-step-label').textContent = t('wiz.stepOf', { n });
 }
 
 function openWizard() {
@@ -513,7 +544,7 @@ function finishWizard() {
   try { localStorage.setItem(WIZARD_DONE_KEY, '1'); } catch (e) { /* ignore */ }
   rebuildAll();
   scheduleSave();
-  showToast('All set — make the fields yours.');
+  showToast(t('toast.allSet'), '', { key: 'toast.allSet' });
 }
 
 function initWizard() {
@@ -561,7 +592,7 @@ function renderQuickMenu() {
   const snaps = listSnapshots();
   const menu = $('#quick-menu');
   if (!snaps.length) {
-    menu.innerHTML = '<span class="menu-empty">No saved signatures yet — save one in the Saved panel.</span>';
+    menu.innerHTML = '<span class="menu-empty">' + t('quick.empty') + '</span>';
     return;
   }
   menu.innerHTML = snaps.slice(0, 6).map(snap => {
@@ -594,7 +625,7 @@ function initQuickSwitch() {
       menu.classList.add('hidden');
       rebuildAll();
       scheduleSave();
-      showToast('Switched signature.');
+      showToast(t('toast.switched'), '', { key: 'toast.switched' });
     }
   });
   document.addEventListener('keydown', e => {
@@ -607,26 +638,26 @@ function initQuickSwitch() {
 function collectWarnings(s) {
   const w = [];
   if (!s.profile.displayName && !s.profile.name) {
-    w.push({ kind: 'err', msg: 'No name set — the signature won’t say who it’s from.' });
+    w.push({ kind: 'err', msg: t('check.noName') });
   }
   if (!String(s.contact.email || '').trim()) {
-    w.push({ kind: 'warn', msg: 'No email address — recipients can’t reach you from the signature.' });
+    w.push({ kind: 'warn', msg: t('check.noEmail') });
   }
   if (String(s.design.logoUrl || '').startsWith('data:')) {
-    w.push({ kind: 'warn', msg: 'Logo is embedded (data: image) — Outlook strips these. Host it and paste the URL.' });
+    w.push({ kind: 'warn', msg: t('check.logoEmbedded') });
   }
   if (String(s.design.bannerUrl || '').startsWith('data:')) {
-    w.push({ kind: 'warn', msg: 'Banner is embedded (data: image) — Outlook strips these. Host it and paste the URL.' });
+    w.push({ kind: 'warn', msg: t('check.bannerEmbedded') });
   }
   if (!s.design.strictOutlook && (s.design.showCard || photoShapeOf(s) !== 'square')) {
-    w.push({ kind: 'info', msg: 'Outlook desktop renders this without rounded corners — turn on Strict mode to preview that.' });
+    w.push({ kind: 'info', msg: t('check.roundedOutlook') });
   }
   if (s.design.showQr) {
-    w.push({ kind: 'info', msg: 'The embedded QR is a table grid, not an image — Outlook recipients see the block but cannot scan it; Gmail and Apple Mail scan fine.' });
+    w.push({ kind: 'info', msg: t('check.embeddedQr') });
   }
   for (const soc of s.socials) {
     if (!String(soc.url || '').trim()) {
-      w.push({ kind: 'info', msg: `${esc(networkById(soc.network).name)} has no link yet — it won’t show in the signature.` });
+      w.push({ kind: 'info', msg: t('check.networkNoLink', { net: esc(networkById(soc.network).name) }) });
     }
   }
   return w;
@@ -637,7 +668,7 @@ function updateChecklist() {
   if (!el) return;
   const w = collectWarnings(state);
   if (!w.length) {
-    el.innerHTML = '<div class="check-ok">✓ Ready to export — nothing missing</div>';
+    el.innerHTML = '<div class="check-ok">' + t('check.ready') + '</div>';
     return;
   }
   el.innerHTML = w.map(x => `<div class="check-item check-${x.kind}">${x.msg}</div>`).join('');
@@ -704,37 +735,43 @@ function renderThemes() {
     return `<button type="button" class="theme-swatch${active ? ' active' : ''}" data-theme="${t.id}" ` +
       `title="${esc(t.name)}" aria-label="${esc(t.name)}" style="background:linear-gradient(135deg, ${t.primary} 50%, ${t.text} 50%);"></button>`;
   }).join('');
-  row.innerHTML = '<span class="hint">Colour themes:</span>' + btns;
+  row.innerHTML = '<span class="hint">' + t('design.colourThemes') + '</span>' + btns;
 }
 
 function onThemeClick(e) {
   const b = e.target.closest('.theme-swatch');
   if (!b) return;
-  const t = themeById(b.dataset.theme);
-  if (!t) return;
-  state.design.primaryColor = t.primary;
-  state.design.textColor = t.text;
-  state.design.dividerColor = t.divider;
+  const theme = themeById(b.dataset.theme);
+  if (!theme) return;
+  state.design.primaryColor = theme.primary;
+  state.design.textColor = theme.text;
+  state.design.dividerColor = theme.divider;
   renderThemes();
   const primary = document.querySelector('[data-field="design.primaryColor"]');
   const text = document.querySelector('[data-field="design.textColor"]');
   const divider = document.querySelector('[data-field="design.dividerColor"]');
-  if (primary) primary.value = t.primary;
-  if (text) text.value = t.text;
-  if (divider) divider.value = t.divider;
+  if (primary) primary.value = theme.primary;
+  if (text) text.value = theme.text;
+  if (divider) divider.value = theme.divider;
   renderPreview();
   scheduleSave();
-  showToast(`Theme applied: ${t.name}.`);
+  showToast(t('toast.themeApplied', { name: theme.name }), '', { key: 'toast.themeApplied', params: { name: theme.name } });
 }
 
 /* ── toasts ───────────────────────────────────────────────────────────── */
 
-function showToast(msg, kind = '') {
-  const t = document.createElement('div');
-  t.className = 'toast' + (kind ? ' ' + kind : '');
-  t.textContent = msg;
-  $('#toasts').appendChild(t);
-  setTimeout(() => t.remove(), 3200);
+function showToast(msg, kind = '', meta) {
+  const toastEl = document.createElement('div');
+  toastEl.className = 'toast' + (kind ? ' ' + kind : '');
+  toastEl.textContent = msg;
+  /* Remember the key (and params) so a live language switch can re-translate
+     toasts that are still on screen. */
+  if (meta && meta.key) {
+    toastEl.dataset.i18nKey = meta.key;
+    if (meta.params) toastEl.dataset.i18nParams = JSON.stringify(meta.params);
+  }
+  $('#toasts').appendChild(toastEl);
+  setTimeout(() => toastEl.remove(), 3200);
 }
 
 /* ── modals & overlays ────────────────────────────────────────────────── */
@@ -806,12 +843,12 @@ function outlookIssues(s) {
   if (s.design.strictOutlook) return [];
   const issues = [];
   const shape = photoShapeOf(s);
-  if (shape !== 'square') issues.push(shape === 'circle' ? 'round photo' : 'rounded photo');
-  if (s.design.showCard) issues.push('card');
-  if (s.design.useMonogram) issues.push('monogram');
-  if (String(s.design.statusText || '').trim()) issues.push('status badge');
-  if (String(s.contact.booking || '').trim()) issues.push('booking button');
-  if (s.socials.some(x => String(x.url || '').trim())) issues.push('social chips');
+  if (shape !== 'square') issues.push(shape === 'circle' ? t('outlook.issue.roundPhoto') : t('outlook.issue.roundedPhoto'));
+  if (s.design.showCard) issues.push(t('outlook.issue.card'));
+  if (s.design.useMonogram) issues.push(t('outlook.issue.monogram'));
+  if (String(s.design.statusText || '').trim()) issues.push(t('outlook.issue.statusBadge'));
+  if (String(s.contact.booking || '').trim()) issues.push(t('outlook.issue.booking'));
+  if (s.socials.some(x => String(x.url || '').trim())) issues.push(t('outlook.issue.socials'));
   return issues;
 }
 
@@ -828,7 +865,7 @@ function guardOutlookExport(fn) {
   }
   pendingExport = fn;
   $('#outlook-issues').textContent =
-    `Outlook desktop renders rounded corners as square for: ${issues.join(', ')}.`;
+    t('outlook.summary', { issues: issues.join(', ') });
   openOverlay('#modal-outlook');
 }
 
@@ -837,23 +874,23 @@ async function doCopy() {
   const plain = plainTextVersion(state);
   const how = await copySignature(html, plain);
   if (how === 'failed') {
-    showToast('Clipboard blocked by the browser — use “Download .html” instead.', 'err');
+    showToast(t('toast.clipboardBlockedDownload'), 'err', { key: 'toast.clipboardBlockedDownload' });
   } else {
-    showToast('Copied — paste into your mail client’s signature box.');
+    showToast(t('toast.copied'), '', { key: 'toast.copied' });
   }
 }
 
 /* Bare table fragment for CMS / signature-management tools. */
 async function doCopyFragment() {
   if (typeof renderFragment !== 'function') {
-    showToast('Fragment export unavailable.', 'err');
+    showToast(t('toast.fragmentUnavailable'), 'err', { key: 'toast.fragmentUnavailable' });
     return;
   }
   const how = await copySignature(renderFragment(state), plainTextVersion(state));
   if (how === 'failed') {
-    showToast('Clipboard blocked by the browser.', 'err');
+    showToast(t('toast.clipboardBlocked'), 'err', { key: 'toast.clipboardBlocked' });
   } else {
-    showToast('Table fragment copied — paste it into your CMS template.');
+    showToast(t('toast.fragmentCopied'), '', { key: 'toast.fragmentCopied' });
   }
 }
 
@@ -871,7 +908,7 @@ function downloadBlob(blob, filename) {
 function doExportPreset() {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   downloadBlob(blob, `${slugify(state.meta.name)}-preset.json`);
-  showToast('Preset exported — share the file with your team.');
+  showToast(t('toast.presetExported'), '', { key: 'toast.presetExported' });
 }
 
 function doImportPresetFile(file) {
@@ -886,9 +923,9 @@ function doImportPresetFile(file) {
       state = normalizeLoadedState(parsed);
       rebuildAll();
       scheduleSave();
-      showToast('Preset imported.');
+      showToast(t('toast.presetImported'), '', { key: 'toast.presetImported' });
     } catch (err) {
-      showToast('Not a valid Signature Studio preset.', 'err');
+      showToast(t('toast.presetInvalid'), 'err', { key: 'toast.presetInvalid' });
     }
   };
   reader.readAsText(file);
@@ -900,25 +937,25 @@ function doVCard() {
   const vcf = buildVCard(state);
   const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
   downloadBlob(blob, `${slugify(state.meta.name)}.vcf`);
-  showToast('vCard downloaded — send it to contacts or add it to your phone.');
+  showToast(t('toast.vcardDownloaded'), '', { key: 'toast.vcardDownloaded' });
 }
 
 function doVCard4() {
   if (typeof buildVCard4 !== 'function') {
-    showToast('vCard 4.0 builder unavailable.', 'err');
+    showToast(t('toast.vcard4Unavailable'), 'err', { key: 'toast.vcard4Unavailable' });
     return;
   }
   const vcf = buildVCard4(state);
   const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
   downloadBlob(blob, `${slugify(state.meta.name)}-v4.vcf`);
-  showToast('vCard 4.0 downloaded — modern contacts apps read it, including pronouns.');
+  showToast(t('toast.vcard4Downloaded'), '', { key: 'toast.vcard4Downloaded' });
 }
 
 function doShowQR() {
   const vcf = buildVCard(state);
   const canvas = $('#qr-canvas');
   if (typeof qrcode !== 'function') {
-    showToast('QR generator failed to load.', 'err');
+    showToast(t('toast.qrFailed'), 'err', { key: 'toast.qrFailed' });
     return;
   }
   const qr = qrcode(0, 'M');
@@ -939,7 +976,7 @@ function doShowQR() {
     }
   }
   $('#qr-caption').textContent =
-    `Scan to add ${state.profile.name || state.meta.name || 'this contact'} to your phone's address book.`;
+    t('qr.caption', { name: state.profile.name || state.meta.name || 'this contact' });
   openOverlay('#modal-qr');
 }
 
@@ -947,17 +984,17 @@ function doShowQR() {
 
 function summarizeParsed(p) {
   const parts = [];
-  if (p.profile.name) parts.push(`<b>Name:</b> ${esc(p.profile.name)}`);
-  if (p.profile.title) parts.push(`<b>Title:</b> ${esc(p.profile.title)}`);
-  if (p.profile.department) parts.push(`<b>Department:</b> ${esc(p.profile.department)}`);
-  if (p.contact.email) parts.push(`<b>Email:</b> ${esc(p.contact.email)}`);
-  if (p.contact.phone) parts.push(`<b>Phone:</b> ${esc(p.contact.phone)}`);
-  if (p.contact.mobile) parts.push(`<b>Mobile:</b> ${esc(p.contact.mobile)}`);
-  if (p.contact.website) parts.push(`<b>Website:</b> ${esc(p.contact.website)}`);
-  if (p.socials.length) parts.push(`<b>Social links:</b> ${p.socials.map(x => esc(networkById(x.network).name)).join(', ')}`);
-  if (p.design.logoUrl) parts.push(`<b>Logo:</b> found`);
-  if (p.design.bannerUrl) parts.push(`<b>Banner:</b> found`);
-  if (p.design.legalText) parts.push(`<b>Legal line:</b> found`);
+  if (p.profile.name) parts.push(`<b>${t('import.labelName')}</b> ${esc(p.profile.name)}`);
+  if (p.profile.title) parts.push(`<b>${t('import.labelTitle')}</b> ${esc(p.profile.title)}`);
+  if (p.profile.department) parts.push(`<b>${t('import.labelDepartment')}</b> ${esc(p.profile.department)}`);
+  if (p.contact.email) parts.push(`<b>${t('import.labelEmail')}</b> ${esc(p.contact.email)}`);
+  if (p.contact.phone) parts.push(`<b>${t('import.labelPhone')}</b> ${esc(p.contact.phone)}`);
+  if (p.contact.mobile) parts.push(`<b>${t('import.labelMobile')}</b> ${esc(p.contact.mobile)}`);
+  if (p.contact.website) parts.push(`<b>${t('import.labelWebsite')}</b> ${esc(p.contact.website)}`);
+  if (p.socials.length) parts.push(`<b>${t('import.labelSocials')}</b> ${p.socials.map(x => esc(networkById(x.network).name)).join(', ')}`);
+  if (p.design.logoUrl) parts.push(`<b>${t('import.labelLogo')}</b> ${t('import.found')}`);
+  if (p.design.bannerUrl) parts.push(`<b>${t('import.labelBanner')}</b> ${t('import.found')}`);
+  if (p.design.legalText) parts.push(`<b>${t('import.labelLegal')}</b> ${t('import.found')}`);
   parts.push(...p.notes.map(n => `<i>${esc(n)}</i>`));
   return parts.join('<br>');
 }
@@ -970,7 +1007,7 @@ function doImportParse() {
   const foundSomething = p.profile.name || p.contact.email || p.contact.phone || p.contact.website ||
     p.socials.length || p.design.logoUrl || p.design.legalText;
   if (!foundSomething) {
-    summary.innerHTML = '<b>Couldn’t find anything</b> — is that really a signature’s HTML?';
+    summary.innerHTML = t('import.nothingFound');
     summary.classList.remove('hidden');
     applyRow.classList.add('hidden');
     lastParsedImport = null;
@@ -1004,7 +1041,7 @@ function doImportApply() {
   closeOverlay('#modal-import');
   rebuildAll();
   scheduleSave();
-  showToast('Imported — review the fields and preview before exporting.');
+  showToast(t('toast.imported'), '', { key: 'toast.imported' });
 }
 
 /* ── saved panel ──────────────────────────────────────────────────────── */
@@ -1016,8 +1053,8 @@ function savedItemHtml(snap) {
       <div class="si-date">${new Date(snap.savedAt).toLocaleString()}</div>
     </div>
     <div class="si-actions">
-      <button class="btn btn-sm snap-load">Load</button>
-      <button class="btn btn-sm snap-del">Delete</button>
+      <button class="btn btn-sm snap-load">${t('saved.load')}</button>
+      <button class="btn btn-sm snap-del">${t('saved.delete')}</button>
     </div>
   </div>`;
 }
@@ -1026,7 +1063,7 @@ function renderSavedList() {
   const snaps = listSnapshots();
   $('#saved-list').innerHTML = snaps.length
     ? snaps.map(savedItemHtml).join('')
-    : '<p class="empty-note">Nothing saved yet.<br>Build a signature, give it a name, and save it here.</p>';
+    : '<p class="empty-note">' + t('saved.empty') + '</p>';
   updateSavedCount();
 }
 
@@ -1058,12 +1095,12 @@ function doSaveSnapshot() {
   const name = $('#save-name').value.trim() || state.meta.name || 'Signature';
   const snap = saveSnapshot(state, name);
   if (!snap) {
-    showToast('Could not save — local storage is full (large embedded images?).', 'err');
+    showToast(t('toast.saveFail'), 'err', { key: 'toast.saveFail' });
     return;
   }
   state.meta.name = name;
   renderSavedList();
-  showToast(`Saved “${name}”.`);
+  showToast(t('toast.saved', { name }), '', { key: 'toast.saved', params: { name } });
 }
 
 /* ── image uploads ────────────────────────────────────────────────────── */
@@ -1097,7 +1134,7 @@ let recropImg = null;
 
 function openRecrop() {
   if (!logoOriginals['design.logoUrl']) {
-    showToast('Upload a new photo first — the original is only kept for this session.', 'err');
+    showToast(t('toast.recropNeedsUpload'), 'err', { key: 'toast.recropNeedsUpload' });
     return;
   }
   recropImg = new Image();
@@ -1110,7 +1147,7 @@ function openRecrop() {
     ctx.drawImage(recropImg, 0, 0, canvas.width, canvas.height);
     openOverlay('#modal-recrop');
   };
-  recropImg.onerror = () => showToast('Could not load the original image.', 'err');
+  recropImg.onerror = () => showToast(t('toast.recropLoadFail'), 'err', { key: 'toast.recropLoadFail' });
   recropImg.src = logoOriginals['design.logoUrl'];
 }
 
@@ -1124,7 +1161,8 @@ function applyRecrop() {
   closeOverlay('#modal-recrop');
   renderPreview();
   scheduleSave();
-  showToast(`Photo re-cropped (${align}).`);
+  showToast(t('toast.recropped', { align: t('recrop.alignValue.' + align) }), '',
+    { key: 'toast.recropped', params: { align: t('recrop.alignValue.' + align) } });
 }
 
 function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
@@ -1134,7 +1172,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
     e.target.value = '';
     if (!file) return;
     if (file.size > 512 * 1024) {
-      showToast('Image too large for embedding (max 512 KB). Host it and paste a URL instead.', 'err');
+      showToast(t('toast.imageTooLarge'), 'err', { key: 'toast.imageTooLarge' });
       return;
     }
     const reader = new FileReader();
@@ -1144,7 +1182,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
       if (el) el.value = url;
       renderPreview();
       scheduleSave();
-      showToast('Embedded image — most mail clients block these. Host it and paste a URL for reliability.', 'warn');
+      showToast(t('toast.embeddedImage'), 'warn', { key: 'toast.embeddedImage' });
     };
     reader.onload = () => {
       if (!square) {
@@ -1261,7 +1299,7 @@ function init() {
     sampleIdx++;
     rebuildAll();
     scheduleSave();
-    showToast(`Sample: ${persona.name} — click again for another.`);
+    showToast(t('toast.sample', { name: persona.name }), '', { key: 'toast.sample', params: { name: persona.name } });
   });
   $('#btn-import').addEventListener('click', () => {
     openOverlay('#modal-import'); /* focus lands on #import-src via data-autofocus */
@@ -1271,12 +1309,12 @@ function init() {
   });
   $('#btn-saved').addEventListener('click', openSavedPanel);
   $('#btn-reset').addEventListener('click', () => {
-    showConfirm('Start over?', 'This clears the current signature and your autosaved draft. Saved snapshots in the “Saved” panel are kept.', () => {
+    showConfirm(t('confirm.startOverTitle'), t('confirm.startOverBody'), () => {
       pushHistory();
       state = defaultState();
       clearDraft();
       rebuildAll();
-      showToast('Fresh start.');
+      showToast(t('toast.freshStart'), '', { key: 'toast.freshStart' });
     });
   });
 
@@ -1295,7 +1333,7 @@ function init() {
     menu.classList.add('hidden');
     guardOutlookExport(() => {
       downloadSignature(renderSignature(state), state.meta.name);
-      showToast('Downloading .html file.');
+      showToast(t('toast.downloading'), '', { key: 'toast.downloading' });
     });
   });
   $('#x-instructions').addEventListener('click', () => {
@@ -1353,12 +1391,12 @@ function init() {
         closeSavedPanel();
         rebuildAll();
         scheduleSave();
-        showToast('Loaded.');
+        showToast(t('toast.loaded'), '', { key: 'toast.loaded' });
       }
     } else if (e.target.classList.contains('snap-del')) {
       deleteSnapshot(id);
       renderSavedList();
-      showToast('Deleted.');
+      showToast(t('toast.deleted'), '', { key: 'toast.deleted' });
     }
   });
 
@@ -1378,7 +1416,7 @@ function init() {
     const fn = pendingExport;
     pendingExport = null;
     if (fn) fn();
-    showToast('Strict mode on — exported the Outlook-honest version.');
+    showToast(t('toast.strictExport'), '', { key: 'toast.strictExport' });
   });
   $('#modal-outlook [data-close]').addEventListener('click', () => { pendingExport = null; });
 

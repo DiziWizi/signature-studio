@@ -99,6 +99,12 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   local/international phones, alternate instructions), recognise link line,
   purpose statement, land acknowledgement, three-slot brand footer; 22 new
   optional fields, all sections hidden when empty; E2E now 70
+- [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
+  original, never persisted); E2E now 81
+- [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
+  auto-detect + topbar language switcher with persistence, live
+  re-rendering of toasts/checklist/wizard, service-worker precache;
+  English default byte-equivalent (all prior tests unchanged); E2E now 86
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.
