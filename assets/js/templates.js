@@ -176,7 +176,7 @@ function contactInlineHtml(s, d, { labels = false } = {}) {
     .join(`<span style="font-size:${d.fontSize}px;color:${mutedColor(d)};">&nbsp;·&nbsp;</span>`);
 }
 
-function socialChipHtml(d, soc, withLabel) {
+function socialChipHtml(d, soc, withLabel, size = 22) {
   const net = networkById(soc.network);
   const isCustom = net.id === 'custom';
   const glyph = isCustom ? (soc.glyph || '↗') : net.glyph;
@@ -186,8 +186,8 @@ function socialChipHtml(d, soc, withLabel) {
   const href = normalizeUrl(net.id, raw);
   const iconUrl = String(soc.iconUrl || '').trim();
   const chip = iconUrl
-    ? `<img src="${esc(iconUrl)}" width="22" height="22" alt="" style="display:inline-block;width:22px;height:22px;border:0;${br(d, '11px')}vertical-align:middle;">`
-    : `<span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;` +
+    ? `<img src="${esc(iconUrl)}" width="${size}" height="${size}" alt="" style="display:inline-block;width:${size}px;height:${size}px;border:0;${br(d, '11px')}vertical-align:middle;">`
+    : `<span style="display:inline-block;width:${size}px;height:${size}px;line-height:${size}px;text-align:center;` +
       `background-color:${color};color:#ffffff;${br(d, '11px')}` +
       `font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:bold;vertical-align:middle;">${esc(glyph)}</span>`;
   if (!withLabel) return `<a href="${esc(href)}" style="text-decoration:none;">${chip}</a>`;
@@ -566,6 +566,176 @@ function photocardRows(s, d) {
   return rows.join('\n');
 }
 
+/* Postcard: a friendly bordered card with a 6px accent strip up top —
+   casual, warm, everything centred inside the card. */
+function postcardRows(s, d) {
+  const rows = [];
+  const den = densityOf(d);
+
+  const strip = `<tr><td colspan="2" height="6" style="height:6px;line-height:6px;font-size:0;background-color:${d.primaryColor};"></td></tr>`;
+
+  const logo = logoCellHtml(s, d);
+  const logoBlock = logo
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td align="center" style="padding:0 0 ${den.rowGap}px 0;">${logo}</td></tr></table>`
+    : '';
+  const identity = [nameHtml(s, d), titleHtml(s, d), companyHtml(s, d),
+    contextLineHtml(s, d), statusHtml(s, d)].join('').replace(/<br>$/, '');
+  const stack = contactStackHtml(s, d, { labels: false });
+  const socials = socialsRowHtml(s, d);
+  const socialsBlock = socials
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`
+    : '';
+
+  const inner = [logoBlock, identity, stack, socialsBlock].filter(x => x !== '').join('<br>');
+
+  rows.push(`<tr><td colspan="2" style="border:1px solid ${d.dividerColor};${br(d, '10px')}background-color:#ffffff;padding:0;">` +
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">` +
+    strip +
+    `<tr><td colspan="2" align="center" style="padding:${den.cellPad}px;">${inner || '&nbsp;'}</td></tr>` +
+    `</table></td></tr>`);
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
+/* Line: one casual line — name, a few muted details, tiny 18px socials. */
+function lineRows(s, d) {
+  const rows = [];
+  const muted = mutedColor(d);
+  const sep = `<span style="font-size:${d.fontSize}px;color:${muted};">&nbsp;·&nbsp;</span>`;
+  const parts = [];
+
+  const name = nameHtml(s, d, { big: false }).replace(/<br>$/, '');
+  if (name) parts.push(name);
+
+  if (d.showTitle !== false) {
+    const bits = [
+      s.profile.title,
+      d.showDepartment !== false ? s.profile.department : '',
+    ].filter(Boolean);
+    if (bits.length) {
+      parts.push(`<span${dmCls(d, 'mut')} style="${textStyle(d, { color: muted })}">${esc(bits.join('  ·  '))}</span>`);
+    }
+  }
+
+  if (d.showLocation !== false) {
+    const loc = [s.profile.location, s.profile.languages].filter(Boolean).join('  ·  ');
+    if (loc) {
+      parts.push(`<span${dmCls(d, 'mut')} style="${textStyle(d, { color: muted })}">${esc(loc)}</span>`);
+    }
+  }
+
+  if (s.contact.website && d.showWebsite !== false) {
+    const href = normalizeUrl('custom', s.contact.website);
+    const label = String(s.contact.websiteLabel || '').trim() || s.contact.website;
+    parts.push(`<a href="${esc(href)}"${dmCls(d, 'mut')} style="${textStyle(d, { color: muted })};text-decoration:none;">${esc(label)}</a>`);
+  }
+
+  if (d.showSocials !== false) {
+    const socials = s.socials.filter(x => String(x.url || '').trim());
+    if (socials.length) {
+      const chips = socials.map(soc => socialChipHtml(d, soc, false, 18)).join('&nbsp;');
+      parts.push(`&nbsp;&nbsp;${chips}`);
+    }
+  }
+
+  if (parts.length) {
+    rows.push(`<tr><td colspan="2" align="left">${parts.join(sep)}</td></tr>`);
+  }
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
+/* Duotone: white-on-accent identity panel left (220px), plain white contact
+   column right. */
+function duotoneRows(s, d) {
+  const rows = [];
+  const den = densityOf(d);
+  const light = mixColors(d.primaryColor, '#ffffff', 0.25);
+
+  const logoContent = logoCellHtml(s, d);
+  const shown = String(s.profile.displayName || s.profile.name || '').trim();
+
+  const leftParts = [];
+  if (logoContent) {
+    leftParts.push(`<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td align="center" style="padding:0 0 ${den.rowGap}px 0;">${logoContent}</td></tr></table>`);
+  }
+  if (shown) {
+    leftParts.push(`<span style="${textStyle(d, { size: d.fontSize + nameExtraOf(d), color: '#ffffff', weight: 'bold' })}">${esc(shown)}</span><br>`);
+  }
+  if (d.showTitle !== false) {
+    const bits = [
+      s.profile.title,
+      d.showDepartment !== false ? s.profile.department : '',
+    ].filter(Boolean);
+    if (bits.length) {
+      leftParts.push(`<span style="${textStyle(d, { size: d.fontSize, color: light })}">${esc(bits.join('  ·  '))}</span><br>`);
+    }
+  }
+  if (d.showCompany !== false && s.profile.company) {
+    leftParts.push(`<span style="${textStyle(d, { size: d.fontSize, color: light, weight: 'bold' })}">${esc(s.profile.company)}</span><br>`);
+  }
+  if (d.showLocation !== false) {
+    const loc = [s.profile.location, s.profile.languages].filter(Boolean).join('  ·  ');
+    if (loc) {
+      leftParts.push(`<span style="${textStyle(d, { size: d.fontSize - 1, color: light })}">${esc(loc)}</span><br>`);
+    }
+  }
+
+  const leftCell = `<td class="m-cell" width="220" valign="middle" align="center" style="background-color:${d.primaryColor};padding:${den.cellPad}px;">` +
+    (leftParts.join('') || '&nbsp;') + `</td>`;
+
+  const stack = contactStackHtml(s, d);
+  const socials = socialsPos(d) === 'inContact' ? '' : socialsRowHtml(s, d);
+  const booking = bookingHtml(s, d);
+  const rightInner = [stack, socials, booking].filter(x => x !== '').join('<br>');
+
+  const rightCell = `<td class="m-cell" valign="middle" style="background-color:#ffffff;padding:${den.cellPad}px;">${rightInner || '&nbsp;'}</td>`;
+
+  rows.push(`<tr>${leftCell}${rightCell}</tr>`);
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
+/* Quote: a favourite line above the identity — personal and warm. */
+function quoteRows(s, d) {
+  const rows = [];
+  const den = densityOf(d);
+  const quote = String(s.design.quoteText || '').trim();
+
+  if (quote) {
+    rows.push(`<tr><td colspan="2" align="center"><span style="${textStyle(d, { size: d.fontSize + 1, color: mutedColor(d), style: 'italic' })}">“${esc(quote)}”</span></td></tr>`);
+    rows.push(spacerHtml(den.rowGap));
+  }
+
+  const logo = logoCellHtml(s, d);
+  if (logo) {
+    rows.push(`<tr><td colspan="2" align="center"><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td align="center" style="padding:0 0 ${den.rowGap}px 0;">${logo}</td></tr></table></td></tr>`);
+    rows.push(spacerHtml(den.rowGap));
+  }
+
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) +
+    contextLineHtml(s, d) + statusHtml(s, d);
+  if (identity) {
+    rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
+  }
+
+  const stack = contactStackHtml(s, d, { labels: false });
+  if (stack) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
+  }
+
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="center"><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table></td></tr>`);
+  }
+
+  rows.push(spacerHtml(den.rowGap));
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
 /* ── document assembly ────────────────────────────────────────────────── */
 
 function darkStyleBlock(d) {
@@ -615,7 +785,11 @@ function renderSignature(state) {
     case 'masthead': inner = mastheadRows(s, d); break;
     case 'monogram': inner = monogramRows(s, d); break;
     case 'photocard': inner = photocardRows(s, d); break;
-    default:         inner = classicRows(s, d);
+    case 'postcard':  inner = postcardRows(s, d); break;
+    case 'line':      inner = lineRows(s, d); break;
+    case 'duotone':   inner = duotoneRows(s, d); break;
+    case 'quote':     inner = quoteRows(s, d); break;
+    default:          inner = classicRows(s, d);
   }
 
   const outerAlign = ['centered', 'roundel', 'monogram'].includes(d.template) ? 'center' : 'left';

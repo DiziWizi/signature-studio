@@ -67,6 +67,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   keyboard-operable switches/segmented controls, aria-labels on every icon
   button, named dialogs, role=status toasts, skip-to-content link,
   visible focus rings everywhere, prefers-reduced-motion; E2E now 49
+- [x] v0.17.0 — four new templates (14 total): Postcard (casual card with
+  accent strip), Line (casual one-liner with tiny socials), Duotone
+  (creative accent panel with white identity text), Quote (personal,
+  optional italic favourite quote via the new quoteText field); E2E now 53
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.

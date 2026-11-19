@@ -162,6 +162,22 @@
             <span class="thumb"><iframe class="tthumb" data-tpl="photocard" title="Photo card preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
             <span class="tpl-name">Photo card</span>
           </button>
+          <button class="tpl-btn" data-template="postcard" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="postcard" title="Postcard preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name">Postcard</span>
+          </button>
+          <button class="tpl-btn" data-template="line" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="line" title="Line preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name">Line</span>
+          </button>
+          <button class="tpl-btn" data-template="duotone" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="duotone" title="Duotone preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name">Duotone</span>
+          </button>
+          <button class="tpl-btn" data-template="quote" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="quote" title="Quote preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name">Quote</span>
+          </button>
         </div>
 
         <div class="themes-row" id="themes-row">
@@ -269,6 +285,9 @@
           <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> Show legal / disclaimer line</label>
           <label class="field span2">Legal / disclaimer text
             <textarea rows="2" data-field="design.legalText" placeholder="This message and any attachments are confidential…"></textarea>
+          </label>
+          <label class="field span2">Favourite quote <span class="opt">(used by the Quote template — leave empty to skip)</span>
+            <input data-field="design.quoteText" placeholder="Small team, big care.">
           </label>
           <label class="field span2">Signature name <span class="opt">(used for file names and the Saved panel)</span>
             <input data-field="meta.name" placeholder="My signature">

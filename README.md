@@ -8,8 +8,9 @@ tracking. Works offline.
 
 ## Features
 
-- **9 layout templates** — Classic, Centered, Compact, Banner, Minimal,
-  Split, Roundel, Masthead, Monogram, Photo card — with **live thumbnails**
+- **14 layout templates** — Classic, Centered, Compact, Banner, Minimal,
+  Split, Roundel, Masthead, Monogram, Photo card, Postcard, Line, Duotone,
+  Quote — with **live thumbnails**
   in the picker that render your actual signature in each layout as you type.
 - **Mobile-friendly by default** — signatures use a fluid width (shrink to any
   screen instead of clipping) and multi-column layouts stack into a single

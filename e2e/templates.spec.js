@@ -68,6 +68,24 @@ const MARKERS = {
   photocard: {
     has: ['valign="top"'],
   },
+  /* postcardRows: the accent top strip (accent bg + height:6 + font-size:0). */
+  postcard: {
+    has: ['height="6" style="height:6px;line-height:6px;font-size:0;background-color:#2f6fed'],
+  },
+  /* lineRows: tiny 18px inline social chips (every other layout uses 22px). */
+  line: {
+    has: ['width:18px;height:18px'],
+    not: ['valign="middle"', 'background-color:#f6f8fa'],
+  },
+  /* duotoneRows: the 220px accent identity panel. */
+  duotone: {
+    has: ['width="220"'],
+  },
+  /* quoteRows: the italic quote line (no other layout emits italics). */
+  quote: {
+    setup: 'quote',
+    has: ['font-style:italic'],
+  },
 };
 
 for (const [template, marker] of Object.entries(MARKERS)) {
@@ -82,6 +100,8 @@ for (const [template, marker] of Object.entries(MARKERS)) {
       await page.fill('[data-field="design.bannerUrl"]', DATA_URI);
     } else if (marker.setup === 'logo') {
       await page.fill('[data-field="design.logoUrl"]', DATA_URI);
+    } else if (marker.setup === 'quote') {
+      await page.fill('[data-field="design.quoteText"]', 'Small team, big care.');
     }
 
     await page.click(`.tpl-btn[data-template="${template}"]`);

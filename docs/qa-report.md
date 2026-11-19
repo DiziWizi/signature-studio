@@ -400,6 +400,38 @@ support, reduced motion — audited with the better-accessibility skill.
 
 ---
 
+# v0.17.0 addendum (four new templates)
+
+Date: 2026-11-19 · Scope: Postcard, Line, Duotone, Quote templates + the
+optional `quoteText` design field.
+
+## Notes
+
+- Postcard: bordered card, 6px accent strip, centered casual content
+  (labels off), socials at the bottom, legal outside the card; strict
+  mode drops the radius.
+- Line: a single casual row — name, muted title/location/website joined
+  with ·, and inline 18px social chips (socialChipHtml gained an optional
+  size param; existing calls byte-identical).
+- Duotone: 220px accent panel with white name / lighter-white title and
+  context (mixColors) beside a white contact column; m-cell stacking on
+  phones.
+- Quote: optional italic quote (design.quoteText, empty = omitted) above
+  the centered identity; freelancer sample carries "Small team, big care."
+- Renderer subagent suite 53/53 (14 templates render, 10 pre-existing
+  markers hold, new markers exclusive across all 14, hostile quote input
+  escaped, socialChipHtml regression byte-identical, toggles respected in
+  the new layouts, strict mode strips the postcard radius).
+- Two subagent judgement calls reverted by the parent: the default accent
+  colour was changed to satisfy a test marker — restored to #2f6fed and
+  the marker updated instead; Ada's corporate sample was given a quote —
+  removed, the quote E2E now sets the field explicitly.
+- Playwright: 53/53 twice consecutively (4 new template-marker tests);
+  pixel checks confirm the postcard strip and duotone panel render.
+  Templates gallery screenshot refreshed.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

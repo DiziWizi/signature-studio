@@ -19,6 +19,10 @@ const TEMPLATES = [
   { id: 'masthead', name: 'Masthead', desc: 'Company name in a coloured brand band up top.' },
   { id: 'monogram', name: 'Monogram', desc: 'Initials avatar, centred — no image needed.' },
   { id: 'photocard', name: 'Photo card', desc: 'Portrait photo left, big name — the personal profile.' },
+  { id: 'postcard', name: 'Postcard', desc: 'A friendly bordered card with an accent strip — casual and warm.' },
+  { id: 'line',     name: 'Line',     desc: 'One casual line: name, a few details, tiny socials.' },
+  { id: 'duotone',  name: 'Duotone',  desc: 'A bold accent panel behind your photo and name.' },
+  { id: 'quote',    name: 'Quote',    desc: 'A favourite line above your name — personal and warm.' },
 ];
 
 /* Curated colour themes: one click sets accent, text and divider together.
@@ -59,6 +63,7 @@ function defaultState() {
       socialStyle: 'icons',   // icons | icons_labels | labels
       showLegal: false,
       legalText: '',
+      quoteText: '',
       darkModeFriendly: false,
       stackMobile: true,
       showLabels: true,
@@ -120,6 +125,7 @@ function sampleState(personaId = 'default') {
     ];
     s.customLines = [{ label: 'Projects', value: 'mayachen.dev/work' }];
     s.design.statusText = 'Open to freelance work';
+    s.design.quoteText = 'Small team, big care.';
     s.design.template = 'split';
     applyTheme(s, 'ocean');
     s.meta.name = 'Maya — freelance';
