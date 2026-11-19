@@ -1068,19 +1068,63 @@ function doSaveSnapshot() {
 
 /* ── image uploads ────────────────────────────────────────────────────── */
 
+/* The last ORIGINAL (uncropped) upload per field, kept in memory for the
+   re-crop modal. Not persisted — originals can be large. */
+const logoOriginals = {};
+
 /* Centre-crop an image to a square and return a data URL. Falls back to
-   JPEG when the PNG would exceed the size guard. */
-function cropToSquare(img, maxBytes = 512 * 1024) {
+   JPEG when the PNG would exceed the size guard. align: center|left|right
+   picks which side of a wide image the square is taken from. */
+function cropToSquare(img, maxBytes = 512 * 1024, align = 'center') {
   const side = Math.min(img.naturalWidth, img.naturalHeight);
   if (!side) return null;
+  const room = img.naturalWidth - side;
+  const sx = align === 'left' ? 0 : align === 'right' ? room : room / 2;
+  const sy = (img.naturalHeight - side) / 2;
   const canvas = document.createElement('canvas');
   canvas.width = side;
   canvas.height = side;
   const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, side, side);
+  ctx.drawImage(img, sx, sy, side, side, 0, 0, side, side);
   let url = canvas.toDataURL('image/png');
   if (url.length > maxBytes) url = canvas.toDataURL('image/jpeg', 0.92);
   return url;
+}
+
+/* ── re-crop modal ────────────────────────────────────────────────────── */
+
+let recropImg = null;
+
+function openRecrop() {
+  if (!logoOriginals['design.logoUrl']) {
+    showToast('Upload a new photo first — the original is only kept for this session.', 'err');
+    return;
+  }
+  recropImg = new Image();
+  recropImg.onload = () => {
+    const canvas = $('#recrop-canvas');
+    const scale = Math.min(220 / recropImg.naturalWidth, 220 / recropImg.naturalHeight, 1);
+    canvas.width = Math.round(recropImg.naturalWidth * scale);
+    canvas.height = Math.round(recropImg.naturalHeight * scale);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(recropImg, 0, 0, canvas.width, canvas.height);
+    openOverlay('#modal-recrop');
+  };
+  recropImg.onerror = () => showToast('Could not load the original image.', 'err');
+  recropImg.src = logoOriginals['design.logoUrl'];
+}
+
+function applyRecrop() {
+  if (!recropImg || !logoOriginals['design.logoUrl']) return;
+  const align = $('#recrop-align').value;
+  const url = cropToSquare(recropImg, 512 * 1024, align) || logoOriginals['design.logoUrl'];
+  setPath(state, 'design.logoUrl', url);
+  const el = document.querySelector('[data-field="design.logoUrl"]');
+  if (el) el.value = url;
+  closeOverlay('#modal-recrop');
+  renderPreview();
+  scheduleSave();
+  showToast(`Photo re-cropped (${align}).`);
 }
 
 function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
@@ -1108,7 +1152,9 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
         return;
       }
       /* Square crop for logos/avatars: portrait photos would otherwise
-         be stretched into the square slot. */
+         be stretched into the square slot. Keep the original in memory
+         for the re-crop modal. */
+      logoOriginals[fieldPath] = reader.result;
       const img = new Image();
       img.onload = () => applyUrl(cropToSquare(img) || reader.result);
       img.onerror = () => applyUrl(reader.result);
@@ -1388,6 +1434,8 @@ function init() {
   /* image uploads */
   bindImageUpload('#upload-logo', '#logo-file', 'design.logoUrl', { square: true });
   bindImageUpload('#upload-banner', '#banner-file', 'design.bannerUrl');
+  $('#recrop-btn').addEventListener('click', openRecrop);
+  $('#recrop-apply').addEventListener('click', applyRecrop);
 
   /* PWA: register the service worker for offline use */
   if ('serviceWorker' in navigator) {
