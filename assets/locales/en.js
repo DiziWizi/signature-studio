@@ -506,6 +506,8 @@ window.SIG_LOCALES.en = {
   'audit.allGood': "Nothing to report.",
   'audit.summaryClean': "No warnings — this signature is clean.",
   'audit.summaryWarn': "{n} warning(s) found.",
+  'sw.updateReady': "Update available",
+  'sw.reloadNow': "Reload now",
   'import.modeHtml': "HTML",
   'import.modeVcard': "vCard (.vcf)",
   'import.hintVcard': "Paste a .vcf contact card — your address book exports these. Fields present in the card fill the matching boxes; everything else stays as it is.",

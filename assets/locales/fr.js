@@ -505,6 +505,8 @@ window.SIG_LOCALES.fr = {
   'audit.allGood': "Rien à signaler.",
   'audit.summaryClean': "Aucun avertissement — cette signature est propre.",
   'audit.summaryWarn': "{n} avertissement(s) trouvé(s).",
+  'sw.updateReady': "Mise à jour disponible",
+  'sw.reloadNow': "Recharger maintenant",
   'import.modeHtml': "HTML",
   'import.modeVcard': "vCard (.vcf)",
   'import.hintVcard': "Collez une carte .vcf — votre carnet d’adresses les exporte. Les champs présents remplissent les cases correspondantes ; le reste ne change pas.",

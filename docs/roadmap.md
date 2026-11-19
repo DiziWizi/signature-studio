@@ -108,6 +108,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   touch, 0.96 press scale on buttons, scroll-contained modals/panels/menus
 - [x] v0.36.0 — writing/accessibility pass: copy and contrast audited
   clean (worst text pair 6.5:1), overscroll containment on the audit list
+- [x] v0.37.0 — vCard import (3.0/4.0 paste or .vcf file, honorifics,
+  PRONOUN, PGP) + keyboard shortcuts (Ctrl+Enter copy, Ctrl+Shift+E menu);
+  E2E now 101
+- [x] v0.38.0 — idle-rendered template thumbnails, service-worker update
+  pill with reload, compact topbar under 480px; E2E now 103
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

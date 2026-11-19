@@ -648,6 +648,30 @@ scroll containment, copy + contrast audit.
 
 ---
 
+# v0.37.0–v0.38.0 addendum (vCard import, shortcuts, update pill)
+
+Date: 2026-11-19 · Scope: import parity, keyboard power, SW updates,
+thumbnail scheduling, narrow-screen topbar.
+
+## Notes
+
+- vCard import: HTML/VCard mode switch in the import modal, paste or
+  .vcf file; RFC 2426/6350 line folding, FN/N with honorifics, work-
+  preferred email, cell phone detection, TITLE/ORG/URL/ADR/BDAY/LANG,
+  PRONOUN, KEY;TYPE=PGP; PHOTO noted and skipped; merge-only apply.
+- Keyboard: Ctrl+Enter copies through the Outlook gate; Ctrl+Shift+E
+  toggles the export menu; shortcut hints in menu titles.
+- Thumbnails render on idle (requestIdleCallback, 1.2s timeout, hidden
+  tabs defer) instead of a 400ms cadence — continuous typing no longer
+  pays for 17 iframe parses at all; E2E asserts settle-on-pause.
+- SW update pill: sw.js already skipWaiting+claims; a controllerchange
+  on a session that HAD a controller now shows an "Update available /
+  Reload now" pill (role=status). E2E drives showUpdatePill directly.
+- Topbar compacts under 480px (smaller controls, brand text hidden);
+  no horizontal overflow at 320px, everything reachable.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

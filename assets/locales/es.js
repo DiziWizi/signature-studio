@@ -504,6 +504,8 @@ window.SIG_LOCALES.es = {
   'audit.allGood': "Nada que informar.",
   'audit.summaryClean': "Sin avisos — esta firma está limpia.",
   'audit.summaryWarn': "{n} aviso(s) encontrados.",
+  'sw.updateReady': "Actualización disponible",
+  'sw.reloadNow': "Recargar ahora",
   'import.modeHtml': "HTML",
   'import.modeVcard': "vCard (.vcf)",
   'import.hintVcard': "Pegue una tarjeta .vcf — su agenda las exporta. Los campos presentes en la tarjeta rellenan las casillas correspondientes; el resto queda igual.",

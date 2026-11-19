@@ -504,6 +504,8 @@ window.SIG_LOCALES.de = {
   'audit.allGood': "Nichts zu melden.",
   'audit.summaryClean': "Keine Warnungen — diese Signatur ist sauber.",
   'audit.summaryWarn': "{n} Warnung(en) gefunden.",
+  'sw.updateReady': "Update verfügbar",
+  'sw.reloadNow': "Jetzt neu laden",
   'import.modeHtml': "HTML",
   'import.modeVcard': "vCard (.vcf)",
   'import.hintVcard': "Fügen Sie eine .vcf-Kontaktkarte ein — Ihr Adressbuch exportiert diese. Vorhandene Felder der Karte füllen die passenden Felder aus; alles andere bleibt unverändert.",

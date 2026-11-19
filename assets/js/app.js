@@ -101,24 +101,26 @@ function renderPreviewNow() {
    (a) the whole pass is skipped while the Design section is closed, and
    (b) when open it runs at most every 400ms with a trailing re-run — 17
    srcdoc parses per keystroke is the heaviest cost in the editor. */
-let thumbsTimer = 0;
-let thumbsTrailing = false;
+let thumbsScheduled = false;
 let thumbsNeedsRebuild = true;
 function renderThumbs() {
   const sec = document.querySelector('details[data-sec="design"]');
   if (!sec || !sec.open) { thumbsNeedsRebuild = true; return; }
-  const now = Date.now();
-  if (now - lastThumbsAt < 400) {
-    thumbsTrailing = true;
-    if (!thumbsTimer) {
-      thumbsTimer = setTimeout(() => {
-        thumbsTimer = 0;
-        if (thumbsTrailing) { thumbsTrailing = false; renderThumbs(); }
-      }, 450);
-    }
-    return;
-  }
-  lastThumbsAt = now;
+  /* Render on idle, at most once per quiet period: continuous typing never
+     pays for 17 iframe parses; the tiles refresh when the user pauses (or
+     at a 1.2s worst case). A hidden tab defers entirely. */
+  if (thumbsScheduled) return;
+  thumbsScheduled = true;
+  const run = () => {
+    thumbsScheduled = false;
+    if (document.hidden) { thumbsNeedsRebuild = true; return; }
+    renderThumbsNow();
+  };
+  if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 1200 });
+  else setTimeout(run, 500);
+}
+
+function renderThumbsNow() {
   thumbsNeedsRebuild = false;
   const thumbs = document.querySelectorAll('.tthumb');
   if (!thumbs.length) return;
@@ -130,7 +132,6 @@ function renderThumbs() {
     iframe.srcdoc = html;
   }
 }
-let lastThumbsAt = 0;
 
 /* Time-throttled autosave: at most one write per second, plus a flush on
    unload. No setTimeout — same background-throttling reason as above. */
@@ -1389,6 +1390,11 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
   });
 }
 
+/* "Update available" pill: a new service worker took over mid-session. */
+function showUpdatePill() {
+  $('#update-pill').classList.remove('hidden');
+}
+
 /* ── init ─────────────────────────────────────────────────────────────── */
 
 function init() {
@@ -1734,10 +1740,19 @@ function init() {
 
   /* PWA: register the service worker for offline use */
   if ('serviceWorker' in navigator) {
+    let hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      /* A NEW worker claimed this page: an update installed in the
+         background. Only prompt when we already had a controller — the
+         first activation on a fresh visit is not an update. */
+      if (hadController) showUpdatePill();
+      hadController = true;
+    });
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js').catch(() => { /* non-fatal */ });
     });
   }
+  $('#update-reload').addEventListener('click', () => location.reload());
 
   rebuildAll();
   updateUndoButtons();
