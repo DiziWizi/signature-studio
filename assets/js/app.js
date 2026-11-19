@@ -180,6 +180,10 @@ function onFieldInput(e) {
     const o = $('#qr-size-out');
     if (o) o.textContent = `${v} px`;
   }
+  if (el.dataset.field === 'design.nameSpacing') {
+    const o = $('#name-spacing-out');
+    if (o) o.textContent = `${v} px`;
+  }
   renderPreview();
   scheduleSave();
 }
@@ -733,6 +737,8 @@ function rebuildAll() {
   if (sso) sso.textContent = `${state.design.socialSize ?? 22} px`;
   const qo = $('#qr-size-out');
   if (qo) qo.textContent = `${state.design.qrSize ?? 60} px`;
+  const spo = $('#name-spacing-out');
+  if (spo) spo.textContent = `${state.design.nameSpacing ?? 0} px`;
   updateSavedCount();
   renderThemes();
   renderPreview();

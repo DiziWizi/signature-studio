@@ -262,6 +262,9 @@
           <label class="field"><span data-i18n="design.accent">Accent colour</span><input type="color" data-field="design.primaryColor"></label>
           <label class="field"><span data-i18n="design.textColour">Text colour</span><input type="color" data-field="design.textColor"></label>
           <label class="field"><span data-i18n="design.dividerColour">Divider colour</span><input type="color" data-field="design.dividerColor"></label>
+          <label class="field"><span data-i18n="design.linkColour">Link colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = accent)</span><input data-field="design.linkColor" placeholder="#2f6fed"></label>
+          <label class="field"><span data-i18n="design.nameColour">Name colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = text colour)</span><input data-field="design.nameColor" placeholder="#3a3f47"></label>
+          <label class="field"><span data-i18n="design.mutedColour">Muted text colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = derived)</span><input data-field="design.mutedColor" placeholder="#8a90a0"></label>
           <label class="field"><span data-i18n="design.cardColour">Card colour</span><input type="color" data-field="design.cardColor"></label>
           <label class="field"><span data-i18n="design.background">Signature background</span> <span class="opt" data-i18n="opt.fullWidthBand">(full-width band)</span><input data-field="design.background" placeholder="#f0f2f5 — empty = transparent"></label>
 
@@ -295,9 +298,25 @@
               <option value="classic" data-i18n="design.fontClassic">Serif (Georgia)</option>
               <option value="clean" data-i18n="design.fontClean">Arial</option>
               <option value="mono" data-i18n="design.fontMono">Monospace</option>
+              <option value="arial">Arial</option>
+              <option value="calibri">Calibri</option>
+              <option value="georgia">Georgia</option>
+              <option value="verdana">Verdana</option>
+              <option value="trebuchet">Trebuchet MS</option>
+              <option value="tahoma">Tahoma</option>
+              <option value="times">Times New Roman</option>
+              <option value="segoe">Segoe UI</option>
             </select>
           </label>
           <label class="field"><span data-i18n="design.fontSize">Base font size (px)</span><input type="number" min="10" max="18" step="1" data-field="design.fontSize"></label>
+          <label class="field"><span data-i18n="field.customFont">Custom font stack</span> <span class="opt" data-i18n="opt.customFontOpt">(overrides the font above)</span><input data-field="design.customFont" placeholder="'Segoe UI', Roboto, sans-serif"></label>
+          <label class="field"><span data-i18n="field.taglineWeight">Tagline weight</span>
+            <select data-field="design.taglineWeight">
+              <option value="" data-i18n="design.weightNormal">Normal</option>
+              <option value="bold" data-i18n="design.weightBold">Bold</option>
+            </select>
+          </label>
+          <span class="range-row"><span class="lbl" data-i18n="field.nameSpacing">Name letter-spacing</span><input type="range" min="0" max="4" step="1" data-field="design.nameSpacing"><output id="name-spacing-out">0 px</output></span>
 
           <label class="field"><span data-i18n="design.density">Density</span>
             <select data-field="design.density">

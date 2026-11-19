@@ -6,7 +6,15 @@
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const stackOf = d => FONT_STACKS[d.font] || FONT_STACKS.modern;
+const stackOf = d => {
+  const custom = String(d.customFont || '').trim();
+  if (custom) {
+    /* The stack is emitted inside a style attribute: keep only characters
+       a font stack can legitimately contain, then escape for HTML. */
+    return esc(custom.replace(/[^a-zA-Z0-9 ,.\-]/g, ''));
+  }
+  return FONT_STACKS[d.font] || FONT_STACKS.modern;
+};
 
 function textStyle(d, opts = {}) {
   const size = opts.size ?? d.fontSize;
@@ -19,10 +27,30 @@ function textStyle(d, opts = {}) {
   ];
   if (opts.weight) parts.push(`font-weight:${opts.weight}`);
   if (opts.style) parts.push(`font-style:${opts.style}`);
+  if (opts.letterSpacing) parts.push(`letter-spacing:${opts.letterSpacing}px`);
   return parts.join(';');
 }
 
-const mutedColor = d => mixColors(d.textColor, '#ffffff', 0.42);
+const mutedColor = d => (d.mutedColor && /^#[0-9a-fA-F]{3,8}$/.test(d.mutedColor))
+  ? d.mutedColor
+  : mixColors(d.textColor, '#ffffff', 0.42);
+
+/* Accent-coloured link text: linkColor when set (hex-validated), else the
+   primary colour — byte-identical defaults. */
+const linkColorOf = d => (d.linkColor && /^#[0-9a-fA-F]{3,8}$/.test(d.linkColor))
+  ? d.linkColor
+  : d.primaryColor;
+
+/* Name text colour override; falls back to textColor. */
+const nameColorOf = d => (d.nameColor && /^#[0-9a-fA-F]{3,8}$/.test(d.nameColor))
+  ? d.nameColor
+  : d.textColor;
+
+/* Letter-spacing on the name, clamped to 0-4 px; '' = none. */
+const nameSpacingOf = d => {
+  const n = Number(d.nameSpacing);
+  return Number.isFinite(n) && n > 0 ? Math.min(4, n) : 0;
+};
 
 /* ── design-state keys with defaults ──────────────────────────────────── */
 
@@ -92,7 +120,13 @@ function nameHtml(s, d, { big = true, size = 0 } = {}) {
     (honorificSuffix ? ', ' + honorificSuffix : '');
   const extra = nameExtraOf(d);
   const fs = size || (big ? d.fontSize + 2 + extra : d.fontSize - 2 + extra);
-  const style = textStyle(d, { size: fs, weight: nameWeightOf(d) });
+  const spacing = nameSpacingOf(d);
+  const style = textStyle(d, {
+    size: fs,
+    weight: nameWeightOf(d),
+    color: d.nameColor ? nameColorOf(d) : undefined,
+    letterSpacing: spacing || undefined,
+  });
   const pronouns = s.profile.pronouns
     ? ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
     : '';
@@ -148,7 +182,7 @@ function titleHtml(s, d) {
 
 function companyHtml(s, d) {
   if (d.showCompany === false || !s.profile.company) return '';
-  const style = textStyle(d, { size: d.fontSize, color: d.primaryColor, weight: 'bold' });
+  const style = textStyle(d, { size: d.fontSize, color: linkColorOf(d), weight: 'bold' });
   if (s.contact.website && d.showWebsite !== false) {
     const href = normalizeUrl('custom', s.contact.website);
     return `<a href="${esc(href)}" style="${style};text-decoration:none;">${esc(s.profile.company)}</a><br>`;
@@ -162,7 +196,8 @@ function taglineHtml(s, d) {
   if (d.showCompany === false) return '';
   const tag = String(s.profile.tagline || '').trim();
   if (!tag) return '';
-  return `<span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d) })}">${esc(tag)}</span><br>`;
+  const weight = d.taglineWeight === 'bold' ? 'bold' : undefined;
+  return `<span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d), weight })}">${esc(tag)}</span><br>`;
 }
 
 function contactItems(s, d = {}) {

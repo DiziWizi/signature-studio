@@ -6,6 +6,14 @@ const FONT_STACKS = {
   classic: "Georgia, 'Times New Roman', Times, serif",
   clean:   "Arial, Helvetica, sans-serif",
   mono:    "'Courier New', Courier, monospace",
+  arial:   "Arial, Helvetica, sans-serif",
+  calibri: "Calibri, 'Segoe UI', Arial, sans-serif",
+  georgia: "Georgia, 'Times New Roman', Times, serif",
+  verdana: "Verdana, Geneva, Tahoma, sans-serif",
+  trebuchet: "'Trebuchet MS', 'Segoe UI', Arial, sans-serif",
+  tahoma:  "Tahoma, Verdana, Geneva, sans-serif",
+  times:   "'Times New Roman', Times, Georgia, serif",
+  segoe:   "'Segoe UI', Tahoma, Arial, sans-serif",
 };
 
 const TEMPLATES = [
@@ -34,6 +42,11 @@ const THEMES = [
   { id: 'slate',      name: 'Slate',      primary: '#3b5bdb', text: '#343a40', divider: '#e9ecef' },
   { id: 'ocean',      name: 'Ocean',      primary: '#0b7285', text: '#2b3a42', divider: '#dee7ea' },
   { id: 'forest',     name: 'Forest',     primary: '#2f9e44', text: '#2b3a2b', divider: '#e4efe5' },
+  { id: 'midnight',   name: 'Midnight',   primary: '#1e40af', text: '#334155', divider: '#e2e8f0' },
+  { id: 'navygold',   name: 'Navy & Gold', primary: '#1e3a8a', text: '#475569', divider: '#ece6d8' },
+  { id: 'plum',       name: 'Plum',       primary: '#7c3aed', text: '#3f3f46', divider: '#eee7f4' },
+  { id: 'warm',       name: 'Warm Earth', primary: '#b45309', text: '#44403c', divider: '#f0e7de' },
+  { id: 'contrast',   name: 'High Contrast', primary: '#111827', text: '#111827', divider: '#d1d5db' },
   { id: 'terracotta', name: 'Terracotta', primary: '#c94f2d', text: '#44302a', divider: '#f0e4de' },
   { id: 'plum',       name: 'Plum',       primary: '#7048a8', text: '#33313d', divider: '#e9e4f0' },
   { id: 'ink',        name: 'Ink',        primary: '#1c7ed6', text: '#212529', divider: '#dee2e6' },
@@ -55,6 +68,12 @@ function defaultState() {
       primaryColor: '#2f6fed',
       textColor: '#3a3f47',
       dividerColor: '#e3e6ea',
+      linkColor: '',        // accent-coloured link text ('' = primaryColor)
+      nameColor: '',        // name text override ('' = textColor)
+      mutedColor: '',       // muted/secondary text override ('' = derived)
+      customFont: '',       // raw font stack override ('' = font preset)
+      taglineWeight: '',    // '' = normal | 'bold'
+      nameSpacing: '',      // letter-spacing on the name, 0-4 px ('' = none)
       font: 'modern',
       fontSize: 14,
       logoUrl: '',
