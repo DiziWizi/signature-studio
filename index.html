@@ -231,6 +231,14 @@
             <span class="thumb"><iframe class="tthumb" data-tpl="enterprise" title="Enterprise preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
             <span class="tpl-name">Enterprise</span>
           </button>
+          <button class="tpl-btn" data-template="night" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="night" title="Night preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name">Night</span>
+          </button>
+          <button class="tpl-btn" data-template="letterhead" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="letterhead" title="Letterhead preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name">Letterhead</span>
+          </button>
         </div>
 
         <div class="themes-row" id="themes-row">
@@ -247,6 +255,18 @@
               <option value="solid">Solid</option>
               <option value="dashed">Dashed</option>
               <option value="dotted">Dotted</option>
+            </select>
+          </label>
+          <label class="field">Divider length
+            <select data-field="design.dividerLength">
+              <option value="full">Full width</option>
+              <option value="short">Short</option>
+            </select>
+          </label>
+          <label class="field">Divider position
+            <select data-field="design.dividerPosition">
+              <option value="belowName">Under the name</option>
+              <option value="belowContact">Under contact details</option>
             </select>
           </label>
           <label class="field">Font

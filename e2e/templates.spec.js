@@ -91,6 +91,14 @@ const MARKERS = {
     setup: 'org',
     has: ['width="33%"'],
   },
+  /* nightRows: the dark outer wrapper. */
+  night: {
+    has: ['background-color:#171a21'],
+  },
+  /* letterheadRows: letter-spaced department line (Ada has one). */
+  letterhead: {
+    has: ['letter-spacing:1px'],
+  },
 };
 
 for (const [template, marker] of Object.entries(MARKERS)) {

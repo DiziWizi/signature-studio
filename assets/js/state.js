@@ -24,6 +24,8 @@ const TEMPLATES = [
   { id: 'duotone',  name: 'Duotone',  desc: 'A bold accent panel behind your photo and name.' },
   { id: 'quote',    name: 'Quote',    desc: 'A favourite line above your name — personal and warm.' },
   { id: 'enterprise', name: 'Enterprise', desc: 'Identity, support box, purpose, acknowledgement and brand footer.' },
+  { id: 'night', name: 'Night', desc: 'Dark background, light text — a signature that stands out.' },
+  { id: 'letterhead', name: 'Letterhead', desc: 'Centred serif letterhead with hairline rules.' },
 ];
 
 /* Curated colour themes: one click sets accent, text and divider together.
@@ -65,6 +67,8 @@ function defaultState() {
       bannerLink: '',        // optional click-through link for a clickable banner
       showDivider: true,
       dividerStyle: 'solid',
+      dividerLength: 'full',      // full | short (classic, centered, banner)
+      dividerPosition: 'belowName', // belowName | belowContact (classic, centered, banner)
       socialStyle: 'icons',   // icons | icons_labels | labels
       showLegal: false,
       legalText: '',

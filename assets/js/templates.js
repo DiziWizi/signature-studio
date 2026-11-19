@@ -263,11 +263,21 @@ function socialsRowHtml(s, d) {
     `<tr>${cells}</tr></table>`;
 }
 
-function dividerHtml(d, cols = 2) {
+/* Divider rule. opts.short (dividerLength 'short', classic/centered/banner)
+   replaces the full-width rule with a 60px nested-table rule; opts.center
+   centres it via align on the outer td. Defaults reproduce the original
+   full-width output byte-for-byte. */
+function dividerHtml(d, cols = 2, opts = {}) {
   if (!d.showDivider) return '';
   const margin = densityOf(d).dividerMargin;
   const cls = d.darkModeFriendly ? ' class="dm-div"' : '';
-  return `<tr><td colspan="${cols}"${cls} style="border-top:1px ${d.dividerStyle || 'solid'} ${d.dividerColor};height:1px;line-height:1px;font-size:0;">&nbsp;</td></tr>` +
+  const border = `border-top:1px ${d.dividerStyle || 'solid'} ${d.dividerColor}`;
+  if (opts.short) {
+    const align = opts.center ? ' align="center"' : '';
+    return `<tr><td colspan="${cols}"${align}><table role="presentation" width="60" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td${cls} style="${border};height:1px;line-height:1px;font-size:0;">&nbsp;</td></tr></table></td></tr>` +
+      `<tr><td colspan="${cols}" height="${margin}" style="height:${margin}px;line-height:${margin}px;font-size:0;">&nbsp;</td></tr>`;
+  }
+  return `<tr><td colspan="${cols}"${cls} style="${border};height:1px;line-height:1px;font-size:0;">&nbsp;</td></tr>` +
     `<tr><td colspan="${cols}" height="${margin}" style="height:${margin}px;line-height:${margin}px;font-size:0;">&nbsp;</td></tr>`;
 }
 
@@ -336,13 +346,19 @@ function classicRows(s, d, { center = false } = {}) {
     rows.push(spacerHtml(4));
   };
   if (socialsPos(d) === 'underName') emitSocials(center ? 'center' : 'left');
-  rows.push(dividerHtml(d));
 
   const stack = contactStackHtml(s, d);
+  /* Divider sits under the name by default; 'belowContact' moves it after
+     the contact stack (right before booking/socials). The short/full length
+     and centring come from the layout's divider options. */
+  const divider = dividerHtml(d, 2, { short: d.dividerLength === 'short', center });
+  const dividerBelowContact = d.dividerPosition === 'belowContact' && stack;
+  if (!dividerBelowContact) rows.push(divider);
   if (stack) {
     rows.push(`<tr><td colspan="2" align="${align}">${stack}</td></tr>`);
     rows.push(spacerHtml(den.rowGap));
   }
+  if (dividerBelowContact) rows.push(divider);
   const booking = bookingHtml(s, d);
   if (booking) {
     rows.push(`<tr><td colspan="2" align="${align}">${booking}</td></tr>`);
@@ -971,6 +987,185 @@ function enterpriseRows(s, d) {
   return rows.join('\n');
 }
 
+/* ── Night & letterhead ───────────────────────────────────────────────── */
+
+/* Night: dark panel, light text — a signature that stands out in any
+   thread. Same structure as classicRows, with light-mode colours hardcoded
+   in the text styles via a local lightStyle util (shared helpers keep the
+   design palette, so nothing else changes). */
+function nightRows(s, d) {
+  const den = densityOf(d);
+  const lightName = '#f2f4f8';
+  const lightMuted = '#9aa1ad';
+  const lightStyle = (size, color, { weight, style } = {}) => {
+    const parts = [
+      `font-family:${stackOf(d)}`,
+      `font-size:${size}px`,
+      `color:${color}`,
+      `line-height:${Math.round(size * 1.5)}px`,
+      'mso-line-height-rule:exactly',
+    ];
+    if (weight) parts.push(`font-weight:${weight}`);
+    if (style) parts.push(`font-style:${style}`);
+    return parts.join(';');
+  };
+
+  const rows = [];
+  const logoContent = logoCellHtml(s, d);
+  const right = d.logoPosition === 'right';
+  const logoCell = logoContent
+    ? `<td class="m-cell" width="${d.logoWidth + den.cellPad}" valign="middle" align="${right ? 'right' : 'left'}" style="${right ? `padding:0 0 0 ${den.cellPad}px;` : `padding:0 ${den.cellPad}px 0 0;`}">${logoContent}</td>`
+    : '';
+
+  /* Dedicated light-name span — same honour/pronoun handling as nameHtml. */
+  let nameLine = '';
+  const shown = s.profile.displayName || s.profile.name;
+  if (shown) {
+    const prefix = String(s.profile.honorificPrefix || '').trim();
+    const suffix = String(s.profile.honorificSuffix || '').trim();
+    const shownWithHonorifics = (prefix ? prefix + ' ' : '') + shown +
+      (suffix ? ', ' + suffix : '');
+    const fs = d.fontSize + 2 + nameExtraOf(d);
+    const style = lightStyle(fs, lightName, { weight: nameWeightOf(d) });
+    const pronouns = s.profile.pronouns
+      ? ` <span style="${lightStyle(fs - 3, lightMuted)}">(${esc(s.profile.pronouns)})</span>`
+      : '';
+    nameLine = `<span style="${style}">${esc(shownWithHonorifics)}</span>${pronouns}<br>`;
+  }
+
+  const titleBits = [
+    d.showTitle !== false ? s.profile.title : '',
+    d.showDepartment !== false ? s.profile.department : '',
+  ].filter(Boolean);
+  const titleLine = titleBits.length
+    ? `<span style="${lightStyle(d.fontSize, lightMuted)}">${esc(titleBits.join('  ·  '))}</span><br>`
+    : '';
+  const companyLine = (d.showCompany !== false && s.profile.company)
+    ? `<span style="${lightStyle(d.fontSize, lightMuted, { weight: 'bold' })}">${esc(s.profile.company)}</span><br>`
+    : '';
+  const tag = String(s.profile.tagline || '').trim();
+  const taglineLine = (d.showCompany !== false && tag)
+    ? `<span style="${lightStyle(d.fontSize - 1, lightMuted)}">${esc(tag)}</span><br>`
+    : '';
+  const contextBits = d.showLocation !== false
+    ? [s.profile.location, s.profile.languages].filter(Boolean) : [];
+  const contextLine = contextBits.length
+    ? `<span style="${lightStyle(d.fontSize - 1, lightMuted)}">${esc(contextBits.join('  ·  '))}</span><br>`
+    : '';
+
+  const identityCell = `<td class="m-cell" valign="middle" align="left">
+      ${nameLine}${titleLine}${companyLine}${taglineLine}${contextLine}${statusHtml(s, d)}
+    </td>`;
+  rows.push(`<tr>${right ? identityCell + logoCell : logoCell + identityCell}</tr>`);
+
+  const socials = socialsRowHtml(s, d);
+  const emitSocials = () => {
+    if (!socials) return;
+    rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
+    rows.push(spacerHtml(4));
+  };
+  if (socialsPos(d) === 'underName') emitSocials();
+
+  /* Fixed full-width divider in the panel colour. */
+  rows.push(d.showDivider
+    ? `<tr><td colspan="2" style="border-top:1px ${d.dividerStyle || 'solid'} #2e333d;height:1px;line-height:1px;font-size:0;">&nbsp;</td></tr>` +
+      `<tr><td colspan="2" height="${den.dividerMargin}" style="height:${den.dividerMargin}px;line-height:${den.dividerMargin}px;font-size:0;">&nbsp;</td></tr>`
+    : '');
+
+  /* Contact stack with light styles (labels and links included). */
+  const items = contactItems(s, d);
+  if (items.length) {
+    const labels = d.showLabels !== false;
+    let stack = items.map(it => {
+      const style = lightStyle(d.fontSize, lightMuted);
+      let inner;
+      if (it.multiline) {
+        inner = it.text.split(/\r?\n/).map(l => esc(l)).join('<br>');
+      } else if (it.href) {
+        inner = `<a href="${esc(it.href)}" style="${style};text-decoration:none;">${esc(it.text)}</a>`;
+      } else {
+        inner = esc(it.text);
+      }
+      const label = labels && it.label
+        ? `<span style="${style};font-weight:bold;">${esc(it.label)}: </span>` : '';
+      return `<span style="${style};">${label}${inner}</span>`;
+    }).join('<br>');
+    if (socialsPos(d) === 'inContact' && socials) stack += `<br>${socials}`;
+    rows.push(`<tr><td colspan="2" align="left">${stack}</td></tr>`);
+    rows.push(spacerHtml(den.rowGap));
+  }
+
+  const booking = bookingHtml(s, d);
+  if (booking) {
+    rows.push(`<tr><td colspan="2" align="left">${booking}</td></tr>`);
+    rows.push(spacerHtml(8));
+  }
+  if (socialsPos(d) === 'bottom') emitSocials();
+
+  if (d.showLegal && String(d.legalText || '').trim()) {
+    rows.push(`<tr><td colspan="2" style="padding-top:6px;">` +
+      `<span style="${lightStyle(10, lightMuted)}">${esc(d.legalText)}</span></td></tr>`);
+  }
+
+  /* The dark panel is the outer wrapper td — Outlook keeps the background
+     and the border rules; strict mode only strips radii, none are used. */
+  return `<tr><td colspan="2" style="background-color:#171a21;padding:${den.cellPad}px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">${rows.join('\n')}</table>
+    </td></tr>`;
+}
+
+/* Letterhead department line: muted with letter-spacing:1px. The spacing
+   string is the E2E marker and only appears when a department is set. */
+function letterheadDepartmentHtml(s, serif, d) {
+  if (d.showDepartment === false) return '';
+  const dept = String(s.profile.department || '').trim();
+  if (!dept) return '';
+  const style = textStyle(serif, { size: d.fontSize - 1, color: mutedColor(d) });
+  return `<span style="${style};letter-spacing:1px">${esc(dept)}</span><br>`;
+}
+
+/* Letterhead: centred serif identity between two hairline rules. */
+function letterheadRows(s, d) {
+  const den = densityOf(d);
+  /* Layout-level serif override — design.font itself is never touched. */
+  const serif = Object.assign({}, d, { font: 'classic' });
+  const rows = [];
+  rows.push(dividerHtml(d)); // top hairline
+
+  const logo = logoCellHtml(s, d);
+  if (logo) {
+    rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.rowGap}px 0;">${logo}</td></tr>`);
+    rows.push(spacerHtml(den.rowGap));
+  }
+
+  const identity = nameHtml(s, serif, { size: d.fontSize + 4 + nameExtraOf(d) }) +
+    titleHtml(s, Object.assign({}, serif, { showDepartment: false })) +
+    companyHtml(s, serif) +
+    letterheadDepartmentHtml(s, serif, d) +
+    contextLineHtml(s, d) +
+    statusHtml(s, d);
+  if (identity) {
+    rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
+  }
+
+  const stack = contactStackHtml(s, d, { labels: false });
+  if (stack) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
+  }
+
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    const nested = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`;
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="center">${nested}</td></tr>`);
+  }
+
+  rows.push(dividerHtml(d)); // bottom hairline
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
 /* ── document assembly ────────────────────────────────────────────────── */
 
 function darkStyleBlock(d) {
@@ -1025,10 +1220,12 @@ function renderSignature(state) {
     case 'duotone':   inner = duotoneRows(s, d); break;
     case 'quote':     inner = quoteRows(s, d); break;
     case 'enterprise': inner = enterpriseRows(s, d); break;
+    case 'night':      inner = nightRows(s, d); break;
+    case 'letterhead': inner = letterheadRows(s, d); break;
     default:          inner = classicRows(s, d);
   }
 
-  const outerAlign = ['centered', 'roundel', 'monogram'].includes(d.template) ? 'center' : 'left';
+  const outerAlign = ['centered', 'roundel', 'monogram', 'letterhead'].includes(d.template) ? 'center' : 'left';
 
   /* Optional card wrapper: soft tint + border around the whole signature.
      Outlook keeps the background/border (ignores the radius, acceptable). */
