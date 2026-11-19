@@ -325,6 +325,20 @@
               <option value="compact" data-i18n="design.densityCompact">Compact</option>
             </select>
           </label>
+
+          <span class="hint span2" data-i18n="design.fineTuneHint">Fine-tuning — leave empty to follow the density preset</span>
+          <label class="field"><span data-i18n="design.rowGap">Section gap (px)</span><input type="number" min="0" max="40" step="1" data-field="design.rowGap" placeholder="auto"></label>
+          <label class="field"><span data-i18n="design.cellPad">Cell padding (px)</span><input type="number" min="0" max="48" step="1" data-field="design.cellPad" placeholder="auto"></label>
+          <label class="field"><span data-i18n="design.socialGap">Social chip gap (px)</span><input type="number" min="0" max="24" step="1" data-field="design.socialGap" placeholder="auto"></label>
+          <label class="field"><span data-i18n="design.lineHeight">Line height (×)</span><input type="number" min="1" max="2" step="0.1" data-field="design.lineHeight" placeholder="1.5"></label>
+          <label class="field"><span data-i18n="design.textAlign">Text alignment</span>
+            <select data-field="design.textAlign">
+              <option value="" data-i18n="design.alignAuto">Template default</option>
+              <option value="left" data-i18n="design.alignLeft">Left</option>
+              <option value="center" data-i18n="design.alignCenter">Centre</option>
+              <option value="right" data-i18n="design.alignRight">Right</option>
+            </select>
+          </label>
           <div class="field">
             <span class="lbl" data-i18n="design.nameSizeBoost">Name size boost</span>
             <span class="range-row"><input type="range" min="0" max="10" step="1" data-field="design.nameSizeExtra"><output id="name-size-out">+3 px</output></span>
@@ -411,6 +425,8 @@
             </span>
           </label>
           <label class="switch span2"><input type="checkbox" data-field="design.showCard"><span class="sw"></span> <span data-i18n="design.showCard">Wrap the signature in a card (tint + border)</span></label>
+          <label class="field"><span data-i18n="design.cardPadding">Card padding (px)</span><input type="number" min="8" max="40" step="1" data-field="design.cardPadding" placeholder="16"></label>
+          <label class="field"><span data-i18n="design.cardBorderWidth">Card border (px)</span><input type="number" min="0" max="4" step="1" data-field="design.cardBorderWidth" placeholder="1"></label>
           <label class="switch span2"><input type="checkbox" data-field="design.strictOutlook"><span class="sw"></span> <span data-i18n="design.strictOutlook">Strict mode — render as Outlook desktop shows it</span></label>
           <span class="micro span2" data-i18n="design.strictMicro">Strict mode removes rounded corners from badges, chips, monograms, round photos and the card — Word-engine Outlook ignores them. What you preview is what Outlook users see, and exports match.</span>
           <div class="field span2">

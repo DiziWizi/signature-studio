@@ -22,7 +22,7 @@ function textStyle(d, opts = {}) {
     `font-family:${stackOf(d)}`,
     `font-size:${size}px`,
     `color:${opts.color ?? d.textColor}`,
-    `line-height:${Math.round(size * 1.5)}px`,
+    `line-height:${Math.round(size * lineHeightOf(d))}px`,
     'mso-line-height-rule:exactly',
   ];
   if (opts.weight) parts.push(`font-weight:${opts.weight}`);
@@ -61,7 +61,27 @@ const DENSITY = {
   regular: { cellPad: 16, rowGap: 10, socialGap: 7,  dividerMargin: 12 },
   compact: { cellPad: 9,  rowGap: 6,  socialGap: 4,  dividerMargin: 7 },
 };
-const densityOf = d => DENSITY[d.density] || DENSITY.regular;
+
+/* Fine-tuning overrides: empty = follow the density preset, so default
+   output stays byte-identical. Numbers are clamped to safe ranges. */
+const clampNum = (v, lo, hi, fallback) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : fallback;
+};
+const overrideOr = (v, base, lo, hi) => (String(v ?? '').trim() === '' ? base : clampNum(v, lo, hi, base));
+
+const densityOf = d => {
+  const base = DENSITY[d.density] || DENSITY.regular;
+  return {
+    cellPad: overrideOr(d.cellPad, base.cellPad, 0, 48),
+    rowGap: overrideOr(d.rowGap, base.rowGap, 0, 40),
+    socialGap: overrideOr(d.socialGap, base.socialGap, 0, 24),
+    dividerMargin: base.dividerMargin,
+  };
+};
+
+/* Line-height multiplier (1.0-2.0); default 1.5 reproduces today. */
+const lineHeightOf = d => overrideOr(d.lineHeight, 1.5, 1, 2);
 
 /* Socials placement: 'bottom' (default, legacy), 'underName' (right after
    the identity block), 'inContact' (inside the contact stack). */
@@ -1107,7 +1127,7 @@ function nightRows(s, d) {
       `font-family:${stackOf(d)}`,
       `font-size:${size}px`,
       `color:${color}`,
-      `line-height:${Math.round(size * 1.5)}px`,
+      `line-height:${Math.round(size * lineHeightOf(d))}px`,
       'mso-line-height-rule:exactly',
     ];
     if (weight) parts.push(`font-weight:${weight}`);
@@ -1334,7 +1354,8 @@ function renderInner(state) {
     default:          inner = classicRows(s, d);
   }
 
-  const outerAlign = ['centered', 'roundel', 'monogram', 'letterhead'].includes(d.template) ? 'center' : 'left';
+  const alignOverride = ['left', 'center', 'right'].includes(d.textAlign) ? d.textAlign : null;
+  const outerAlign = alignOverride || (['centered', 'roundel', 'monogram', 'letterhead'].includes(d.template) ? 'center' : 'left');
 
   /* Signature background colour for the outermost content cell — the band
      spans the full 600px canvas with all cell padding preserved. Only
@@ -1350,7 +1371,9 @@ function renderInner(state) {
      Outlook keeps the background/border (ignores the radius, acceptable). */
   let bodyRows = inner;
   if (d.showCard) {
-    bodyRows = `<tr><td style="background-color:${d.cardColor || '#f6f8fa'};border:1px solid ${d.dividerColor};${br(d, '12px')}padding:16px 18px;">
+    const cardPad = String(d.cardPadding ?? '').trim() === '' ? '16px 18px' : `${clampNum(d.cardPadding, 8, 40, 16)}px`;
+    const cardBorder = String(d.cardBorderWidth ?? '').trim() === '' ? 1 : clampNum(d.cardBorderWidth, 0, 4, 1);
+    bodyRows = `<tr><td style="background-color:${d.cardColor || '#f6f8fa'};border:${cardBorder}px solid ${d.dividerColor};${br(d, '12px')}padding:${cardPad};">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">${inner}</table>
     </td></tr>`;
   }

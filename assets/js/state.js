@@ -122,6 +122,13 @@ function defaultState() {
       socialsPosition: 'bottom',  // bottom | underName | inContact
       /* density + name size */
       density: 'regular',   // airy | regular | compact
+      rowGap: '',           // px override for the section gap ('' = density)
+      cellPad: '',          // px override for cell padding ('' = density)
+      socialGap: '',        // px override for the social chip gap
+      lineHeight: '',       // line-height multiplier 1.0-2.0 ('' = 1.5)
+      textAlign: '',        // '' = layout default | left | center | right
+      cardPadding: '',      // px override for card padding ('' = 16x18)
+      cardBorderWidth: '',  // px override for the card border ('' = 1)
       nameSizeExtra: 3,     // px added to the base font size for the name
       showQr: false,        // inline vCard QR in Classic + Enterprise
       qrSize: 60,           // QR size in px (32-96)
