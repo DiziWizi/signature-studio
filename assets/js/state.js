@@ -61,6 +61,7 @@ function defaultState() {
       logoAlt: '',
       logoWidth: 72,
       signatureWidth: 600,   // canvas width in px — renderer clamps to 400–600
+      background: '',        // signature background colour (hex) — empty = transparent
       logoPosition: 'left',
       bannerUrl: '',
       bannerAlt: '',
@@ -70,6 +71,7 @@ function defaultState() {
       dividerLength: 'full',      // full | short (classic, centered, banner)
       dividerPosition: 'belowName', // belowName | belowContact (classic, centered, banner)
       socialStyle: 'icons',   // icons | icons_labels | labels
+      socialSize: 22,         // social chip size in px — renderer clamps to 16–28
       showLegal: false,
       legalText: '',
       quoteText: '',

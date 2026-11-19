@@ -250,6 +250,7 @@
           <label class="field">Text colour<input type="color" data-field="design.textColor"></label>
           <label class="field">Divider colour<input type="color" data-field="design.dividerColor"></label>
           <label class="field">Card colour<input type="color" data-field="design.cardColor"></label>
+          <label class="field">Signature background <span class="opt">(full-width band)</span><input data-field="design.background" placeholder="#f0f2f5 — empty = transparent"></label>
           <label class="field">Divider style
             <select data-field="design.dividerStyle">
               <option value="solid">Solid</option>
@@ -304,6 +305,11 @@
               <label><input type="radio" name="socialStyle" value="icons_labels" data-field="design.socialStyle"><span>Icons + labels</span></label>
               <label><input type="radio" name="socialStyle" value="labels" data-field="design.socialStyle"><span>Text links</span></label>
             </div>
+          </div>
+
+          <div class="field">
+            <span class="lbl">Social icon size</span>
+            <span class="range-row"><input type="range" min="16" max="28" step="1" data-field="design.socialSize"><output id="social-size-out">22 px</output></span>
           </div>
 
           <div class="field span2">

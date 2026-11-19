@@ -137,6 +137,10 @@ function onFieldInput(e) {
     const o = $('#width-out');
     if (o) o.textContent = `${v} px`;
   }
+  if (el.dataset.field === 'design.socialSize') {
+    const o = $('#social-size-out');
+    if (o) o.textContent = `${v} px`;
+  }
   renderPreview();
   scheduleSave();
 }
@@ -649,6 +653,8 @@ function rebuildAll() {
   if (nso) nso.textContent = `+${state.design.nameSizeExtra ?? 3} px`;
   const wo = $('#width-out');
   if (wo) wo.textContent = `${state.design.signatureWidth ?? 600} px`;
+  const sso = $('#social-size-out');
+  if (sso) sso.textContent = `${state.design.socialSize ?? 22} px`;
   updateSavedCount();
   renderThemes();
   renderPreview();

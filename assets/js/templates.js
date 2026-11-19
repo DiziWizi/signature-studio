@@ -58,6 +58,15 @@ const widthOf = d => {
   return Number.isFinite(n) ? Math.min(600, Math.max(400, n)) : 600;
 };
 
+/* Social chip size (px). Default 22 reproduces today's output byte-for-byte;
+   user values are clamped to 16–28, empty/invalid falls back to 22. */
+const socialSizeOf = d => {
+  const raw = String(d.socialSize ?? '').trim();
+  if (raw === '') return 22;
+  const n = Number(raw);
+  return Number.isFinite(n) ? Math.min(28, Math.max(16, n)) : 22;
+};
+
 /* Photo shape for side/top logos: 'square' (default), 'rounded' or 'circle'.
    roundPhoto (legacy) still maps to 'circle' when photoShape is unset.
    (Named photoShapeOfDesign: app.js owns photoShapeOf(s) at global scope.) */
@@ -226,7 +235,7 @@ function socialChipHtml(d, soc, withLabel, size = 22) {
   const href = normalizeUrl(net.id, raw);
   const iconUrl = String(soc.iconUrl || '').trim();
   const chip = iconUrl
-    ? `<img src="${esc(iconUrl)}" width="${size}" height="${size}" alt="" style="display:inline-block;width:${size}px;height:${size}px;border:0;${br(d, '11px')}vertical-align:middle;">`
+    ? `<img src="${esc(iconUrl)}" width="${size}" height="${size}" alt="${esc(net.name)}" style="display:inline-block;width:${size}px;height:${size}px;border:0;${br(d, '11px')}vertical-align:middle;">`
     : `<span style="display:inline-block;width:${size}px;height:${size}px;line-height:${size}px;text-align:center;` +
       `background-color:${color};color:#ffffff;${br(d, '11px')}` +
       `font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:bold;vertical-align:middle;">${esc(glyph)}</span>`;
@@ -258,7 +267,7 @@ function socialsRowHtml(s, d) {
   const withLabel = style === 'icons_labels';
   const gap = densityOf(d).socialGap;
   const cells = socials.map(soc =>
-    `<td style="padding:0 ${gap}px ${gap}px 0;vertical-align:middle;">${socialChipHtml(d, soc, withLabel)}</td>`).join('');
+    `<td style="padding:0 ${gap}px ${gap}px 0;vertical-align:middle;">${socialChipHtml(d, soc, withLabel, socialSizeOf(d))}</td>`).join('');
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">` +
     `<tr>${cells}</tr></table>`;
 }
@@ -1227,6 +1236,16 @@ function renderSignature(state) {
 
   const outerAlign = ['centered', 'roundel', 'monogram', 'letterhead'].includes(d.template) ? 'center' : 'left';
 
+  /* Signature background colour for the outermost content cell — the band
+     spans the full 600px canvas with all cell padding preserved. Only
+     hex-ish values (3–8 hex digits) are emitted; anything else falls back
+     to transparent (no attribute), keeping default output byte-identical.
+     Word-engine Outlook preserves cell backgrounds, so strict mode keeps it. */
+  const bgStyle = (() => {
+    const raw = String(d.background || '');
+    return /^#[0-9a-fA-F]{3,8}$/.test(raw) ? `background-color:${esc(raw)};` : '';
+  })();
+
   /* Optional card wrapper: soft tint + border around the whole signature.
      Outlook keeps the background/border (ignores the radius, acceptable). */
   let bodyRows = inner;
@@ -1250,7 +1269,7 @@ ${d.darkModeFriendly
 <body style="margin:0;padding:0;background-color:transparent;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
   <tr>
-    <td align="${outerAlign}">
+    <td align="${outerAlign}"${bgStyle ? ` style="${bgStyle}"` : ''}>
       <table role="presentation" width="${widthOf(d)}" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${widthOf(d)}px;border-collapse:collapse;">
 ${bodyRows.split('\n').map(l => '        ' + l).join('\n')}
       </table>
