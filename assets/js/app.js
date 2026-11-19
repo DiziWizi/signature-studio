@@ -894,6 +894,24 @@ async function doShareLink() {
   }
 }
 
+function openAudit() {
+  const r = buildAudit(state);
+  const list = $('#audit-list');
+  list.textContent = '';
+  for (const item of r.items) {
+    const li = document.createElement('li');
+    li.className = `audit-${item.kind}`;
+    li.textContent = item.text;
+    list.appendChild(li);
+  }
+  $('#audit-summary').textContent = r.summary;
+  openOverlay('#modal-audit');
+}
+
+function downloadAudit() {
+  downloadRawFile(auditTextReport(state), `${slugify(state.meta.name)}-audit.txt`, 'text/plain');
+}
+
 /* Raw JSON editing: the preset format. */
 function openJsonEditor() {
   $('#json-text').value = JSON.stringify(state, null, 2);
@@ -1398,6 +1416,8 @@ function init() {
   });
   $('#x-share').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink(); });
   $('#x-json').addEventListener('click', () => { menu.classList.add('hidden'); openJsonEditor(); });
+  $('#x-audit').addEventListener('click', () => { menu.classList.add('hidden'); openAudit(); });
+  $('#audit-download').addEventListener('click', downloadAudit);
   $('#json-apply').addEventListener('click', applyJsonEditor);
   $('#x-download').addEventListener('click', () => {
     menu.classList.add('hidden');
