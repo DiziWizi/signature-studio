@@ -619,6 +619,35 @@ Date: 2026-11-19 · Scope: dependency-free internationalisation layer.
 
 ---
 
+# v0.34.0–v0.36.0 addendum (UI/UX/performance pass)
+
+Date: 2026-11-19 · Scope: editor performance, touch-safe interaction,
+scroll containment, copy + contrast audit.
+
+## Notes
+
+- Performance: preview renders coalesced to one rAF per frame (a
+  30-key burst measured 70ms → 0ms synchronous work); template
+  thumbnails skip while the Design section is closed and throttle to
+  400ms with a trailing re-run when open, rebuilding on reopen; the
+  inline QR cell-table is cached per (vCard, size). E2E covers the
+  reopen-rebuild path.
+- UI: all 15 hover rules gated behind @media (hover: hover) so touch
+  devices never latch hover states; buttons scale 0.96 on press;
+  export menu capped at 60vh with scroll; modals, saved panel and
+  audit list get max-height + overscroll containment — verified on a
+  390×560 emulated phone.
+- Writing: no actionable findings — casing consistent (sentence-case
+  topbar, title-case labels), toggles describe the ON state, no
+  'successfully'/'Please'/'Click here'/error exclamations anywhere in
+  the 481-key English master.
+- Accessibility re-verified: focus trap + Escape cover every overlay
+  (incl. the four newest modals), reduced-motion blanket intact,
+  measured contrast worst case 6.5:1 (micro text), 320px layout has
+  no horizontal overflow.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

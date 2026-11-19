@@ -246,7 +246,7 @@ textarea { resize: vertical; min-height: 40px; }
 .hint { font-size: 12px; color: var(--mut); margin: 0 0 10px; }
 
 /* audit report */
-.audit-list { list-style: none; margin: 12px 0; padding: 0; max-height: 46vh; overflow: auto; }
+.audit-list { list-style: none; margin: 12px 0; padding: 0; max-height: 46vh; overflow: auto; overscroll-behavior: contain; }
 .audit-list li { padding: 7px 10px; margin: 6px 0; border-radius: 8px; font-size: 12.5px; line-height: 1.45; border: 1px solid var(--line); }
 .audit-list li.audit-ok { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 10%, transparent); }
 .audit-list li.audit-warn { border-color: var(--warn, #d97706); background: color-mix(in srgb, var(--warn, #d97706) 10%, transparent); }

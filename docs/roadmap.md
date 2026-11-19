@@ -99,6 +99,15 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   local/international phones, alternate instructions), recognise link line,
   purpose statement, land acknowledgement, three-slot brand footer; 22 new
   optional fields, all sections hidden when empty; E2E now 70
+- [x] v0.33.0 — CSV bulk generation (header-matched columns, ZIP of
+  signature files, skipped rows counted, blank identity per row); E2E now 96
+- [x] v0.34.0 — performance: preview coalesced to one render per frame,
+  thumbnails gated on the Design section + 400ms throttle, cached QR
+  tables, scrollable export menu; E2E now 98
+- [x] v0.35.0 — UI polish: hover states gated behind (hover: hover) for
+  touch, 0.96 press scale on buttons, scroll-contained modals/panels/menus
+- [x] v0.36.0 — writing/accessibility pass: copy and contrast audited
+  clean (worst text pair 6.5:1), overscroll containment on the audit list
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
