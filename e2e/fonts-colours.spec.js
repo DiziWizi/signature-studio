@@ -78,5 +78,25 @@ test('the theme picker offers the five new palettes', async ({ page }) => {
 
   const swatch = page.locator('#themes-row .theme-swatch[data-theme="navygold"]');
   await expect(swatch).toHaveCount(1);
+
+  /* Regression guards: no duplicate theme ids (two 'Plum' entries collided
+     in v0.39) and wizard swatch labels are never ellipsis-truncated. */
+  const dupes = await page.evaluate(() => {
+    const ids = THEMES.map(t => t.id);
+    return ids.filter((x, i) => ids.indexOf(x) !== i);
+  });
+  expect(dupes).toEqual([]);
+
+  await page.reload();
+  await page.waitForLoadState('load');
+  /* Open the wizard (the Guide button) so the swatches actually render. */
+  await page.click('#btn-guide');
+  await expect(page.locator('#modal-wizard')).not.toHaveClass(/hidden/);
+  const clipped = await page.evaluate(() =>
+    [...document.querySelectorAll('#modal-wizard .wiz-swatch-name')]
+      .filter(el => el.scrollWidth > el.clientWidth + 1).length
+  );
+  expect(clipped).toBe(0);
+
   await expectNoErrors(h);
 });

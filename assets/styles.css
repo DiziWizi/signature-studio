@@ -349,7 +349,7 @@ textarea { resize: vertical; min-height: 40px; }
   border-radius: 10px;
 }
 .wiz-swatch-dot { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line2); display: block; }
-.wiz-swatch-name { font-size: 10.5px; line-height: 1.1; color: var(--mut); max-width: 52px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wiz-swatch-name { font-size: 10.5px; line-height: 1.2; color: var(--mut); white-space: normal; text-align: center; word-wrap: break-word; }
 .wiz-swatch.active .wiz-swatch-name { color: var(--text); }
 
 /* wizard persona thumbnails: scaled-down real renders */

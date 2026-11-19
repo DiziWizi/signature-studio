@@ -45,7 +45,7 @@ const THEMES = [
   { id: 'forest',     name: 'Forest',     primary: '#2f9e44', text: '#2b3a2b', divider: '#e4efe5' },
   { id: 'midnight',   name: 'Midnight',   primary: '#1e40af', text: '#334155', divider: '#e2e8f0' },
   { id: 'navygold',   name: 'Navy & Gold', primary: '#1e3a8a', text: '#475569', divider: '#ece6d8' },
-  { id: 'plum',       name: 'Plum',       primary: '#7c3aed', text: '#3f3f46', divider: '#eee7f4' },
+  { id: 'orchid',     name: 'Orchid',     primary: '#7c3aed', text: '#3f3f46', divider: '#eee7f4' },
   { id: 'warm',       name: 'Warm Earth', primary: '#b45309', text: '#44403c', divider: '#f0e7de' },
   { id: 'contrast',   name: 'High Contrast', primary: '#111827', text: '#111827', divider: '#d1d5db' },
   { id: 'terracotta', name: 'Terracotta', primary: '#c94f2d', text: '#44302a', divider: '#f0e4de' },
