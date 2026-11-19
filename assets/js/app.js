@@ -20,6 +20,11 @@ function normalizeLoadedState(raw) {
   out.profile = Object.assign({}, def.profile, (raw || {}).profile || {});
   out.contact = Object.assign({}, def.contact, (raw || {}).contact || {});
   out.design = Object.assign({}, def.design, (raw || {}).design || {});
+  /* Legacy saves: pre-photoShape states used roundPhoto — migrate it so
+     old round photos stay circular instead of silently becoming square. */
+  if (!((raw || {}).design || {}).photoShape && out.design.roundPhoto) {
+    out.design.photoShape = 'circle';
+  }
   out.meta = Object.assign({}, def.meta, (raw || {}).meta || {});
   if (!Array.isArray(out.socials)) out.socials = [];
   if (!Array.isArray(out.customLines)) out.customLines = [];
@@ -601,7 +606,7 @@ function collectWarnings(s) {
   if (String(s.design.bannerUrl || '').startsWith('data:')) {
     w.push({ kind: 'warn', msg: 'Banner is embedded (data: image) — Outlook strips these. Host it and paste the URL.' });
   }
-  if (!s.design.strictOutlook && (s.design.showCard || s.design.roundPhoto)) {
+  if (!s.design.strictOutlook && (s.design.showCard || photoShapeOf(s) !== 'square')) {
     w.push({ kind: 'info', msg: 'Outlook desktop renders this without rounded corners — turn on Strict mode to preview that.' });
   }
   for (const soc of s.socials) {
@@ -770,12 +775,17 @@ function showConfirm(title, body, onOk) {
 
 /* ── export ───────────────────────────────────────────────────────────── */
 
+function photoShapeOf(s) {
+  return s.design.photoShape || (s.design.roundPhoto ? 'circle' : 'square');
+}
+
 /* Rounded corners Word-engine Outlook will render square, when strict
    mode is off. Lists the features currently producing them. */
 function outlookIssues(s) {
   if (s.design.strictOutlook) return [];
   const issues = [];
-  if (s.design.roundPhoto) issues.push('round photo');
+  const shape = photoShapeOf(s);
+  if (shape !== 'square') issues.push(shape === 'circle' ? 'round photo' : 'rounded photo');
   if (s.design.showCard) issues.push('card');
   if (s.design.useMonogram) issues.push('monogram');
   if (String(s.design.statusText || '').trim()) issues.push('status badge');

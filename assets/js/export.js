@@ -15,6 +15,7 @@ function plainTextVersion(s) {
   const bits = [p.title, p.department].filter(Boolean).join(' · ');
   if (bits) lines.push(bits);
   if (p.company) lines.push(p.company);
+  if (p.tagline) lines.push(p.tagline);
   const ctx = [p.location, p.languages].filter(Boolean).join(' · ');
   if (ctx) lines.push(ctx);
   if (s.design.statusText) lines.push(`[${s.design.statusText}]`);

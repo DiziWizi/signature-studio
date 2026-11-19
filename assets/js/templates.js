@@ -46,6 +46,14 @@ const nameExtraOf = d => {
   return Number.isFinite(n) ? n : 3;
 };
 
+/* Name font weight. Default 'bold' reproduces today's output byte-for-byte. */
+const nameWeightOf = d => d.nameWeight || 'bold';
+
+/* Photo shape for side/top logos: 'square' (default), 'rounded' or 'circle'.
+   roundPhoto (legacy) still maps to 'circle' when photoShape is unset.
+   (Named photoShapeOfDesign: app.js owns photoShapeOf(s) at global scope.) */
+const photoShapeOfDesign = d => d.photoShape || (d.roundPhoto ? 'circle' : 'square');
+
 /* ── small pieces ─────────────────────────────────────────────────────── */
 
 function imgTag(url, width, alt, extra = '') {
@@ -66,7 +74,7 @@ function nameHtml(s, d, { big = true, size = 0 } = {}) {
     (honorificSuffix ? ', ' + honorificSuffix : '');
   const extra = nameExtraOf(d);
   const fs = size || (big ? d.fontSize + 2 + extra : d.fontSize - 2 + extra);
-  const style = textStyle(d, { size: fs, weight: 'bold' });
+  const style = textStyle(d, { size: fs, weight: nameWeightOf(d) });
   const pronouns = s.profile.pronouns
     ? ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
     : '';
@@ -128,6 +136,15 @@ function companyHtml(s, d) {
     return `<a href="${esc(href)}" style="${style};text-decoration:none;">${esc(s.profile.company)}</a><br>`;
   }
   return `<span style="${style}">${esc(s.profile.company)}</span><br>`;
+}
+
+/* Company tagline: muted line under the company name. Subordinate to the
+   company — hidden when the company is hidden (or the tagline unset). */
+function taglineHtml(s, d) {
+  if (d.showCompany === false) return '';
+  const tag = String(s.profile.tagline || '').trim();
+  if (!tag) return '';
+  return `<span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d) })}">${esc(tag)}</span><br>`;
 }
 
 function contactItems(s, d = {}) {
@@ -271,9 +288,14 @@ function monogramHtml(s, d) {
 }
 
 /* Logo cell content: hosted logo, or the initials monogram when enabled.
-   roundPhoto gives the side logo a circular crop. */
+   photoShape gives the side logo a square (default), rounded or circular
+   crop; the legacy roundPhoto flag maps to 'circle'. */
 function logoCellHtml(s, d) {
-  if (d.logoUrl) return imgTag(d.logoUrl, d.logoWidth, 'logo', d.roundPhoto ? br(d, '50%') : '');
+  if (d.logoUrl) {
+    const shape = photoShapeOfDesign(d);
+    const radius = shape === 'circle' ? br(d, '50%') : shape === 'rounded' ? br(d, '10px') : '';
+    return imgTag(d.logoUrl, d.logoWidth, String(s.design.logoAlt || 'logo'), radius);
+  }
   if (d.useMonogram) return monogramHtml(s, d);
   return '';
 }
@@ -290,7 +312,7 @@ function classicRows(s, d, { center = false } = {}) {
     ? `<td class="m-cell" width="${d.logoWidth + den.cellPad}" valign="middle" align="${align}" style="${right ? `padding:0 0 0 ${den.cellPad}px;` : `padding:0 ${den.cellPad}px 0 0;`}">${logoContent}</td>`
     : '';
   const identityCell = `<td class="m-cell" valign="middle" align="${align}">
-      ${nameHtml(s, d)}${titleHtml(s, d)}${companyHtml(s, d)}${contextLineHtml(s, d)}${statusHtml(s, d)}
+      ${nameHtml(s, d)}${titleHtml(s, d)}${companyHtml(s, d)}${taglineHtml(s, d)}${contextLineHtml(s, d)}${statusHtml(s, d)}
     </td>`;
 
   rows.push(`<tr>${right ? identityCell + logoCell : logoCell + identityCell}</tr>`);
@@ -340,7 +362,7 @@ function compactRows(s, d) {
   const pos = socialsPos(d);
 
   const identityCell = `<td class="m-cell" valign="middle" align="left">
-      ${nameHtml(s, d, { big: false })}${titleHtml(s, d)}${contextLineHtml(s, d)}${statusHtml(s, d)}${pos === 'underName' && socials ? `<br>${socials}` : ''}
+      ${nameHtml(s, d, { big: false })}${titleHtml(s, d)}${taglineHtml(s, d)}${contextLineHtml(s, d)}${statusHtml(s, d)}${pos === 'underName' && socials ? `<br>${socials}` : ''}
     </td>`;
   const contactInner = pos === 'inContact' && socials ? `${contact}<br>${socials}` : contact;
   const contactCell = `<td class="m-cell" valign="middle" align="right" style="padding-left:24px;">${contactInner || '&nbsp;'}</td>`;
@@ -357,7 +379,7 @@ function compactRows(s, d) {
 
 function minimalRows(s, d) {
   const rows = [];
-  const first = [nameHtml(s, d, { big: true }), titleHtml(s, d), companyHtml(s, d), contextLineHtml(s, d), statusHtml(s, d)].join('');
+  const first = [nameHtml(s, d, { big: true }), titleHtml(s, d), companyHtml(s, d), taglineHtml(s, d), contextLineHtml(s, d), statusHtml(s, d)].join('');
   rows.push(`<tr><td colspan="2" align="left">${first}</td></tr>`);
   const socials = socialsRowHtml(s, d);
   if (socialsPos(d) === 'underName' && socials) {
@@ -380,7 +402,7 @@ function minimalRows(s, d) {
 function bannerRows(s, d) {
   const rows = [];
   if (d.bannerUrl) {
-    rows.push(`<tr><td colspan="2" align="center">${imgTag(d.bannerUrl, 600, 'banner')}</td></tr>`);
+    rows.push(`<tr><td colspan="2" align="center">${imgTag(d.bannerUrl, 600, String(s.design.bannerAlt || 'banner'))}</td></tr>`);
     rows.push(spacerHtml(16));
   }
   rows.push(classicRows(s, d));
@@ -391,13 +413,13 @@ function bannerRows(s, d) {
 function splitRows(s, d) {
   const rows = [];
   if (d.bannerUrl) {
-    rows.push(`<tr><td colspan="2" align="center">${imgTag(d.bannerUrl, 600, 'banner')}</td></tr>`);
+    rows.push(`<tr><td colspan="2" align="center">${imgTag(d.bannerUrl, 600, String(s.design.bannerAlt || 'banner'))}</td></tr>`);
     rows.push(spacerHtml(16));
   }
   const logoContent = logoCellHtml(s, d);
   const right = d.logoPosition === 'right';
   const den = densityOf(d);
-  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
   if (logoContent || identity) {
     const logoCell = logoContent
       ? `<td class="m-cell" width="${d.logoWidth + den.cellPad}" valign="middle" align="${right ? 'right' : 'left'}" style="${right ? `padding:0 0 0 ${den.cellPad}px;` : `padding:0 ${den.cellPad}px 0 0;`}">${logoContent}</td>`
@@ -438,12 +460,12 @@ function roundelRows(s, d) {
   const logoContent = logoCellHtml(s, d);
   if (logoContent) {
     const circle = d.logoUrl
-      ? `<img src="${esc(d.logoUrl)}" width="${d.logoWidth}" alt="logo" ` +
+      ? `<img src="${esc(d.logoUrl)}" width="${d.logoWidth}" alt="${esc(String(s.design.logoAlt || 'logo'))}" ` +
         `style="display:block;width:${d.logoWidth}px;max-width:${d.logoWidth}px;height:auto;border:0;${br(d, '50%')}">`
       : monogramHtml(s, d);
     rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.dividerMargin}px 0;">${circle}</td></tr>`);
   }
-  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
   if (identity) {
     rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
   }
@@ -490,7 +512,7 @@ function mastheadRows(s, d) {
   }
   if (s.profile.displayName || s.profile.name) {
     /* Without the band (no company, or company hidden), keep title/department visible. */
-    const rest = bandVisible ? '' : titleHtml(s, d) + companyHtml(s, d);
+    const rest = bandVisible ? '' : titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d);
     rows.push(`<tr><td colspan="2" align="left">${nameHtml(s, d)}${rest}${contextLineHtml(s, d)}${statusHtml(s, d)}</td></tr>`);
     rows.push(spacerHtml(6));
   }
@@ -521,7 +543,7 @@ function monogramRows(s, d) {
   if (s.profile.displayName || s.profile.name) {
     rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.dividerMargin}px 0;">${monogramHtml(s, d)}</td></tr>`);
   }
-  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
   if (identity) {
     rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
   }
@@ -553,7 +575,7 @@ function photocardRows(s, d) {
   const den = densityOf(d);
   const logoContent = logoCellHtml(s, d);
   const identity = nameHtml(s, d, { size: d.fontSize + 4 + nameExtraOf(d) }) + titleHtml(s, d) +
-    companyHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
+    companyHtml(s, d) + taglineHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
   if (logoContent || identity) {
     const logoCell = logoContent
       ? `<td class="m-cell" width="${d.logoWidth + 20}" valign="top" align="left" style="padding:2px 20px 0 0;">${logoContent}</td>`
@@ -592,7 +614,7 @@ function postcardRows(s, d) {
   const logoBlock = logo
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td align="center" style="padding:0 0 ${den.rowGap}px 0;">${logo}</td></tr></table>`
     : '';
-  const identity = [nameHtml(s, d), titleHtml(s, d), companyHtml(s, d),
+  const identity = [nameHtml(s, d), titleHtml(s, d), companyHtml(s, d), taglineHtml(s, d),
     contextLineHtml(s, d), statusHtml(s, d)].join('').replace(/<br>$/, '');
   const stack = contactStackHtml(s, d, { labels: false });
   const socials = socialsRowHtml(s, d);
@@ -678,7 +700,7 @@ function duotoneRows(s, d) {
     leftParts.push(`<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td align="center" style="padding:0 0 ${den.rowGap}px 0;">${logoContent}</td></tr></table>`);
   }
   if (shown) {
-    leftParts.push(`<span style="${textStyle(d, { size: d.fontSize + nameExtraOf(d), color: '#ffffff', weight: 'bold' })}">${esc(duotoneShown)}</span><br>`);
+    leftParts.push(`<span style="${textStyle(d, { size: d.fontSize + nameExtraOf(d), color: '#ffffff', weight: nameWeightOf(d) })}">${esc(duotoneShown)}</span><br>`);
   }
   if (d.showTitle !== false) {
     const bits = [
@@ -692,6 +714,7 @@ function duotoneRows(s, d) {
   if (d.showCompany !== false && s.profile.company) {
     leftParts.push(`<span style="${textStyle(d, { size: d.fontSize, color: light, weight: 'bold' })}">${esc(s.profile.company)}</span><br>`);
   }
+  leftParts.push(taglineHtml(s, d));
   if (d.showLocation !== false) {
     const loc = [s.profile.location, s.profile.languages].filter(Boolean).join('  ·  ');
     if (loc) {
@@ -731,7 +754,7 @@ function quoteRows(s, d) {
     rows.push(spacerHtml(den.rowGap));
   }
 
-  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) +
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d) +
     contextLineHtml(s, d) + statusHtml(s, d);
   if (identity) {
     rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);

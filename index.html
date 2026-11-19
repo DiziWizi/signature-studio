@@ -75,6 +75,7 @@
         <label class="field">Languages <span class="opt">(optional)</span><input data-field="profile.languages" placeholder="English · Deutsch"></label>
         <label class="field">Department<input data-field="profile.department" placeholder="Data Science"></label>
         <label class="field">Company<input data-field="profile.company" placeholder="Analytical Engines Ltd"></label>
+        <label class="field">Company tagline <span class="opt">(optional)</span><input data-field="profile.tagline" placeholder="Data you can trust"></label>
       </div>
     </details>
 
@@ -255,6 +256,7 @@
           <div class="field">
             <span class="lbl">Logo / photo URL</span>
             <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button">Upload</button></span>
+            <input data-field="design.logoAlt" placeholder="Alt text — e.g. “Maya’s portrait”">
             <input type="file" id="logo-file" accept="image/*" hidden>
             <span class="range-row"><input type="range" min="40" max="160" step="4" data-field="design.logoWidth" id="logo-width"><output id="logo-width-out"></output></span>
             <span class="field-inline">Position
@@ -278,6 +280,7 @@
 
           <label class="field">Banner URL (banner template)
             <span class="url-row"><input data-field="design.bannerUrl" placeholder="https://…/banner.png"><button class="btn btn-sm" id="upload-banner" type="button">Upload</button></span>
+            <input data-field="design.bannerAlt" placeholder="Alt text — e.g. “Analytical Engines logo”">
             <input type="file" id="banner-file" accept="image/*" hidden>
           </label>
 
@@ -292,10 +295,24 @@
               <input type="color" data-field="design.statusColor" title="Badge colour" aria-label="Badge colour" class="mini-color">
             </span>
           </label>
-          <label class="switch span2"><input type="checkbox" data-field="design.roundPhoto"><span class="sw"></span> Round photo (circular crop for the side logo)</label>
           <label class="switch span2"><input type="checkbox" data-field="design.showCard"><span class="sw"></span> Wrap the signature in a card (tint + border)</label>
           <label class="switch span2"><input type="checkbox" data-field="design.strictOutlook"><span class="sw"></span> Strict mode — render as Outlook desktop shows it</label>
           <span class="micro span2">Strict mode removes rounded corners from badges, chips, monograms, round photos and the card — Word-engine Outlook ignores them. What you preview is what Outlook users see, and exports match.</span>
+          <div class="field span2">
+            <span class="lbl">Photo shape (side logo)</span>
+            <div class="seg" id="seg-photo-shape">
+              <label><input type="radio" name="photoShape" value="square" data-field="design.photoShape"><span>Square</span></label>
+              <label><input type="radio" name="photoShape" value="rounded" data-field="design.photoShape"><span>Rounded</span></label>
+              <label><input type="radio" name="photoShape" value="circle" data-field="design.photoShape"><span>Circle</span></label>
+            </div>
+          </div>
+          <label class="field span2">Name weight
+            <select data-field="design.nameWeight">
+              <option value="bold">Bold</option>
+              <option value="semibold">Semibold</option>
+              <option value="normal">Normal</option>
+            </select>
+          </label>
           <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> Show legal / disclaimer line</label>
           <label class="field span2">Legal / disclaimer text
             <textarea rows="2" data-field="design.legalText" placeholder="This message and any attachments are confidential…"></textarea>

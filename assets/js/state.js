@@ -43,7 +43,7 @@ function themeById(id) {
 
 function defaultState() {
   return {
-    profile: { name: '', displayName: '', honorificPrefix: '', honorificSuffix: '', title: '', department: '', company: '', pronouns: '', location: '', languages: '', birthday: '', timezone: '' },
+    profile: { name: '', displayName: '', honorificPrefix: '', honorificSuffix: '', title: '', department: '', company: '', tagline: '', pronouns: '', location: '', languages: '', birthday: '', timezone: '' },
     contact: { email: '', email2: '', emailLabel: '', email2Label: '', phone: '', phoneLabel: '', mobile: '', mobileLabel: '', website: '', websiteLabel: '', booking: '', bookingLabel: '', portfolio: '', portfolioLabel: '', pgpKey: '', address: '', addressLabel: '' },
     socials: [],      // { network, url, glyph, color }
     customLines: [],  // { label, value }
@@ -55,9 +55,11 @@ function defaultState() {
       font: 'modern',
       fontSize: 14,
       logoUrl: '',
+      logoAlt: '',
       logoWidth: 72,
       logoPosition: 'left',
       bannerUrl: '',
+      bannerAlt: '',
       showDivider: true,
       dividerStyle: 'solid',
       socialStyle: 'icons',   // icons | icons_labels | labels
@@ -72,7 +74,9 @@ function defaultState() {
       statusColor: '#2f9e44',
       showCard: false,
       cardColor: '#f6f8fa',
-      roundPhoto: false,
+      roundPhoto: false,       // legacy — superseded by photoShape
+      photoShape: 'square',    // square | rounded | circle (side/top logos)
+      nameWeight: 'bold',      // name font-weight in every layout
       strictOutlook: false,
       /* element visibility — hide anything you don't need */
       showTitle: true,

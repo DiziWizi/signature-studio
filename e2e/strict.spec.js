@@ -17,7 +17,9 @@ test('strict mode strips every border-radius from the signature', async ({ page 
   const h = await freshPage(page);
   await page.click('#btn-sample');
   await toggleSwitch(page, 'design.showCard');
-  await toggleSwitch(page, 'design.roundPhoto');
+  /* Photo shape: circle (the old roundPhoto switch is superseded). */
+  await page.locator('#seg-photo-shape label:has(input[value="circle"])').click();
+  await expect(page.locator('#seg-photo-shape input[value="circle"]')).toBeChecked();
   const doc = async () => (await page.locator('#preview-frame').getAttribute('srcdoc')) || '';
 
   await expect.poll(doc).toContain('border-radius');

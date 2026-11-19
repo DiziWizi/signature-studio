@@ -501,6 +501,28 @@ through signature, plain text and vCards.
 
 ---
 
+# v0.21.0 addendum (tagline, alt text, photo shape, name weight)
+
+Date: 2026-11-19 · Scope: identity polish fields.
+
+## Notes
+
+- Company tagline renders as a muted line under the company in every
+  layout that shows it (hidden with showCompany; excluded from the Line
+  template which has no company); flows into the plain-text export.
+- logoAlt/bannerAlt replace the hardcoded 'logo'/'banner' alt attributes.
+- photoShape (square/rounded/circle) supersedes the roundPhoto toggle; the
+  Roundel's avatar stays a circle by design; strict mode strips circle and
+  rounded radii. Legacy saves with roundPhoto:true are migrated to
+  photoShape:'circle' on load.
+- nameWeight (bold/semibold/normal) drives the name in classic and the
+  duotone/photocard name spans.
+- Subagent: 28/28 byte-identity + 34/34 feature checks; caught a global
+  name collision with the parent's app.js helper (renamed theirs). E2E
+  64/64 twice locally; CI green on the tag.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
