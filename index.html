@@ -48,21 +48,24 @@
       <button class="btn btn-primary" id="btn-export" type="button" data-i18n="topbar.export" data-i18n-title="topbar.exportShortcut" title="Export (Ctrl+Shift+E)">Export ▾</button>
       <div class="menu hidden" id="export-menu" role="menu">
         <button role="menuitem" id="x-copy" type="button" data-i18n="topbar.copy" data-i18n-title="topbar.copyShortcut" title="Copy to clipboard (Ctrl+Enter)">Copy to clipboard</button>
-        <button role="menuitem" id="x-copy-fragment" type="button" data-i18n="topbar.copyFragment">Copy table fragment (for CMS)</button>
-        <button role="menuitem" id="x-apple-mail" type="button" data-i18n="topbar.appleMail">Download for Apple Mail (.mailsignature)</button>
-        <button role="menuitem" id="x-thunderbird" type="button" data-i18n="topbar.thunderbird">Download for Thunderbird (.html)</button>
         <button role="menuitem" id="x-download" type="button" data-i18n="topbar.download">Download .html file</button>
         <button role="menuitem" id="x-instructions" type="button" data-i18n="topbar.instructions">Install in your mail client…</button>
         <hr class="sep">
+        <span class="menu-group" role="presentation" data-i18n="menu.mailFormats">Mail apps &amp; formats</span>
+        <button role="menuitem" id="x-apple-mail" type="button" data-i18n="topbar.appleMail">Download for Apple Mail (.mailsignature)</button>
+        <button role="menuitem" id="x-thunderbird" type="button" data-i18n="topbar.thunderbird">Download for Thunderbird (.html)</button>
+        <button role="menuitem" id="x-vcard" type="button" data-i18n="topbar.vcard">Download vCard (.vcf)</button>
+        <button role="menuitem" id="x-vcard4" type="button" data-i18n="topbar.vcard4">Download vCard 4.0 (.vcf)</button>
+        <button role="menuitem" id="x-qr" type="button" data-i18n="topbar.qr">Show QR code</button>
+        <hr class="sep">
+        <span class="menu-group" role="presentation" data-i18n="menu.powerTools">Power tools</span>
+        <button role="menuitem" id="x-copy-fragment" type="button" data-i18n="topbar.copyFragment">Copy table fragment (for CMS)</button>
         <button role="menuitem" id="x-preset-export" type="button" data-i18n="topbar.presetExport">Export preset (.json)</button>
         <button role="menuitem" id="x-preset-import" type="button" data-i18n="topbar.presetImport">Import preset (.json)</button>
         <button role="menuitem" id="x-share" type="button" data-i18n="topbar.share">Copy share link</button>
         <button role="menuitem" id="x-json" type="button" data-i18n="topbar.jsonEdit">Edit as JSON…</button>
         <button role="menuitem" id="x-audit" type="button" data-i18n="topbar.audit">Audit signature…</button>
         <button role="menuitem" id="x-bulk" type="button" data-i18n="topbar.bulk">Bulk generate (CSV)…</button>
-        <button role="menuitem" id="x-vcard" type="button" data-i18n="topbar.vcard">Download vCard (.vcf)</button>
-        <button role="menuitem" id="x-vcard4" type="button" data-i18n="topbar.vcard4">Download vCard 4.0 (.vcf)</button>
-        <button role="menuitem" id="x-qr" type="button" data-i18n="topbar.qr">Show QR code</button>
       </div>
     </div>
     <button class="btn btn-icon" id="btn-reset" type="button" data-i18n-title="topbar.resetTitle" data-i18n-aria="topbar.resetAria" title="Start over" aria-label="Start over">↺</button>
@@ -528,6 +531,18 @@
 <div id="update-pill" class="update-pill hidden" role="status">
   <span data-i18n="sw.updateReady">Update available</span>
   <button id="update-reload" class="btn btn-sm" type="button" data-i18n="sw.reloadNow">Reload now</button>
+</div>
+
+<!-- Manual copy fallback (clipboard blocked) -->
+<div class="overlay hidden" id="modal-manual-copy" role="dialog" aria-modal="true" aria-labelledby="manual-copy-title">
+  <div class="modal">
+    <h2 id="manual-copy-title" data-i18n="manualCopy.title">Copy it yourself</h2>
+    <p class="micro" data-i18n="manualCopy.micro">Your browser blocked the one-click copy. The text below is already selected — press Ctrl+C (or right-click → Copy).</p>
+    <textarea id="manual-copy-text" rows="8" readonly spellcheck="false" style="width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-primary" data-close type="button" data-i18n="manualCopy.done">Done</button>
+    </div>
+  </div>
 </div>
 
 <!-- Import modal -->

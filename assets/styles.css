@@ -721,7 +721,15 @@ textarea { resize: vertical; min-height: 40px; }
   font-family: inherit;
 }
 @media (hover: hover) {
-  .menu button:hover { background: #232c42; }
+  .menu-group {
+  display: block;
+  padding: 8px 10px 3px;
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+.menu button:hover { background: #232c42; }
 }
 .menu hr.sep { border: 0; border-top: 1px solid var(--line); margin: 5px 6px; }
 

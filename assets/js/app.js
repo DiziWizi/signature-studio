@@ -965,6 +965,7 @@ async function doCopy() {
   const how = await copySignature(html, plain);
   if (how === 'failed') {
     showToast(t('toast.clipboardBlockedDownload'), 'err', { key: 'toast.clipboardBlockedDownload' });
+    showManualCopy(html);
   } else {
     showToast(t('toast.copied'), '', { key: 'toast.copied' });
   }
@@ -976,6 +977,7 @@ async function doShareLink() {
   const how = await copySignature(url, url);
   if (how === 'failed') {
     showToast(t('toast.clipboardBlocked'), 'err', { key: 'toast.clipboardBlocked' });
+    showManualCopy(url);
   } else {
     showToast(t('share.copied'), 'ok', { key: 'share.copied' });
   }
@@ -1063,6 +1065,7 @@ async function doCopyFragment() {
   const how = await copySignature(renderFragment(state), plainTextVersion(state));
   if (how === 'failed') {
     showToast(t('toast.clipboardBlocked'), 'err', { key: 'toast.clipboardBlocked' });
+    showManualCopy(renderFragment(state));
   } else {
     showToast(t('toast.fragmentCopied'), '', { key: 'toast.fragmentCopied' });
   }
@@ -1445,6 +1448,19 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
 /* "Update available" pill: a new service worker took over mid-session. */
 function showUpdatePill() {
   $('#update-pill').classList.remove('hidden');
+}
+
+/* Manual-copy fallback: the browser blocked the clipboard API. Show the
+   payload in a read-only textarea, pre-selected, so Ctrl+C just works. */
+function showManualCopy(payload) {
+  const ta = $('#manual-copy-text');
+  if (!ta) return;
+  ta.value = payload;
+  openOverlay('#modal-manual-copy');
+  setTimeout(() => {
+    ta.focus();
+    ta.select();
+  }, 30);
 }
 
 /* ── init ─────────────────────────────────────────────────────────────── */
