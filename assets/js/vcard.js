@@ -160,6 +160,7 @@ function buildVCard(state) {
   if (p.title) lines.push(vcardField('TITLE', null, p.title));
 
   if (c.email) lines.push(vcardField('EMAIL', ['TYPE=INTERNET'], c.email));
+  if (c.email2) lines.push(vcardField('EMAIL', ['TYPE=INTERNET'], c.email2));
   if (c.phone) lines.push(vcardField('TEL', ['TYPE=WORK'], c.phone));
   if (c.mobile) lines.push(vcardField('TEL', ['TYPE=CELL'], c.mobile));
   if (c.website) {
@@ -255,6 +256,7 @@ function buildVCard4(state) {
   if (p.title) lines.push(vcardField4('TITLE', null, p.title));
 
   if (c.email) lines.push(vcardField4('EMAIL', ['TYPE=INTERNET'], c.email));
+  if (c.email2) lines.push(vcardField4('EMAIL', ['TYPE=INTERNET'], c.email2));
   if (c.phone) lines.push(vcardField4('TEL', ['TYPE=WORK'], c.phone));
   if (c.mobile) lines.push(vcardField4('TEL', ['TYPE=CELL'], c.mobile));
   if (c.website) {

@@ -22,6 +22,7 @@ function plainTextVersion(s) {
   const c = s.contact;
   const contact = [];
   if (c.email) contact.push(c.email);
+  if (c.email2) contact.push(`${c.email2Label || 'Email 2'}: ${c.email2}`);
   if (c.phone) contact.push(c.phone);
   if (c.mobile) contact.push(c.mobile);
   if (c.website) contact.push(c.websiteLabel || c.website);

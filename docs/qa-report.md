@@ -482,6 +482,25 @@ Date: 2026-11-19 · Scope: vCard completeness properties + editor fields.
 
 ---
 
+# v0.20.0 addendum (secondary email + custom contact labels)
+
+Date: 2026-11-19 · Scope: second email address and per-field labels flowing
+through signature, plain text and vCards.
+
+## Notes
+
+- contact.email2 renders in every layout's contact stack (href mailto:),
+  the plain-text export and as a second EMAIL;TYPE=INTERNET in both vCards;
+  showEmail governs both email items together.
+- Per-field labels: emailLabel/email2Label/phoneLabel/mobileLabel/
+  addressLabel with the existing defaults as fallbacks; the address stays
+  label-less unless a label is set (byte-identical default).
+- Subagent harness 48/48 incl. sha256-identical defaults across all 5
+  personas, hostile-label escaping and the compact-layout email2 filter.
+  Full E2E 60/60 twice locally; CI green on the tag.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

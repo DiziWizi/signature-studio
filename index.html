@@ -82,8 +82,13 @@
       <summary>Contact details</summary>
       <div class="body grid2">
         <label class="field">Email<input type="email" data-field="contact.email" placeholder="ada@example.com"></label>
+        <label class="field">Email label <span class="opt">(default “Email”)</span><input data-field="contact.emailLabel" placeholder="Email"></label>
+        <label class="field">Secondary email <span class="opt">(optional)</span><input type="email" data-field="contact.email2" placeholder="ada.personal@example.com"></label>
+        <label class="field">Secondary email label <span class="opt">(default “Email 2”)</span><input data-field="contact.email2Label" placeholder="Email 2"></label>
         <label class="field">Phone<input data-field="contact.phone" placeholder="+44 20 7946 0958"></label>
+        <label class="field">Phone label <span class="opt">(default “Phone”)</span><input data-field="contact.phoneLabel" placeholder="Phone"></label>
         <label class="field">Mobile<input data-field="contact.mobile" placeholder="+44 7700 900123"></label>
+        <label class="field">Mobile label <span class="opt">(default “Mobile”)</span><input data-field="contact.mobileLabel" placeholder="Mobile"></label>
         <label class="field">Website<input data-field="contact.website" placeholder="example.com"></label>
         <label class="field">Website label<input data-field="contact.websiteLabel" placeholder="Leave empty to use the URL"></label>
         <label class="field">Booking link <span class="opt">(Calendly, Cal.com…)</span><input data-field="contact.booking" placeholder="cal.com/you"></label>
@@ -94,6 +99,7 @@
         <label class="field span2">Address (one line or multiple)
           <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom"></textarea>
         </label>
+        <label class="field span2">Address label <span class="opt">(default “Address” — shown only when labels are on)</span><input data-field="contact.addressLabel" placeholder="Address"></label>
       </div>
     </details>
 

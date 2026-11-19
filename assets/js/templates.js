@@ -133,9 +133,10 @@ function companyHtml(s, d) {
 function contactItems(s, d = {}) {
   const items = [];
   const c = s.contact;
-  if (c.email && d.showEmail !== false) items.push({ key: 'email', label: 'Email', text: c.email, href: 'mailto:' + c.email });
-  if (c.phone && d.showPhone !== false) items.push({ key: 'phone', label: 'Phone', text: c.phone, href: 'tel:' + c.phone.replace(/[^\d+]/g, '') });
-  if (c.mobile && d.showMobile !== false) items.push({ key: 'mobile', label: 'Mobile', text: c.mobile, href: 'tel:' + c.mobile.replace(/[^\d+]/g, '') });
+  if (c.email && d.showEmail !== false) items.push({ key: 'email', label: c.emailLabel || 'Email', text: c.email, href: 'mailto:' + c.email });
+  if (c.email2 && d.showEmail !== false) items.push({ key: 'email2', label: c.email2Label || 'Email 2', text: c.email2, href: 'mailto:' + c.email2 });
+  if (c.phone && d.showPhone !== false) items.push({ key: 'phone', label: c.phoneLabel || 'Phone', text: c.phone, href: 'tel:' + c.phone.replace(/[^\d+]/g, '') });
+  if (c.mobile && d.showMobile !== false) items.push({ key: 'mobile', label: c.mobileLabel || 'Mobile', text: c.mobile, href: 'tel:' + c.mobile.replace(/[^\d+]/g, '') });
   if (c.website && d.showWebsite !== false) items.push({ key: 'website', label: c.websiteLabel || 'Web', text: c.websiteLabel || c.website, href: normalizeUrl('custom', c.website) });
   if (c.portfolio) items.push({ key: 'portfolio', label: c.portfolioLabel || 'Portfolio', text: c.portfolioLabel || c.portfolio, href: normalizeUrl('custom', c.portfolio) });
   if (c.pgpKey) {
@@ -147,7 +148,7 @@ function contactItems(s, d = {}) {
       items.push(item);
     }
   }
-  if (c.address && d.showAddress !== false) items.push({ key: 'address', label: '', text: c.address, multiline: true });
+  if (c.address && d.showAddress !== false) items.push({ key: 'address', label: c.addressLabel ? (c.addressLabel || 'Address') : '', text: c.address, multiline: true });
   for (const line of s.customLines) {
     if (line.value) items.push({ key: 'custom', label: line.label, text: line.value });
   }
@@ -331,7 +332,7 @@ function compactRows(s, d) {
     : '';
 
   const contact = contactItems(s, d)
-    .filter(it => ['email', 'phone', 'mobile', 'website'].includes(it.key))
+    .filter(it => ['email', 'email2', 'phone', 'mobile', 'website'].includes(it.key))
     .map(it => contactLineHtml(d, it, { labels: false }))
     .join('<br>');
 

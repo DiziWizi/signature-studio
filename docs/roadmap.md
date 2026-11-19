@@ -81,6 +81,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   BDAY properties in both cards; stable deterministic UID (no more
   duplicate contacts on re-import) + REV timestamps; birthday and timezone
   fields in the editor; E2E now 58
+- [x] v0.20.0 — secondary email (signature, plain text, second
+  EMAIL;TYPE=INTERNET in both vCards) and configurable per-field contact
+  labels (Email, Phone, Mobile, Address, Secondary email — e.g. "Direct
+  line"); E2E now 60
 - [ ] Live demo — skipped for now (user decision, 2026-11-19). This
   instance (17.0.1+gitea-1.22.0) has **no Pages feature** — Gitea removed
   it from the 1.21 base; there is no `[pages]` config and no Pages API.
