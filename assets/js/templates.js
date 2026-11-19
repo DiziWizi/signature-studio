@@ -328,9 +328,51 @@ function logoCellHtml(s, d) {
   return '';
 }
 
+/* ── inline QR (Classic + Enterprise) ────────────────────────────────── */
+
+/* Inline vCard QR as an Outlook-safe table of 1×1 cells — no canvas, no
+   data URI, no <img>, so it survives every email client and node/vm
+   rendering. Uses the same qrcode.js matrix API as the QR modal (the
+   parent's doShowQR); any failure (missing generator/vCard builder, code
+   length overflow) quietly renders nothing so the signature itself is
+   never broken. */
+function qrTableHtml(s, d) {
+  if (!d.showQr) return '';
+  if (typeof buildVCard !== 'function' || typeof qrcode !== 'function') return '';
+  let qr;
+  try {
+    qr = qrcode(0, 'M');
+    qr.addData(buildVCard(s));
+    qr.make();
+  } catch (e) {
+    return '';
+  }
+  const n = qr.getModuleCount();
+  if (!n) return '';
+  const raw = String(d.qrSize ?? '').trim();
+  const target = (() => {
+    if (raw === '') return 60;
+    const num = Number(raw);
+    return Number.isFinite(num) ? Math.min(96, Math.max(32, num)) : 60;
+  })();
+  const c = Math.max(1, Math.round(target / n));
+  const width = n * c;
+  const rows = [];
+  for (let r = 0; r < n; r++) {
+    const cells = [];
+    for (let col = 0; col < n; col++) {
+      const dark = qr.isDark(r, col);
+      cells.push(`<td width="${c}" height="${c}" style="background-color:${dark ? '#000000' : '#ffffff'};font-size:0;line-height:0;">&nbsp;</td>`);
+    }
+    rows.push(`<tr>${cells.join('')}</tr>`);
+  }
+  const table = `<table role="presentation" width="${width}" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">${rows.join('')}</table>`;
+  return spacerHtml(8) + '\n' + `<tr><td colspan="2" align="left">${table}</td></tr>`;
+}
+
 /* ── layouts ──────────────────────────────────────────────────────────── */
 
-function classicRows(s, d, { center = false } = {}) {
+function classicRows(s, d, { center = false, qr = true } = {}) {
   const rows = [];
   const align = center ? 'center' : 'left';
   const den = densityOf(d);
@@ -368,6 +410,10 @@ function classicRows(s, d, { center = false } = {}) {
     rows.push(spacerHtml(den.rowGap));
   }
   if (dividerBelowContact) rows.push(divider);
+  /* Inline vCard QR — after the contact stack, before booking/socials.
+     Disabled by callers that reuse these rows for another layout. */
+  const qrRows = qr ? qrTableHtml(s, d) : '';
+  if (qrRows) rows.push(qrRows);
   const booking = bookingHtml(s, d);
   if (booking) {
     rows.push(`<tr><td colspan="2" align="${align}">${booking}</td></tr>`);
@@ -454,7 +500,7 @@ function bannerRows(s, d) {
     rows.push(`<tr><td colspan="2" align="center">${bannerImgHtml(s, d)}</td></tr>`);
     rows.push(spacerHtml(16));
   }
-  rows.push(classicRows(s, d));
+  rows.push(classicRows(s, d, { qr: false }));
   return rows.join('\n');
 }
 
@@ -956,6 +1002,10 @@ function enterpriseRows(s, d) {
     rows.push(`<tr><td colspan="2" align="left">${stack}</td></tr>`);
   }
 
+  /* Inline vCard QR — right after the contact block. */
+  const qrRows = qrTableHtml(s, d);
+  if (qrRows) rows.push(qrRows);
+
   const support = supportBoxHtml(s, d);
   if (support) {
     rows.push(spacerHtml(den.rowGap));
@@ -1204,7 +1254,11 @@ function mobileStyleBlock(d) {
 </style>`;
 }
 
-function renderSignature(state) {
+/* The bare signature fragment: the outermost signature table block — the
+   entire <body> payload without the doctype/html/head/body wrapper. Both
+   renderSignature (full document) and export.renderFragment (bare block)
+   are built on top of it, so the two can never drift apart. */
+function renderInner(state) {
   /* Clamp user/imported numeric values so the output can never degenerate. */
   const raw = state.design || {};
   const d = Object.assign({}, raw, {
@@ -1215,7 +1269,7 @@ function renderSignature(state) {
 
   let inner;
   switch (d.template) {
-    case 'centered': inner = classicRows(s, d, { center: true }); break;
+    case 'centered': inner = classicRows(s, d, { center: true, qr: false }); break;
     case 'compact':  inner = compactRows(s, d); break;
     case 'minimal':  inner = minimalRows(s, d); break;
     case 'banner':   inner = bannerRows(s, d); break;
@@ -1255,6 +1309,23 @@ function renderSignature(state) {
     </td></tr>`;
   }
 
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+  <tr>
+    <td align="${outerAlign}"${bgStyle ? ` style="${bgStyle}"` : ''}>
+      <table role="presentation" width="${widthOf(d)}" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${widthOf(d)}px;border-collapse:collapse;">
+${bodyRows.split('\n').map(l => '        ' + l).join('\n')}
+      </table>
+    </td>
+  </tr>
+</table>`;
+}
+
+function renderSignature(state) {
+  const raw = state.design || {};
+  const d = Object.assign({}, raw, {
+    fontSize: Math.min(18, Math.max(10, Number(raw.fontSize) || 14)),
+    logoWidth: Math.min(300, Math.max(20, Number(raw.logoWidth) || 72)),
+  });
   const doc =
 `<!DOCTYPE html>
 <html lang="en">
@@ -1267,15 +1338,7 @@ ${d.darkModeFriendly
 <title>Email signature</title>
 </head>
 <body style="margin:0;padding:0;background-color:transparent;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
-  <tr>
-    <td align="${outerAlign}"${bgStyle ? ` style="${bgStyle}"` : ''}>
-      <table role="presentation" width="${widthOf(d)}" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${widthOf(d)}px;border-collapse:collapse;">
-${bodyRows.split('\n').map(l => '        ' + l).join('\n')}
-      </table>
-    </td>
-  </tr>
-</table>
+${renderInner(state)}
 </body>
 </html>`;
   return doc;

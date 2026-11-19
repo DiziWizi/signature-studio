@@ -42,6 +42,7 @@
       <button class="btn btn-primary" id="btn-export" type="button">Export ▾</button>
       <div class="menu hidden" id="export-menu" role="menu">
         <button role="menuitem" id="x-copy" type="button">Copy to clipboard</button>
+        <button role="menuitem" id="x-copy-fragment" type="button">Copy table fragment (for CMS)</button>
         <button role="menuitem" id="x-download" type="button">Download .html file</button>
         <button role="menuitem" id="x-instructions" type="button">Install in your mail client…</button>
         <hr class="sep">
@@ -310,6 +311,13 @@
           <div class="field">
             <span class="lbl">Social icon size</span>
             <span class="range-row"><input type="range" min="16" max="28" step="1" data-field="design.socialSize"><output id="social-size-out">22 px</output></span>
+          </div>
+
+          <label class="switch span2"><input type="checkbox" data-field="design.showQr"><span class="sw"></span> Embed a scannable vCard QR (Classic + Enterprise)</label>
+          <div class="field">
+            <span class="lbl">QR size</span>
+            <span class="range-row"><input type="range" min="32" max="96" step="4" data-field="design.qrSize"><output id="qr-size-out">60 px</output></span>
+            <span class="micro">Target size — the QR grows a little when your contact data is long (scannability wins). Rendered as an Outlook-safe grid; Gmail and Apple Mail scan fine.</span>
           </div>
 
           <div class="field span2">

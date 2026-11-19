@@ -141,6 +141,10 @@ function onFieldInput(e) {
     const o = $('#social-size-out');
     if (o) o.textContent = `${v} px`;
   }
+  if (el.dataset.field === 'design.qrSize') {
+    const o = $('#qr-size-out');
+    if (o) o.textContent = `${v} px`;
+  }
   renderPreview();
   scheduleSave();
 }
@@ -617,6 +621,9 @@ function collectWarnings(s) {
   if (!s.design.strictOutlook && (s.design.showCard || photoShapeOf(s) !== 'square')) {
     w.push({ kind: 'info', msg: 'Outlook desktop renders this without rounded corners — turn on Strict mode to preview that.' });
   }
+  if (s.design.showQr) {
+    w.push({ kind: 'info', msg: 'The embedded QR is a table grid, not an image — Outlook recipients see the block but cannot scan it; Gmail and Apple Mail scan fine.' });
+  }
   for (const soc of s.socials) {
     if (!String(soc.url || '').trim()) {
       w.push({ kind: 'info', msg: `${esc(networkById(soc.network).name)} has no link yet — it won’t show in the signature.` });
@@ -655,6 +662,8 @@ function rebuildAll() {
   if (wo) wo.textContent = `${state.design.signatureWidth ?? 600} px`;
   const sso = $('#social-size-out');
   if (sso) sso.textContent = `${state.design.socialSize ?? 22} px`;
+  const qo = $('#qr-size-out');
+  if (qo) qo.textContent = `${state.design.qrSize ?? 60} px`;
   updateSavedCount();
   renderThemes();
   renderPreview();
@@ -831,6 +840,20 @@ async function doCopy() {
     showToast('Clipboard blocked by the browser — use “Download .html” instead.', 'err');
   } else {
     showToast('Copied — paste into your mail client’s signature box.');
+  }
+}
+
+/* Bare table fragment for CMS / signature-management tools. */
+async function doCopyFragment() {
+  if (typeof renderFragment !== 'function') {
+    showToast('Fragment export unavailable.', 'err');
+    return;
+  }
+  const how = await copySignature(renderFragment(state), plainTextVersion(state));
+  if (how === 'failed') {
+    showToast('Clipboard blocked by the browser.', 'err');
+  } else {
+    showToast('Table fragment copied — paste it into your CMS template.');
   }
 }
 
@@ -1221,6 +1244,7 @@ function init() {
     if (!e.target.closest('.export-wrap')) menu.classList.add('hidden');
   });
   $('#x-copy').addEventListener('click', () => { menu.classList.add('hidden'); guardOutlookExport(() => doCopy()); });
+  $('#x-copy-fragment').addEventListener('click', () => { menu.classList.add('hidden'); doCopyFragment(); });
   $('#x-download').addEventListener('click', () => {
     menu.classList.add('hidden');
     guardOutlookExport(() => {

@@ -93,3 +93,12 @@ function downloadSignature(html, name) {
     a.remove();
   }, 1000);
 }
+
+/* Bare signature fragment for embedding in an existing document: the
+   outermost signature table block, without the doctype/html/head/body
+   wrapper. Delegates to templates.renderInner, so it always matches what
+   renderSignature emits between <body> and </body> byte-for-byte. */
+function renderFragment(state) {
+  if (typeof renderInner !== 'function') return '';
+  return renderInner(state);
+}
