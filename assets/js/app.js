@@ -880,6 +880,43 @@ async function doCopy() {
   }
 }
 
+/* Share link: compress the whole state into a URL. */
+async function doShareLink() {
+  const url = `${location.origin}${location.pathname}?sig=${lzwEncode(JSON.stringify(state))}`;
+  const how = await copySignature(url, url);
+  if (how === 'failed') {
+    showToast(t('toast.clipboardBlocked'), 'err', { key: 'toast.clipboardBlocked' });
+  } else {
+    showToast(t('share.copied'), 'ok', { key: 'share.copied' });
+  }
+}
+
+/* Raw JSON editing: the preset format. */
+function openJsonEditor() {
+  $('#json-text').value = JSON.stringify(state, null, 2);
+  openOverlay('#modal-json');
+  setTimeout(() => $('#json-text').focus(), 30);
+}
+
+function applyJsonEditor() {
+  let parsed;
+  try {
+    parsed = JSON.parse($('#json-text').value);
+  } catch (e) {
+    showToast(t('json.invalid'), 'err', { key: 'json.invalid' });
+    return;
+  }
+  if (!parsed || typeof parsed !== 'object' || !parsed.design || !parsed.profile) {
+    showToast(t('json.invalid'), 'err', { key: 'json.invalid' });
+    return;
+  }
+  state = normalizeLoadedState(parsed);
+  closeOverlay('#modal-json');
+  rebuildAll();
+  scheduleSave();
+  showToast(t('json.apply'), 'ok', { key: 'json.apply' });
+}
+
 /* Bare table fragment for CMS / signature-management tools. */
 async function doCopyFragment() {
   if (typeof renderFragment !== 'function') {
@@ -1207,6 +1244,23 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
 function init() {
   state = normalizeLoadedState(loadDraft());
 
+  /* Shared-signature links (?sig=…): load the state, skip the wizard. */
+  let sigBootStatus = 'none';
+  try {
+    const sigParam = new URLSearchParams(location.search).get('sig');
+    if (sigParam) {
+      const raw = lzwDecode(sigParam);
+      if (!raw) throw new Error('decode');
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object' || !parsed.design || !parsed.profile) throw new Error('shape');
+      state = normalizeLoadedState(parsed);
+      localStorage.setItem(WIZARD_DONE_KEY, '1');
+      sigBootStatus = 'loaded';
+    }
+  } catch (e) {
+    if (new URLSearchParams(location.search).has('sig')) sigBootStatus = 'bad';
+  }
+
   document.addEventListener('input', onFieldInput);
   document.addEventListener('change', onFieldInput);
 
@@ -1329,6 +1383,9 @@ function init() {
   });
   $('#x-copy').addEventListener('click', () => { menu.classList.add('hidden'); guardOutlookExport(() => doCopy()); });
   $('#x-copy-fragment').addEventListener('click', () => { menu.classList.add('hidden'); doCopyFragment(); });
+  $('#x-share').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink(); });
+  $('#x-json').addEventListener('click', () => { menu.classList.add('hidden'); openJsonEditor(); });
+  $('#json-apply').addEventListener('click', applyJsonEditor);
   $('#x-download').addEventListener('click', () => {
     menu.classList.add('hidden');
     guardOutlookExport(() => {
@@ -1484,6 +1541,14 @@ function init() {
 
   rebuildAll();
   updateUndoButtons();
+
+  /* Report the outcome of a ?sig= share link. */
+  if (sigBootStatus === 'loaded') {
+    scheduleSave();
+    showToast(t('share.loaded'), 'ok', { key: 'share.loaded' });
+  } else if (sigBootStatus === 'bad') {
+    showToast(t('share.bad'), 'err', { key: 'share.bad' });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);

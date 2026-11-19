@@ -54,6 +54,8 @@
         <hr class="sep">
         <button role="menuitem" id="x-preset-export" type="button" data-i18n="topbar.presetExport">Export preset (.json)</button>
         <button role="menuitem" id="x-preset-import" type="button" data-i18n="topbar.presetImport">Import preset (.json)</button>
+        <button role="menuitem" id="x-share" type="button" data-i18n="topbar.share">Copy share link</button>
+        <button role="menuitem" id="x-json" type="button" data-i18n="topbar.jsonEdit">Edit as JSON…</button>
         <button role="menuitem" id="x-vcard" type="button" data-i18n="topbar.vcard">Download vCard (.vcf)</button>
         <button role="menuitem" id="x-vcard4" type="button" data-i18n="topbar.vcard4">Download vCard 4.0 (.vcf)</button>
         <button role="menuitem" id="x-qr" type="button" data-i18n="topbar.qr">Show QR code</button>
@@ -646,6 +648,19 @@
   </div>
 </div>
 
+<!-- JSON editor modal -->
+<div class="overlay hidden" id="modal-json" role="dialog" aria-modal="true" aria-labelledby="json-title">
+  <div class="modal">
+    <h2 id="json-title" data-i18n="json.title">Edit as JSON</h2>
+    <p class="micro" data-i18n="json.micro">The exact state of your signature, in the preset format. Invalid JSON is rejected.</p>
+    <textarea id="json-text" rows="16" spellcheck="false" style="width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;"></textarea>
+    <div class="modal-actions">
+      <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
+      <button class="btn btn-primary" id="json-apply" type="button" data-i18n="json.apply">Apply</button>
+    </div>
+  </div>
+</div>
+
 <!-- Outlook export warning -->
 <div class="overlay hidden" id="modal-outlook" role="dialog" aria-modal="true" aria-labelledby="outlook-title">
   <div class="modal">
@@ -691,6 +706,7 @@
 <script src="assets/locales/es.js"></script>
 <script src="assets/locales/fr.js"></script>
 <script src="assets/js/i18n.js"></script>
+<script src="assets/js/lzw.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>
