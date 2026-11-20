@@ -151,6 +151,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   "under the name" now honoured on every template (was bottom on
   Enterprise, Night-adjacent layouts, Letterhead and more); CI guards
   version consistency across package.json/app.js/sw.js; E2E now 140
+- [x] v0.51.0 — "Signature + images (ZIP)…" export: the current
+  signature as a pipeline-ready ZIP (HTML + optimised image parts +
+  manifest) without needing the CSV bulk flow; explains itself when
+  no image is in CID mode; E2E now 141
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

@@ -1168,6 +1168,25 @@ function openBulk() {
   setTimeout(() => $('#bulk-csv').focus(), 30);
 }
 
+/* Export the current signature as a ZIP with its CID image parts and
+   manifest — the pipeline-ready package for one signature, no CSV. */
+async function doCidZip() {
+  if (!cidImagesActive(state.design)) {
+    showToast(t('toast.cidZipNone'), 'warn', { key: 'toast.cidZipNone' });
+    return;
+  }
+  const files = await singleCidPackage(state);
+  const zip = zipStore(files);
+  const blob = new Blob([zip], { type: 'application/zip' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${slugify(state.meta.name)}-signature.zip`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  showToast(t('toast.cidZipDone'), '', { key: 'toast.cidZipDone' });
+}
+
 async function runBulk() {
   const csv = $('#bulk-csv').value;
   const res = bulkGenerate(state, csv);
@@ -1640,7 +1659,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.50.0';
+const APP_VERSION = '0.51.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -1933,6 +1952,7 @@ function init() {
   $('#x-json').addEventListener('click', () => { menu.classList.add('hidden'); openJsonEditor(); });
   $('#x-audit').addEventListener('click', () => { menu.classList.add('hidden'); openAudit(); });
   $('#x-bulk').addEventListener('click', () => { menu.classList.add('hidden'); openBulk(); });
+  $('#x-cid-zip').addEventListener('click', () => { menu.classList.add('hidden'); doCidZip(); });
   $('#bulk-generate').addEventListener('click', runBulk);
   $('#audit-download').addEventListener('click', downloadAudit);
   $('#json-apply').addEventListener('click', applyJsonEditor);

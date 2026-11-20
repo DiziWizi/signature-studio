@@ -133,6 +133,20 @@ function bulkTargetWidth(state, key) {
   return 600;
 }
 
+/* Single-signature CID package: the rendered HTML plus the image
+   parts and manifest — the same ZIP shape the bulk generator produces,
+   for one signature (the current template/design). */
+async function singleCidPackage(state) {
+  const html = renderSignature(state);
+  const m = await bulkAssetsAsync(state);
+  const files = [{ name: `${slugify(state.meta.name)}-signature.html`, data: html }];
+  if (m) {
+    files.push({ name: 'manifest.json', data: JSON.stringify(m.manifest, null, 2) });
+    for (const a of m.assets) files.push({ name: a.name, data: a.data });
+  }
+  return files;
+}
+
 async function bulkAssetsAsync(state) {
   const d = state.design || {};
   const fields = [

@@ -844,6 +844,26 @@ Date: 2026-11-20 · Scope: the three requests from user QA.
 
 ---
 
+# v0.51.0 addendum (single-signature CID ZIP export)
+
+Date: 2026-11-20 · Scope: the pipeline package without the CSV flow.
+
+## Notes
+
+- New export-menu item "Signature + images (ZIP)…" (Power tools):
+  renders the current signature and packages it exactly like the
+  bulk generator does — <slug>-signature.html, images/ assets,
+  manifest.json — via the shared singleCidPackage() in bulk.js.
+- With no image set to Inline CID it downloads nothing and toasts
+  guidance (the package only exists because of the cid refs).
+- Success toast is neutral (no .toast.ok style exists).
+- Audit advisory reworded: "the ZIP exports" (plural) now covers
+  both flows. 3 new i18n keys ×4 (560 each).
+- E2E: toast-then-download flow, ZIP contents (html with cid src,
+  manifest, PNG part). Suite 141/141 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

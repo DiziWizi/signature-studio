@@ -146,6 +146,44 @@ test('the audit recommends the right image strategy', async ({ page }) => {
   await expectNoErrors(h);
 });
 
+test('single-signature ZIP export packages the current signature with images and manifest', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+
+  /* No CID images yet: the export explains itself instead of failing. */
+  await page.click('#btn-export');
+  await page.click('#x-cid-zip');
+  await expect(page.locator('#toasts')).toContainText('Inline CID');
+
+  /* Put the logo in CID mode and export the current signature. */
+  const transUri = await page.evaluate(() => {
+    const c = document.createElement('canvas');
+    c.width = 128; c.height = 128;
+    const x = c.getContext('2d');
+    x.clearRect(0, 0, 128, 128);
+    x.fillStyle = 'rgba(30,120,220,1)';
+    x.fillRect(8, 8, 112, 112);
+    return c.toDataURL('image/png');
+  });
+  await page.fill('[data-field="design.logoUrl"]', transUri);
+  await page.selectOption('[data-field="design.imageRef.logo"]', 'cid');
+
+  await page.click('#btn-export');
+  const dlPromise = page.waitForEvent('download');
+  await page.click('#x-cid-zip');
+  const dl = await dlPromise;
+  expect(dl.suggestedFilename()).toMatch(/\.zip$/);
+  const blob = require('fs').readFileSync(await dl.path()).toString('latin1');
+
+  expect(blob).toContain('ada-lovelace-analytical-engines-signature.html');
+  expect(blob).toContain('src="cid:sigstudio-logo"');
+  expect(blob).toContain('manifest.json');
+  expect(blob).toContain('images/sigstudio-logo.png');
+  expect(blob).toContain('"cid": "sigstudio-logo"');
+
+  await expectNoErrors(h);
+});
+
 test('hosted URLs in CID mode are listed by reference in the manifest', async ({ page }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');
