@@ -11,7 +11,14 @@ const esc = s => String(s ?? '')
    value (hosted URL or data URI) stays the asset's source of truth and
    is restored when the mode switches back. */
 const imgSrcOf = (d, key, stored) => {
-  if (d.imageMode === 'cid' && stored && String(stored).trim()) return `cid:sigstudio-${key}`;
+  const ref = d.imageRef || {};
+  const refKey = key.startsWith('social-')
+    ? 'socials'
+    : { 'footer-left': 'footerLeft', 'footer-center': 'footerCenter', 'footer-right': 'footerRight' }[key] || key;
+  /* Per-image override wins; the legacy global imageMode applies only
+     to images without an explicit per-image setting. */
+  const cid = ref[refKey] === 'cid' || (!ref[refKey] && d.imageMode === 'cid');
+  if (cid && stored && String(stored).trim()) return `cid:sigstudio-${key}`;
   return stored;
 };
 
@@ -639,6 +646,14 @@ function roundelRows(s, d) {
   if (identity) {
     rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
   }
+  const socials = socialsRowHtml(s, d);
+  const socialsNested = socials
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`
+    : '';
+  if (socialsPos(d) === 'underName' && socialsNested) {
+    rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
+    rows.push(spacerHtml(4));
+  }
   rows.push(dividerHtml(d));
   const stack = contactStackHtml(s, d);
   if (stack) {
@@ -650,10 +665,8 @@ function roundelRows(s, d) {
     rows.push(`<tr><td colspan="2" align="center">${booking}</td></tr>`);
     rows.push(spacerHtml(8));
   }
-  const socials = socialsRowHtml(s, d);
-  if (socials) {
-    const nested = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`;
-    rows.push(`<tr><td colspan="2" align="center">${nested}</td></tr>`);
+  if (socialsPos(d) !== 'underName' && socialsNested) {
+    rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
     rows.push(spacerHtml(4));
   }
   rows.push(legalHtml(s, d));
@@ -686,6 +699,11 @@ function mastheadRows(s, d) {
     rows.push(`<tr><td colspan="2" align="left">${nameHtml(s, d)}${rest}${contextLineHtml(s, d)}${statusHtml(s, d)}</td></tr>`);
     rows.push(spacerHtml(6));
   }
+  const socials = socialsRowHtml(s, d);
+  if (socialsPos(d) === 'underName' && socials) {
+    rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
+    rows.push(spacerHtml(4));
+  }
   const stack = contactStackHtml(s, d);
   if (stack) {
     rows.push(`<tr><td colspan="2" align="left">${stack}</td></tr>`);
@@ -696,8 +714,7 @@ function mastheadRows(s, d) {
     rows.push(`<tr><td colspan="2" align="left">${booking}</td></tr>`);
     rows.push(spacerHtml(8));
   }
-  const socials = socialsRowHtml(s, d);
-  if (socials) {
+  if (socialsPos(d) !== 'underName' && socials) {
     rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
     rows.push(spacerHtml(4));
   }
@@ -717,6 +734,14 @@ function monogramRows(s, d) {
   if (identity) {
     rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
   }
+  const socials = socialsRowHtml(s, d);
+  const socialsNested = socials
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`
+    : '';
+  if (socialsPos(d) === 'underName' && socialsNested) {
+    rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
+    rows.push(spacerHtml(4));
+  }
   rows.push(dividerHtml(d));
   const stack = contactStackHtml(s, d);
   if (stack) {
@@ -728,10 +753,8 @@ function monogramRows(s, d) {
     rows.push(`<tr><td colspan="2" align="center">${booking}</td></tr>`);
     rows.push(spacerHtml(8));
   }
-  const socials = socialsRowHtml(s, d);
-  if (socials) {
-    const nested = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`;
-    rows.push(`<tr><td colspan="2" align="center">${nested}</td></tr>`);
+  if (socialsPos(d) !== 'underName' && socialsNested) {
+    rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
     rows.push(spacerHtml(4));
   }
   rows.push(legalHtml(s, d));
@@ -752,6 +775,11 @@ function photocardRows(s, d) {
       : '';
     rows.push(`<tr>${logoCell}<td class="m-cell" valign="top" align="left">${identity || '&nbsp;'}</td></tr>`);
   }
+  const socials = socialsRowHtml(s, d);
+  if (socialsPos(d) === 'underName' && socials) {
+    rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
+    rows.push(spacerHtml(4));
+  }
   rows.push(dividerHtml(d));
   const stack = contactStackHtml(s, d, { labels: false });
   if (stack) {
@@ -763,8 +791,7 @@ function photocardRows(s, d) {
     rows.push(`<tr><td colspan="2" align="left">${booking}</td></tr>`);
     rows.push(spacerHtml(8));
   }
-  const socials = socialsRowHtml(s, d);
-  if (socials) {
+  if (socialsPos(d) !== 'underName' && socials) {
     rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
     rows.push(spacerHtml(4));
   }
@@ -792,7 +819,9 @@ function postcardRows(s, d) {
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`
     : '';
 
-  const inner = [logoBlock, identity, stack, socialsBlock].filter(x => x !== '').join('<br>');
+  const inner = (socialsPos(d) === 'underName'
+    ? [logoBlock, identity, socialsBlock, stack]
+    : [logoBlock, identity, stack, socialsBlock]).filter(x => x !== '').join('<br>');
 
   rows.push(`<tr><td colspan="2" style="border:1px solid ${d.dividerColor};${br(d, '10px')}background-color:#ffffff;padding:0;">` +
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">` +
@@ -836,16 +865,20 @@ function lineRows(s, d) {
     parts.push(`<a href="${esc(href)}"${dmCls(d, 'mut')} style="${textStyle(d, { color: muted })};text-decoration:none;">${esc(label)}</a>`);
   }
 
+  let lineSocials = '';
   if (d.showSocials !== false) {
     const socials = s.socials.filter(x => String(x.url || '').trim());
     if (socials.length) {
       const chips = socials.map(soc => socialChipHtml(d, soc, false, 18)).join('&nbsp;');
-      parts.push(`&nbsp;&nbsp;${chips}`);
+      if (socialsPos(d) === 'underName') lineSocials = chips;
+      else parts.push(chips);
     }
   }
-
   if (parts.length) {
     rows.push(`<tr><td colspan="2" align="left">${parts.join(sep)}</td></tr>`);
+  }
+  if (lineSocials) {
+    rows.push(`<tr><td colspan="2" align="left">${lineSocials}</td></tr>`);
   }
   rows.push(legalHtml(s, d));
   return rows.join('\n');
@@ -892,14 +925,14 @@ function duotoneRows(s, d) {
     }
   }
 
-  const leftCell = `<td class="m-cell" width="220" valign="middle" align="center" style="background-color:${d.primaryColor};padding:${den.cellPad}px;">` +
-    (leftParts.join('') || '&nbsp;') + `</td>`;
-
   const stack = contactStackHtml(s, d);
   const socials = socialsPos(d) === 'inContact' ? '' : socialsRowHtml(s, d);
   const booking = bookingHtml(s, d);
-  const rightInner = [stack, socials, booking].filter(x => x !== '').join('<br>');
+  const underNameSocials = socialsPos(d) === 'underName' && socials ? `<br>${socials}` : '';
+  const rightInner = [stack, socialsPos(d) === 'underName' ? '' : socials, booking].filter(x => x !== '').join('<br>');
 
+  const leftInner = (leftParts.join('') || '&nbsp;') + underNameSocials;
+  const leftCell = `<td class="m-cell" width="220" valign="middle" align="center" style="background-color:${d.primaryColor};padding:${den.cellPad}px;">${leftInner}</td>`;
   const rightCell = `<td class="m-cell" valign="middle" style="background-color:#ffffff;padding:${den.cellPad}px;">${rightInner || '&nbsp;'}</td>`;
 
   rows.push(`<tr>${leftCell}${rightCell}</tr>`);
@@ -930,16 +963,24 @@ function quoteRows(s, d) {
     rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
   }
 
+  const socials = socialsRowHtml(s, d);
+  const socialsNested = socials
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`
+    : '';
+  if (socialsPos(d) === 'underName' && socialsNested) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
+  }
+
   const stack = contactStackHtml(s, d, { labels: false });
   if (stack) {
     rows.push(spacerHtml(den.rowGap));
     rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
   }
 
-  const socials = socialsRowHtml(s, d);
-  if (socials) {
+  if (socialsPos(d) !== 'underName' && socialsNested) {
     rows.push(spacerHtml(den.rowGap));
-    rows.push(`<tr><td colspan="2" align="center"><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table></td></tr>`);
+    rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
   }
 
   rows.push(spacerHtml(den.rowGap));
@@ -1077,6 +1118,12 @@ function enterpriseRows(s, d) {
     </td>`;
   rows.push(`<tr>${right ? identityCell + logoCell : logoCell + identityCell}</tr>`);
 
+  const socials = socialsPos(d) === 'inContact' ? '' : socialsRowHtml(s, d);
+  if (socialsPos(d) === 'underName' && socials) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
+  }
+
   const stack = contactStackHtml(s, d);
   if (stack) {
     rows.push(spacerHtml(den.rowGap));
@@ -1111,8 +1158,7 @@ function enterpriseRows(s, d) {
     rows.push(`<tr><td colspan="2" align="left"><span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 2, color: mutedColor(d) })}">${esc(acknowledgement)}</span></td></tr>`);
   }
 
-  const socials = socialsPos(d) === 'inContact' ? '' : socialsRowHtml(s, d);
-  if (socials) {
+  if (socialsPos(d) !== 'underName' && socials) {
     rows.push(spacerHtml(den.rowGap));
     rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
   }
@@ -1373,17 +1419,24 @@ function letterheadRows(s, d) {
     rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
   }
 
+  const socials = socialsRowHtml(s, d);
+  const socialsNested = socials
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`
+    : '';
+  if (socialsPos(d) === 'underName' && socialsNested) {
+    rows.push(spacerHtml(den.rowGap));
+    rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
+  }
+
   const stack = contactStackHtml(s, d, { labels: false });
   if (stack) {
     rows.push(spacerHtml(den.rowGap));
     rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
   }
 
-  const socials = socialsRowHtml(s, d);
-  if (socials) {
-    const nested = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`;
+  if (socialsPos(d) !== 'underName' && socialsNested) {
     rows.push(spacerHtml(den.rowGap));
-    rows.push(`<tr><td colspan="2" align="center">${nested}</td></tr>`);
+    rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
   }
 
   rows.push(dividerHtml(d)); // bottom hairline

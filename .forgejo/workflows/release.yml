@@ -18,6 +18,20 @@ jobs:
           for f in tests/*.js; do node --check "$f" || exit 1; done
           python3 -m py_compile tools/publish_release.py
 
+      - name: Version consistency
+        run: |
+          node -e "
+          const pkg = require('./package.json').version;
+          const fs = require('fs');
+          const app = fs.readFileSync('assets/js/app.js', 'utf8');
+          const m = app.match(/const APP_VERSION = '([^']+)';/);
+          if (!m || m[1] !== pkg) { console.error('APP_VERSION ' + (m ? m[1] : '?') + ' != package.json ' + pkg); process.exit(1); }
+          const sw = fs.readFileSync('sw.js', 'utf8');
+          const s = sw.match(/sigstudio-v([0-9.]+)/);
+          if (!s || s[1] !== pkg) { console.error('sw.js v' + (s ? s[1] : '?') + ' != package.json ' + pkg); process.exit(1); }
+          console.log('versions consistent: ' + pkg);
+          "
+
       - name: Static smoke test
         run: |
           python3 -m http.server 8899 >/tmp/http.log 2>&1 &

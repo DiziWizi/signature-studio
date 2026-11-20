@@ -73,7 +73,7 @@ function buildAudit(state) {
   }
 
   /* Image strategy: point the user at the right mode for their setup. */
-  if (s.imageMode === 'cid') {
+  if (cidImagesActive(s)) {
     items.push({ kind: 'info', text: t('audit.cidModeInfo') });
   } else {
     const dataUriImages = [s.logoUrl, s.bannerUrl, s.footerLeftImg, s.footerCenterImg, s.footerRightImg]

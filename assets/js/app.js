@@ -17,6 +17,14 @@ const $ = sel => document.querySelector(sel);
 function normalizeLoadedState(raw) {
   const def = defaultState();
   const out = Object.assign({}, def, raw || {});
+  /* Legacy v0.48 global imageMode: fold into per-image overrides. */
+  if (out.design && out.design.imageMode === 'cid') {
+    const ref = out.design.imageRef || (out.design.imageRef = {});
+    for (const k of ['logo', 'banner', 'footerLeft', 'footerCenter', 'footerRight', 'socials']) {
+      if (!ref[k]) ref[k] = 'cid';
+    }
+    delete out.design.imageMode;
+  }
   out.profile = Object.assign({}, def.profile, (raw || {}).profile || {});
   out.contact = Object.assign({}, def.contact, (raw || {}).contact || {});
   out.design = Object.assign({}, def.design, (raw || {}).design || {});
@@ -826,7 +834,7 @@ function collectWarnings(s) {
   if (s.design.customHtml && String(s.design.customHtml).trim()) {
     w.push({ kind: 'warn', msg: t('check.customHtml') });
   }
-  if (s.design.imageMode === 'cid') {
+  if (cidImagesActive(s.design)) {
     const hasImg = s.design.logoUrl || s.design.bannerUrl || s.design.footerLeftImg ||
       s.design.footerCenterImg || s.design.footerRightImg ||
       (s.socials || []).some(x => String(x.iconUrl || '').trim());
@@ -1173,7 +1181,7 @@ async function runBulk() {
     return;
   }
   const files = res.files.slice();
-  if (state.design && state.design.imageMode === 'cid') {
+  if (state.design && cidImagesActive(state.design)) {
     line.textContent = t('bulk.optimizing');
     const m = await bulkAssetsAsync(state);
     if (m) {
@@ -1631,6 +1639,8 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    fine-tuning, power tools) via CSS — state is never touched, so
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
+/* Kept in sync with package.json and sw.js on every release. */
+const APP_VERSION = '0.50.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -1702,6 +1712,8 @@ function showManualCopy(payload) {
 /* ── init ─────────────────────────────────────────────────────────────── */
 
 function init() {
+  const verEl = $('#app-version');
+  if (verEl) verEl.textContent = t('footer.version', { v: APP_VERSION });
   state = normalizeLoadedState(loadDraft());
 
   /* Shared-signature links (?sig=…): load the state, skip the wizard. */
@@ -2088,6 +2100,9 @@ function init() {
   /* image uploads */
   bindImageUpload('#upload-logo', '#logo-file', 'design.logoUrl', { square: true });
   bindImageUpload('#upload-banner', '#banner-file', 'design.bannerUrl');
+  bindImageUpload('#upload-footer-left', '#footer-left-file', 'design.footerLeftImg');
+  bindImageUpload('#upload-footer-center', '#footer-center-file', 'design.footerCenterImg');
+  bindImageUpload('#upload-footer-right', '#footer-right-file', 'design.footerRightImg');
   $('#recrop-btn').addEventListener('click', openRecrop);
   $('#recrop-apply').addEventListener('click', applyRecrop);
 

@@ -145,6 +145,12 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   downscaled to their display size and re-encoded (JPEG 0.85 for
   photos, PNG for transparency, keeps whichever is smaller); the audit
   now recommends the right image strategy; E2E now 137
+- [x] v0.50.0 — version number in the app footer; per-image reference
+  controls (as stored / inline CID) beside every image field incl.
+  upload buttons for all three brand-footer slots; socials position
+  "under the name" now honoured on every template (was bottom on
+  Enterprise, Night-adjacent layouts, Letterhead and more); CI guards
+  version consistency across package.json/app.js/sw.js; E2E now 140
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

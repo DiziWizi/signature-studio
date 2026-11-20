@@ -451,6 +451,15 @@ textarea { resize: vertical; min-height: 40px; }
 .check-info { color: var(--mut); border-color: var(--line2); background: rgba(42, 50, 69, .4); }
 .check-ok { color: #7fd08a; font-size: 12px; padding: 6px 10px; }
 
+/* app footer (version line) */
+.app-footer {
+  text-align: center;
+  padding: 18px 12px 26px;
+  color: var(--mut);
+  font-size: 12.5px;
+  letter-spacing: .02em;
+}
+
 /* image hosting helper */
 .host-help { margin-top: 2px; }
 .host-help summary { cursor: pointer; color: var(--mut); }

@@ -130,7 +130,9 @@ function defaultState() {
       textAlign: '',        // '' = layout default | left | center | right
       cardPadding: '',      // px override for card padding ('' = 16x18)
       cardBorderWidth: '',  // px override for the card border ('' = 1)
-      imageMode: '',        // '' = as stored (hosted URL / data URI) | 'cid' = cid:sigstudio-<key> refs
+      imageMode: '',
+  /* Per-image reference mode ('' = as stored, 'cid' = inline CID). */
+  imageRef: { logo: '', banner: '', footerLeft: '', footerCenter: '', footerRight: '', socials: '' },        // '' = as stored (hosted URL / data URI) | 'cid' = cid:sigstudio-<key> refs
       blockOrder: ['identity', 'divider', 'contact', 'socials', 'banner', 'footer', 'qr', 'custom'], // custom template section order
       nameSizeExtra: 3,     // px added to the base font size for the name
       showQr: false,        // inline vCard QR in Classic + Enterprise
@@ -269,6 +271,19 @@ function setPath(obj, path, value) {
   const last = keys.pop();
   const target = keys.reduce((o, k) => (o[k] = o[k] ?? {}), obj);
   target[last] = value;
+}
+
+/* True when any signature image is emitted as a CID reference —
+   per-image override wins; legacy global imageMode still counts. */
+function cidImagesActive(d) {
+  const ref = d.imageRef || {};
+  if (d.imageMode === 'cid') {
+    return Object.keys(ref).every(k => ref[k] === 'cid') ? true
+      : ['logo', 'banner', 'footerLeft', 'footerCenter', 'footerRight', 'socials']
+        .some(k => (ref[k] || d.imageMode) === 'cid');
+  }
+  return ['logo', 'banner', 'footerLeft', 'footerCenter', 'footerRight', 'socials']
+    .some(k => ref[k] === 'cid');
 }
 
 /* Mix two hex colours; t = amount of b. */

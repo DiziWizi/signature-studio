@@ -149,18 +149,45 @@
         </label>
 
         <span class="hint span2" data-i18n="field.footerHint">Brand footer — three slots (image + text)</span>
-        <label class="field"><span data-i18n="field.footerLeftImg">Left image</span><input data-field="design.footerLeftImg" placeholder="https://…/left.png"></label>
+        <label class="field"><span data-i18n="field.footerLeftImg">Left image</span>
+          <span class="url-row"><input data-field="design.footerLeftImg" placeholder="https://…/left.png"><button class="btn btn-sm" id="upload-footer-left" type="button" data-i18n="design.upload">Upload</button></span>
+          <select data-field="design.imageRef.footerLeft">
+            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
+          </select>
+        </label>
         <label class="field"><span data-i18n="field.footerLeftText">Left text</span><input data-field="design.footerLeftText" placeholder="Tagline"></label>
-        <label class="field"><span data-i18n="field.footerCenterImg">Centre image</span><input data-field="design.footerCenterImg" placeholder="https://…/centre.png"></label>
+        <label class="field"><span data-i18n="field.footerCenterImg">Centre image</span>
+          <span class="url-row"><input data-field="design.footerCenterImg" placeholder="https://…/centre.png"><button class="btn btn-sm" id="upload-footer-center" type="button" data-i18n="design.upload">Upload</button></span>
+          <select data-field="design.imageRef.footerCenter">
+            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
+          </select>
+        </label>
         <label class="field"><span data-i18n="field.footerCenterText">Centre text</span><input data-field="design.footerCenterText" placeholder="Tagline"></label>
-        <label class="field"><span data-i18n="field.footerRightImg">Right image</span><input data-field="design.footerRightImg" placeholder="https://…/right.png"></label>
+        <label class="field"><span data-i18n="field.footerRightImg">Right image</span>
+          <span class="url-row"><input data-field="design.footerRightImg" placeholder="https://…/right.png"><button class="btn btn-sm" id="upload-footer-right" type="button" data-i18n="design.upload">Upload</button></span>
+          <select data-field="design.imageRef.footerRight">
+            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
+          </select>
+        </label>
         <label class="field"><span data-i18n="field.footerRightText">Right text</span><input data-field="design.footerRightText" placeholder="Tagline"></label>
+        <input type="file" id="footer-left-file" accept="image/*" hidden>
+        <input type="file" id="footer-center-file" accept="image/*" hidden>
+        <input type="file" id="footer-right-file" accept="image/*" hidden>
       </div>
     </details>
 
     <details open data-sec="socials">
       <summary><span data-i18n="sec.socials">Social links</span> <span class="sec-count" id="count-socials">0</span></summary>
       <div class="body">
+        <span class="field-inline"><span data-i18n="design.socialsImageRef">Icon images use</span>
+          <select data-field="design.imageRef.socials">
+            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches them</option>
+          </select>
+        </span>
         <div class="quick" id="quick-socials">
           <span class="hint" data-i18n="socials.quickAdd">Quick add:</span>
           <button class="chip-btn" data-net="linkedin" data-i18n-title="socials.titleLinkedIn" data-i18n-aria="socials.addLinkedIn" title="LinkedIn" aria-label="Add LinkedIn" type="button" style="background:#0a66c2;color:#fff;border-color:transparent;">in</button>
@@ -395,20 +422,19 @@
               <label><input type="radio" name="socialsPosition" value="underName" data-field="design.socialsPosition"><span data-i18n="design.socialsPosUnderName">Under the name</span></label>
               <label><input type="radio" name="socialsPosition" value="inContact" data-field="design.socialsPosition"><span data-i18n="design.socialsPosInContact">With contact details</span></label>
             </div>
-            <span class="micro" data-i18n="design.socialsPosMicro">“Under the name” applies to Classic, Centered, Compact, Banner, Split and Minimal; other layouts keep them at the bottom.</span>
+            <span class="micro" data-i18n="design.socialsPosMicro">“Under the name” places the icons right below your name on every template; on the Custom layout the block order wins.</span>
           </div>
 
           <div class="field">
             <span class="lbl" data-i18n="design.logoUrl">Logo / photo URL</span>
             <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button" data-i18n="design.upload">Upload</button><button class="btn btn-sm" id="recrop-btn" type="button" data-i18n-title="design.recropTitle" data-i18n="design.recrop">Re-crop</button></span>
             <input data-field="design.logoAlt" placeholder="Alt text — e.g. “Maya’s portrait”">
-            <label class="field span2"><span data-i18n="design.imageMode">Image reference mode</span>
-              <select data-field="design.imageMode">
-                <option value="" data-i18n="design.imageModeNormal">Normal — as entered (hosted URL or embedded)</option>
-                <option value="cid" data-i18n="design.imageModeCid">Inline CID — for mail systems that attach images</option>
+            <span class="field-inline"><span data-i18n="design.imageRef">Image use</span>
+              <select data-field="design.imageRef.logo">
+                <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+                <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
               </select>
-              <span class="micro" data-i18n="design.imageModeHint">CID mode writes cid:sigstudio-logo, -banner, -footer-left/-center/-right, -social-&lt;network&gt; and pairs with the bulk generator’s manifest. Hand-pasted CID signatures show broken images — your mail pipeline must attach the parts.</span>
-            </label>
+            </span>
             <input type="file" id="logo-file" accept="image/*" hidden>
             <span class="range-row"><input type="range" min="40" max="160" step="4" data-field="design.logoWidth" id="logo-width"><output id="logo-width-out"></output></span>
             <span class="field-inline"><span data-i18n="design.position">Position</span>
@@ -432,6 +458,10 @@
 
           <label class="field"><span data-i18n="design.bannerUrl">Banner URL (banner template)</span>
             <span class="url-row"><input data-field="design.bannerUrl" placeholder="https://…/banner.png"><button class="btn btn-sm" id="upload-banner" type="button" data-i18n="design.upload">Upload</button></span>
+            <select data-field="design.imageRef.banner">
+              <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+              <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
+            </select>
             <input data-field="design.bannerAlt" placeholder="Alt text — e.g. “Analytical Engines logo”">
             <input data-field="design.bannerLink" placeholder="Click-through link (optional)">
             <input type="file" id="banner-file" accept="image/*" hidden>
@@ -543,6 +573,8 @@
   </section>
 
 </main>
+
+<footer class="app-footer"><span id="app-version"></span></footer>
 
 <!-- Update available pill (shown when a new service worker takes over) -->
 <div id="update-pill" class="update-pill hidden" role="status">

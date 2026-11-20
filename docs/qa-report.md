@@ -816,6 +816,34 @@ Date: 2026-11-19 · Scope: per-message weight for CID deployments.
 
 ---
 
+# v0.50.0 addendum (footer version, per-image controls, socials position)
+
+Date: 2026-11-20 · Scope: the three requests from user QA.
+
+## Notes
+
+- App footer shows "Signature Studio vX.Y.Z" from APP_VERSION in
+  app.js, which the release loop keeps in sync with package.json and
+  sw.js (CI check job now fails the build on drift).
+- Image reference mode moved from one global select to a per-image
+  select beside every image field: logo, banner, brand-footer ×3
+  (which also gained Upload buttons) and one for all social icons.
+  design.imageRef.<key> overrides win over the legacy global
+  design.imageMode, which is migrated into per-image values on load
+  (v0.48 saves keep working). cidImagesActive(state.design) gates the
+  checklist warning, the audit advice and the bulk manifest.
+- Socials position "Under the name": honoured on every template.
+  Fixed the reported bug on Enterprise (emitted after the footer)
+  and the same defect on Letterhead; added it to Roundel, Masthead,
+  Monogram, Photocard, Postcard, Duotone, Quote and Line (line keeps
+  chips on their own row under the single line). Custom keeps its
+  block order.
+- E2E: version-footer match against package.json; footer upload
+  buttons + per-image CID on brand footer; underName ordering across
+  templates + bottom restoration. Suite 140/140 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

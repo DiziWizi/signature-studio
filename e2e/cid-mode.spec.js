@@ -14,12 +14,12 @@ test('CID mode rewrites every image to cid:sigstudio-<key> and restores on switc
   await page.fill('[data-field="design.logoUrl"]', TINY_PNG);
   await expect.poll(() => previewSrcdoc(page)).toContain('data:image/png;base64');
 
-  await page.selectOption('[data-field="design.imageMode"]', 'cid');
+  await page.selectOption('[data-field="design.imageRef.logo"]', 'cid');
   await expect.poll(() => previewSrcdoc(page)).toContain('src="cid:sigstudio-logo"');
   await expect.poll(() => previewSrcdoc(page)).not.toContain('src="data:image/png;base64');
   await expect(page.locator('#checklist')).toContainText('CID mode');
 
-  await page.selectOption('[data-field="design.imageMode"]', '');
+  await page.selectOption('[data-field="design.imageRef.logo"]', '');
   await expect.poll(() => previewSrcdoc(page)).toContain('src="data:image/png;base64');
   await expect.poll(() => previewSrcdoc(page)).not.toContain('cid:sigstudio-logo');
 
@@ -31,7 +31,7 @@ test('bulk ZIP in CID mode carries the manifest and extracted image bytes', asyn
   await page.click('#btn-sample');
 
   await page.fill('[data-field="design.logoUrl"]', TINY_PNG);
-  await page.selectOption('[data-field="design.imageMode"]', 'cid');
+  await page.selectOption('[data-field="design.imageRef.logo"]', 'cid');
 
   await page.click('#btn-export');
   await page.click('#x-bulk');
@@ -75,7 +75,7 @@ test('oversized opaque images are downscaled and re-encoded on export', async ({
     return c.toDataURL('image/png');
   });
   await page.fill('[data-field="design.logoUrl"]', bigUri);
-  await page.selectOption('[data-field="design.imageMode"]', 'cid');
+  await page.selectOption('[data-field="design.imageRef.logo"]', 'cid');
 
   await page.click('#btn-export');
   await page.click('#x-bulk');
@@ -110,7 +110,7 @@ test('transparent images stay PNG through the optimiser', async ({ page }) => {
     return c.toDataURL('image/png');
   });
   await page.fill('[data-field="design.logoUrl"]', transUri);
-  await page.selectOption('[data-field="design.imageMode"]', 'cid');
+  await page.selectOption('[data-field="design.imageRef.logo"]', 'cid');
 
   await page.click('#btn-export');
   await page.click('#x-bulk');
@@ -138,7 +138,7 @@ test('the audit recommends the right image strategy', async ({ page }) => {
 
   /* CID mode: the advisory names the manifest/pipeline. */
   await page.locator('#modal-audit [data-close]').click();
-  await page.selectOption('[data-field="design.imageMode"]', 'cid');
+  await page.selectOption('[data-field="design.imageRef.logo"]', 'cid');
   await page.click('#btn-export');
   await page.click('#x-audit');
   await expect(page.locator('#audit-list')).toContainText('CID mode');
@@ -151,7 +151,7 @@ test('hosted URLs in CID mode are listed by reference in the manifest', async ({
   await page.click('#btn-sample');
 
   await page.fill('[data-field="design.logoUrl"]', 'http://127.0.0.1:8137/assets/icons/icon-192.png');
-  await page.selectOption('[data-field="design.imageMode"]', 'cid');
+  await page.selectOption('[data-field="design.imageRef.logo"]', 'cid');
 
   await expect.poll(() => previewSrcdoc(page)).toContain('src="cid:sigstudio-logo"');
   const doc = await previewSrcdoc(page);
