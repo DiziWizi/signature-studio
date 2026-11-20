@@ -864,6 +864,34 @@ Date: 2026-11-20 · Scope: the pipeline package without the CSV flow.
 
 ---
 
+# v0.52.0 addendum (sidebar scroll layout fix)
+
+Date: 2026-11-20 · Scope: sidebar clipping reported by the user
+(screenshot: editor content cut at the fold, page-level scrollbar).
+
+## Notes
+
+- Cause: the layout relied on height:calc(100vh - 52px) with the
+  editor overflow-y:auto — fragile across engines, and the version
+  footer added a permanent ~60px page scroll. Replaced with a
+  definite-height flex column: body {display:flex; flex-direction:
+  column; height:100vh}, .layout {flex:1 1 auto; min-height:0;
+  overflow:hidden; grid-template-rows:minmax(0,1fr)}, editor/
+  preview-col {min-height:0}. min-height:100vh alone does NOT shrink
+  the app row (body grows to content — measured: layout 6559px);
+  the explicit 1fr grid row is required because an auto row sizes to
+  the content regardless of the item's min-height:0.
+- Narrow widths (<=980px) revert to single-column with the page
+  scrolling as a whole (flex:none; height:auto on .layout).
+- Regression guard: e2e/layout.spec.js pins editor-scrollable +
+  bodyScrollH == viewport on desktop, and page-scroll at 760px.
+- Two CSS patch hazards recorded: an anchored insert severed the
+  html,body rule (orphaned declarations made the parser swallow the
+  .hidden rule — the visible scrim blocked every click) and the
+  flex/grid shrinking rules above. Suite 143/143 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

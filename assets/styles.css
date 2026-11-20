@@ -33,6 +33,19 @@ html, body {
   font-size: 14px;
 }
 
+/* Column stack: header, app, version footer. The app row takes the
+   remaining viewport exactly, so the sidebar/preview scroll INTERNALLY
+   instead of clipping at the fold — and no page-level scrollbar
+   appears on desktop sizes. */
+body {
+  display: flex;
+  flex-direction: column;
+  /* Definite height (not min-height) so the flex layout can SHRINK the
+     app row to the viewport share — with min-height alone the body
+     grows to the content and the sidebar never becomes scrollable. */
+  height: 100vh;
+}
+
 .hidden { display: none !important; }
 
 /* ── top bar ──────────────────────────────────────────────────────────── */
@@ -129,17 +142,26 @@ html, body {
 .layout {
   display: grid;
   grid-template-columns: minmax(430px, 560px) 1fr;
-  height: calc(100vh - 52px);
+  grid-template-rows: minmax(0, 1fr);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
+/* min-height:0 lets the grid/flex children size to the track instead
+   of their content — without it, tall sections push the row past the
+   viewport and the editor never becomes a scroll region (the WebKit/
+   grid-item overflow trap the clipped sidebar came from). */
 .editor {
   overflow-y: auto;
+  min-height: 0;
   padding: 16px 20px 48px;
   border-right: 1px solid var(--line);
 }
 
 .preview-col {
   overflow-y: auto;
+  min-height: 0;
   padding: 16px 24px 32px;
   display: flex;
   flex-direction: column;
@@ -1025,8 +1047,9 @@ textarea { resize: vertical; min-height: 40px; }
 /* ── responsive ───────────────────────────────────────────────────────── */
 
 @media (max-width: 980px) {
-  .layout { grid-template-columns: 1fr; height: auto; }
-  .editor { border-right: 0; overflow: visible; }
+  /* Single column: the page scrolls as a whole again. */
+  .layout { grid-template-columns: 1fr; flex: none; height: auto; overflow: visible; }
+  .editor { border-right: 0; overflow: visible; min-height: 0; }
   .preview-col { min-height: 320px; }
   .brand-tag { display: none; }
   .tpl-picker { grid-template-columns: repeat(4, 1fr); }
