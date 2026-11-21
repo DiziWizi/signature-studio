@@ -282,6 +282,9 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   and Reply (one line for threads); the picker gains Personal / Business /
   Creative filters plus honest layout chips (No images / Photo / Dark) fed
   from template metadata; E2E 243
+- [x] v0.79.0 — templates II: Academic (CV split), Clinic (appointments
+  first), Creator (social hero) and Public sector (image-free, high
+  contrast, land acknowledgement); picker gains a Public filter; E2E 244
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

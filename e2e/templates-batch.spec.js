@@ -44,7 +44,7 @@ test('reply picks up contact and role without a logo', async ({ page }) => {
 test('the picker filters by category and every tile is tagged', async ({ page }) => {
   const h = await freshPage(page);
   const total = await page.locator('#tpl-picker .tpl-btn').count();
-  expect(total).toBe(21);
+  expect(total).toBe(25);
 
   const untagged = await page.evaluate(() => [...document.querySelectorAll('#tpl-picker .tpl-btn')]
     .filter(b => !b.dataset.category).map(b => b.dataset.template));
@@ -58,7 +58,43 @@ test('the picker filters by category and every tile is tagged', async ({ page })
   expect(visible).not.toContain('reply');
 
   await page.click('.tpl-cat[data-cat="all"]');
-  await expect(page.locator('#tpl-picker .tpl-btn:not(.hidden)')).toHaveCount(21);
+  await expect(page.locator('#tpl-picker .tpl-btn:not(.hidden)')).toHaveCount(25);
+  await expectNoErrors(h);
+});
+
+test('the four sector layouts carry their defining element', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+
+  await page.click('.tpl-btn[data-template="academic"]');
+  const academic = await page.evaluate(() => renderSignature(state));
+  /* Contact sits in a right-hand column beside the identity. */
+  expect(academic).toMatch(/<td width="42%" align="right" valign="top">/);
+
+  await page.fill('[data-field="contact.booking"]', 'clinic.example/book');
+  await page.click('.tpl-btn[data-template="clinic"]');
+  const clinic = await page.evaluate(() => renderSignature(state));
+  expect(clinic).toContain('clinic.example/book');
+  expect(clinic).toMatch(/Appointments/);
+
+  await page.click('.tpl-btn[data-template="creator"]');
+  const creator = await page.evaluate(() => renderSignature(state));
+  const socialAt = creator.indexOf('background-color:#0a66c2');
+  const mailAt = creator.indexOf('mailto:');
+  expect(socialAt).toBeGreaterThan(-1);
+  expect(mailAt).toBeGreaterThan(-1);
+  expect(socialAt).toBeLessThan(mailAt);
+
+  await page.click('.tpl-btn[data-template="public"]');
+  await page.evaluate(() => {
+    state.design.showAcknowledgement = true;
+    state.design.landAcknowledgement = 'We acknowledge the Traditional Owners of the land.';
+    renderPreview();
+  });
+  const publicHtml = await page.evaluate(() => renderSignature(state));
+  expect(publicHtml).not.toContain('<img');
+  expect(publicHtml).toContain('border-top:2px solid');
+  expect(publicHtml).toContain('Traditional Owners');
   await expectNoErrors(h);
 });
 

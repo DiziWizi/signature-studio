@@ -17,7 +17,7 @@ test('every template renders to its baseline', async ({ page }) => {
   await page.evaluate(() => document.querySelector('#stage').classList.remove('dark'));
 
   const ids = await page.$$eval('.tpl-btn', btns => btns.map(b => b.dataset.template));
-  expect(ids.length).toBe(21);
+  expect(ids.length).toBe(25);
 
   for (const id of ids) {
     await page.click(`.tpl-btn[data-template="${id}"]`);

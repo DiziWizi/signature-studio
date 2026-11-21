@@ -41,6 +41,10 @@ const TEMPLATES = [
   { id: 'booking',   name: 'Booking',   desc: 'A booking button front and centre — for sales and consulting.', category: 'business' },
   { id: 'vertical',  name: 'Vertical card', desc: 'Portrait on top, stacked details — reads at phone width.', category: 'creative', badge: 'photo' },
   { id: 'reply',     name: 'Reply',     desc: 'One line for thread replies: name, role, contact.', category: 'personal', badge: 'noImages' },
+  { id: 'academic',  name: 'Academic',  desc: 'Identity beside contact, CV style — department and office hours in place.', category: 'business' },
+  { id: 'clinic',    name: 'Clinic',    desc: 'Appointments first: booking button, status, consulting hours.', category: 'business' },
+  { id: 'creator',   name: 'Creator',   desc: 'Social row as the hero — for makers, hosts and freelancers.', category: 'creative' },
+  { id: 'public',    name: 'Public sector', desc: 'Image-free, high contrast, with a land acknowledgement.', category: 'public', badge: 'noImages' },
 ];
 
 /* Curated colour themes: one click sets accent, text and divider together.

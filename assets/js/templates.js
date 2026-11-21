@@ -1599,6 +1599,103 @@ function replyRows(s, d) {
   return `<tr><td>${bits.join(sep)}</td></tr>\n${legalHtml(s, d)}`;
 }
 
+
+/* Academic: identity left, contact right, rule beneath both — the CV card.
+   Office hours arrive as a custom line, so nothing new has to be modelled. */
+function academicRows(s, d) {
+  const rows = [];
+  const den = densityOf(d);
+  const logo = logoCellHtml(s, d);
+  if (logo) {
+    rows.push(`<tr><td colspan="2" style="padding:0 0 ${den.dividerMargin}px 0;">${logo}</td></tr>`);
+  }
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + statusHtml(s, d);
+  const stack = contactStackHtml(s, d);
+  const right = stack
+    ? `<td width="42%" align="right" valign="top">${stack}</td>`
+    : '';
+  rows.push(`<tr><td valign="top">${identity}</td>${right}</tr>`);
+  rows.push(dividerHtml(d));
+  const socials = socialsRowHtml(s, d);
+  if (socials) rows.push(`<tr><td colspan="2">${socials}</td></tr>`);
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
+/* Clinic: appointments are the point — status, hours (a custom line) and the
+   booking button sit directly under the name, with the admin lines beneath. */
+function clinicRows(s, d) {
+  const rows = [];
+  const den = densityOf(d);
+  const logo = logoCellHtml(s, d);
+  if (logo) {
+    rows.push(`<tr><td colspan="2" style="padding:0 0 ${den.dividerMargin}px 0;">${logo}</td></tr>`);
+  }
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + statusHtml(s, d);
+  rows.push(`<tr><td colspan="2">${identity}</td></tr>`);
+  rows.push(dividerHtml(d));
+  const stack = contactStackHtml(s, d);
+  if (stack) {
+    rows.push(`<tr><td colspan="2">${stack}</td></tr>`);
+    rows.push(spacerHtml(den.rowGap));
+  }
+  const booking = bookingHtml(s, d);
+  if (booking) {
+    rows.push(`<tr><td colspan="2"><span style="${textStyle(d, { size: d.fontSize - 2, color: mutedColor(d) })}">${esc(t('tpl.appointments'))}</span></td></tr>`);
+    rows.push(`<tr><td colspan="2" style="padding:4px 0 6px 0;">${booking}</td></tr>`);
+  }
+  const socials = socialsRowHtml(s, d);
+  if (socials) rows.push(`<tr><td colspan="2">${socials}</td></tr>`);
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
+/* Creator: the social row leads, the rest is a caption. */
+function creatorRows(s, d) {
+  const rows = [];
+  const den = densityOf(d);
+  const logo = logoCellHtml(s, d);
+  if (logo) {
+    rows.push(`<tr><td colspan="2" style="padding:0 0 ${den.dividerMargin}px 0;">${logo}</td></tr>`);
+  }
+  rows.push(`<tr><td colspan="2">${nameHtml(s, d)}${taglineHtml(s, d)}</td></tr>`);
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    const nested = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`;
+    rows.push(`<tr><td colspan="2" style="padding:4px 0 2px 0;">${nested}</td></tr>`);
+  }
+  rows.push(dividerHtml(d, 2, { short: true }));
+  const stack = contactStackHtml(s, d);
+  if (stack) rows.push(`<tr><td colspan="2">${stack}</td></tr>`);
+  const qr = qrTableHtml(s, d);
+  if (qr) rows.push(qr);
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
+/* Public sector: no images at all, a 2 px rule, maximum contrast, and the
+   acknowledgement the Enterprise block already models. */
+function publicRows(s, d) {
+  const rows = [];
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + statusHtml(s, d);
+  rows.push(`<tr><td>${identity}</td></tr>`);
+  rows.push(`<tr><td style="padding:8px 0;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;"><tr><td style="border-top:2px solid ${d.textColor};font-size:0;line-height:0;">&nbsp;</td></tr></table></td></tr>`);
+  const stack = contactStackHtml(s, d);
+  if (stack) rows.push(`<tr><td>${stack}</td></tr>`);
+  const acknowledgement = String(d.landAcknowledgement || '').trim();
+  if (d.showAcknowledgement && acknowledgement) {
+    rows.push(spacerHtml(8));
+    rows.push(`<tr><td><span style="${textStyle(d, { size: d.fontSize - 2, color: mutedColor(d) })}">${esc(acknowledgement)}</span></td></tr>`);
+  }
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    rows.push(spacerHtml(8));
+    rows.push(`<tr><td>${socials}</td></tr>`);
+  }
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
 function renderInner(state) {
   /* Clamp user/imported numeric values so the output can never degenerate. */
   const raw = state.design || {};
@@ -1630,6 +1727,10 @@ function renderInner(state) {
     case 'booking':    inner = bookingRows(s, d); break;
     case 'vertical':   inner = verticalRows(s, d); break;
     case 'reply':      inner = replyRows(s, d); break;
+    case 'academic':   inner = academicRows(s, d); break;
+    case 'clinic':     inner = clinicRows(s, d); break;
+    case 'creator':    inner = creatorRows(s, d); break;
+    case 'public':     inner = publicRows(s, d); break;
     default:          inner = classicRows(s, d);
   }
 

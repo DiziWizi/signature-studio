@@ -49,7 +49,7 @@ test('empty blocks do not render and the picker shows 18 tiles', async ({ page }
   const h = await freshPage(page);
   await page.click('#btn-sample');
 
-  await expect(page.locator('.tpl-btn')).toHaveCount(21);
+  await expect(page.locator('.tpl-btn')).toHaveCount(25);
 
   /* Banner, footer, QR and custom HTML are all empty on the sample. */
   await page.click('.tpl-btn[data-template="custom"]');

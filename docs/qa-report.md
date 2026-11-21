@@ -1600,6 +1600,27 @@ Date: 2026-11-21 · Scope: Booking, Vertical card, Reply, categories, chips.
 
 ---
 
+# v0.79.0 addendum (templates II — the sector layouts)
+
+Date: 2026-11-21 · Scope: Academic, Clinic, Creator, Public sector.
+
+- **Academic** — identity on the left, contact stack in a 42 % right column,
+  rule beneath both. Department renders through the existing title line and
+  office hours through a custom line, so the layout needed no new state.
+- **Clinic** — status chip, contact, then an "Appointments" label and the
+  booking button; admin details and the confidentiality note (legal text)
+  follow. Falls back cleanly when no booking URL is set.
+- **Creator** — name and tagline, social row immediately beneath, then a
+  hairline, contact and the vCard QR. The social row precedes the contact
+  block, which the test pins by index.
+- **Public sector** — renders no images at all, a 2 px solid rule, and the
+  existing land acknowledgement (behind `showAcknowledgement`). Honest
+  "No images" chip.
+- Picker gains a **Public** category. 25 templates; visual baselines extended.
+- 1 new E2E test (templates-batch.spec.js). Suite 244/244 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
