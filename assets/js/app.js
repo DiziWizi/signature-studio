@@ -1851,38 +1851,87 @@ function applyRecrop() {
     { key: 'toast.recropped', params: { align: t('recrop.alignValue.' + align) } });
 }
 
+/* Bytes → data URL (chunked: big images blow the arg limit otherwise). */
+function dataUrlFromBytes(bytes, mime) {
+  let bin = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return `data:${mime};base64,${btoa(bin)}`;
+}
+
+/* Upload target: 2× the display size so retina screens stay crisp while a
+   phone photo still shrinks by an order of magnitude. */
+function uploadTargetWidth(fieldPath) {
+  if (fieldPath === 'design.bannerUrl') return 600;
+  if (fieldPath.startsWith('design.footer')) return 192;
+  const w = Number(state.design.logoWidth) || 72;
+  return Math.min(320, Math.max(64, w * 2));
+}
+
+function fmtKB(n) {
+  return n < 1024 ? `${Math.round(n)} B` : `${Math.round(n / 1024)} KB`;
+}
+
+async function optimiseUpload(dataUrl, fieldPath) {
+  if (typeof optimizeImage !== 'function' || typeof dataUriBytes !== 'function') {
+    return { url: dataUrl, before: 0, after: 0 };
+  }
+  try {
+    const before = dataUriBytes(dataUrl);
+    const opt = await optimizeImage(dataUrl, uploadTargetWidth(fieldPath));
+    if (!opt) return { url: dataUrl, before, after: before };
+    const after = opt.bytes.length;
+    if (after >= before) return { url: dataUrl, before, after: before };
+    return { url: dataUrlFromBytes(opt.bytes, opt.mime), before, after };
+  } catch (e) {
+    return { url: dataUrl, before: 0, after: 0 };
+  }
+}
+
 function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
   $(btnId).addEventListener('click', () => $(fileId).click());
   $(fileId).addEventListener('change', e => {
     const file = e.target.files && e.target.files[0];
     e.target.value = '';
     if (!file) return;
-    if (file.size > 512 * 1024) {
+    /* Reading a huge file is the real limit — size is handled by
+       downscaling below, so accepted uploads no longer dead-end. */
+    if (file.size > 8 * 1024 * 1024) {
       showToast(t('toast.imageTooLarge'), 'err', { key: 'toast.imageTooLarge' });
       return;
     }
     const reader = new FileReader();
-    const applyUrl = (url) => {
+    const applyUrl = (url, opt) => {
       setPath(state, fieldPath, url);
       const el = document.querySelector(`[data-field="${fieldPath}"]`);
       if (el) el.value = url;
       renderPreview();
       scheduleSave();
-      showToast(t('toast.embeddedImage'), 'warn', { key: 'toast.embeddedImage' });
-    };
-    reader.onload = () => {
-      if (!square) {
-        applyUrl(reader.result);
-        return;
+      if (opt && opt.after && opt.after < opt.before) {
+        showToast(t('toast.imageOptimised', { before: fmtKB(opt.before), after: fmtKB(opt.after) }),
+          '', { key: 'toast.imageOptimised', params: { before: fmtKB(opt.before), after: fmtKB(opt.after) } });
+      } else {
+        showToast(t('toast.embeddedImage'), 'warn', { key: 'toast.embeddedImage' });
       }
-      /* Square crop for logos/avatars: portrait photos would otherwise
-         be stretched into the square slot. Keep the original in memory
-         for the re-crop modal. */
-      logoOriginals[fieldPath] = reader.result;
-      const img = new Image();
-      img.onload = () => applyUrl(cropToSquare(img) || reader.result);
-      img.onerror = () => applyUrl(reader.result);
-      img.src = reader.result;
+    };
+    reader.onload = async () => {
+      let url = reader.result;
+      if (square) {
+        /* Square crop for logos/avatars: portrait photos would otherwise
+           be stretched into the square slot. Keep the original in memory
+           for the re-crop modal. */
+        logoOriginals[fieldPath] = url;
+        url = await new Promise(res => {
+          const img = new Image();
+          img.onload = () => res(cropToSquare(img) || url);
+          img.onerror = () => res(url);
+          img.src = url;
+        });
+      }
+      const opt = await optimiseUpload(url, fieldPath);
+      applyUrl(opt.url, opt);
     };
     reader.readAsDataURL(file);
   });
@@ -1895,7 +1944,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.63.0';
+const APP_VERSION = '0.64.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2085,6 +2134,15 @@ function init() {
   });
 
   /* empty-state guide: straight to the one field that matters */
+  const guideExample = $('#empty-guide-example');
+  if (guideExample) guideExample.addEventListener('click', () => {
+    pushHistory();
+    const persona = SAMPLE_PERSONAS[0];
+    state = sampleState(persona.id);
+    rebuildAll();
+    scheduleSave();
+    showToast(t('toast.sample', { name: persona.name }), '', { key: 'toast.sample', params: { name: persona.name } });
+  });
   $('#empty-guide-btn').addEventListener('click', () => {
     const sec = document.querySelector('details[data-sec="profile"]');
     if (sec) sec.open = true;

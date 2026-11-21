@@ -1119,6 +1119,29 @@ signature.
 
 ---
 
+# v0.64.0 addendum (optimised uploads, example CTA)
+
+Date: 2026-11-21 · Scope: the 512 KB wall removed by shrinking instead of
+refusing; cold-start example.
+
+## Notes
+
+- bindImageUpload now accepts up to 8 MB (the read limit, not a product
+  limit), then optimises: uploadTargetWidth = 2× display (logo width ×2,
+  600 banner, 192 footer), optimizeImage() re-encodes JPEG/PNG and keeps
+  the smaller; bytes are rebuilt into a data URL in 32 KB chunks. The
+  square-crop path runs first and the pre-optimise original is kept for
+  re-crop quality.
+- Toast reports the saving ("Image optimised — 2.4 MB → 86 KB"); images
+  that do not shrink fall back to the embedded-image warning. The 8 MB
+  refusal keeps its own message.
+- Empty state gains "Or start from an example" → loads the first sample
+  persona (already undoable via pushHistory).
+- 2 new i18n keys + rewritten size message ×4 (591 each). 3 new E2E
+  tests (downscale, refusal, example CTA). Suite 179/179 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
