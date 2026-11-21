@@ -411,6 +411,10 @@ window.SIG_LOCALES.es = {
   'saved.load': 'Cargar',
   'saved.delete': 'Eliminar',
   'saved.empty': 'Aún no hay nada guardado.<br>Cree una firma, póngale nombre y guárdela aquí.',
+  'saved.usage': "{used} de {total} usados · {n} guardadas",
+  'saved.cleanup': "Borrar las más antiguas",
+  'saved.cleaned': "Se eliminaron {n} firma(s) antiguas.",
+  'saved.nothingToClean': "Nada que borrar: el almacenamiento está bien.",
 
   'quick.empty': 'Aún no hay firmas guardadas — guarde una en el panel Guardadas.',
 

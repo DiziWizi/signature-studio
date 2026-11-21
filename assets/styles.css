@@ -311,6 +311,28 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* No-JS notice: the app is client-only, say so instead of a black page. */
+.noscript {
+  margin: 24px auto;
+  max-width: 560px;
+  padding: 14px 18px;
+  border: 1px solid #b45309;
+  border-radius: 10px;
+  background: #2a1a0b;
+  color: #fbd9a5;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Saved panel: storage meter + cleanup */
+.storage-meter { padding: 8px 2px 10px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.storage-meter .sm-bar { height: 6px; border-radius: 999px; background: var(--line2); overflow: hidden; }
+.storage-meter .sm-bar > span { display: block; height: 100%; width: 0; background: var(--acc); transition: width .2s; }
+.storage-meter .sm-bar > span[data-level="high"] { background: #d19a3e; }
+.storage-meter .sm-bar > span[data-level="full"] { background: #e5484d; }
+.storage-meter .sm-text { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--mut); }
+.si-size { font-size: 10.5px; color: var(--mut); margin-top: 2px; }
+
 /* Autosave status (footer) */
 .save-state { font-size: 11px; color: var(--mut); }
 .save-state[data-state="saving"] { color: var(--mut); opacity: .8; }

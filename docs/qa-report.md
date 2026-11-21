@@ -1423,6 +1423,37 @@ Date: 2026-11-21 · Scope: T1–T4 of the technical persona review.
 
 ---
 
+# v0.72.0 addendum (technical-adversary batch 2 — ops polish)
+
+Date: 2026-11-21 · Scope: T5–T9.
+
+- **T5 app archive**: `tools/make_app_zip.py` (`npm run pack:app`) writes
+  `dist/signature-studio-<v>-app.zip` — index.html, sw.js,
+  manifest.webmanifest, nginx.conf and assets/ at the zip root, 27 files /
+  391 KB, no dev material. Every release now attaches it alongside the
+  source archives; README Option C points at it.
+- **T6 docs drift**: README no longer states a test count ("29 tests" had
+  aged fourfold). Counts live in this report, which is written per release.
+- **T7 noscript**: a styled notice explains that the app is client-only
+  when scripting is disabled.
+- **T8 storage**: Saved shows "3.2 MB of 5.0 MB used · 2 saved" with a
+  colour-coded bar (70 % amber, 90 % red), per-snapshot sizes, and
+  **Delete oldest**, which trims until 70 % but never removes the last
+  snapshot. Measured fixtures: two photo-sized snapshots + filler = 76 %
+  → cleanup leaves one. IndexedDB for image blobs is still the right
+  long-term answer and remains an explicit follow-up — this release makes
+  the ceiling visible and recoverable rather than silent.
+- **T9 service worker**: `skipWaiting()` removed from install; the new
+  worker waits, the pill appears from `registration.waiting` /
+  `updatefound`, and accepting posts `SKIP_WAITING` (new message handler)
+  before reloading, with a 1.5 s fallback. `activateWaiting()` is the
+  testable seam; `e2e/selfhost-ops.spec.js` asserts the contract and the
+  static absence of the old auto-promotion.
+
+4 new E2E tests. Suite 213/213 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

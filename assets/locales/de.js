@@ -411,6 +411,10 @@ window.SIG_LOCALES.de = {
   'saved.load': 'Laden',
   'saved.delete': 'Löschen',
   'saved.empty': 'Noch nichts gespeichert.<br>Erstellen Sie eine Signatur, geben Sie ihr einen Namen und speichern Sie sie hier.',
+  'saved.usage': "{used} von {total} belegt · {n} gespeichert",
+  'saved.cleanup': "Älteste löschen",
+  'saved.cleaned': "{n} alte Signatur(en) entfernt.",
+  'saved.nothingToClean': "Nichts zu löschen — Speicher ist ok.",
 
   'quick.empty': 'Noch keine gespeicherten Signaturen — speichern Sie eine im Panel „Gespeichert“.',
 

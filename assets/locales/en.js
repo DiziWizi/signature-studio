@@ -413,6 +413,10 @@ window.SIG_LOCALES.en = {
   'saved.load': 'Load',
   'saved.delete': 'Delete',
   'saved.empty': 'Nothing saved yet.<br>Build a signature, give it a name, and save it here.',
+  'saved.usage': "{used} of {total} used · {n} saved",
+  'saved.cleanup': "Delete oldest",
+  'saved.cleaned': "Removed {n} old signature(s).",
+  'saved.nothingToClean': "Nothing to remove — storage is fine.",
 
   'quick.empty': 'No saved signatures yet — save one in the Saved panel.',
 

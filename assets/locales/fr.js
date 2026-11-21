@@ -411,6 +411,10 @@ window.SIG_LOCALES.fr = {
   'saved.load': 'Charger',
   'saved.delete': 'Supprimer',
   'saved.empty': 'Rien d’enregistré pour le moment.<br>Créez une signature, donnez-lui un nom et enregistrez-la ici.',
+  'saved.usage': "{used} sur {total} utilisés · {n} enregistrée(s)",
+  'saved.cleanup': "Supprimer les plus anciennes",
+  'saved.cleaned': "{n} ancienne(s) signature(s) supprimée(s).",
+  'saved.nothingToClean': "Rien à supprimer — le stockage va bien.",
 
   'quick.empty': 'Pas encore de signature enregistrée — enregistrez-en une dans le panneau Enregistrées.',
 

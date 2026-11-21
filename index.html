@@ -11,6 +11,13 @@
 <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
+<noscript>
+  <div class="noscript" role="alert">
+    <strong>Signature Studio needs JavaScript.</strong>
+    Everything — editing, previewing and exporting — runs in your browser, so
+    nothing works with scripting disabled. Enable JavaScript and reload.
+  </div>
+</noscript>
 
 <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
 
@@ -925,6 +932,13 @@
   <div class="save-row">
     <input id="save-name" placeholder="Name this signature…" maxlength="60">
     <button class="btn btn-primary" id="save-now" type="button" data-i18n="saved.saveCurrent">Save current</button>
+  </div>
+  <div class="storage-meter">
+    <div class="sm-bar"><span id="sm-fill"></span></div>
+    <div class="sm-text">
+      <span id="sm-usage"></span>
+      <button class="btn btn-sm" id="saved-cleanup" type="button" data-i18n="saved.cleanup">Delete oldest</button>
+    </div>
   </div>
   <div id="saved-list"></div>
 </aside>

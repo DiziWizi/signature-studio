@@ -121,8 +121,10 @@ podman run -p 8080:80 signature-studio
 
 **Option C — any static host** (nginx, Caddy, Forgejo Pages, …) — publish
 only the app itself: `index.html`, `assets/`, `sw.js`, `manifest.webmanifest`.
-Do **not** point a public web root at a checkout: `e2e/`, `docs/`,
-`test-results/` and `node_modules/` are development material.
+Each release ships exactly that as **`signature-studio-<version>-app.zip`**
+(unzip into your web root; `nginx.conf` is included). The full source archive
+is for development. Do **not** point a public web root at a checkout:
+`e2e/`, `docs/`, `test-results/` and `node_modules/` are development material.
 
 The Docker image is built from an explicit allow-list, so it contains the app
 and nothing else — `curl localhost:8080/e2e/a11y.spec.js` is a 404.
@@ -209,9 +211,11 @@ docs/                   design notes, QA report, screenshots, roadmap
 ```sh
 npm run serve       # or: python3 -m http.server 8137
 npm run check       # syntax-check all JS + publish script
-npm run test:e2e    # Playwright suite (29 tests: boot, templates, socials,
-                    # checklist, crop, fixtures, export, undo, preset, PWA…)
+npm run test:e2e    # Playwright suite — boot, templates, socials, checklist,
+                    # crop, fixtures, export, undo, presets, PWA, security,
+                    # a11y (axe), self-host CSP, visual baselines…
                     # first run: npm install && npx playwright install chromium
+npm run pack:app    # dist/signature-studio-<version>-app.zip — deployables only
 ```
 
 The service worker is **cache-first**: after you change any file, bump

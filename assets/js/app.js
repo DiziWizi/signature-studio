@@ -7,6 +7,8 @@ let state = null;
 let lastParsedImport = null;
 let lastSaveAt = 0;
 let dragCtx = null; // { type: 'socials'|'customs', index }
+let waitingWorker = null; // SW waiting to activate (update pill)
+let reloadOnControl = false; // reload once the promoted worker takes control
 
 const HISTORY_MAX = 50;
 let undoStack = [];
@@ -1901,6 +1903,7 @@ function savedItemHtml(snap) {
     <div>
       <div class="si-name">${esc(snap.name)}</div>
       <div class="si-date">${new Date(snap.savedAt).toLocaleString()}</div>
+      <div class="si-size">${fmtSize(JSON.stringify(snap.state).length)}</div>
     </div>
     <div class="si-actions">
       <button class="btn btn-sm snap-load">${t('saved.load')}</button>
@@ -1909,11 +1912,43 @@ function savedItemHtml(snap) {
   </div>`;
 }
 
+/* Storage accounting. localStorage holds UTF-16 text; Chrome's per-origin
+   budget is ~5 MB of characters, and the draft plus every snapshot share
+   it. Show the real number instead of letting a save fail mysteriously. */
+const STORAGE_BUDGET = 5 * 1024 * 1024;
+
+function storageUsageChars() {
+  let n = 0;
+  try {
+    for (const k of Object.keys(localStorage)) n += k.length + (localStorage.getItem(k) || '').length;
+  } catch (e) { /* ignore */ }
+  return n;
+}
+
+function fmtSize(chars) {
+  const kb = chars / 1024;
+  return kb >= 1024 ? (kb / 1024).toFixed(1) + ' MB' : Math.round(kb) + ' KB';
+}
+
+function renderStorageMeter() {
+  const fill = $('#sm-fill');
+  const text = $('#sm-usage');
+  if (!fill || !text) return;
+  const used = storageUsageChars();
+  const pct = Math.min(100, Math.round(used / STORAGE_BUDGET * 100));
+  fill.style.width = pct + '%';
+  fill.dataset.level = pct >= 90 ? 'full' : pct >= 70 ? 'high' : 'ok';
+  text.textContent = t('saved.usage', {
+    used: fmtSize(used), total: fmtSize(STORAGE_BUDGET), n: listSnapshots().length,
+  });
+}
+
 function renderSavedList() {
   const snaps = listSnapshots();
   $('#saved-list').innerHTML = snaps.length
     ? snaps.map(savedItemHtml).join('')
     : '<p class="empty-note">' + t('saved.empty') + '</p>';
+  renderStorageMeter();
   updateSavedCount();
 }
 
@@ -2108,7 +2143,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.71.0';
+const APP_VERSION = '0.72.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2159,9 +2194,18 @@ function initMode() {
   $('#mode-advanced').addEventListener('click', () => setMode('advanced'));
 }
 
-/* "Update available" pill: a new service worker took over mid-session. */
+/* "Update available" pill: a new service worker is installed and waiting. */
 function showUpdatePill() {
   $('#update-pill').classList.remove('hidden');
+}
+
+/* Ask the waiting worker to activate, then reload onto the new version.
+   The timeout is a fallback for browsers that never fire controllerchange
+   (the worker itself may be gone by then). */
+function activateWaiting(worker) {
+  reloadOnControl = true;
+  try { worker.postMessage({ type: 'SKIP_WAITING' }); } catch (e) { /* gone */ }
+  setTimeout(() => location.reload(), 1500);
 }
 
 /* Manual-copy fallback: the browser blocked the clipboard API. Show the
@@ -2362,6 +2406,22 @@ function init() {
     reader.readAsText(file);
   });
   $('#btn-saved').addEventListener('click', openSavedPanel);
+  $('#saved-cleanup').addEventListener('click', () => {
+    const snaps = listSnapshots().slice().sort((a, b) => String(a.savedAt).localeCompare(String(b.savedAt)));
+    const target = STORAGE_BUDGET * 0.7;
+    let removed = 0;
+    /* Keep at least one snapshot: "free space" must not become "lose
+       everything". If the budget is still tight afterwards, the meter says
+       so and the user can export and delete deliberately. */
+    while (snaps.length > 1 && storageUsageChars() > target) {
+      const oldest = snaps.shift();
+      deleteSnapshot(oldest.id);
+      removed += 1;
+    }
+    renderSavedList();
+    showToast(t(removed ? 'saved.cleaned' : 'saved.nothingToClean', { n: removed }), '',
+      { key: removed ? 'saved.cleaned' : 'saved.nothingToClean', params: { n: removed } });
+  });
   $('#btn-reset').addEventListener('click', () => {
     showConfirm(t('confirm.startOverTitle'), t('confirm.startOverBody'), () => {
       pushHistory();
@@ -2693,21 +2753,35 @@ function init() {
   $('#recrop-btn').addEventListener('click', openRecrop);
   $('#recrop-apply').addEventListener('click', applyRecrop);
 
-  /* PWA: register the service worker for offline use */
+  /* PWA: register the service worker for offline use. An updated worker
+     WAITS (sw.js no longer skipWaiting's); the pill offers to activate it,
+     and only then does the page reload. */
   if ('serviceWorker' in navigator) {
-    let hadController = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      /* A NEW worker claimed this page: an update installed in the
-         background. Only prompt when we already had a controller — the
-         first activation on a fresh visit is not an update. */
-      if (hadController) showUpdatePill();
-      hadController = true;
+      if (reloadOnControl) location.reload();
     });
+    const offer = worker => {
+      if (!worker || !navigator.serviceWorker.controller) return; /* first install */
+      waitingWorker = worker;
+      showUpdatePill();
+    };
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => { /* non-fatal */ });
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        if (reg.waiting) offer(reg.waiting);
+        reg.addEventListener('updatefound', () => {
+          const fresh = reg.installing;
+          if (!fresh) return;
+          fresh.addEventListener('statechange', () => {
+            if (fresh.state === 'installed') offer(fresh);
+          });
+        });
+      }).catch(() => { /* non-fatal */ });
     });
   }
-  $('#update-reload').addEventListener('click', () => location.reload());
+  $('#update-reload').addEventListener('click', () => {
+    if (waitingWorker) activateWaiting(waitingWorker);
+    else location.reload();
+  });
 
   initMode();
   rebuildAll();

@@ -249,6 +249,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   reject longer request lines) with "with images" as an explicit menu item;
   settings search moves to "/" and Ctrl+Shift+K (Ctrl+K belongs to the
   browser); E2E 209
+- [x] v0.72.0 — ops polish: releases ship signature-studio-<v>-app.zip
+  (deployables only, 391 KB); Saved shows a storage meter, per-snapshot
+  sizes and "Delete oldest" (never the last one); the service worker waits
+  for the update pill instead of skipWaiting; <noscript> notice; README no
+  longer hardcodes a test count; E2E 213
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

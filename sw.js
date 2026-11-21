@@ -2,7 +2,7 @@
    to invalidate the cache and ship a new precache set. */
 'use strict';
 
-const VERSION = 'sigstudio-v0.71.0';
+const VERSION = 'sigstudio-v0.72.0';
 
 const PRECACHE = [
   './',
@@ -35,10 +35,15 @@ const PRECACHE = [
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(VERSION)
-      .then(cache => cache.addAll(PRECACHE))
-      .then(() => self.skipWaiting())
+    caches.open(VERSION).then(cache => cache.addAll(PRECACHE))
   );
+  /* Deliberately NOT skipWaiting(): a new worker waits until the page asks,
+     so an update cannot swap cache generations under an open tab. */
+});
+
+self.addEventListener('message', event => {
+  const data = event.data || {};
+  if (data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
