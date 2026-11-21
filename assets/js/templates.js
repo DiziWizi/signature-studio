@@ -10,6 +10,17 @@ const esc = s => String(s ?? '')
    mail pipeline can attach parts with matching Content-IDs. The stored
    value (hosted URL or data URI) stays the asset's source of truth and
    is restored when the mode switches back. */
+/* Image srcs must be absolute: a bare host ("www.acme.com/logo.png")
+   copied out of an email becomes a RELATIVE url in the sent signature and
+   loads nowhere. data:/cid: pass through untouched. */
+const absoluteImgUrl = (url) => {
+  const v = String(url || '').trim();
+  if (!v) return '';
+  if (/^(data:|cid:|blob:|https?:)/i.test(v)) return v;
+  if (v.startsWith('//')) return 'https:' + v;
+  return 'https://' + v.replace(/^\/+/, '');
+};
+
 const imgSrcOf = (d, key, stored) => {
   const ref = d.imageRef || {};
   const refKey = key.startsWith('social-')
@@ -19,7 +30,7 @@ const imgSrcOf = (d, key, stored) => {
      to images without an explicit per-image setting. */
   const cid = ref[refKey] === 'cid' || (!ref[refKey] && d.imageMode === 'cid');
   if (cid && stored && String(stored).trim()) return `cid:sigstudio-${key}`;
-  return stored;
+  return absoluteImgUrl(stored);
 };
 
 const stackOf = d => {

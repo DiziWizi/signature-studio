@@ -372,6 +372,7 @@ document.addEventListener('visibilitychange', () => {
 function onFieldInput(e) {
   const el = e.target;
   if (!el || !el.dataset || !el.dataset.field) return;
+  if (typeof tourOnFirstEdit === 'function') tourOnFirstEdit();
   let v;
   if (el.type === 'checkbox') v = el.checked;
   else if (el.type === 'radio') { if (!el.checked) return; v = el.value; }
@@ -876,14 +877,25 @@ const TOUR_STEPS = [
 let tourStep = 0;
 let tourReturnFocus = null;
 
+let tourArmed = false;
 function maybeStartTour() {
   try {
     if (localStorage.getItem(TOUR_DONE_KEY)) return;
   } catch (e) { return; }
   if (wizardHadDraft) return; /* a draft already existed → returning user */
+  /* Never drop a spotlight bubble over a blank preview straight after the
+     wizard: arm the tour and start it on the user's first real edit. */
+  tourArmed = true;
+}
+
+function tourOnFirstEdit() {
+  if (!tourArmed) return;
+  tourArmed = false;
+  try { if (localStorage.getItem(TOUR_DONE_KEY)) return; } catch (e) { return; }
   openTour();
 }
 
+let tourRepositionTimer = null;
 function openTour() {
   const overlay = $('#tour-overlay');
   if (!overlay) return;
@@ -892,6 +904,15 @@ function openTour() {
      first step focuses the Next button. */
   overlay.classList.remove('hidden');
   tourShowStep(0);
+  /* The tour can now open mid-edit, when the layout is still settling
+     (empty-guide vanishing, reflow). Keep the spotlight glued on. */
+  if (!tourRepositionTimer) {
+    tourRepositionTimer = setInterval(() => {
+      const o = $('#tour-overlay');
+      if (!o || o.classList.contains('hidden')) { clearInterval(tourRepositionTimer); tourRepositionTimer = null; return; }
+      positionTour();
+    }, 300);
+  }
 }
 
 function tourShowStep(n) {
@@ -1865,7 +1886,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.59.0';
+const APP_VERSION = '0.60.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2300,7 +2321,7 @@ function init() {
   const programmaticClose = new WeakSet();
   if (firstVisit) {
     document.querySelectorAll('details[data-sec]').forEach(d => {
-      if (d.dataset.sec !== 'profile' && d.dataset.sec !== 'tpl') {
+      if (d.dataset.sec !== 'profile') {
         programmaticClose.add(d);
         d.removeAttribute('open');
       }

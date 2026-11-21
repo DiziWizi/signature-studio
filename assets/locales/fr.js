@@ -505,6 +505,7 @@ window.SIG_LOCALES.fr = {
   'audit.allGood': "Rien à signaler.",
   'audit.summaryClean': "Aucun avertissement — cette signature est propre.",
   'audit.summaryWarn': "{n} avertissement(s) trouvé(s).",
+  'audit.imgBadUrl': "L’URL de {what} n’est pas une adresse web — elle ne se chargera nulle part dans un e-mail. Utilisez https://… ou importez le fichier.",
   'dim.usedBy': "Uniquement en {names}",
   'reset.done': "Section réinitialisée aux valeurs par défaut.",
   'search.placeholder': "Rechercher un réglage… (Ctrl+K)",

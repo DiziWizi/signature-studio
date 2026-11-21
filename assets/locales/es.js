@@ -504,6 +504,7 @@ window.SIG_LOCALES.es = {
   'audit.allGood': "Nada que informar.",
   'audit.summaryClean': "Sin avisos — esta firma está limpia.",
   'audit.summaryWarn': "{n} aviso(s) encontrados.",
+  'audit.imgBadUrl': "La URL de {what} no es una dirección web: no cargará en el correo. Use https://… o suba el archivo.",
   'dim.usedBy': "Solo en {names}",
   'reset.done': "Sección restablecida a los valores predeterminados.",
   'search.placeholder': "Buscar ajustes… (Ctrl+K)",

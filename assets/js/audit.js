@@ -30,6 +30,15 @@ function buildAudit(state) {
     [t('audit.footerRight'), s.footerRightImg, null],
   ]) {
     if (!url) continue;
+    /* A value that isn't a web address (local path, spaces, ftp://) will
+       never load in a mail client — flag it before it ships. */
+    const raw = String(url).trim();
+    const isWeb = /^(data:|cid:|https?:\/\/|\/\/)/i.test(raw);
+    const normalised = isWeb ? raw : 'https://' + raw.replace(/^\/+/, '');
+    if (!isWeb && !/^https:\/\/[a-z0-9][a-z0-9.-]*\.[a-z]{2,}(:\d+)?([/?#]\S*)?$/i.test(normalised)) {
+      items.push({ kind: 'warn', text: t('audit.imgBadUrl', { what: label }) });
+      continue;
+    }
     if (String(url).startsWith('data:')) {
       const kb = auditDataUriSize(url);
       items.push({ kind: 'warn', text: t('audit.imgEmbedded', { what: label, size: kb < 1024 ? `${kb} B` : `${Math.round(kb / 1024)} KB` }) });

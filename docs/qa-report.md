@@ -1024,6 +1024,37 @@ Date: 2026-11-21 · Scope: usability batch 3, 4 and 6.
 
 ---
 
+# v0.60.0 addendum (adversarial-pass fixes)
+
+Date: 2026-11-21 · Scope: RED R1/R2, corrected R3, two P2s.
+
+## Notes
+
+- **R1 copy stall:** navigator.clipboard.write can stay pending forever
+  (WebKitGTK; Chromium after an OS file dialog steals focus), leaving
+  Copy silently dead. copySignature now races a 1500ms timeout, falls to
+  execCommand, then the manual-copy modal + toast. Test stalls the
+  clipboard, forces execCommand false, and proves the modal opens.
+- **R2 image URLs:** absoluteImgUrl() prefixes https:// on scheme-less
+  values (mail clients cannot resolve relative srcs); data:/cid:/blob:
+  pass through. The audit flags values that are not web addresses
+  (local paths, spaces) with audit.imgBadUrl ×4 locales.
+- **R3 correction:** the filed "wizard/tour fire mid-task" was a FALSE
+  POSITIVE caused by using offsetParent (always null on position:fixed
+  overlays). Re-measured with computed display: the wizard opens at load
+  (~1.3s), as designed. The genuine residue — the tour landing on a
+  blank preview immediately after the wizard — is fixed: the tour arms
+  on wizard skip and starts on the first field edit; the spotlight
+  repositions on a 300ms interval so reflow can't desync it; focus
+  returns to the field the user was editing.
+- **First visit** now opens Identity only (Template & layout starts
+  collapsed).
+- **Labels** 11px → 12px (field labels only; micro help text unchanged).
+- Note for future adversarial runs: measure overlays with
+  getComputedStyle, never offsetParent. Suite 166/166 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

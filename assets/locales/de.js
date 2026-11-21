@@ -504,6 +504,7 @@ window.SIG_LOCALES.de = {
   'audit.allGood': "Nichts zu melden.",
   'audit.summaryClean': "Keine Warnungen — diese Signatur ist sauber.",
   'audit.summaryWarn': "{n} Warnung(en) gefunden.",
+  'audit.imgBadUrl': "{what}-URL ist keine Webadresse — sie lädt in E-Mails nirgends. Verwenden Sie https://… oder laden Sie die Datei hoch.",
   'dim.usedBy': "Nur bei {names}",
   'reset.done': "Abschnitt auf Standard zurückgesetzt.",
   'search.placeholder': "Einstellungen durchsuchen… (Strg+K)",

@@ -56,6 +56,10 @@ test('a reload that flushes an empty default draft still gets the tour', async (
 
   await expect(page.locator('#modal-wizard')).not.toHaveClass(/hidden/);
   await page.click('#wiz-skip');
+  /* v0.60: no bubble over a blank preview — the tour arms and starts on
+     the user's first real edit. */
+  await expect(page.locator('#tour-overlay')).toHaveClass(/hidden/);
+  await page.fill('[data-field="profile.name"]', 'Ada');
   await expect(page.locator('#tour-overlay')).not.toHaveClass(/hidden/);
   await expect(page.locator('#tour-text')).toContainText('builds here');
   await page.keyboard.press('Escape');
@@ -63,13 +67,12 @@ test('a reload that flushes an empty default draft still gets the tour', async (
   expect(await page.evaluate(() => localStorage.getItem('sigstudio.tour.done'))).toBe('1');
 });
 
-test('essentials-first: a genuine first visit opens only Template and Identity', async ({ page }) => {
+test('essentials-first: a genuine first visit opens Identity only', async ({ page }) => {
   await firstVisitBoot(page);
   const open = sel =>
     page.locator(`details[data-sec="${sel}"]`).evaluate(el => el.open);
-  expect(await open('tpl')).toBe(true);
   expect(await open('profile')).toBe(true);
-  for (const sec of ['logo', 'contact', 'socials', 'org', 'type', 'blocks', 'adv', 'elements']) {
+  for (const sec of ['tpl', 'logo', 'contact', 'socials', 'org', 'type', 'blocks', 'adv', 'elements']) {
     expect(await open(sec), `${sec} should start closed on a first visit`).toBe(false);
   }
   /* Nothing persisted: the map is only written when the user toggles. */
@@ -125,6 +128,10 @@ test('pointer tour: plays after the wizard is skipped, walks 4 highlighted steps
   await expect(page.locator('#modal-wizard')).not.toHaveClass(/hidden/);
   await page.click('#wiz-skip');
 
+  /* v0.60: the tour arms on wizard skip but starts on the first edit, so
+     the spotlight never lands on a blank preview. */
+  await page.fill('[data-field="profile.name"]', 'Ada');
+
   const overlay = page.locator('#tour-overlay');
   await expect(overlay).not.toHaveClass(/hidden/);
   await expect(overlay).toHaveAttribute('role', 'dialog');
@@ -159,12 +166,15 @@ test('pointer tour: plays after the wizard is skipped, walks 4 highlighted steps
   await page.click('#tour-next');
   await expect(overlay).toHaveClass(/hidden/);
   expect(await page.evaluate(() => localStorage.getItem('sigstudio.tour.done'))).toBe('1');
-  await expect(page.locator('#btn-guide')).toBeFocused();
+  /* v0.60: the tour opens from the first edit, so focus returns to what the
+     user was using (the name field) rather than the Guide button. */
+  await expect(page.locator('[data-field="profile.name"]')).toBeFocused();
 });
 
 test('pointer tour: Skip closes it and marks it done', async ({ page }) => {
   await singleBoot(page);
   await page.click('#wiz-skip');
+  await page.fill('[data-field="profile.name"]', 'Ada');
   const overlay = page.locator('#tour-overlay');
   await expect(overlay).not.toHaveClass(/hidden/);
   await page.click('#tour-skip');
@@ -175,6 +185,7 @@ test('pointer tour: Skip closes it and marks it done', async ({ page }) => {
 test('pointer tour: Escape closes it and marks it done', async ({ page }) => {
   await singleBoot(page);
   await page.click('#wiz-skip');
+  await page.fill('[data-field="profile.name"]', 'Ada');
   const overlay = page.locator('#tour-overlay');
   await expect(overlay).not.toHaveClass(/hidden/);
   await page.keyboard.press('Escape');

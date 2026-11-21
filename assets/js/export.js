@@ -47,16 +47,27 @@ function plainTextVersion(s) {
   return lines.filter(l => l !== null).join('\n');
 }
 
+/* The async clipboard can STALL instead of rejecting (WebKitGTK, and
+   Chromium when the document lost focus to an OS dialog) — a promise that
+   never settles leaves the Copy button silently dead. Always race a
+   timeout, then fall back. */
+const COPY_TIMEOUT_MS = 1500;
+
 async function copySignature(html, plain) {
   if (navigator.clipboard && window.ClipboardItem && navigator.clipboard.write) {
     try {
-      await navigator.clipboard.write([
+      const write = navigator.clipboard.write([
         new ClipboardItem({
           'text/html': new Blob([html], { type: 'text/html' }),
           'text/plain': new Blob([plain], { type: 'text/plain' }),
         }),
+      ]).then(() => 'done', () => 'failed');
+      const outcome = await Promise.race([
+        write,
+        new Promise(resolve => setTimeout(() => resolve('timeout'), COPY_TIMEOUT_MS)),
       ]);
-      return 'clipboard';
+      if (outcome === 'done') return 'clipboard';
+      /* 'failed' or 'timeout' → legacy path below */
     } catch (e) {
       /* fall through to legacy path */
     }

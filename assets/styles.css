@@ -300,13 +300,13 @@ details[open] summary::before { transform: rotate(90deg); }
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--mut);
   text-transform: uppercase;
-  letter-spacing: .06em;
+  letter-spacing: .05em;
 }
-.field .lbl { font-size: 11px; }
+.field .lbl { font-size: 12px; }
 .field .opt { font-weight: 400; text-transform: none; letter-spacing: normal; opacity: .8; }
 .field .field-inline { display: flex; align-items: center; gap: 8px; font-size: 11px; }
 .field .field-inline select { flex: 1; }
