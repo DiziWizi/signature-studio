@@ -1221,6 +1221,25 @@ Date: 2026-11-21 · Scope: the workflow's static smoke test, not the app.
 
 ---
 
+# v0.66.2 addendum (QA audit — i18n regression)
+
+Date: 2026-11-21 · Scope: a regression from v0.65 found by the adversarial
+audit, plus the guard that would have caught it.
+
+- `.sec-tools-label` shipped with `data-i18n="reset.short"` but no such key
+  existed in any locale, so every section header rendered the literal
+  string "reset.short". Added ×4 (Reset / Zurücksetzen / Restablecer /
+  Réinitialiser), 592 keys each.
+- New spec `e2e/i18n-keys.spec.js` (4 tests, one per locale): opens every
+  section, then fails if any `[data-i18n]` element or i18n-bound
+  title/placeholder/aria attribute renders text shaped like a key
+  (`lowerCamel.dotted.path`). This class of bug is invisible to axe and to
+  per-feature specs — the string is valid text, just the wrong text.
+- Suite 189/189 twice locally. The full audit report (18 findings across
+  security, data-loss, import quality and a11y) is separate from the repo.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

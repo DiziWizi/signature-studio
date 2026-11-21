@@ -518,6 +518,7 @@ window.SIG_LOCALES.en = {
   'audit.imgBadUrl': "{what} URL is not a web address — it will load nowhere in email. Use https://… or upload the file.",
   'dim.usedBy': "Only in {names}",
   'reset.done': "Section reset to defaults.",
+  'reset.short': "Reset",
   'search.placeholder': "Search settings… (Ctrl+K)",
   'search.none': "No settings match",
   'sec.tpl': "Template & layout",

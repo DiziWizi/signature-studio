@@ -516,6 +516,7 @@ window.SIG_LOCALES.de = {
   'audit.imgBadUrl': "{what}-URL ist keine Webadresse — sie lädt in E-Mails nirgends. Verwenden Sie https://… oder laden Sie die Datei hoch.",
   'dim.usedBy': "Nur bei {names}",
   'reset.done': "Abschnitt auf Standard zurückgesetzt.",
+  'reset.short': "Zurücksetzen",
   'search.placeholder': "Einstellungen durchsuchen… (Strg+K)",
   'search.none': "Keine Einstellungen gefunden",
   'sec.tpl': "Vorlage & Layout",
