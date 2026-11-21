@@ -1179,6 +1179,31 @@ Date: 2026-11-21 · Scope: measured accessibility; layout drift insurance.
 
 ---
 
+# v0.66.0 addendum (undo coverage)
+
+Date: 2026-11-21 · Scope: every destructive edit is reversible.
+
+## Audit
+
+| Action | History before | Now |
+| --- | --- | --- |
+| Load sample persona | yes | yes |
+| Wizard finish | yes | yes |
+| Start over (confirm) | yes | yes |
+| Import (vCard / HTML) apply | yes | yes |
+| Preset import | yes | yes |
+| Saved-snapshot load | yes | yes |
+| **Section reset** | **no** | **yes** |
+| **JSON editor apply** | **no** | **yes** |
+
+- `resetSection()` and `applyJsonEditor()` now call `pushHistory()` before
+  mutating, so ↶ restores the pre-reset values and the previous document.
+- 2 new E2E tests (reset → undo restores logoWidth; JSON apply → undo
+  restores the name). The JSON test also caught that the textarea is
+  `#json-text`, not `#json-src`. Suite 185/185 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

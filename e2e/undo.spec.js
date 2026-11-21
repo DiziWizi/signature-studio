@@ -45,3 +45,43 @@ test('undo/redo adding a social', async ({ page }) => {
   await expect(page.locator('.social-row')).toHaveCount(1);
   await expectNoErrors(h);
 });
+
+test('section reset is undoable', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+
+  /* Change something in the Logo section, then reset the section. */
+  await page.fill('[data-field="design.logoWidth"]', '120');
+  await page.evaluate(() => {
+    const el = document.querySelector('[data-field="design.logoWidth"]');
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  expect(await page.evaluate(() => state.design.logoWidth)).toBe(120);
+
+  await page.click('.sec-reset[data-reset-sec="logo"]');
+  expect(await page.evaluate(() => state.design.logoWidth)).not.toBe(120);
+
+  await page.click('#btn-undo');
+  expect(await page.evaluate(() => state.design.logoWidth)).toBe(120);
+  await expectNoErrors(h);
+});
+
+test('applying edited JSON is undoable', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+  const before = await page.evaluate(() => state.profile.name);
+
+  /* Open the JSON editor from the export menu and apply a new name. */
+  await page.click('#btn-export');
+  await page.click('#x-json');
+  const edited = await page.locator('#json-text').inputValue();
+  const next = edited.replace(`"name": "${before}"`, '"name": "Grace Hopper"');
+  expect(next).not.toBe(edited);
+  await page.fill('#json-text', next);
+  await page.click('#json-apply');
+  expect(await page.evaluate(() => state.profile.name)).toBe('Grace Hopper');
+
+  await page.click('#btn-undo');
+  expect(await page.evaluate(() => state.profile.name)).toBe(before);
+  await expectNoErrors(h);
+});

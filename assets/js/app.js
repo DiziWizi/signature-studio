@@ -281,6 +281,7 @@ const SECTION_RESET_KEYS = {
 function resetSection(sec) {
   const keys = SECTION_RESET_KEYS[sec];
   if (!keys) return;
+  pushHistory(); /* a reset is a destructive edit — undo must restore it */
   const def = defaultState();
   for (const k of keys) {
     const defVal = k.startsWith('imageRef.')
@@ -1492,6 +1493,7 @@ function applyJsonEditor() {
     showToast(t('json.invalid'), 'err', { key: 'json.invalid' });
     return;
   }
+  pushHistory(); /* replacing the whole state must be undoable */
   state = normalizeLoadedState(parsed);
   closeOverlay('#modal-json');
   rebuildAll();
@@ -1944,7 +1946,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.65.0';
+const APP_VERSION = '0.66.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
