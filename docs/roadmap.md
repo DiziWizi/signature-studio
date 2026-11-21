@@ -278,6 +278,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   the background; separate name font (body stays put, Night included);
   name colour verified; social icons switch brand / monochrome / outline;
   derived muted text fixed from 3.2:1 to 4.6:1; E2E 239
+- [x] v0.78.0 — templates I: Booking (CTA-led), Vertical card (phone-width)
+  and Reply (one line for threads); the picker gains Personal / Business /
+  Creative filters plus honest layout chips (No images / Photo / Dark) fed
+  from template metadata; E2E 243
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

@@ -103,6 +103,12 @@
       <summary><span data-i18n="sec.tpl">Template &amp; layout</span></summary>
       <div class="body">
 <div class="sec-tools"><span class="sec-tools-label" data-i18n="reset.short">Reset</span> <button class="sec-reset" type="button" data-reset-sec="tpl" title="Reset this section" aria-label="Reset this section">↺</button></div>
+        <div class="tpl-filter" id="tpl-filter" role="group" aria-label="Filter templates" data-i18n-aria="tpl.filterLabel">
+          <button type="button" class="tpl-cat is-on" data-cat="all" aria-pressed="true" data-i18n="tpl.all">All</button>
+          <button type="button" class="tpl-cat" data-cat="personal" aria-pressed="false" data-i18n="tpl.personal">Personal</button>
+          <button type="button" class="tpl-cat" data-cat="business" aria-pressed="false" data-i18n="tpl.business">Business</button>
+          <button type="button" class="tpl-cat" data-cat="creative" aria-pressed="false" data-i18n="tpl.creative">Creative</button>
+        </div>
         <div class="tpl-picker" id="tpl-picker">
           <button class="tpl-btn" data-template="classic" type="button" aria-pressed="true">
             <span class="thumb"><iframe class="tthumb" data-tpl="classic" data-i18n-title="tpl.classicPreview" title="Classic preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
@@ -171,6 +177,18 @@
           <button class="tpl-btn" data-template="letterhead" type="button" aria-pressed="false">
             <span class="thumb"><iframe class="tthumb" data-tpl="letterhead" data-i18n-title="tpl.letterheadPreview" title="Letterhead preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
             <span class="tpl-name" data-i18n="tpl.letterhead">Letterhead</span>
+          </button>
+          <button class="tpl-btn" data-template="booking" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="booking" data-i18n-title="tpl.bookingPreview" title="Booking preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.booking">Booking</span>
+          </button>
+          <button class="tpl-btn" data-template="vertical" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="vertical" data-i18n-title="tpl.verticalPreview" title="Vertical card preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.vertical">Vertical card</span>
+          </button>
+          <button class="tpl-btn" data-template="reply" type="button" aria-pressed="false">
+            <span class="thumb"><iframe class="tthumb" data-tpl="reply" data-i18n-title="tpl.replyPreview" title="Reply preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
+            <span class="tpl-name" data-i18n="tpl.reply">Reply</span>
           </button>
           <button class="tpl-btn" data-template="custom" type="button" aria-pressed="false">
             <span class="thumb"><iframe class="tthumb" data-tpl="custom" data-i18n-title="tpl.customPreview" title="Custom preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>

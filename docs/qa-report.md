@@ -1577,6 +1577,29 @@ social treatment, name colour.
 
 ---
 
+# v0.78.0 addendum (templates I — three layouts and a picker that scales)
+
+Date: 2026-11-21 · Scope: Booking, Vertical card, Reply, categories, chips.
+
+- **Booking** — identity, contact stack, then the booking button as the one
+  loud element; socials and legal stay quiet beneath. Booking is only shown
+  when a URL exists, so the layout falls back gracefully to a plain centred
+  signature.
+- **Vertical card** — portrait (or monogram) on top at 1.8× logo width,
+  centred identity, hairline, contact stack. Deliberately no two-column row:
+  it is the layout that survives a 320 px mail view.
+- **Reply** — one row: name · role · company · inline contact. No logo, no
+  rule. Fits the 4th message of a thread.
+- **Picker** — `TEMPLATES` entries now carry `category` (personal / business /
+  creative) and an honest `badge` (noImages / photo / dark). `initTemplatePicker()`
+  applies both from that single source, so a new template cannot miss the
+  filter or invent a badge. Filter is a `role="group"` of pressed-state
+  buttons.
+- 4 new E2E tests (templates-batch.spec.js); visual baselines extended to 21
+  templates. Suite 243/243 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

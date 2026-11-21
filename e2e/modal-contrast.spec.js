@@ -83,7 +83,7 @@ test('template thumbnails scale to their tile at 320 px', async ({ page }) => {
     const f = tile.querySelector('.tthumb');
     return { tile: Math.round(tile.clientWidth), frame: Math.round(f.getBoundingClientRect().width) };
   }));
-  expect(fit.length).toBe(18);
+  expect(fit.length).toBe(21);
   for (const f of fit) {
     expect(f.frame).toBeLessThanOrEqual(f.tile + 1);
     expect(f.frame).toBeGreaterThan(f.tile - 6);

@@ -1494,6 +1494,39 @@ function updateSavedCount() {
 
 /* ── colour themes ────────────────────────────────────────────────────── */
 
+/* Template picker: categories come from TEMPLATES metadata, so a new layout
+   is one entry — it cannot drift out of the filter or lose its badge. */
+function initTemplatePicker() {
+  const picker = $('#tpl-picker');
+  if (!picker || typeof TEMPLATES === 'undefined') return;
+  TEMPLATES.forEach(def => {
+    const btn = picker.querySelector(`.tpl-btn[data-template="${def.id}"]`);
+    if (!btn) return;
+    btn.dataset.category = def.category || 'personal';
+    if (def.badge && !btn.querySelector('.tpl-badge')) {
+      const chip = document.createElement('span');
+      chip.className = `tpl-badge tpl-badge-${def.badge}`;
+      chip.textContent = t(`tpl.badge${def.badge.charAt(0).toUpperCase()}${def.badge.slice(1)}`);
+      btn.appendChild(chip);
+    }
+  });
+  const bar = $('#tpl-filter');
+  if (!bar) return;
+  bar.addEventListener('click', ev => {
+    const b = ev.target.closest('.tpl-cat');
+    if (!b) return;
+    const cat = b.dataset.cat;
+    bar.querySelectorAll('.tpl-cat').forEach(x => {
+      const on = x === b;
+      x.classList.toggle('is-on', on);
+      x.setAttribute('aria-pressed', String(on));
+    });
+    picker.querySelectorAll('.tpl-btn').forEach(btn => {
+      btn.classList.toggle('hidden', cat !== 'all' && btn.dataset.category !== cat);
+    });
+  });
+}
+
 function renderThemes() {
   const row = $('#themes-row');
   if (!row) return;
@@ -2431,7 +2464,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.77.0';
+const APP_VERSION = '0.78.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2535,6 +2568,8 @@ function init() {
   } catch (e) {
     if (new URLSearchParams(location.search).has('sig')) sigBootStatus = 'bad';
   }
+
+  initTemplatePicker();
 
   document.addEventListener('input', onFieldInput);
   document.addEventListener('change', onFieldInput);

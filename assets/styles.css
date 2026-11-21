@@ -318,6 +318,24 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* Template category filter + honest layout chips */
+.tpl-filter { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.tpl-cat {
+  font: inherit; font-size: 11px; padding: 3px 10px; cursor: pointer;
+  background: transparent; color: var(--mut);
+  border: 1px solid var(--line2); border-radius: 999px;
+}
+.tpl-cat.is-on { background: var(--accent-soft, rgba(120,140,255,.14)); color: var(--text); border-color: var(--accent, #7f8cf5); }
+.tpl-btn { position: relative; }
+.tpl-badge {
+  position: absolute; top: 4px; right: 4px; z-index: 1;
+  font-size: 9px; line-height: 1; padding: 3px 5px; border-radius: 4px;
+  background: rgba(10, 12, 18, .72); color: #e8ecf4; border: 1px solid rgba(255,255,255,.16);
+  pointer-events: none;
+}
+.tpl-badge-photo { background: rgba(38, 76, 120, .8); }
+.tpl-badge-dark { background: rgba(20, 20, 26, .85); }
+
 /* Contrast meter under the colour themes */
 .contrast-meter { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 8px; }
 .contrast-meter:empty { display: none; }

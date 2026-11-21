@@ -1525,6 +1525,80 @@ function mobileStyleBlock(d) {
    entire <body> payload without the doctype/html/head/body wrapper. Both
    renderSignature (full document) and export.renderFragment (bare block)
    are built on top of it, so the two can never drift apart. */
+
+/* Booking-first: identity, contact, then the booking button as the hero CTA.
+   Everything else is deliberately quiet so the action reads first. */
+function bookingRows(s, d) {
+  const rows = [];
+  const den = densityOf(d);
+  const logo = logoCellHtml(s, d);
+  if (logo) rows.push(`<tr><td align="center" style="padding:0 0 ${den.dividerMargin}px 0;">${logo}</td></tr>`);
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d) + statusHtml(s, d);
+  if (identity) rows.push(`<tr><td align="center">${identity}</td></tr>`);
+  const stack = contactStackHtml(s, d);
+  if (stack) {
+    rows.push(`<tr><td align="center" style="padding:${den.rowGap}px 0 0 0;">${stack}</td></tr>`);
+  }
+  const booking = bookingHtml(s, d);
+  if (booking) {
+    rows.push(`<tr><td align="center" style="padding:14px 0 6px 0;">${booking}</td></tr>`);
+  }
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    const nested = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`;
+    rows.push(`<tr><td align="center" style="padding-top:8px;">${nested}</td></tr>`);
+  }
+  rows.push(dividerHtml(d, 2, { center: true, short: true }));
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
+/* Vertical card: portrait on top, everything stacked beneath — the layout
+   that still reads correctly in a 320 px mail view. */
+function verticalRows(s, d) {
+  const rows = [];
+  const den = densityOf(d);
+  const w = Math.max(96, Math.round(d.logoWidth * 1.8));
+  const portrait = d.logoUrl
+    ? `<img src="${esc(imgSrcOf(d, 'logo', d.logoUrl))}" width="${w}" alt="${esc(String(d.logoAlt || 'logo'))}" ` +
+      `style="display:block;width:${w}px;max-width:${w}px;height:auto;border:0;${br(d, '10px')}">`
+    : monogramHtml(s, d);
+  rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.dividerMargin}px 0;">${portrait}</td></tr>`);
+  const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d) + statusHtml(s, d);
+  if (identity) rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
+  rows.push(dividerHtml(d, 2, { center: true, short: true }));
+  const stack = contactStackHtml(s, d);
+  if (stack) {
+    rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
+    rows.push(spacerHtml(den.rowGap));
+  }
+  const booking = bookingHtml(s, d);
+  if (booking) {
+    rows.push(`<tr><td colspan="2" align="center">${booking}</td></tr>`);
+    rows.push(spacerHtml(8));
+  }
+  const socials = socialsRowHtml(s, d);
+  if (socials) {
+    const nested = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`;
+    rows.push(`<tr><td colspan="2" align="center">${nested}</td></tr>`);
+  }
+  rows.push(legalHtml(s, d));
+  return rows.join('\n');
+}
+
+/* Reply: one line, no logo, no rule — the signature you actually want on the
+   fourth message of a thread. */
+function replyRows(s, d) {
+  const name = nameHtml(s, d).replace(/<br>$/, '');
+  const role = [s.profile.jobTitle, s.profile.company].filter(Boolean).map(esc).join(' · ');
+  const contact = contactInlineHtml(s, d, { labels: false });
+  const sep = `<span style="color:${mutedColor(d)}"> · </span>`;
+  const bits = [name];
+  if (role) bits.push(`<span style="${textStyle(d, { color: mutedColor(d) })}">${role}</span>`);
+  if (contact) bits.push(contact);
+  return `<tr><td>${bits.join(sep)}</td></tr>\n${legalHtml(s, d)}`;
+}
+
 function renderInner(state) {
   /* Clamp user/imported numeric values so the output can never degenerate. */
   const raw = state.design || {};
@@ -1553,6 +1627,9 @@ function renderInner(state) {
     case 'night':      inner = nightRows(s, d); break;
     case 'letterhead': inner = letterheadRows(s, d); break;
     case 'custom':     inner = customRows(s, d); break;
+    case 'booking':    inner = bookingRows(s, d); break;
+    case 'vertical':   inner = verticalRows(s, d); break;
+    case 'reply':      inner = replyRows(s, d); break;
     default:          inner = classicRows(s, d);
   }
 
