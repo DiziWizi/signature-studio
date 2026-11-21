@@ -96,11 +96,117 @@ function renderPreview() {
    on data-when (space-separated = ALL must be on) and data-when-fill
    (field must be non-empty). Special subjects: @socials, @pronouns,
    @status. */
+/* ── settings search ──────────────────────────────────────────────────── */
+
+let settingsFilterActive = false;
+
+function applySettingsFilter() {
+  const input = $('#settings-search');
+  if (!input) return;
+  const q = input.value.trim().toLowerCase();
+  const empty = $('#settings-search-empty');
+  const wasActive = settingsFilterActive;
+  settingsFilterActive = q.length > 0;
+
+  if (!settingsFilterActive) {
+    document.querySelectorAll('.filtered-out').forEach(el => el.classList.remove('filtered-out'));
+    document.querySelectorAll('details[data-sec]').forEach(s => s.classList.remove('hidden'));
+    if (empty) empty.classList.add('hidden');
+    if (wasActive) applyFieldVisibility();
+    return;
+  }
+
+  /* Searching reveals everything a feature toggle would hide — a match
+     must never be a phantom result. */
+  document.querySelectorAll('#main [data-when].hidden, #main [data-when-fill].hidden')
+    .forEach(el => el.classList.remove('hidden'));
+
+  let total = 0;
+  document.querySelectorAll('details[data-sec]').forEach(sec => {
+    const sumEl = sec.querySelector(':scope > summary');
+    const sumMatch = (sumEl ? sumEl.textContent : '').toLowerCase().includes(q);
+    let hits = 0;
+    const controls = sec.querySelectorAll('.body .field, .body label.switch, .body .range-row, .body .tpl-btn, .body .hint, .body .quick, .body .themes-row');
+    controls.forEach(c => {
+      /* A control nested inside another control (a range row inside its
+         field) is governed by its owner — otherwise the slider vanishes
+         while its label row stays. */
+      const owner = c.parentElement && c.parentElement.closest('.field, label.switch');
+      if (owner && owner !== c) {
+        c.classList.remove('filtered-out');
+        return;
+      }
+      const sub = c.closest('details.sub');
+      const subEl = sub ? sub.querySelector(':scope > summary') : null;
+      const subMatch = subEl ? subEl.textContent.toLowerCase().includes(q) : false;
+      const own = (c.textContent || '').toLowerCase().includes(q);
+      const show = sumMatch || subMatch || own;
+      c.classList.toggle('filtered-out', !show);
+      if (show) hits++;
+    });
+    sec.querySelectorAll('details.sub').forEach(sub => {
+      const subEl = sub.querySelector(':scope > summary');
+      const sM = subEl ? subEl.textContent.toLowerCase().includes(q) : false;
+      const hasHit = [...sub.querySelectorAll('.field, label.switch')].some(x => !x.classList.contains('filtered-out'));
+      const keep = sumMatch || sM || hasHit;
+      sub.classList.toggle('filtered-out', !keep);
+      if (keep) sub.open = true;
+    });
+    const showSec = sumMatch || hits > 0;
+    sec.classList.toggle('hidden', !showSec);
+    if (showSec) { sec.open = true; total += Math.max(hits, 1); }
+  });
+  if (empty) empty.classList.toggle('hidden', total > 0);
+}
+
+/* Preview → settings: clicking an annotated element scrolls to and
+   flashes the control that produces it. */
+const EDIT_TARGETS = {
+  name: 'profile.name', pronouns: 'profile.pronouns', title: 'profile.title',
+  company: 'profile.company', tagline: 'profile.tagline', location: 'profile.location',
+  status: 'design.statusText', legal: 'design.legalText', qr: 'design.showQr',
+  divider: 'design.dividerStyle', logo: 'design.logoUrl', banner: 'design.bannerUrl',
+};
+
+function revealControl(key) {
+  if (!key) return;
+  let sel = null;
+  let section = null;
+  if (key.startsWith('contact:')) {
+    sel = `[data-field="contact.${key.slice(8)}"]`;
+    section = 'contact';
+  } else if (key === 'socials') {
+    section = 'socials';
+  } else if (key === 'footer') {
+    section = 'org';
+  } else if (EDIT_TARGETS[key]) {
+    sel = `[data-field="${EDIT_TARGETS[key]}"]`;
+  }
+  let el = sel ? document.querySelector(sel) : null;
+  const sec = section
+    ? document.querySelector(`details[data-sec="${section}"]`)
+    : (el ? el.closest('details[data-sec]') : null);
+  if (!sec) return;
+  if (!sec.open) sec.open = true;
+  const sub = el ? el.closest('details.sub') : null;
+  if (sub && !sub.open) sub.open = true;
+  /* Controls can be hidden by conditional visibility — fall back to the
+     section header in that case. */
+  const visibleEl = el && el.offsetParent !== null ? el : null;
+  const target = visibleEl ? (visibleEl.closest('.field, label.switch') || visibleEl) : (sec.querySelector(':scope > summary') || sec);
+  target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  target.classList.remove('flash');
+  void target.offsetWidth; /* restart the animation */
+  target.classList.add('flash');
+  setTimeout(() => target.classList.remove('flash'), 1700);
+}
+
 function visOn(v) {
   return !(v === false || v === '' || v === null || v === undefined);
 }
 function applyFieldVisibility() {
   if (!state) return;
+  if (settingsFilterActive) return; /* search reveals everything */
   const hasSocials = (state.socials || []).some(x => String(x.url || '').trim());
   const specials = {
     '@socials': hasSocials,
@@ -120,10 +226,15 @@ function applyFieldVisibility() {
 
 function renderPreviewNow() {
   const frame = $('#preview-frame');
-  const html = renderSignature(state).replace(
-    '</body>',
-    '<script>document.addEventListener("click",function(e){e.preventDefault();},true);<\/script></body>'
-  );
+  /* Annotated render (data-edit) + click reporter: clicks never navigate,
+     they tell the editor which control produced the clicked element. */
+  const previewScript =
+    '<style>[data-edit]{cursor:pointer}[data-edit]:hover{outline:1px dashed rgba(91,124,250,.75);outline-offset:2px}</style>' +
+    '<script>document.addEventListener("click",function(e){e.preventDefault();' +
+    'var t=e.target,el=t&&t.closest?t.closest("[data-edit]"):null;' +
+    'try{parent.postMessage({__sigstudio:"edit",key:el?el.getAttribute("data-edit"):""},"*");}catch(err){}' +
+    '},true);<\/script>';
+  const html = renderSignaturePreview(state).replace('</body>', previewScript + '</body>');
   frame.srcdoc = html;
   applyFieldVisibility();
   renderThumbs();
@@ -1687,7 +1798,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.57.0';
+const APP_VERSION = '0.58.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2151,6 +2262,30 @@ function init() {
   bindImageUpload('#upload-footer-left', '#footer-left-file', 'design.footerLeftImg');
   bindImageUpload('#upload-footer-center', '#footer-center-file', 'design.footerCenterImg');
   bindImageUpload('#upload-footer-right', '#footer-right-file', 'design.footerRightImg');
+
+  /* Settings search: filter as you type; Ctrl/Cmd+K focuses, Esc clears. */
+  const ssearch = $('#settings-search');
+  if (ssearch) {
+    ssearch.addEventListener('input', applySettingsFilter);
+    ssearch.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        ssearch.value = '';
+        applySettingsFilter();
+        ssearch.blur();
+      }
+    });
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && (e.key || '').toLowerCase() === 'k') {
+        e.preventDefault();
+        ssearch.focus();
+        ssearch.select();
+      }
+    });
+  }
+  window.addEventListener('message', e => {
+    const m = e.data || {};
+    if (m.__sigstudio === 'edit') revealControl(m.key);
+  });
   $('#recrop-btn').addEventListener('click', openRecrop);
   $('#recrop-apply').addEventListener('click', applyRecrop);
 

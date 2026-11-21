@@ -80,6 +80,12 @@
 <main class="layout" id="main" tabindex="-1">
 
   <section class="editor" aria-label="Signature editor" data-i18n-aria="sec.editorAria">
+    <div class="sec-search">
+      <input id="settings-search" type="search" autocomplete="off" spellcheck="false"
+             placeholder="Search settings… (Ctrl+K)" data-i18n-placeholder="search.placeholder"
+             aria-label="Search settings" data-i18n-aria="search.placeholder">
+      <span id="settings-search-empty" class="micro hidden" data-i18n="search.none">No settings match</span>
+    </div>
 
     <details open data-sec="tpl">
       <summary data-i18n="sec.tpl">Template &amp; layout</summary>

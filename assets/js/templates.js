@@ -138,8 +138,8 @@ const photoShapeOfDesign = d => d.photoShape || (d.roundPhoto ? 'circle' : 'squa
 
 /* ── small pieces ─────────────────────────────────────────────────────── */
 
-function imgTag(url, width, alt, extra = '') {
-  return `<img src="${esc(url)}" width="${width}" alt="${esc(alt)}" ` +
+function imgTag(url, width, alt, extra = '', attrs = '') {
+  return `<img ${attrs}src="${esc(url)}" width="${width}" alt="${esc(alt)}" ` +
     `style="display:block;width:${width}px;max-width:${width}px;height:auto;border:0;${extra}">`;
 }
 
@@ -171,7 +171,7 @@ function nameHtml(s, d, { big = true, size = 0 } = {}) {
       ? `<br><span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 4, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
       : ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
     : '';
-  return `<span${dmCls(d, 'txt')} style="${style}">${esc(shownWithHonorifics)}</span>${pronouns}<br>`;
+  return `<span${dmCls(d, 'txt')} data-edit="name" style="${style}">${esc(shownWithHonorifics)}</span>${pronouns.replace('<span', '<span data-edit="pronouns"')}<br>`;
 }
 
 /* Personal context line: location · languages, muted under the title. */
@@ -179,7 +179,7 @@ function contextLineHtml(s, d) {
   if (d.showLocation === false) return '';
   const bits = [s.profile.location, s.profile.languages].filter(Boolean);
   if (!bits.length) return '';
-  return `<span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d) })}">${esc(bits.join('  ·  '))}</span><br>`;
+  return `<span${dmCls(d, 'mut')} data-edit="location" style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d) })}">${esc(bits.join('  ·  '))}</span><br>`;
 }
 
 /* Strict mode: Word-engine Outlook ignores border-radius entirely, so
@@ -194,7 +194,7 @@ function statusHtml(s, d) {
   if (d.showStatus === false) return '';
   const text = String(s.design.statusText || '').trim();
   if (!text) return '';
-  return `<span style="display:inline-block;background-color:${s.design.statusColor || '#2f9e44'};color:#ffffff;` +
+  return `<span data-edit="status" style="display:inline-block;background-color:${s.design.statusColor || '#2f9e44'};color:#ffffff;` +
     `${br(d, '10px')}padding:1px 9px;font-family:${stackOf(d)};font-size:${d.fontSize - 3}px;` +
     `line-height:1.7;font-weight:bold;">${esc(text)}</span>`;
 }
@@ -218,7 +218,7 @@ function titleHtml(s, d) {
   ].filter(Boolean);
   if (!bits.length) return '';
   const style = textStyle(d, { size: d.fontSize, color: mutedColor(d) });
-  return `<span${dmCls(d, 'mut')} style="${style}">${esc(bits.join('  ·  '))}</span><br>`;
+  return `<span${dmCls(d, 'mut')} data-edit="title" style="${style}">${esc(bits.join('  ·  '))}</span><br>`;
 }
 
 function companyHtml(s, d) {
@@ -226,9 +226,9 @@ function companyHtml(s, d) {
   const style = textStyle(d, { size: d.fontSize, color: linkColorOf(d), weight: 'bold' });
   if (s.contact.website && d.showWebsite !== false) {
     const href = normalizeUrl('custom', s.contact.website);
-    return `<a href="${esc(href)}" style="${style};text-decoration:none;">${esc(s.profile.company)}</a><br>`;
+    return `<a href="${esc(href)}" data-edit="company" style="${style};text-decoration:none;">${esc(s.profile.company)}</a><br>`;
   }
-  return `<span style="${style}">${esc(s.profile.company)}</span><br>`;
+  return `<span data-edit="company" style="${style}">${esc(s.profile.company)}</span><br>`;
 }
 
 /* Company tagline: muted line under the company name. Subordinate to the
@@ -238,7 +238,7 @@ function taglineHtml(s, d) {
   const tag = String(s.profile.tagline || '').trim();
   if (!tag) return '';
   const weight = d.taglineWeight === 'bold' ? 'bold' : undefined;
-  return `<span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d), weight })}">${esc(tag)}</span><br>`;
+  return `<span${dmCls(d, 'mut')} data-edit="tagline" style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d), weight })}">${esc(tag)}</span><br>`;
 }
 
 function contactItems(s, d = {}) {
@@ -279,7 +279,7 @@ function contactLineHtml(d, item, { labels = true } = {}) {
   }
   const label = labels && item.label
     ? `<span${cls} style="${style};font-weight:bold;">${esc(item.label)}: </span>` : '';
-  return `<span${cls} style="${style};">${label}${inner}</span>`;
+  return `<span${cls} data-edit="contact:${item.key}" style="${style};">${label}${inner}</span>`;
 }
 
 function contactStackHtml(s, d, opts = {}) {
@@ -315,11 +315,11 @@ function socialChipHtml(d, soc, withLabel, size = 22) {
     : `<span style="display:inline-block;width:${size}px;height:${size}px;line-height:${size}px;text-align:center;` +
       `background-color:${color};color:#ffffff;${br(d, '11px')}` +
       `font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:bold;vertical-align:middle;">${esc(glyph)}</span>`;
-  if (!withLabel) return `<a href="${esc(href)}" style="text-decoration:none;">${chip}</a>`;
+  if (!withLabel) return `<a href="${esc(href)}" data-edit="socials" style="text-decoration:none;">${chip}</a>`;
   const clsAttr = d.darkModeFriendly ? ' class="dm-txt"' : '';
   const label = `<span${clsAttr} style="display:inline-block;vertical-align:middle;` +
     `font-family:${stackOf(d)};font-size:${d.fontSize - 2}px;color:${d.textColor};padding-left:5px;">${esc(net.name)}</span>`;
-  return `<a href="${esc(href)}" style="text-decoration:none;">${chip}${label}</a>`;
+  return `<a href="${esc(href)}" data-edit="socials" style="text-decoration:none;">${chip}${label}</a>`;
 }
 
 /* Chips in a nested table row — reliable in every client. */
@@ -333,7 +333,7 @@ function socialsRowHtml(s, d) {
     const parts = socials.map(soc => {
       const net = networkById(soc.network);
       const color = net.id === 'custom' ? (soc.color || '#5b6472') : net.color;
-      return `<a href="${esc(normalizeUrl(net.id, soc.url))}" style="font-family:${stackOf(d)};` +
+      return `<a href="${esc(normalizeUrl(net.id, soc.url))}" data-edit="socials" style="font-family:${stackOf(d)};` +
         `font-size:${d.fontSize - 2}px;color:${color};text-decoration:none;">${esc(net.name)}</a>`;
     });
     const sep = `<span style="font-size:${d.fontSize - 2}px;color:${mutedColor(d)};">&nbsp;·&nbsp;</span>`;
@@ -370,7 +370,7 @@ function legalHtml(s, d, cols = 2) {
   if (!d.showLegal || !String(d.legalText || '').trim()) return '';
   const style = textStyle(d, { size: 10, color: mutedColor(d) });
   return `<tr><td colspan="${cols}" style="padding-top:6px;">` +
-    `<span${dmCls(d, 'mut')} style="${style}">${esc(d.legalText)}</span></td></tr>`;
+    `<span${dmCls(d, 'mut')} data-edit="legal" style="${style}">${esc(d.legalText)}</span></td></tr>`;
 }
 
 function spacerHtml(h, cols = 2) {
@@ -398,7 +398,7 @@ function logoCellHtml(s, d) {
   if (d.logoUrl) {
     const shape = photoShapeOfDesign(d);
     const radius = shape === 'circle' ? br(d, '50%') : shape === 'rounded' ? br(d, '10px') : '';
-    return imgTag(imgSrcOf(d, 'logo', d.logoUrl), d.logoWidth, String(s.design.logoAlt || 'logo'), radius);
+    return imgTag(imgSrcOf(d, 'logo', d.logoUrl), d.logoWidth, String(s.design.logoAlt || 'logo'), radius, 'data-edit="logo" ');
   }
   if (d.useMonogram) return monogramHtml(s, d);
   return '';
@@ -573,7 +573,7 @@ function minimalRows(s, d) {
    (the banner simply renders unlinked). Empty bannerLink → byte-identical
    output, no wrapper. */
 function bannerImgHtml(s, d) {
-  const img = imgTag(imgSrcOf(d, 'banner', d.bannerUrl), 600, String(s.design.bannerAlt || 'banner'));
+  const img = imgTag(imgSrcOf(d, 'banner', d.bannerUrl), 600, String(s.design.bannerAlt || 'banner'), '', 'data-edit="banner" ');
   const raw = String(d.bannerLink || '').trim();
   if (!raw) return img;
   const href = normalizeUrl('custom', raw);
@@ -1103,7 +1103,7 @@ function footerRowHtml(s, d) {
   const row = footerCellHtml(d, 'footerLeftImg', 'footerLeftText', 'left') +
     footerCellHtml(d, 'footerCenterImg', 'footerCenterText', 'center') +
     footerCellHtml(d, 'footerRightImg', 'footerRightText', 'right');
-  return `<tr><td colspan="2"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>${row}</tr></table></td></tr>`;
+  return `<tr><td colspan="2" data-edit="footer"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>${row}</tr></table></td></tr>`;
 }
 
 /* Enterprise: identity, contact details, a support module, organisational
@@ -1563,7 +1563,14 @@ ${bodyRows.split('\n').map(l => '        ' + l).join('\n')}
 </table>`;
 }
 
-function renderSignature(state) {
+/* Preview-only annotations (data-edit) let a click in the live preview
+   highlight the matching control. Exports strip them so the copy stays
+   clean and byte-identical. */
+function stripEditMarks(html) {
+  return String(html).replace(/ data-edit="[^"]*"/g, '');
+}
+
+function renderSignatureDoc(state) {
   const raw = state.design || {};
   const d = Object.assign({}, raw, {
     fontSize: Math.min(18, Math.max(10, Number(raw.fontSize) || 14)),
@@ -1585,4 +1592,12 @@ ${renderInner(state)}
 </body>
 </html>`;
   return doc;
+}
+
+function renderSignature(state) {
+  return stripEditMarks(renderSignatureDoc(state));
+}
+
+function renderSignaturePreview(state) {
+  return renderSignatureDoc(state);
 }

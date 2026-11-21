@@ -975,6 +975,30 @@ conditional visibility.
 
 ---
 
+# v0.58.0 addendum (settings search + preview linking)
+
+Date: 2026-11-21 · Scope: recommendations 1 and 2 from the usability pass.
+
+## Notes
+
+- Search: sticky input above the sections; matches control text and
+  section/sub-group headings; non-matching controls (.filtered-out) and
+  empty sections hide; matching sub-groups auto-open; while searching,
+  data-when hides are suspended so a match is never a phantom result;
+  Ctrl/Cmd+K focuses, Esc clears. Nested controls (range rows) are
+  governed by their owning field — otherwise the slider vanished while
+  its label stayed.
+- Preview linking: templates emit data-edit marks (name, pronouns,
+  title, company, tagline, location, status, legal, divider, logo,
+  banner, socials, footer, contact:<key>) only in the preview render;
+  renderSignature/renderFragment strip them so exports stay clean. The
+  preview iframe posts {__sigstudio:'edit'} on click; the editor opens
+  the containing section/sub-group, scrolls the control into view and
+  flashes it. Hidden controls fall back to the section header.
+- 2 new i18n keys x4 (579 each). Suite 157/157 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

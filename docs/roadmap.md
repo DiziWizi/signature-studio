@@ -177,6 +177,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   nested sub-groups (Colours/Typography/Spacing/Divider, Style &
   position, vCard extras, Support module); conditional visibility hides
   controls whose feature is off or whose subject is empty; E2E now 152
+- [x] v0.58.0 — settings search (Ctrl/Cmd+K, filters across sections,
+  reveals feature-hidden controls, empty state) and preview → settings
+  linking (click any element in the live preview to jump to and flash
+  the control that produces it; data-edit annotations stripped from
+  every export); E2E now 157
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

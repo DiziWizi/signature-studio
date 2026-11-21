@@ -100,7 +100,8 @@ function downloadSignature(html, name) {
    renderSignature emits between <body> and </body> byte-for-byte. */
 function renderFragment(state) {
   if (typeof renderInner !== 'function') return '';
-  return renderInner(state);
+  /* Strip preview-only data-edit marks so exports stay clean. */
+  return renderInner(state).replace(/ data-edit="[^"]*"/g, '');
 }
 
 /* Apple Mail stores signatures as .mailsignature files: the HTML fragment

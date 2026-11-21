@@ -505,6 +505,8 @@ window.SIG_LOCALES.fr = {
   'audit.allGood': "Rien à signaler.",
   'audit.summaryClean': "Aucun avertissement — cette signature est propre.",
   'audit.summaryWarn': "{n} avertissement(s) trouvé(s).",
+  'search.placeholder': "Rechercher un réglage… (Ctrl+K)",
+  'search.none': "Aucun réglage ne correspond",
   'sec.tpl': "Modèle et mise en page",
   'sec.logo': "Logo et photo",
   'sec.type': "Couleurs et typographie",

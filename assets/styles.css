@@ -197,6 +197,32 @@ summary::before {
 }
 details[open] summary::before { transform: rotate(90deg); }
 
+/* Settings search: sticky above the section list. */
+.sec-search { position: sticky; top: 0; z-index: 6; background: var(--bg); padding: 2px 0 10px; }
+.sec-search input {
+  width: 100%;
+  background: var(--panel2);
+  border: 1px solid var(--line2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-size: 13.5px;
+  font-family: inherit;
+}
+.sec-search input:focus { outline: none; border-color: var(--acc); box-shadow: 0 0 0 3px rgba(91, 124, 250, .22); }
+.sec-search .micro { display: block; margin-top: 6px; }
+.filtered-out { display: none !important; }
+
+/* Preview → settings flash */
+.flash { animation: flashPulse 1.6s ease; }
+@keyframes flashPulse {
+  0%, 100% { box-shadow: none; }
+  12%, 55% { box-shadow: 0 0 0 3px rgba(91, 124, 250, .75); border-radius: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flash { animation-duration: .01s; outline: 2px solid var(--acc); outline-offset: 2px; }
+}
+
 .body { padding: 2px 16px 18px; }
 
 /* Nested sub-groups inside a section body (Progressive sections):
