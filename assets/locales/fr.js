@@ -474,6 +474,11 @@ window.SIG_LOCALES.fr = {
   'check.badEmail': "Cette adresse e-mail semble incomplète — vos destinataires risquent de ne pas vous joindre.",
   'check.badPhone': "Ce numéro semble trop court pour être appelé.",
   'check.badUrl': "Cette adresse web n’en est pas une — le lien serait mort. Utilisez https://… ou laissez vide.",
+  'field.errEmail': "Semble incomplète — personne ne pourra vous répondre.",
+  'field.errPhone': "Trop court pour être appelé.",
+  'field.errUrl': "Pas une adresse web — utilisez https://… ou laissez vide.",
+  'check.countAnnounce': "{n} élément(s) à vérifier.",
+  'check.readyAnnounce': "Prêt à exporter — rien ne manque.",
   'check.longLine': "Un mot très long sans espace peut décaler la signature sur le côté dans Outlook.",
 
   'concise.summary': '{lines} {lineWord} · la plus longue ~{longest} caractères — {verdict}',

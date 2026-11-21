@@ -473,6 +473,11 @@ window.SIG_LOCALES.de = {
   'check.badEmail': "Diese E-Mail-Adresse wirkt unvollständig — Empfänger erreichen Sie evtl. nicht.",
   'check.badPhone': "Diese Telefonnummer ist zu kurz zum Wählen.",
   'check.badUrl': "Diese Website ist keine Webadresse — der Link wäre tot. Nutzen Sie https://… oder lassen Sie das Feld leer.",
+  'field.errEmail': "Wirkt unvollständig — darauf kann niemand antworten.",
+  'field.errPhone': "Zu kurz zum Wählen.",
+  'field.errUrl': "Keine Webadresse — nutzen Sie https://… oder lassen Sie es leer.",
+  'check.countAnnounce': "{n} Punkt(e) zu prüfen.",
+  'check.readyAnnounce': "Bereit zum Export — nichts fehlt.",
   'check.longLine': "Ein sehr langes, ununterbrochenes Wort kann die Signatur in Outlook seitlich verschieben.",
 
   'concise.summary': '{lines} {lineWord} · längste ~{longest} Zeichen — {verdict}',

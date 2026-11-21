@@ -473,6 +473,11 @@ window.SIG_LOCALES.es = {
   'check.badEmail': "Esa dirección de correo parece incompleta: puede que no te escriban.",
   'check.badPhone': "Ese teléfono parece demasiado corto para marcar.",
   'check.badUrl': "Esa web no es una dirección válida: el enlace quedaría roto. Usa https://… o déjalo vacío.",
+  'field.errEmail': "Parece incompleta: nadie podría responderte.",
+  'field.errPhone': "Demasiado corto para marcar.",
+  'field.errUrl': "No es una dirección web: usa https://… o déjalo vacío.",
+  'check.countAnnounce': "{n} elemento(s) por revisar.",
+  'check.readyAnnounce': "Listo para exportar: no falta nada.",
   'check.longLine': "Una palabra muy larga sin espacios puede desplazar la firma hacia un lado en Outlook.",
 
   'concise.summary': '{lines} {lineWord} · la más larga ~{longest} caracteres — {verdict}',

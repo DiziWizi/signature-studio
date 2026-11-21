@@ -1454,6 +1454,33 @@ Date: 2026-11-21 · Scope: T5–T9.
 
 ---
 
+# v0.73.0 addendum (accessibility batch 1 — form semantics)
+
+Date: 2026-11-21 · Scope: A1, A2, A3, A5 from the accessibility review.
+
+- **A1** — `autocomplete` tokens (name, nickname, organization,
+  organization-title, address-level2, email, tel, url, street-address) and
+  `type=tel/url` + `inputmode` on every identity/contact field. Two email
+  inputs already had `type=email`.
+- **A2** — inline validation: shared `validEmail/validPhone/validSite`
+  helpers drive both the checklist and a `.field-error` note under the
+  field, with `aria-invalid` + `aria-describedby`; cleared when fixed.
+- **A3** — `#check-announce` (role=status) announces "N item(s) to review" /
+  "Ready to export" without re-reading the list; "No settings match" and the
+  Saved count are live too.
+- **A5** — a visually hidden `<h1>` and ten section titles exposed as
+  `role="heading" aria-level="2"`; the four summaries that carried
+  `data-i18n` directly were normalised to the same inner-span shape.
+- **Bonus, found by the new axe test**: `.tpl-dim` used `opacity:.45`,
+  which took 12 px text to **2.27:1** — a real WCAG 1.4.3 failure that the
+  earlier axe run missed because the dimmed fields sat outside its sample.
+  Dimming is now a dashed outline + the existing "Only in …" chip; `.opt`
+  and the saving state also lost their sub-1 opacity.
+- 6 new E2E tests (a11y-forms.spec.js, including axe with an invalid field).
+  Suite 219/219 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

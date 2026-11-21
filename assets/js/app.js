@@ -394,6 +394,7 @@ function renderPreviewNow() {
   if (peek && !$('#peek-sheet').classList.contains('hidden')) peek.srcdoc = html;
   applyFieldVisibility();
   applyTemplateDimming();
+  applyFieldErrors();
   renderThumbs();
   updateConciseness();
   updateChecklist();
@@ -1146,6 +1147,52 @@ function initQuickSwitch() {
 
 /* Every warning names the control that fixes it (data-field path or a
    section id) so the checklist can jump there. */
+/* One definition of "valid" for both the checklist and the inline hints. */
+function validEmail(v) {
+  const s = String(v || '').trim();
+  return !s || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s);
+}
+function validPhone(v) {
+  const s = String(v || '').trim();
+  return !s || s.replace(/\D/g, '').length >= 6;
+}
+function validSite(v) {
+  const s = String(v || '').trim();
+  return !s || !!normalizeUrl('custom', s);
+}
+
+/* Inline error text for the three fields where a typo silently produces a
+   dead link or an unreachable address. Runs on every preview render. */
+function applyFieldErrors() {
+  const rules = [
+    ['contact.email', validEmail, 'field.errEmail'],
+    ['contact.phone', validPhone, 'field.errPhone'],
+    ['contact.website', validSite, 'field.errUrl'],
+  ];
+  for (const [path, ok, key] of rules) {
+    const el = document.querySelector(`[data-field="${path}"]`);
+    if (!el) continue;
+    const field = el.closest('.field') || el.parentElement;
+    if (!field) continue;
+    let note = field.querySelector('.field-error');
+    if (ok(getPath(state, path))) {
+      if (note) note.remove();
+      el.removeAttribute('aria-invalid');
+      el.removeAttribute('aria-describedby');
+      continue;
+    }
+    if (!note) {
+      note = document.createElement('span');
+      note.className = 'field-error';
+      note.id = 'err-' + path.replace(/[^a-z0-9]+/gi, '-');
+      field.appendChild(note);
+    }
+    note.textContent = t(key);
+    el.setAttribute('aria-invalid', 'true');
+    el.setAttribute('aria-describedby', note.id);
+  }
+}
+
 function collectWarnings(s) {
   const w = [];
   if (!s.profile.displayName && !s.profile.name) {
@@ -1178,15 +1225,15 @@ function collectWarnings(s) {
   /* Format checks: junk values pass silently today and only show up as a
      dead link or an unreachable address in the sent signature. */
   const email = String(s.contact.email || '').trim();
-  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+  if (!validEmail(email)) {
     w.push({ kind: 'warn', msg: t('check.badEmail'), target: 'contact.email' });
   }
   const phone = String(s.contact.phone || '').trim();
-  if (phone && (phone.replace(/\D/g, '').length < 6)) {
+  if (!validPhone(phone)) {
     w.push({ kind: 'warn', msg: t('check.badPhone'), target: 'contact.phone' });
   }
   const site = String(s.contact.website || '').trim();
-  if (site && !normalizeUrl('custom', site)) {
+  if (!validSite(site)) {
     w.push({ kind: 'warn', msg: t('check.badUrl'), target: 'contact.website' });
   }
   /* Unbroken tokens force a horizontal scrollbar in Word-engine Outlook. */
@@ -1212,6 +1259,11 @@ function updateChecklist() {
   const el = $('#checklist');
   if (!el) return;
   const w = collectWarnings(state);
+  const announce = $('#check-announce');
+  if (announce) {
+    const text = w.length ? t('check.countAnnounce', { n: w.length }) : t('check.readyAnnounce');
+    if (announce.textContent !== text) announce.textContent = text;
+  }
   if (!w.length) {
     el.innerHTML = '<div class="check-ok">' + t('check.ready') + '</div>';
   } else {
@@ -2143,7 +2195,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.72.0';
+const APP_VERSION = '0.73.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2784,6 +2836,12 @@ function init() {
   });
 
   initMode();
+  /* Screen-reader heading navigation: the ten section summaries stay
+     disclosure buttons, but their titles also expose as h2-level headings. */
+  document.querySelectorAll('details[data-sec] > summary > span[data-i18n]').forEach(el => {
+    el.setAttribute('role', 'heading');
+    el.setAttribute('aria-level', '2');
+  });
   rebuildAll();
   updateUndoButtons();
   setSaveStatus('saved');

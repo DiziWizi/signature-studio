@@ -475,6 +475,11 @@ window.SIG_LOCALES.en = {
   'check.badEmail': "That email address looks incomplete — recipients may not reach you.",
   'check.badPhone': "That phone number looks too short to dial.",
   'check.badUrl': "That website isn’t a web address — the link would be dead. Use https://… or leave it empty.",
+  'field.errEmail': "Looks incomplete — a recipient can’t reply to this.",
+  'field.errPhone': "Too short to dial.",
+  'field.errUrl': "Not a web address — use https://… or leave empty.",
+  'check.countAnnounce': "{n} item(s) to review.",
+  'check.readyAnnounce': "Ready to export — nothing missing.",
   'check.longLine': "A very long unbroken word can push the signature sideways in Outlook.",
 
   'concise.summary': '{lines} {lineWord} · longest ~{longest} chars — {verdict}',

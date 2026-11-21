@@ -223,8 +223,15 @@ details[open] summary::before { transform: rotate(90deg); }
 .field.vis-off input:not([type="checkbox"]) { text-decoration: line-through; }
 
 /* Template-aware dimming */
-.tpl-dim { opacity: .45; }
-.tpl-dim .eye { opacity: .45; }
+.tpl-dim {
+  /* Template-irrelevant controls stay fully legible: the dashed outline and
+     the "Only in …" chip carry the meaning. Dimming with opacity pushed
+     12 px text to ~2.3:1 — a real WCAG 1.4.3 failure. */
+  outline: 1px dashed var(--line2);
+  outline-offset: 5px;
+  border-radius: 4px;
+}
+.tpl-dim .eye { opacity: 1; }
 .tpl-dim::after {
   content: attr(data-dim-label);
   display: inline-block;
@@ -311,6 +318,26 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* Visually hidden but available to assistive tech. */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+/* Inline field errors (paired with aria-invalid + aria-describedby) */
+.field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #f08c8c;
+}
+.field input[aria-invalid="true"],
+.field textarea[aria-invalid="true"] { border-color: #e5484d; }
+
 /* No-JS notice: the app is client-only, say so instead of a black page. */
 .noscript {
   margin: 24px auto;
@@ -335,7 +362,7 @@ details[open] summary::before { transform: rotate(90deg); }
 
 /* Autosave status (footer) */
 .save-state { font-size: 11px; color: var(--mut); }
-.save-state[data-state="saving"] { color: var(--mut); opacity: .8; }
+.save-state[data-state="saving"] { color: var(--mut); }
 .save-state[data-state="error"] { color: #f08c8c; font-weight: 600; }
 .save-state:empty { display: none; }
 
@@ -419,7 +446,7 @@ details[open] summary::before { transform: rotate(90deg); }
   letter-spacing: .05em;
 }
 .field .lbl { font-size: 12px; }
-.field .opt { font-weight: 400; text-transform: none; letter-spacing: normal; opacity: .8; }
+.field .opt { font-weight: 400; text-transform: none; letter-spacing: normal; }
 .field .field-inline { display: flex; align-items: center; gap: 8px; font-size: 11px; }
 .field .field-inline select { flex: 1; }
 .field .field-inline select:disabled { opacity: .45; }
