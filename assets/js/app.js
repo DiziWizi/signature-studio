@@ -168,37 +168,40 @@ const EDIT_TARGETS = {
   divider: 'design.dividerStyle', logo: 'design.logoUrl', banner: 'design.bannerUrl',
 };
 
-function revealControl(key) {
-  if (!key) return;
-  let sel = null;
-  let section = null;
-  if (key.startsWith('contact:')) {
-    sel = `[data-field="contact.${key.slice(8)}"]`;
-    section = 'contact';
-  } else if (key === 'socials') {
-    section = 'socials';
-  } else if (key === 'footer') {
-    section = 'org';
-  } else if (EDIT_TARGETS[key]) {
-    sel = `[data-field="${EDIT_TARGETS[key]}"]`;
+/* Shared jump-to-setting: accepts a data-field path or '@section:<id>'.
+   Opens the section (and any nested sub-group), scrolls to the control and
+   flashes it. Hidden controls fall back to the section header. */
+function focusField(pathOrSection) {
+  if (!pathOrSection) return;
+  let el = null;
+  let sec = null;
+  if (pathOrSection.startsWith('@section:')) {
+    sec = document.querySelector(`details[data-sec="${pathOrSection.slice(9)}"]`);
+  } else {
+    el = document.querySelector(`[data-field="${pathOrSection}"]`);
+    sec = el ? el.closest('details[data-sec]') : null;
   }
-  let el = sel ? document.querySelector(sel) : null;
-  const sec = section
-    ? document.querySelector(`details[data-sec="${section}"]`)
-    : (el ? el.closest('details[data-sec]') : null);
   if (!sec) return;
   if (!sec.open) sec.open = true;
   const sub = el ? el.closest('details.sub') : null;
   if (sub && !sub.open) sub.open = true;
-  /* Controls can be hidden by conditional visibility — fall back to the
-     section header in that case. */
   const visibleEl = el && el.offsetParent !== null ? el : null;
-  const target = visibleEl ? (visibleEl.closest('.field, label.switch') || visibleEl) : (sec.querySelector(':scope > summary') || sec);
+  const target = visibleEl
+    ? (visibleEl.closest('.field, label.switch') || visibleEl)
+    : (sec.querySelector(':scope > summary') || sec);
   target.scrollIntoView({ block: 'center', behavior: 'smooth' });
   target.classList.remove('flash');
   void target.offsetWidth; /* restart the animation */
   target.classList.add('flash');
   setTimeout(() => target.classList.remove('flash'), 1700);
+}
+
+function revealControl(key) {
+  if (!key) return;
+  if (key.startsWith('contact:')) return focusField('contact.' + key.slice(8));
+  if (key === 'socials') return focusField('@section:socials');
+  if (key === 'footer') return focusField('@section:org');
+  if (EDIT_TARGETS[key]) return focusField(EDIT_TARGETS[key]);
 }
 
 function visOn(v) {
@@ -1038,38 +1041,40 @@ function initQuickSwitch() {
 
 /* ── pre-export checklist ─────────────────────────────────────────────── */
 
+/* Every warning names the control that fixes it (data-field path or a
+   section id) so the checklist can jump there. */
 function collectWarnings(s) {
   const w = [];
   if (!s.profile.displayName && !s.profile.name) {
-    w.push({ kind: 'err', msg: t('check.noName') });
+    w.push({ kind: 'err', msg: t('check.noName'), target: 'profile.name' });
   }
   if (!String(s.contact.email || '').trim()) {
-    w.push({ kind: 'warn', msg: t('check.noEmail') });
+    w.push({ kind: 'warn', msg: t('check.noEmail'), target: 'contact.email' });
   }
   if (String(s.design.logoUrl || '').startsWith('data:')) {
-    w.push({ kind: 'warn', msg: t('check.logoEmbedded') });
+    w.push({ kind: 'warn', msg: t('check.logoEmbedded'), target: 'design.logoUrl' });
   }
   if (String(s.design.bannerUrl || '').startsWith('data:')) {
-    w.push({ kind: 'warn', msg: t('check.bannerEmbedded') });
+    w.push({ kind: 'warn', msg: t('check.bannerEmbedded'), target: 'design.bannerUrl' });
   }
   if (!s.design.strictOutlook && (s.design.showCard || photoShapeOf(s) !== 'square')) {
-    w.push({ kind: 'info', msg: t('check.roundedOutlook') });
+    w.push({ kind: 'info', msg: t('check.roundedOutlook'), target: 'design.strictOutlook' });
   }
   if (s.design.showQr) {
-    w.push({ kind: 'info', msg: t('check.embeddedQr') });
+    w.push({ kind: 'info', msg: t('check.embeddedQr'), target: 'design.showQr' });
   }
   if (s.design.customHtml && String(s.design.customHtml).trim()) {
-    w.push({ kind: 'warn', msg: t('check.customHtml') });
+    w.push({ kind: 'warn', msg: t('check.customHtml'), target: 'design.customHtml' });
   }
   if (cidImagesActive(s.design)) {
     const hasImg = s.design.logoUrl || s.design.bannerUrl || s.design.footerLeftImg ||
       s.design.footerCenterImg || s.design.footerRightImg ||
       (s.socials || []).some(x => String(x.iconUrl || '').trim());
-    if (hasImg) w.push({ kind: 'warn', msg: t('check.cidImages') });
+    if (hasImg) w.push({ kind: 'warn', msg: t('check.cidImages'), target: 'design.imageRef.logo' });
   }
   for (const soc of s.socials) {
     if (!String(soc.url || '').trim()) {
-      w.push({ kind: 'info', msg: t('check.networkNoLink', { net: esc(networkById(soc.network).name) }) });
+      w.push({ kind: 'info', msg: t('check.networkNoLink', { net: esc(networkById(soc.network).name) }), target: '@section:socials' });
     }
   }
   return w;
@@ -1082,7 +1087,9 @@ function updateChecklist() {
   if (!w.length) {
     el.innerHTML = '<div class="check-ok">' + t('check.ready') + '</div>';
   } else {
-    el.innerHTML = w.map(x => `<div class="check-item check-${x.kind}">${x.msg}</div>`).join('');
+    el.innerHTML = w.map(x =>
+      `<button type="button" class="check-item check-${x.kind}" data-check-target="${esc(x.target || '')}">${x.msg}<span class="check-go" aria-hidden="true">→</span></button>`
+    ).join('');
   }
   updateTrustBadge();
 }
@@ -1886,7 +1893,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.60.0';
+const APP_VERSION = '0.61.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2177,6 +2184,11 @@ function init() {
   });
   $('#x-share').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink(); });
   $('#x-json').addEventListener('click', () => { menu.classList.add('hidden'); openJsonEditor(); });
+  $('#x-instructions').addEventListener('click', () => { menu.classList.add('hidden'); openOverlay('#modal-instructions'); });
+  /* Copy from inside the instructions: one place to read the steps and
+     grab the signature (no bouncing back to the export menu). */
+  const instrCopy = $('#instr-copy');
+  if (instrCopy) instrCopy.addEventListener('click', () => doCopy());
   $('#x-audit').addEventListener('click', () => { menu.classList.add('hidden'); openAudit(); });
   $('#x-bulk').addEventListener('click', () => { menu.classList.add('hidden'); openBulk(); });
   $('#x-cid-zip').addEventListener('click', () => { menu.classList.add('hidden'); doCidZip(); });
@@ -2375,10 +2387,21 @@ function init() {
     if (m.__sigstudio === 'edit') revealControl(m.key);
   });
 
+  /* Checklist items jump to the control that fixes them. */
+  const checklistEl = $('#checklist');
+  if (checklistEl) {
+    checklistEl.addEventListener('click', e => {
+      const item = e.target.closest('[data-check-target]');
+      if (!item) return;
+      focusField(item.dataset.checkTarget);
+    });
+  }
+
   /* Inline visibility eyes: toggle the show/hide state from the field. */
   document.querySelectorAll('[data-eye]').forEach(btn => {
     btn.addEventListener('click', e => {
       e.preventDefault();
+      e.stopPropagation();
       const key = btn.dataset.eye;
       const next = getPath(state, key) === false;
       setPath(state, key, next);

@@ -1055,6 +1055,29 @@ Date: 2026-11-21 · Scope: RED R1/R2, corrected R3, two P2s.
 
 ---
 
+# v0.61.0 addendum (actionable guidance)
+
+Date: 2026-11-21 · Scope: checklist jumps + copy inside instructions.
+
+## Notes
+
+- collectWarnings() now attaches a target to every warning (data-field
+  path or @section:id); checklist items render as <button> elements with
+  data-check-target and focusField() (shared with preview-click linking)
+  opens the section/sub-group, scrolls and flashes the control.
+- Instructions modal gained a "Copy signature" primary action above the
+  tabs — one place to read the steps and grab the signature. Every
+  client pane's first step now points at that button. Menu item renamed
+  "How to add it to Outlook, Gmail…".
+- Incident: the patch that added the #instr-copy binding fuzzy-matched
+  the neighbouring line and deleted the #x-json handler (JSON editor
+  dead). Caught by share-json.spec; binding restored. Recorded in the
+  skill: always diff after patches near sibling one-liners.
+- 2 new i18n keys + 6 rewritten step-1 strings ×4 (584 each). 4 new E2E
+  tests. Suite 170/170 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

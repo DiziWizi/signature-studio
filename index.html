@@ -53,7 +53,7 @@
       <div class="menu hidden" id="export-menu" role="menu">
         <button role="menuitem" id="x-copy" type="button" data-i18n="topbar.copy" data-i18n-title="topbar.copyShortcut" title="Copy to clipboard (Ctrl+Enter)">Copy to clipboard</button>
         <button role="menuitem" id="x-download" type="button" data-i18n="topbar.download">Download .html file</button>
-        <button role="menuitem" id="x-instructions" type="button" data-i18n="topbar.instructions">Install in your mail client…</button>
+        <button role="menuitem" id="x-instructions" type="button" data-i18n="topbar.instructions">How to add it to Outlook, Gmail…</button>
         <hr class="sep">
         <span class="menu-group" role="presentation" data-i18n="menu.mailFormats">Mail apps &amp; formats</span>
         <button role="menuitem" id="x-apple-mail" type="button" data-i18n="topbar.appleMail">Download for Apple Mail (.mailsignature)</button>
@@ -680,7 +680,11 @@
 <!-- Instructions modal -->
 <div class="overlay hidden" id="modal-instructions" role="dialog" aria-modal="true" aria-labelledby="instructions-title">
   <div class="modal modal-wide">
-    <h2 id="instructions-title" data-i18n="instr.title">Install in your mail client</h2>
+    <h2 id="instructions-title" data-i18n="instr.title">Add it to your mail client</h2>
+    <div class="instr-actions">
+      <button class="btn btn-primary" id="instr-copy" type="button" data-i18n="instr.copy">Copy signature</button>
+      <span class="micro" data-i18n="instr.copyHint">Copies the current signature — paste it where step 1 says.</span>
+    </div>
     <div class="tabs" id="instr-tabs">
       <button class="itab active" data-tab="gmail" type="button" aria-pressed="true" data-i18n="instr.gmail">Gmail</button>
       <button class="itab" data-tab="outlook" type="button" aria-pressed="false" data-i18n="instr.outlook">Outlook (Windows)</button>

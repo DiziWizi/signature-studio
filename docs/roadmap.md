@@ -194,6 +194,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   "wizard fires mid-task" was a false positive — measurement error,
   see QA report); first visit opens Identity only; field labels 12px;
   E2E now 166
+- [x] v0.61.0 — guidance: every checklist warning is a button that jumps
+  to the control that fixes it (opens sections/sub-groups, flashes the
+  field); the instructions page now carries its own Copy-signature
+  button (all six client tabs start with it); export menu renamed
+  "How to add it to Outlook, Gmail…"; E2E now 170
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

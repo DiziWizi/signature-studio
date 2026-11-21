@@ -251,6 +251,16 @@ details[open] summary::before { transform: rotate(90deg); }
 }
 .sec-reset:hover { color: var(--text); border-color: var(--line2); background: var(--panel2); }
 
+/* Instructions modal: copy action above the client tabs. */
+.instr-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 2px 0 12px;
+}
+.instr-actions .micro { margin: 0; }
+
 /* Settings search: sticky above the section list. */
 .sec-search { position: sticky; top: 0; z-index: 6; background: var(--bg); padding: 2px 0 10px; }
 .sec-search input {
@@ -560,13 +570,26 @@ textarea { resize: vertical; min-height: 40px; }
 /* pre-export checklist */
 .checklist { margin-bottom: 12px; }
 .check-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  font: inherit;
   font-size: 12px;
   line-height: 1.45;
   padding: 6px 10px;
   border-radius: 8px;
   border: 1px solid;
   margin-bottom: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: filter .12s ease;
 }
+.check-item:hover { filter: brightness(1.35); }
+.check-item:focus-visible { outline: 2px solid var(--acc); outline-offset: 1px; }
+.check-go { opacity: .55; flex: 0 0 auto; }
 .check-err { color: #ffb3b6; border-color: #7a2e32; background: rgba(229, 72, 77, .08); }
 .check-warn { color: #e9b36a; border-color: #8a6d3b; background: rgba(233, 179, 106, .08); }
 .check-info { color: var(--mut); border-color: var(--line2); background: rgba(42, 50, 69, .4); }
