@@ -1645,8 +1645,34 @@ async function doShareLink({ forceFull = false } = {}) {
   }
 }
 
+/* C1: show exactly what the CSV will do before anything is generated. */
+function renderBulkPreview() {
+  const box = $('#bulk-preview');
+  if (!box) return;
+  const plan = bulkPlan(state, $('#bulk-csv').value);
+  if (plan.empty) { box.innerHTML = `<p class="bulk-more">${esc(t('bulk.noRows'))}</p>`; return; }
+  if (plan.noEmailColumn) { box.innerHTML = `<p class="bulk-more">${esc(t('bulk.noEmailColumn'))}</p>`; return; }
+  const statusLabel = row => t(row.status === 'ready' ? 'bulk.ready'
+    : row.status === 'noName' ? 'bulk.skipNoName'
+      : row.status === 'noEmail' ? 'bulk.skipNoEmail' : 'bulk.skipDuplicate');
+  const shown = plan.rows.slice(0, 25);
+  const rowsHtml = shown.map(row => `
+    <tr data-status="${row.status}">
+      <td>${row.line}</td>
+      <td class="trunc">${esc(row.name || '—')}</td>
+      <td class="trunc">${esc(row.email || '—')}</td>
+      <td class="trunc">${row.status === 'ready' ? esc(row.filename) : statusLabel(row)}</td>
+    </tr>`).join('');
+  const more = plan.rows.length > shown.length
+    ? `<p class="bulk-more">${esc(t('bulk.moreRows', { n: plan.rows.length - shown.length }))}</p>` : '';
+  box.innerHTML = `<table class="bulk-table">
+    <thead><tr><th>#</th><th>${esc(t('bulk.colName'))}</th><th>${esc(t('bulk.colEmail'))}</th><th>${esc(t('bulk.colStatus'))}</th></tr></thead>
+    <tbody>${rowsHtml}</tbody></table>${more}`;
+}
+
 function openBulk() {
   $('#bulk-result').textContent = '';
+  renderBulkPreview();
   openOverlay('#modal-bulk');
   setTimeout(() => $('#bulk-csv').focus(), 30);
 }
@@ -1903,6 +1929,8 @@ function doVCardParse() {
 }
 
 function doImportParse() {
+  const chips = $('#import-fields');
+  if (chips) { chips.innerHTML = ''; chips.classList.add('hidden'); }
   const mode = (document.querySelector('input[name="importMode"]:checked') || {}).value || 'html';
   if (mode === 'vcard') {
     doVCardParse();
@@ -1924,7 +1952,49 @@ function doImportParse() {
   summary.innerHTML = summarizeParsed(p);
   summary.classList.remove('hidden');
   applyRow.classList.remove('hidden');
+  renderImportFields(p);
   lastParsedImport = p;
+}
+
+/* C2: let people take only the fields they trust. The summary says the
+   import is best-effort; chips make that actionable instead of all-or-
+   nothing. */
+const IMPORT_FIELDS = [
+  ['profile.name', 'field.name', p => p.profile.name],
+  ['profile.title', 'field.title', p => p.profile.title],
+  ['profile.department', 'field.department', p => p.profile.department],
+  ['profile.company', 'field.company', p => p.profile.company],
+  ['contact.email', 'field.email', p => p.contact.email],
+  ['contact.phone', 'field.phone', p => p.contact.phone],
+  ['contact.mobile', 'field.mobile', p => p.contact.mobile],
+  ['contact.website', 'field.website', p => p.contact.website],
+  ['design.logoUrl', 'import.logo', p => p.design.logoUrl],
+  ['design.legalText', 'import.legal', p => p.design.legalText],
+  ['socials', 'sec.socials', p => (p.socials || []).length ? p.socials.map(s => s.network).join(', ') : ''],
+];
+
+function importWanted(path) {
+  const box = document.querySelector(`[data-import-field="${path}"]`);
+  return !box || box.checked;
+}
+
+function renderImportFields(p) {
+  const box = $('#import-fields');
+  if (!box) return;
+  const rows = IMPORT_FIELDS
+    .map(([path, key, get]) => {
+      const v = get(p);
+      return v ? { path, key, value: Array.isArray(v) ? v.join(', ') : String(v) } : null;
+    })
+    .filter(Boolean);
+  box.innerHTML = rows.length
+    ? `<p class="micro">${esc(t('import.choose'))}</p>` + rows.map(r => `
+      <label class="import-chip">
+        <input type="checkbox" checked data-import-field="${r.path}">
+        <span>${esc(t(r.key))}: <b>${esc(r.value.slice(0, 60))}</b></span>
+      </label>`).join('')
+    : '';
+  box.classList.toggle('hidden', !rows.length);
 }
 
 function doImportApply() {
@@ -1957,18 +2027,19 @@ function doImportApply() {
     lastParsedImport = null;
     return;
   }
-  if (p.profile.name) state.profile.name = p.profile.name;
-  if (p.profile.title) state.profile.title = p.profile.title;
-  if (p.profile.department) state.profile.department = p.profile.department;
-  if (p.contact.email) state.contact.email = p.contact.email;
-  if (p.contact.phone) state.contact.phone = p.contact.phone;
-  if (p.contact.mobile) state.contact.mobile = p.contact.mobile;
-  if (p.contact.website) state.contact.website = p.contact.website;
-  if (p.socials.length) state.socials = p.socials;
-  if (p.design.logoUrl) state.design.logoUrl = p.design.logoUrl;
+  if (p.profile.name && importWanted('profile.name')) state.profile.name = p.profile.name;
+  if (p.profile.title && importWanted('profile.title')) state.profile.title = p.profile.title;
+  if (p.profile.department && importWanted('profile.department')) state.profile.department = p.profile.department;
+  if (p.profile.company && importWanted('profile.company')) state.profile.company = p.profile.company;
+  if (p.contact.email && importWanted('contact.email')) state.contact.email = p.contact.email;
+  if (p.contact.phone && importWanted('contact.phone')) state.contact.phone = p.contact.phone;
+  if (p.contact.mobile && importWanted('contact.mobile')) state.contact.mobile = p.contact.mobile;
+  if (p.contact.website && importWanted('contact.website')) state.contact.website = p.contact.website;
+  if (p.socials.length && importWanted('socials')) state.socials = p.socials;
+  if (p.design.logoUrl && importWanted('design.logoUrl')) state.design.logoUrl = p.design.logoUrl;
   if (p.design.bannerUrl) state.design.bannerUrl = p.design.bannerUrl;
   if (p.design.logoPosition) state.design.logoPosition = p.design.logoPosition;
-  if (p.design.legalText) {
+  if (p.design.legalText && importWanted('design.legalText')) {
     state.design.showLegal = true;
     state.design.legalText = p.design.legalText;
   }
@@ -2229,7 +2300,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.74.0';
+const APP_VERSION = '0.75.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2567,6 +2638,11 @@ function init() {
   $('#x-bulk').addEventListener('click', () => { menu.classList.add('hidden'); openBulk(); });
   $('#x-cid-zip').addEventListener('click', () => { menu.classList.add('hidden'); doCidZip(); });
   $('#bulk-generate').addEventListener('click', runBulk);
+  let bulkPreviewTimer = 0;
+  $('#bulk-csv').addEventListener('input', () => {
+    clearTimeout(bulkPreviewTimer);
+    bulkPreviewTimer = setTimeout(renderBulkPreview, 200);
+  });
   $('#audit-download').addEventListener('click', downloadAudit);
   $('#json-apply').addEventListener('click', applyJsonEditor);
   $('#x-download').addEventListener('click', () => {

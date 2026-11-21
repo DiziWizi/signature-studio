@@ -1504,6 +1504,25 @@ Date: 2026-11-21 · Scope: A4, B1, B2.
 
 ---
 
+# v0.75.0 addendum (accessibility batch 3 — team flow)
+
+Date: 2026-11-21 · Scope: C1, C2.
+
+- **C1** — `bulkPlan()` classifies each CSV row before anything is built
+  (ready / noName / noEmail / duplicate) and assigns the final filename;
+  `bulkGenerate()` now consumes the plan, so what the preview shows is exactly
+  what the ZIP contains. The modal renders a sticky-header table of the first
+  25 rows with status in the last column, updating 200 ms after typing.
+  Delimiter sniffing accepts `,` `;` and tab; a leading BOM is stripped.
+- **C2** — HTML paste-import now lists every recovered field as a checked
+  chip (name, title, department, company, email, phone, mobile, website,
+  logo, legal line, socials). Apply merges only the checked ones; the chips
+  reset on every new Parse.
+- 4 new E2E tests (team-flow.spec.js) plus the existing bulk/sharing specs.
+  Suite 228/228 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

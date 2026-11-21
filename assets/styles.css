@@ -318,6 +318,24 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* Bulk CSV preview table */
+.bulk-preview { margin: 8px 0; max-height: 220px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; }
+.bulk-preview:empty { display: none; }
+.bulk-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.bulk-table th, .bulk-table td { padding: 5px 8px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.bulk-table th { position: sticky; top: 0; background: var(--panel2); font-weight: 600; color: var(--mut); }
+.bulk-table td.trunc { max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
+.bulk-table tr[data-status="ready"] td:last-child { color: #63d489; }
+.bulk-table tr[data-status="noName"] td:last-child,
+.bulk-table tr[data-status="noEmail"] td:last-child { color: #e0a33e; }
+.bulk-table tr[data-status="duplicate"] td:last-child { color: var(--mut); }
+.bulk-more { padding: 6px 8px; color: var(--mut); font-size: 11px; }
+
+/* Import: per-field accept chips */
+.import-fields { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.import-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border: 1px solid var(--line2); border-radius: 999px; font-size: 11.5px; background: var(--panel2); }
+.import-chip b { font-weight: 600; color: var(--text); }
+
 /* Windows High Contrast / forced colours: surfaces that rely on background
    colour alone lose it (toasts, status text, dashed dim outlines). Give them
    a real border in CanvasText and keep the status chip's colour meaning. */

@@ -4,7 +4,7 @@
 
 /* Small-but-honest CSV parser: quoted fields, escaped quotes, commas and
    newlines inside quotes. Returns [{ col: value }, ...] or null. */
-function parseCsv(text) {
+function parseCsv(text, delimiter = ',') {
   const rows = [];
   let row = [];
   let field = '';
@@ -19,7 +19,7 @@ function parseCsv(text) {
       } else field += ch;
     } else if (ch === '"') {
       inQuotes = true;
-    } else if (ch === ',') {
+    } else if (ch === delimiter) {
       row.push(field);
       field = '';
     } else if (ch === '\n' || ch === '\r') {
@@ -195,50 +195,87 @@ async function bulkAssetsAsync(state) {
 }
 
 /* Returns { files: [{name, data}], generated, skipped }. */
-function bulkGenerate(state, csvText) {
-  const rows = parseCsv(csvText);
-  const out = { files: [], generated: 0, skipped: 0 };
-  if (!rows.length) return out;
-  const header = rows[0];
-  const map = bulkColumnMap(header);
-  const hasEmail = map.some(m => header[m.idx] && /email/i.test(header[m.idx]));
-  if (!map.length || !hasEmail) return { ...out, noEmailColumn: true };
+/* Delimiter sniffing: teams paste from Excel (comma), German Excel (;),
+   Google Sheets (tab) and CSV exported with a BOM. */
+function bulkDelimiter(text) {
+  const first = String(text || '').replace(/^\uFEFF/, '').split(/\r?\n/)[0] || '';
+  const counts = { ',': 0, ';': 0, '\t': 0 };
+  let quoted = false;
+  for (const ch of first) {
+    if (ch === '"') quoted = !quoted;
+    else if (!quoted && counts[ch] !== undefined) counts[ch] += 1;
+  }
+  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][1] > 0
+    ? Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0]
+    : ',';
+}
 
+function bulkBaseName(name, email) {
+  const local = String(email.split('@')[0] || '').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  return `${slugify(name)}${local ? '-' + slugify(local) : ''}`;
+}
+
+/* Plan only: parse and classify every row so the modal can show exactly
+   what will happen before anything is generated. `status` is one of
+   ready | noName | noEmail | duplicate. */
+function bulkPlan(state, csvText) {
+  const text = String(csvText || '').replace(/^\uFEFF/, '');
+  const delim = bulkDelimiter(text);
+  const rows = parseCsv(text, delim);
+  const plan = { rows: [], header: [], noEmailColumn: false, empty: !rows.length, delimiter: delim };
+  if (!rows.length) return plan;
+  plan.header = rows[0];
+  const map = bulkColumnMap(rows[0]);
+  const hasEmail = map.some(m => rows[0][m.idx] && /email/i.test(rows[0][m.idx]));
+  if (!map.length || !hasEmail) { plan.noEmailColumn = true; return plan; }
+
+  const seen = new Set();
+  const usedFiles = new Set();
   for (let r = 1; r < rows.length; r++) {
     const values = rows[r];
     const clone = JSON.parse(JSON.stringify(state));
-    /* Bulk rows are fresh people: start from a blank identity/contact
-       (the template/design carries over, the person does not). */
     for (const k of ['name', 'displayName', 'title', 'department', 'company',
       'pronouns', 'location', 'birthday', 'languages',
       'honorificPrefix', 'honorificSuffix']) clone.profile[k] = '';
     for (const k of ['email', 'phone', 'mobile', 'website', 'address']) clone.contact[k] = '';
-    for (const m of map) {
-      m.set(clone, (values[m.idx] || '').trim());
-    }
+    for (const m of map) m.set(clone, (values[m.idx] || '').trim());
+
     const name = String(clone.profile.name || '').trim();
     const email = String(clone.contact.email || '').trim();
-    if (!name || !email) {
-      out.skipped += 1;
-      continue;
-    }
-    clone.meta.name = `${name} — ${clone.profile.company || 'Signature'}`;
-    if (typeof renderSignature !== 'function') {
-      out.skipped += 1;
-      continue;
-    }
-    /* Filenames must be unique inside one ZIP: two people can share a name
-       (and a whole team can share a mailbox), and extractors overwrite. */
-    const local = String(email.split('@')[0] || '').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
-    const base = `${slugify(name)}${local ? '-' + slugify(local) : ''}`;
     const key = `${name}|${email}`.toLowerCase();
-    if (out.seen && out.seen.has(key)) { out.duplicates = (out.duplicates || 0) + 1; continue; }
-    (out.seen = out.seen || new Set()).add(key);
-    let file = `${base}.html`;
-    let n = 2;
-    const used = new Set(out.files.map(f => f.name));
-    while (used.has(file)) file = `${base}-${n++}.html`;
-    out.files.push({ name: file, data: renderSignature(clone) });
+    let status = 'ready';
+    if (!name) status = 'noName';
+    else if (!email) status = 'noEmail';
+    else if (seen.has(key)) status = 'duplicate';
+
+    let filename = '';
+    if (status === 'ready') {
+      seen.add(key);
+      const base = bulkBaseName(name, email);
+      filename = `${base}.html`;
+      let n = 2;
+      while (usedFiles.has(filename)) filename = `${base}-${n++}.html`;
+      usedFiles.add(filename);
+      clone.meta.name = `${name} — ${clone.profile.company || 'Signature'}`;
+    }
+    plan.rows.push({ line: r + 1, name, email, status, filename, state: clone });
+  }
+  return plan;
+}
+
+function bulkGenerate(state, csvText) {
+  const plan = bulkPlan(state, csvText);
+  const out = { files: [], generated: 0, skipped: 0, duplicates: 0 };
+  if (plan.empty) return out;
+  if (plan.noEmailColumn) return Object.assign(out, { noEmailColumn: true });
+  for (const row of plan.rows) {
+    if (row.status !== 'ready') {
+      out.skipped += 1;
+      if (row.status === 'duplicate') out.duplicates += 1;
+      continue;
+    }
+    if (typeof renderSignature !== 'function') { out.skipped += 1; continue; }
+    out.files.push({ name: row.filename, data: renderSignature(row.state) });
     out.generated += 1;
   }
   return out;

@@ -264,6 +264,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   focus in the list; the preview sheet is an honest non-modal region;
   forced-colours rules border the toast/status surfaces; thumbnail previews
   scale to their tile instead of clipping at 320 px; E2E 224
+- [x] v0.75.0 — team flow: bulk CSV now previews every row with its fate
+  (filename / no name / no email / duplicate) before generating, sniffs
+  ;/tab delimiters and strips BOMs; paste-import shows per-field chips so
+  you keep only what you trust; E2E 228
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

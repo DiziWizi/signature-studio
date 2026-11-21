@@ -698,7 +698,8 @@
       <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
       <button class="btn btn-primary" id="import-parse" type="button" data-i18n="import.parse">Parse</button>
     </div>
-    <div id="import-summary" class="hidden"></div>
+    <div id="import-summary" class="micro hidden"></div>
+    <div id="import-fields" class="import-fields hidden"></div>
     <div class="modal-actions hidden" id="import-apply-row">
       <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
       <button class="btn btn-primary" id="import-apply" type="button" data-i18n="import.apply">Apply to editor</button>
@@ -876,6 +877,7 @@
     <h2 id="bulk-title" data-i18n="bulk.title">Bulk generate from CSV</h2>
     <p class="micro" data-i18n="bulk.micro">Paste CSV with a header row — columns are matched by name. Each row with a name and email becomes one signature in a ZIP.</p>
     <textarea id="bulk-csv" rows="8" spellcheck="false" style="width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;" placeholder="name,email,title,company,phone&#10;Ada Lovelace,ada@example.com,Head of Analytics,Analytical Engines Ltd,+44 20 7946 0958"></textarea>
+    <div id="bulk-preview" class="bulk-preview"></div>
     <p id="bulk-result" class="micro" role="status"></p>
     <div class="modal-actions">
       <button class="btn" data-close type="button" data-i18n="import.cancel">Cancel</button>
