@@ -926,6 +926,26 @@ Date: 2026-11-21 · Scope: pronouns under the name, requested.
 
 ---
 
+# v0.56.0 addendum (Design section right column clipped)
+
+Date: 2026-11-21 · Scope: controls cut off at the sidebar's right edge
+(Divider Length, Font, Custom font stack, Line height, footer selects…).
+
+## Notes
+
+- Measured: the Design .grid2 overflowed by 115px at a 1280px window —
+  plain 1fr tracks take their content's min-content width, and one
+  select (long "As stored — URL or uploaded image" option) had a
+  269px min-content; details{overflow:hidden} then clipped the right
+  column with no scrollbar.
+- Fix: .grid2 → repeat(2, minmax(0, 1fr)) with min-width:0 on cells;
+  field inputs/selects min-width:0; .range-row wraps with min-width:0
+  (the name letter-spacing row was the last 15px).
+- Regression guard: layout.spec now asserts zero horizontal overflow
+  across EVERY section's grid2/fields at 1280px. Suite 147/147 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
