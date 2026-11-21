@@ -203,6 +203,9 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   vCards, Import HTML); plainer labels (Spacing preset, Width, Text
   size); eyes on team, tagline, status and the socials row; team field
   dimmed as enterprise-only; E2E now 174
+- [x] v0.63.0 — narrow-window preview peek: a floating Preview button
+  (≤980px) opens a live bottom sheet mirroring the preview, streaming
+  edits and closing on Escape/Close; desktop unaffected; E2E now 176
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

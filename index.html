@@ -911,6 +911,18 @@
   <div id="saved-list"></div>
 </aside>
 
+<button id="peek-fab" type="button" aria-expanded="false" aria-controls="peek-sheet"
+        data-i18n-title="peek.title" title="Show the live preview">
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg>
+  <span data-i18n="peek.label">Preview</span>
+</button>
+<div id="peek-sheet" class="hidden" role="dialog" aria-label="Live preview" data-i18n-aria="peek.label">
+  <div class="peek-head">
+    <span data-i18n="peek.label">Preview</span>
+    <button id="peek-close" class="btn btn-sm" type="button" data-i18n="peek.close">Close</button>
+  </div>
+  <iframe id="peek-frame" title="Live preview" tabindex="-1" aria-hidden="true"></iframe>
+</div>
 <div id="toasts" role="status" aria-live="polite"></div>
 
 <!-- First-run pointer tour: spotlight ring over live UI, shown once after

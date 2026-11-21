@@ -1102,6 +1102,23 @@ Date: 2026-11-21 · Scope: jargon out of Simple mode; visibility parity.
 
 ---
 
+# v0.63.0 addendum (narrow-window preview peek)
+
+Date: 2026-11-21 · Scope: editing below 980px without losing sight of the
+signature.
+
+## Notes
+
+- A floating Preview pill appears at ≤980px; it opens a bottom sheet with
+  a mirrored live preview (same srcdoc as the main frame, refreshed on
+  every render while open). Close button and Escape dismiss it;
+  aria-expanded tracks state and focus returns to the pill.
+- Desktop unchanged: the pill and sheet are hidden above 980px.
+- 3 new i18n keys ×4 (589 each). 2 new E2E tests (narrow open/mirror/
+  stream/close; desktop hidden). Suite 176/176 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

@@ -305,6 +305,8 @@ function renderPreviewNow() {
     '},true);<\/script>';
   const html = renderSignaturePreview(state).replace('</body>', previewScript + '</body>');
   frame.srcdoc = html;
+  const peek = $('#peek-frame');
+  if (peek && !$('#peek-sheet').classList.contains('hidden')) peek.srcdoc = html;
   applyFieldVisibility();
   applyTemplateDimming();
   renderThumbs();
@@ -1893,7 +1895,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.62.0';
+const APP_VERSION = '0.63.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2386,6 +2388,28 @@ function init() {
     const m = e.data || {};
     if (m.__sigstudio === 'edit') revealControl(m.key);
   });
+
+  /* Narrow-window preview peek: a live bottom sheet instead of scrolling
+     back and forth between the editor and the preview. */
+  const peekFab = $('#peek-fab');
+  const peekSheet = $('#peek-sheet');
+  if (peekFab && peekSheet) {
+    const setPeek = open => {
+      peekSheet.classList.toggle('hidden', !open);
+      peekFab.setAttribute('aria-expanded', String(open));
+      if (open) {
+        peekSheet.querySelector('#peek-frame').srcdoc = $('#preview-frame').srcdoc;
+        $('#peek-close').focus();
+      } else {
+        peekFab.focus();
+      }
+    };
+    peekFab.addEventListener('click', () => setPeek(peekSheet.classList.contains('hidden')));
+    $('#peek-close').addEventListener('click', () => setPeek(false));
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !peekSheet.classList.contains('hidden')) setPeek(false);
+    });
+  }
 
   /* Checklist items jump to the control that fixes them. */
   const checklistEl = $('#checklist');
