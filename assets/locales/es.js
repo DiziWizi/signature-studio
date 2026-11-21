@@ -504,6 +504,7 @@ window.SIG_LOCALES.es = {
   'audit.allGood': "Nada que informar.",
   'audit.summaryClean': "Sin avisos — esta firma está limpia.",
   'audit.summaryWarn': "{n} aviso(s) encontrados.",
+  'footer.aiDisclosure': "Creada en gran parte con ayuda de IA — dirigida y probada por personas.",
   'topbar.cidZip': "Firma + imágenes (ZIP)…",
   'toast.cidZipNone': "Ponga primero una imagen en «CID en línea» — esta exportación empaqueta las imágenes con la firma.",
   'toast.cidZipDone': "ZIP de firma descargado — HTML, imágenes y manifiesto.",

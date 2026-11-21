@@ -506,6 +506,7 @@ window.SIG_LOCALES.en = {
   'audit.allGood': "Nothing to report.",
   'audit.summaryClean': "No warnings — this signature is clean.",
   'audit.summaryWarn': "{n} warning(s) found.",
+  'footer.aiDisclosure': "Built largely with AI assistance — human-directed and tested.",
   'topbar.cidZip': "Signature + images (ZIP)…",
   'toast.cidZipNone': "Set an image to “Inline CID” first — this export packages the images with the signature.",
   'toast.cidZipDone': "Signature ZIP downloaded — HTML, images and manifest.",

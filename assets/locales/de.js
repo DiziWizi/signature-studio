@@ -504,6 +504,7 @@ window.SIG_LOCALES.de = {
   'audit.allGood': "Nichts zu melden.",
   'audit.summaryClean': "Keine Warnungen — diese Signatur ist sauber.",
   'audit.summaryWarn': "{n} Warnung(en) gefunden.",
+  'footer.aiDisclosure': "Größtenteils mit KI-Unterstützung erstellt — von Menschen geleitet und geprüft.",
   'topbar.cidZip': "Signatur + Bilder (ZIP)…",
   'toast.cidZipNone': "Setzen Sie zuerst ein Bild auf „Inline-CID“ — dieser Export packt die Bilder zur Signatur.",
   'toast.cidZipDone': "Signatur-ZIP heruntergeladen — HTML, Bilder und Manifest.",

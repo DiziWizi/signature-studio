@@ -1,5 +1,11 @@
 # Signature Studio
 
+> [!IMPORTANT]
+> **AI-BUILT DISCLOSURE:** Signature Studio was built largely by an AI coding
+> agent. Its code, documentation and release packaging were AI-generated,
+> with human direction and testing. Review it independently before relying on
+> it for anything sensitive; no warranty of correctness or security is implied.
+
 A web-based tool for **creating and editing HTML email signatures** — in your
 browser, with your data staying on your machine. No account, no backend, no
 tracking. Works offline.

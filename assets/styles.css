@@ -476,10 +476,16 @@ textarea { resize: vertical; min-height: 40px; }
 /* app footer (version line) */
 .app-footer {
   text-align: center;
-  padding: 18px 12px 26px;
+  padding: 14px 12px 20px;
   color: var(--mut);
   font-size: 12.5px;
   letter-spacing: .02em;
+}
+.app-footer .app-ai {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  opacity: .72;
 }
 
 /* image hosting helper */

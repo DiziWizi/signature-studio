@@ -892,6 +892,21 @@ Date: 2026-11-20 · Scope: sidebar clipping reported by the user
 
 ---
 
+# v0.53.0 addendum (AI-built disclosure)
+
+Date: 2026-11-20 · Scope: transparency, mirroring Roost.
+
+## Notes
+
+- README: Roost-style [!IMPORTANT] blockquote at the very top —
+  AI-generated code/docs/packaging with human direction and testing,
+  review before sensitive use, no implied warranty.
+- App footer: second line under the version ("Built largely with AI
+  assistance — human-directed and tested."), key footer.aiDisclosure
+  in all four locales (561 each), styled as a dimmer sub-line.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
