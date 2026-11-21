@@ -210,6 +210,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   is downscaled to 2× its display slot and re-encoded (JPEG/PNG), so a
   2 MB phone photo becomes tens of KB and embeds cleanly; toast reports
   the saving. Empty state gains "Or start from an example"; E2E now 179
+- [x] v0.65.0 — accessibility + visual regression: @axe-core/playwright
+  audits the editor and overlays (0 serious/critical after fixes);
+  section reset/eye moved out of summaries; ranges and selects named;
+  stage focusable; contrast fixes. 19 screenshot baselines (18 layouts
+  + editor), local-only; E2E now 183
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

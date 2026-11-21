@@ -311,6 +311,22 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* Section tools row (reset, section-level visibility) */
+.sec-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0 8px;
+  justify-content: flex-end;
+}
+.sec-tools-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--mut);
+}
+.sec-tools .eye { position: static; width: 24px; height: 24px; }
+
 /* Settings search: sticky above the section list. */
 .sec-search { position: sticky; top: 0; z-index: 6; background: var(--bg); padding: 2px 0 10px; }
 .sec-search input {
@@ -657,7 +673,6 @@ textarea { resize: vertical; min-height: 40px; }
   display: block;
   margin-top: 3px;
   font-size: 11px;
-  opacity: .72;
 }
 
 /* image hosting helper */
@@ -930,8 +945,8 @@ textarea { resize: vertical; min-height: 40px; }
 .stage.dark .compose-body { background: #17181a; }
 .compose-msg { margin: 0 0 10px; font-size: 13px; color: #3a3f47; }
 .stage.dark .compose-msg { color: #a7adbb; }
-.compose-sig-note { margin: 14px 0 8px; font-size: 11px; color: #8a93a3; letter-spacing: .4px; }
-.stage.dark .compose-sig-note { color: #5d6675; }
+.compose-sig-note { margin: 14px 0 8px; font-size: 11px; color: #5d6675; letter-spacing: .4px; }
+.stage.dark .compose-sig-note { color: #8a93a3; }
 
 .stage iframe {
   width: 100%;
@@ -1280,7 +1295,7 @@ textarea { resize: vertical; min-height: 40px; }
   padding: 6px 10px;
   cursor: pointer;
 }
-.mode-seg button[aria-pressed="true"] { background: var(--acc); color: #fff; }
+.mode-seg button[aria-pressed="true"] { background: color-mix(in srgb, var(--acc) 72%, #000); color: #fff; }
 
 .update-pill {
   position: fixed;

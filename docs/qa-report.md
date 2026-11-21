@@ -1142,6 +1142,43 @@ refusing; cold-start example.
 
 ---
 
+# v0.65.0 addendum (axe audit + visual baselines)
+
+Date: 2026-11-21 · Scope: measured accessibility; layout drift insurance.
+
+## axe findings and fixes
+
+- **nested-interactive (6)** — reset buttons and the socials eye lived in
+  `<summary>`. Moved to a `.sec-tools` row at the top of each section body
+  (with a small "Reset" label). Sections affected: Templates, Logo,
+  Social links, Colours & type, Blocks, Show / hide.
+- **select-name (critical, 5)** — logo position, the per-row network
+  select and the socials image-use select had no accessible name;
+  `aria-label` added (network select in app.js socials row renderer).
+- **label (critical, 5)** — six range inputs (width, logo size, social
+  icon size, name spacing, name size, QR) were named only by adjacent
+  text. `aria-label` added; `#stage` is now `tabindex="0"` with
+  `role="region"` and an aria-label (fixes scrollable-region-focusable).
+- **color-contrast (3)** — active mode toggle (white on --acc ≈ 3.3:1) now
+  uses a 72% accent mix; `.compose-sig-note` light/dark greys swapped
+  (light #5d6675, dark #8a93a3); the AI footer disclosure's opacity was
+  removed.
+- Result: 0 serious/critical violations across the editor, export menu,
+  instructions and audit modals. 2 axe tests added to a11y.spec.js
+  (7 total there).
+
+## Visual baselines
+
+- e2e/visual.spec.js screenshots `.compose-sig` for all 18 templates plus
+  the editor chrome, with animations/carets disabled and a light stage.
+  Baselines (19 PNGs, 696 KB) committed; `maxDiffPixelRatio: 0.002`.
+  **Skipped on CI** — font rasterisation differs between machines, so the
+  guard is local-only rather than a false-red gate. Regenerate with
+  `--update-snapshots` after an intentional design change.
+- Suite 183/183 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

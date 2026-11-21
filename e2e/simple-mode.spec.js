@@ -64,10 +64,10 @@ test('the socials eye turns the whole row off from the summary', async ({ page }
   await page.click('#btn-sample');
   await expect.poll(() => previewSrcdoc(page)).toContain('linkedin.com');
 
-  const summary = page.locator('details[data-sec="socials"] > summary .eye');
+  const summary = page.locator('details[data-sec="socials"] .sec-tools .eye');
   await summary.click();
   await expect.poll(() => previewSrcdoc(page)).not.toContain('linkedin.com');
-  /* The section stayed open — the eye didn't toggle the summary. */
+  /* The section stays open — the eye lives in the tools row now. */
   expect(await page.evaluate(() =>
     document.querySelector('details[data-sec="socials"]').open)).toBe(true);
 

@@ -144,3 +144,47 @@ test('prefers-reduced-motion disables non-essential animation', async ({ page })
 
   await expectNoErrors(h);
 });
+
+
+/* ── axe-core audits (v0.65) ──────────────────────────────────────────── */
+const AxeBuilder = require('@axe-core/playwright').default;
+
+async function audit(page, label) {
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+    .exclude('#preview-frame')   /* user signature, not app chrome */
+    .exclude('.thumb iframe')
+    .analyze();
+  const bad = results.violations.filter(v => v.impact === 'serious' || v.impact === 'critical');
+  for (const v of bad) {
+    console.log(`AXE ${label} :: ${v.id} (${v.impact}) — ${v.nodes.length} node(s)`);
+    for (const n of v.nodes.slice(0, 4)) {
+      console.log('   ', n.target.join(' '), '::', (n.html || '').slice(0, 140));
+    }
+  }
+  return bad.map(v => `${v.id} (${v.impact})`);
+}
+
+test('axe: the main editor has no serious or critical violations', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+  expect(await audit(page, 'main')).toEqual([]);
+  await expectNoErrors(h);
+});
+
+test('axe: overlays pass too (export menu, instructions, audit)', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+
+  await page.click('#btn-export');
+  expect(await audit(page, 'export-menu')).toEqual([]);
+  await page.click('#x-instructions');
+  expect(await audit(page, 'instructions')).toEqual([]);
+  await page.locator('#modal-instructions [data-close]').click();
+
+  await page.click('#btn-export');
+  await page.click('#x-audit');
+  expect(await audit(page, 'audit-modal')).toEqual([]);
+
+  await expectNoErrors(h);
+});

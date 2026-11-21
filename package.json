@@ -1,6 +1,6 @@
 {
   "name": "signature-studio",
-  "version": "0.64.0",
+  "version": "0.65.0",
   "description": "Web-based HTML email signature builder and editor. Static, dependency-free.",
   "scripts": {
     "serve": "python3 -m http.server 8137",
@@ -8,6 +8,7 @@
     "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.65.1"
   },
   "license": "MIT"

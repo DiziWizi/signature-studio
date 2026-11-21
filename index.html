@@ -88,8 +88,9 @@
     </div>
 
     <details open data-sec="tpl">
-      <summary><span data-i18n="sec.tpl">Template &amp; layout</span> <button class="sec-reset" type="button" data-reset-sec="tpl" title="Reset this section" aria-label="Reset this section">↺</button></summary>
+      <summary><span data-i18n="sec.tpl">Template &amp; layout</span></summary>
       <div class="body">
+<div class="sec-tools"><span class="sec-tools-label" data-i18n="reset.short">Reset</span> <button class="sec-reset" type="button" data-reset-sec="tpl" title="Reset this section" aria-label="Reset this section">↺</button></div>
         <div class="tpl-picker" id="tpl-picker">
           <button class="tpl-btn" data-template="classic" type="button" aria-pressed="true">
             <span class="thumb"><iframe class="tthumb" data-tpl="classic" data-i18n-title="tpl.classicPreview" title="Classic preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
@@ -171,7 +172,7 @@
         <div class="grid2">
           <div class="field">
             <span class="lbl" data-i18n="design.width">Signature width</span>
-            <span class="range-row"><input type="range" min="400" max="600" step="10" data-field="design.signatureWidth"><output id="width-out">600 px</output></span>
+            <span class="range-row"><input type="range" min="400" max="600" step="10" data-field="design.signatureWidth" aria-label="Signature width"><output id="width-out">600 px</output></span>
             <span class="micro" data-i18n="design.widthMicro">Narrower widths suit small client panes and short layouts.</span>
           </div>
           <label class="field"><span data-i18n="design.density">Density</span>
@@ -225,8 +226,9 @@
     </details>
 
     <details open data-sec="logo">
-      <summary><span data-i18n="sec.logo">Logo &amp; photo</span> <button class="sec-reset" type="button" data-reset-sec="logo" title="Reset this section" aria-label="Reset this section">↺</button></summary>
+      <summary><span data-i18n="sec.logo">Logo &amp; photo</span></summary>
       <div class="body grid2">
+<div class="sec-tools"><span class="sec-tools-label" data-i18n="reset.short">Reset</span> <button class="sec-reset" type="button" data-reset-sec="logo" title="Reset this section" aria-label="Reset this section">↺</button></div>
           <div class="field span2">
             <span class="lbl" data-i18n="design.logoUrl">Logo / photo URL</span>
             <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button" data-i18n="design.upload">Upload</button><button class="btn btn-sm" id="recrop-btn" type="button" data-i18n-title="design.recropTitle" data-i18n="design.recrop">Re-crop</button></span>
@@ -238,9 +240,9 @@
               </select>
             </span>
             <input type="file" id="logo-file" accept="image/*" hidden>
-            <span class="range-row"><input type="range" min="40" max="160" step="4" data-field="design.logoWidth" id="logo-width"><output id="logo-width-out"></output></span>
+            <span class="range-row"><input type="range" min="40" max="160" step="4" data-field="design.logoWidth" id="logo-width" aria-label="Logo size"><output id="logo-width-out"></output></span>
             <span class="field-inline" data-used-by="classic,compact,split,banner"><span data-i18n="design.position">Position</span>
-              <select data-field="design.logoPosition" id="logo-position">
+              <select data-field="design.logoPosition" id="logo-position" aria-label="Logo position">
                 <option value="left" data-i18n="design.logoPosLeft">Left of name</option>
                 <option value="right" data-i18n="design.logoPosRight">Right of name</option>
               </select>
@@ -305,8 +307,12 @@
     </details>
 
     <details open data-sec="socials">
-      <summary><span data-i18n="sec.socials">Social links</span> <span class="sec-count" id="count-socials">0</span><button class="eye" type="button" data-eye="design.showSocials" aria-pressed="true" title="Show / hide in the signature"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><line class="eye-slash" x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="1.8"/></svg></button> <button class="sec-reset" type="button" data-reset-sec="socials" title="Reset this section" aria-label="Reset this section">↺</button></summary>
+      <summary><span data-i18n="sec.socials">Social links</span> <span class="sec-count" id="count-socials">0</span></summary>
       <div class="body">
+        <div class="sec-tools">
+          <button class="eye" type="button" data-eye="design.showSocials" aria-pressed="true" title="Show / hide social links in the signature"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><line class="eye-slash" x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="1.8"/></svg></button>
+          <button class="sec-reset" type="button" data-reset-sec="socials" title="Reset this section" aria-label="Reset this section">↺</button>
+        </div>
         <div class="quick" id="quick-socials">
           <span class="hint" data-i18n="socials.quickAdd">Quick add:</span>
           <button class="chip-btn" data-net="linkedin" data-i18n-title="socials.titleLinkedIn" data-i18n-aria="socials.addLinkedIn" title="LinkedIn" aria-label="Add LinkedIn" type="button" style="background:#0a66c2;color:#fff;border-color:transparent;">in</button>
@@ -334,7 +340,7 @@
           </div>
           <div class="field" data-when="@socials">
             <span class="lbl" data-i18n="design.socialSize">Social icon size</span>
-            <span class="range-row"><input type="range" min="16" max="28" step="1" data-field="design.socialSize"><output id="social-size-out">22 px</output></span>
+            <span class="range-row"><input type="range" min="16" max="28" step="1" data-field="design.socialSize" aria-label="Social icon size"><output id="social-size-out">22 px</output></span>
           </div>
             <label class="field" data-when="@socials"><span data-i18n="design.socialGap">Social chip gap (px)</span><input type="number" min="0" max="24" step="1" data-field="design.socialGap" placeholder="auto"></label>
           <div class="field span2" data-when="@socials">
@@ -348,7 +354,7 @@
           </div>
             <div class="field span2" data-when="@socials">
               <span class="lbl" data-i18n="design.socialsImageRef">Icon images use</span>
-              <select data-field="design.imageRef.socials">
+              <select data-field="design.imageRef.socials" aria-label="Icon image use">
                 <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
                 <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches them</option>
               </select>
@@ -418,8 +424,9 @@
     </details>
 
     <details open data-sec="type">
-      <summary><span data-i18n="sec.type">Colours &amp; type</span> <button class="sec-reset" type="button" data-reset-sec="type" title="Reset this section" aria-label="Reset this section">↺</button></summary>
+      <summary><span data-i18n="sec.type">Colours &amp; type</span></summary>
       <div class="body">
+<div class="sec-tools"><span class="sec-tools-label" data-i18n="reset.short">Reset</span> <button class="sec-reset" type="button" data-reset-sec="type" title="Reset this section" aria-label="Reset this section">↺</button></div>
         <details class="sub" open>
           <summary data-i18n="sub.colours">Colours</summary>
           <div class="grid2">
@@ -464,10 +471,10 @@
               <option value="bold" data-i18n="design.weightBold">Bold</option>
             </select>
           </label>
-          <span class="range-row" data-advanced><span class="lbl" data-i18n="field.nameSpacing">Name letter-spacing</span><input type="range" min="0" max="4" step="1" data-field="design.nameSpacing"><output id="name-spacing-out">0 px</output></span>
+          <span class="range-row" data-advanced><span class="lbl" data-i18n="field.nameSpacing">Name letter-spacing</span><input type="range" min="0" max="4" step="1" data-field="design.nameSpacing" aria-label="Name letter-spacing"><output id="name-spacing-out">0 px</output></span>
           <div class="field">
             <span class="lbl" data-i18n="design.nameSizeBoost">Name size boost</span>
-            <span class="range-row"><input type="range" min="0" max="10" step="1" data-field="design.nameSizeExtra"><output id="name-size-out">+3 px</output></span>
+            <span class="range-row"><input type="range" min="0" max="10" step="1" data-field="design.nameSizeExtra" aria-label="Name size boost"><output id="name-size-out">+3 px</output></span>
             <span class="micro" data-i18n="design.nameSizeMicro">Added to the base font size for your name.</span>
           </div>
           <label class="field span2"><span data-i18n="design.nameWeight">Name weight</span>
@@ -525,8 +532,9 @@
     </details>
 
     <details open data-sec="blocks">
-      <summary><span data-i18n="sec.blocks">Blocks</span> <span class="sec-count" id="count-customs" title="Custom lines">0</span> <button class="sec-reset" type="button" data-reset-sec="blocks" title="Reset this section" aria-label="Reset this section">↺</button></summary>
+      <summary><span data-i18n="sec.blocks">Blocks</span> <span class="sec-count" id="count-customs" title="Custom lines">0</span></summary>
       <div class="body grid2">
+<div class="sec-tools"><span class="sec-tools-label" data-i18n="reset.short">Reset</span> <button class="sec-reset" type="button" data-reset-sec="blocks" title="Reset this section" aria-label="Reset this section">↺</button></div>
           <label class="field span2 has-eye"><span data-i18n="design.statusBadge">Status badge</span><button class="eye" type="button" data-eye="design.showStatus" aria-pressed="true" title="Show / hide in the signature"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><line class="eye-slash" x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="1.8"/></svg></button> <span class="opt" data-i18n="opt.statusBadge">(e.g. “Open to freelance work” — leave empty to hide)</span>
             <span class="url-row">
               <input data-field="design.statusText" placeholder="Open to freelance work">
@@ -536,7 +544,7 @@
           <label class="switch span2" data-advanced data-used-by="classic,enterprise"><input type="checkbox" data-field="design.showQr"><span class="sw"></span> <span data-i18n="design.showQr">Embed a scannable vCard QR (Classic + Enterprise)</span></label>
           <div class="field" data-advanced data-when="design.showQr">
             <span class="lbl" data-i18n="design.qrSize">QR size</span>
-            <span class="range-row"><input type="range" min="32" max="96" step="4" data-field="design.qrSize"><output id="qr-size-out">60 px</output></span>
+            <span class="range-row"><input type="range" min="32" max="96" step="4" data-field="design.qrSize" aria-label="QR size"><output id="qr-size-out">60 px</output></span>
             <span class="micro" data-i18n="design.qrMicro">Target size — the QR grows a little when your contact data is long (scannability wins). Rendered as an Outlook-safe grid; Gmail and Apple Mail scan fine.</span>
           </div>
           <label class="field span2" data-used-by="quote"><span data-i18n="design.quoteText">Favourite quote</span> <span class="opt" data-i18n="opt.usedByQuote">(used by the Quote template — leave empty to skip)</span>
@@ -570,8 +578,9 @@
     </details>
 
     <details open data-sec="elements">
-      <summary><span data-i18n="sec.elements">Show / hide</span> <button class="sec-reset" type="button" data-reset-sec="elements" title="Reset this section" aria-label="Reset this section">↺</button></summary>
+      <summary><span data-i18n="sec.elements">Show / hide</span></summary>
       <div class="body grid2">
+<div class="sec-tools"><span class="sec-tools-label" data-i18n="reset.short">Reset</span> <button class="sec-reset" type="button" data-reset-sec="elements" title="Reset this section" aria-label="Reset this section">↺</button></div>
         <label class="switch"><input type="checkbox" data-field="design.showTitle"><span class="sw"></span> <span data-i18n="elements.jobTitle">Job title</span></label>
         <label class="switch"><input type="checkbox" data-field="design.showCompany"><span class="sw"></span> <span data-i18n="elements.company">Company</span></label>
         <label class="switch"><input type="checkbox" data-field="design.showDepartment"><span class="sw"></span> <span data-i18n="elements.department">Department</span></label>
@@ -608,7 +617,7 @@
       <button class="trust-badge warn" id="trust-badge" type="button"></button>
     </div>
     <div class="checklist" id="checklist" tabindex="-1"></div>
-    <div class="stage" id="stage">
+    <div class="stage" id="stage" tabindex="0" role="region" aria-label="Signature preview">
       <div class="compose" id="compose">
         <div class="compose-head" aria-hidden="true">
           <span class="compose-dots" aria-hidden="true"><i></i><i></i><i></i></span>
