@@ -479,6 +479,8 @@ window.SIG_LOCALES.fr = {
   'json.invalid': 'JSON invalide — aucune modification appliquée.',
   'share.copied': 'Lien de partage copié — ouvrez-le pour charger cette signature.',
   'share.loaded': 'Signature partagée chargée.',
+  'share.replaceTitle': "Ouvrir cette signature partagée ?",
+  'share.replaceBody': "Elle remplacera la signature ouverte. Appuyez ensuite sur ↶ pour récupérer la vôtre, ou fermez ceci pour la conserver.",
   'share.bad': 'Ce lien de partage est invalide.',
   'topbar.audit': "Auditer la signature…",
   'audit.title': "Audit de la signature",

@@ -14,6 +14,45 @@ let redoStack = [];
 
 const $ = sel => document.querySelector(sel);
 
+/* ── dangerous-markup stripping ─────────────────────────────────────────
+   The preview iframe is same-origin (it must be: the height sync reads
+   contentDocument), and the Custom HTML block is raw by design — so a
+   pasted/imported/shared payload could script the app and read every saved
+   signature. Strip the executable surface wherever state enters the app
+   and again at the preview sink; the exported markup is still whatever the
+   user wrote, minus dangerous URL schemes. */
+const DANGEROUS_URL = /^\s*(?:javascript|vbscript|data:text\/html)/i;
+
+function cleanDangerousNodes(root) {
+  root.querySelectorAll('script,iframe,object,embed,base,meta[http-equiv],link[rel="import"]')
+    .forEach(n => n.remove());
+  for (const el of root.querySelectorAll('*')) {
+    for (const attr of [...el.attributes]) {
+      const name = attr.name.toLowerCase();
+      if (name.startsWith('on')) { el.removeAttribute(attr.name); continue; }
+      if (['href', 'src', 'action', 'formaction', 'xlink:href'].includes(name) &&
+          DANGEROUS_URL.test(attr.value)) { el.removeAttribute(attr.name); continue; }
+      if (name === 'style' && /expression\s*\(|url\(\s*['"]?\s*javascript:/i.test(attr.value)) {
+        el.removeAttribute(attr.name);
+      }
+    }
+  }
+}
+
+function sanitiseHtmlFragment(html) {
+  const src = String(html || '');
+  if (!src.trim()) return src;
+  const doc = new DOMParser().parseFromString(src, 'text/html');
+  cleanDangerousNodes(doc.body);
+  return doc.body.innerHTML;
+}
+
+function sanitiseDocumentHtml(html) {
+  const doc = new DOMParser().parseFromString(String(html || ''), 'text/html');
+  cleanDangerousNodes(doc);
+  return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+}
+
 function normalizeLoadedState(raw) {
   const def = defaultState();
   const out = Object.assign({}, def, raw || {});
@@ -36,6 +75,14 @@ function normalizeLoadedState(raw) {
   out.meta = Object.assign({}, def.meta, (raw || {}).meta || {});
   if (!Array.isArray(out.socials)) out.socials = [];
   if (!Array.isArray(out.customLines)) out.customLines = [];
+  /* Never let executable markup in through a file, link or stale draft. */
+  if (typeof out.design.customHtml === 'string' && out.design.customHtml) {
+    out.design.customHtml = sanitiseHtmlFragment(out.design.customHtml);
+  }
+  out.socials = out.socials.filter(s => s && typeof s === 'object').map(s => {
+    const url = typeof s.url === 'string' ? s.url : '';
+    return DANGEROUS_URL.test(url) ? Object.assign({}, s, { url: '' }) : s;
+  });
   return out;
 }
 
@@ -304,7 +351,8 @@ function renderPreviewNow() {
     'var t=e.target,el=t&&t.closest?t.closest("[data-edit]"):null;' +
     'try{parent.postMessage({__sigstudio:"edit",key:el?el.getAttribute("data-edit"):""},"*");}catch(err){}' +
     '},true);<\/script>';
-  const html = renderSignaturePreview(state).replace('</body>', previewScript + '</body>');
+  const html = sanitiseDocumentHtml(renderSignaturePreview(state))
+    .replace('</body>', previewScript + '</body>');
   frame.srcdoc = html;
   const peek = $('#peek-frame');
   if (peek && !$('#peek-sheet').classList.contains('hidden')) peek.srcdoc = html;
@@ -1946,7 +1994,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.66.2';
+const APP_VERSION = '0.67.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2022,8 +2070,11 @@ function init() {
   if (verEl) verEl.textContent = t('footer.version', { v: APP_VERSION });
   state = normalizeLoadedState(loadDraft());
 
-  /* Shared-signature links (?sig=…): load the state, skip the wizard. */
+  /* Shared-signature links (?sig=…): decode now, decide at the end of init
+     — replacing the user's own signature must be a choice, not a side
+     effect. */
   let sigBootStatus = 'none';
+  let sharedState = null;
   try {
     const sigParam = new URLSearchParams(location.search).get('sig');
     if (sigParam) {
@@ -2031,7 +2082,7 @@ function init() {
       if (!raw) throw new Error('decode');
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== 'object' || !parsed.design || !parsed.profile) throw new Error('shape');
-      state = normalizeLoadedState(parsed);
+      sharedState = normalizeLoadedState(parsed);
       localStorage.setItem(WIZARD_DONE_KEY, '1');
       sigBootStatus = 'loaded';
     }
@@ -2446,7 +2497,11 @@ function init() {
   }
   window.addEventListener('message', e => {
     const m = e.data || {};
-    if (m.__sigstudio === 'edit') revealControl(m.key);
+    if (m.__sigstudio !== 'edit') return;
+    const frame = $('#preview-frame');
+    if (e.origin !== location.origin) return;
+    if (frame && e.source !== frame.contentWindow) return;
+    revealControl(m.key);
   });
 
   /* Narrow-window preview peek: a live bottom sheet instead of scrolling
@@ -2527,10 +2582,23 @@ function init() {
   rebuildAll();
   updateUndoButtons();
 
-  /* Report the outcome of a ?sig= share link. */
-  if (sigBootStatus === 'loaded') {
-    scheduleSave();
-    showToast(t('share.loaded'), 'ok', { key: 'share.loaded' });
+  /* Report the outcome of a ?sig= share link. With work already open, the
+     load is a confirmed, undoable action rather than a silent replacement. */
+  if (sigBootStatus === 'loaded' && sharedState) {
+    const applyShared = () => {
+      pushHistory();                 /* the local draft stays one ↶ away */
+      state = sharedState;
+      rebuildAll();
+      scheduleSave();
+      showToast(t('share.loaded'), '', { key: 'share.loaded' });
+    };
+    if (!draftHasContent(loadDraft())) {
+      applyShared();
+    } else {
+      /* Drop the parameter so a reload doesn't re-ask after a refusal. */
+      history.replaceState({}, '', location.pathname);
+      showConfirm(t('share.replaceTitle'), t('share.replaceBody'), applyShared);
+    }
   } else if (sigBootStatus === 'bad') {
     showToast(t('share.bad'), 'err', { key: 'share.bad' });
   }

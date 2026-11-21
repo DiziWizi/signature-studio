@@ -478,6 +478,8 @@ window.SIG_LOCALES.es = {
   'json.invalid': 'JSON no válido — no se aplicaron cambios.',
   'share.copied': 'Enlace compartido copiado — ábralo para cargar esta firma.',
   'share.loaded': 'Firma compartida cargada.',
+  'share.replaceTitle': "¿Abrir esta firma compartida?",
+  'share.replaceBody': "Reemplazará la firma que tiene abierta. Pulse ↶ después para recuperar la suya, o cierre esto para conservarla.",
   'share.bad': 'Este enlace compartido no es válido.',
   'topbar.audit': "Auditar firma…",
   'audit.title': "Auditoría de la firma",

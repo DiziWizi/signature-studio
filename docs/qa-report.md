@@ -1240,6 +1240,43 @@ audit, plus the guard that would have caught it.
 
 ---
 
+# v0.67.0 addendum (audit batch 1 — security & share safety)
+
+Date: 2026-11-21 · Scope: S1 (stored XSS) and S2 (silent draft replacement)
+from the adversarial audit, plus the message-listener hardening (O9).
+
+## S1 — executable markup
+
+- New `sanitiseHtmlFragment()` / `sanitiseDocumentHtml()` (DOMParser based)
+  strip `script, iframe, object, embed, base, meta[http-equiv],
+  link[rel=import]`, every `on*=` attribute, `javascript:` / `vbscript:` /
+  `data:text/html` URLs in href/src/action, and CSS `expression()` /
+  `url(javascript:)`.
+- Applied twice: `normalizeLoadedState()` cleans `design.customHtml` and
+  social URLs (so drafts, JSON imports, presets, snapshots and `?sig=`
+  links all arrive clean), and `renderPreviewNow()` sanitises the whole
+  preview document before the click reporter is injected — so even state
+  mutated at runtime cannot execute.
+- Proof: `onerror`/`<script>` payloads no longer fire (parent flags stay
+  0) via the Custom HTML block, a `?sig=` link, or JSON apply; the preview
+  still carries `data-edit` and click-to-edit still flashes the field.
+
+## S2 — shared links no longer clobber open work
+
+- `?sig=` decodes into `sharedState` and is applied at end of init only
+  after checking `draftHasContent(loadDraft())`. With work open it shows a
+  confirm ("Open this shared signature? … press ↶ afterwards to get yours
+  back"), pushes the local state onto history, and strips the parameter
+  via `history.replaceState` so a reload does not re-ask. Without a draft
+  it loads directly (and still reports "Shared signature loaded.").
+- The share round-trip spec now opens the link in a **separate browser
+  context**, matching a different person opening it.
+
+5 new E2E tests (security.spec.js). Suite 194/194 twice; visual baselines
+unchanged (sanitising does not alter the rendered pixels).
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

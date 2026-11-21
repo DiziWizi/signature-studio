@@ -10,7 +10,7 @@ test.beforeEach(async ({ context }) => {
   });
 });
 
-test('share link round-trips the full state', async ({ page }) => {
+test('share link round-trips the full state', async ({ page, browser }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');
 
@@ -27,12 +27,15 @@ test('share link round-trips the full state', async ({ page }) => {
   });
   expect(url).toContain('?sig=');
 
-  /* Open the link in a fresh page: state loads, no wizard. */
-  const page2 = await page.context().newPage();
+  /* A different person opens it: fresh storage, so no confirm step — the
+     shared state loads directly, without the wizard. */
+  const other = await browser.newContext();
+  const page2 = await other.newPage();
   await page2.goto(url, { waitUntil: 'load' });
   await expect(page2.locator('[data-field="profile.name"]')).toHaveValue('Xanthe');
   await expect(page2.locator('#modal-wizard')).toHaveClass(/hidden/);
   await expect(page2.locator('#toasts')).toContainText('Shared signature loaded');
+  await other.close();
 
   await expectNoErrors(h);
 });

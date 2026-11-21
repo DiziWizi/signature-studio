@@ -480,6 +480,8 @@ window.SIG_LOCALES.en = {
   'json.invalid': 'Invalid JSON — no changes applied.',
   'share.copied': 'Share link copied — open it to load this signature.',
   'share.loaded': 'Shared signature loaded.',
+  'share.replaceTitle': "Open this shared signature?",
+  'share.replaceBody': "It will replace the signature you have open. Press ↶ afterwards to get yours back, or close this to keep it.",
   'share.bad': 'This share link is invalid.',
   'topbar.audit': "Audit signature…",
   'audit.title': "Signature audit",

@@ -478,6 +478,8 @@ window.SIG_LOCALES.de = {
   'json.invalid': 'Ungültiges JSON — keine Änderungen übernommen.',
   'share.copied': 'Freigabe-Link kopiert — öffnen Sie ihn, um diese Signatur zu laden.',
   'share.loaded': 'Geteilte Signatur geladen.',
+  'share.replaceTitle': "Diese geteilte Signatur öffnen?",
+  'share.replaceBody': "Sie ersetzt die Signatur, die Sie gerade offen haben. Mit ↶ holen Sie Ihre zurück — oder schließen Sie dieses Fenster, um sie zu behalten.",
   'share.bad': 'Dieser Freigabe-Link ist ungültig.',
   'topbar.audit': "Signatur prüfen…",
   'audit.title': "Signatur-Prüfung",
