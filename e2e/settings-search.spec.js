@@ -3,6 +3,7 @@
 const { test, expect } = require('@playwright/test');
 const { freshPage, expectNoErrors } = require('./helper');
 
+/* v0.71: '/' replaces Ctrl+K, which the browser reserves. */
 test('search filters settings across sections and clears', async ({ page }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');
@@ -42,7 +43,7 @@ test('no-match state and Ctrl+K focus', async ({ page }) => {
   await page.fill('#settings-search', 'zzzznotathing');
   await expect(page.locator('#settings-search-empty')).toBeVisible();
 
-  await page.keyboard.press('Control+k');
+  await page.keyboard.press('/');
   await expect(page.locator('#settings-search')).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(page.locator('#settings-search')).toHaveValue('');

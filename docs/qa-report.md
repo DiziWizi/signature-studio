@@ -1375,6 +1375,54 @@ Date: 2026-11-21 · Scope: S8, S9, S10, S12.
 
 ---
 
+# v0.71.0 addendum (technical-adversary batch 1 — self-host correctness)
+
+Date: 2026-11-21 · Scope: T1–T4 of the technical persona review.
+
+## T1 — the image was a checkout
+
+- `Dockerfile` now copies an allow-list (`index.html`, `sw.js`,
+  `manifest.webmanifest`, `assets/`, `nginx.conf`) instead of `COPY .`;
+  `.dockerignore` excludes `e2e/`, `docs/`, `tools/`, `tests/`,
+  `test-results/`, `.forgejo/`, `node_modules/`, package files and markdown.
+- `tools/check_selfhost.py` fails the build if `COPY .` returns, if a COPY
+  source is missing/unexpected, if an ignore line disappears, or if the
+  nginx CSP goes missing. Wired into the CI `check` job.
+- Simulated image tree: 27 files / 900 KB, no dev directories.
+  **Verified by manifest + simulation** — this environment has the Docker
+  CLI but no daemon, so `docker build` itself was not run here; the guard
+  makes the regression class impossible to reintroduce silently.
+
+## T2 — share links that hosts will accept
+
+- Above 8 KB the default now copies the image-free link and says why
+  ("would be 209 KB, which many hosts refuse"). The menu item became
+  **Copy share link with images** for the explicit full link, which keeps
+  the size warning. Threshold rationale: nginx's default request line is
+  8 KB; our dev server answered **414** at 64 KB.
+
+## T3 — reachable shortcut
+
+- Search moved to `/` (when not typing) and `Ctrl/Cmd+Shift+K`. Plain
+  Ctrl/Cmd+K is untouched — it belongs to the address bar. Placeholder
+  hint, README-adjacent copy and the search spec follow.
+
+## T4 — CSP that ships and is tested
+
+- `nginx.conf`: CSP (self + the two `'unsafe-inline'` tokens this app
+  needs), `X-Frame-Options: DENY`, `Permissions-Policy`, plus 404s for
+  `/e2e/`, `/docs/`, `/tools/`, `/tests/`, `/test-results/`, `/.forgejo/`
+  and dotfiles.
+- `e2e/selfhost.spec.js` reads `nginx.conf`, asserts the headers and deny
+  regexes, then applies that exact CSP to a live page: zero violations,
+  preview renders, click-to-edit still works.
+- README gains a **Hardening** section explaining the two `'unsafe-inline'`
+  tokens and what tightening them would require.
+
+3 new E2E tests; suite 209/209 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

@@ -242,6 +242,13 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   toast per key; reset buttons and sliders meet the 24 px target minimum;
   a "Remote images" switch stops the preview (and thumbnails) from pinging
   image hosts; E2E 206
+- [x] v0.71.0 — self-host correctness: Dockerfile copies an allow-list and
+  .dockerignore keeps dev material out (tools/check_selfhost.py guards it in
+  CI); nginx.conf ships CSP/X-Frame-Options/Permissions-Policy and 404s dev
+  paths; share links above 8 KB default to the image-free variant (hosts
+  reject longer request lines) with "with images" as an explicit menu item;
+  settings search moves to "/" and Ctrl+Shift+K (Ctrl+K belongs to the
+  browser); E2E 209
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

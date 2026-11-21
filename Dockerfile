@@ -1,7 +1,12 @@
 FROM nginx:1.27-alpine
 
+# Copy an allow-list: the image is the app, not a checkout. New dev folders
+# (e2e/, test-results/, docs/, node_modules/) can never leak into a
+# self-hosted instance.
+COPY index.html sw.js manifest.webmanifest /usr/share/nginx/html/
+COPY assets /usr/share/nginx/html/assets
+
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY . /usr/share/nginx/html
 
 EXPOSE 80
 

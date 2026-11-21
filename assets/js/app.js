@@ -1517,8 +1517,10 @@ async function doCopy() {
 
 /* Share link: compress the whole state into a URL. Embedded images ride
    along, and random pixel data does not compress — a 120 KB logo becomes a
-   200 KB link that chat apps truncate. Say so, and offer the image-free
-   variant (menu item below). */
+   200 KB link. Beyond ~8 KB such a URL is not just awkward, it is REFUSED:
+   nginx's default request-line limit is 8 KB and many hosts answer 414.
+   So the default copies a link that works (images omitted) and says so;
+   "Copy link with images" in the menu forces the full one. */
 const SHARE_BIG = 8000;
 
 function stateWithoutImages(s) {
@@ -1532,20 +1534,28 @@ function stateWithoutImages(s) {
   return c;
 }
 
-async function doShareLink({ plain = false } = {}) {
-  const src = plain ? stateWithoutImages(state) : state;
-  const url = `${location.origin}${location.pathname}?sig=${lzwEncode(JSON.stringify(src))}`;
+function shareUrlFor(src) {
+  return `${location.origin}${location.pathname}?sig=${lzwEncode(JSON.stringify(src))}`;
+}
+
+async function doShareLink({ forceFull = false } = {}) {
+  const fullUrl = shareUrlFor(state);
+  const overLimit = fullUrl.length > SHARE_BIG;
+  const omitImages = overLimit && !forceFull;
+  const url = omitImages ? shareUrlFor(stateWithoutImages(state)) : fullUrl;
+  const kb = Math.round(fullUrl.length / 1024);
+
   const how = await copySignature(url, url);
   if (how === 'failed') {
     showToast(t('toast.clipboardBlocked'), 'err', { key: 'toast.clipboardBlocked' });
     showManualCopy(url);
     return;
   }
-  if (plain) {
-    showToast(t('share.plainCopied'), '', { key: 'share.plainCopied' });
-  } else if (url.length > SHARE_BIG) {
-    showToast(t('share.tooBig', { kb: Math.round(url.length / 1024) }), 'warn',
-      { key: 'share.tooBig', params: { kb: Math.round(url.length / 1024) } });
+  if (omitImages) {
+    showToast(t('share.plainForSize', { kb }), 'warn',
+      { key: 'share.plainForSize', params: { kb } });
+  } else if (overLimit) {
+    showToast(t('share.tooBig', { kb }), 'warn', { key: 'share.tooBig', params: { kb } });
   } else {
     showToast(t('share.copied'), '', { key: 'share.copied' });
   }
@@ -2098,7 +2108,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.70.0';
+const APP_VERSION = '0.71.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2400,7 +2410,7 @@ function init() {
     showToast(t('toast.thunderbird'), 'ok', { key: 'toast.thunderbird' });
   });
   $('#x-share').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink(); });
-  $('#x-share-plain').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink({ plain: true }); });
+  $('#x-share-full').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink({ forceFull: true }); });
   $('#x-json').addEventListener('click', () => { menu.classList.add('hidden'); openJsonEditor(); });
   $('#x-instructions').addEventListener('click', () => { menu.classList.add('hidden'); openOverlay('#modal-instructions'); });
   /* Copy from inside the instructions: one place to read the steps and
@@ -2592,12 +2602,18 @@ function init() {
         ssearch.blur();
       }
     });
+    /* Ctrl/Cmd+K is the browser's own "focus the address bar" shortcut in
+       Chrome, Edge and Firefox — a page never sees it. Use "/" (when not
+       already typing) or Ctrl/Cmd+Shift+K, which are actually reachable. */
     document.addEventListener('keydown', e => {
-      if ((e.ctrlKey || e.metaKey) && (e.key || '').toLowerCase() === 'k') {
-        e.preventDefault();
-        ssearch.focus();
-        ssearch.select();
-      }
+      const t = e.target;
+      const typing = t && (t.closest('input, textarea, select') || t.isContentEditable);
+      const chord = (e.ctrlKey || e.metaKey) && e.shiftKey && (e.key || '').toLowerCase() === 'k';
+      const slash = e.key === '/' && !typing && !e.ctrlKey && !e.metaKey && !e.altKey;
+      if (!chord && !slash) return;
+      e.preventDefault();
+      ssearch.focus();
+      ssearch.select();
     });
   }
   window.addEventListener('message', e => {

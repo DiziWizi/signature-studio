@@ -17,6 +17,7 @@ jobs:
           for f in assets/js/*.js; do node --check "$f" || exit 1; done
           for f in tests/*.js; do node --check "$f" || exit 1; done
           python3 -m py_compile tools/publish_release.py
+          python3 tools/check_selfhost.py
 
       - name: Version consistency
         run: |

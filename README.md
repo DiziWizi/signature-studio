@@ -119,8 +119,35 @@ podman build -t signature-studio .
 podman run -p 8080:80 signature-studio
 ```
 
-**Option C — any static host** (nginx, Caddy, Forgejo Pages, …) — serve the
-repository root.
+**Option C — any static host** (nginx, Caddy, Forgejo Pages, …) — publish
+only the app itself: `index.html`, `assets/`, `sw.js`, `manifest.webmanifest`.
+Do **not** point a public web root at a checkout: `e2e/`, `docs/`,
+`test-results/` and `node_modules/` are development material.
+
+The Docker image is built from an explicit allow-list, so it contains the app
+and nothing else — `curl localhost:8080/e2e/a11y.spec.js` is a 404.
+
+### Hardening
+
+`nginx.conf` ships the headers this app actually needs:
+
+| Header | Value | Why |
+| --- | --- | --- |
+| `Content-Security-Policy` | `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; object-src 'none'; frame-ancestors 'none'` | The editor sets inline style attributes, and the live preview injects a tiny click-reporter into an `about:srcdoc` frame. Without those two `'unsafe-inline'` tokens the app renders but click-to-edit silently dies — see `e2e/selfhost.spec.js`, which applies this exact policy and asserts zero violations. |
+| `X-Frame-Options` | `DENY` | Nothing may frame the editor. |
+| `X-Content-Type-Options` | `nosniff` | |
+| `Referrer-Policy` | `no-referrer` | |
+| `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), payment=()` | |
+
+Tightening further: replacing the style `'unsafe-inline'` requires moving
+every dynamic style attribute into hashed `<style>` blocks, and the script
+token is needed for the preview reporter. Neither is worth it for a
+single-page local tool; if you do it, delete the corresponding test so the
+suite documents the new contract.
+
+`nginx.conf` also returns 404 for `/e2e/`, `/docs/`, `/tools/`, `/tests/`,
+`/test-results/`, `/.forgejo/` and any dotfile, so a bind-mounted checkout
+does not become a directory listing.
 
 ## Using the app
 

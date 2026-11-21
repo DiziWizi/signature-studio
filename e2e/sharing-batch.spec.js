@@ -30,7 +30,7 @@ test('bulk filenames are unique even when names collide', async ({ page }) => {
   await expectNoErrors(h);
 });
 
-test('a huge share link says so, and the plain variant is small', async ({ page }) => {
+test('a huge share link defaults to the short, openable variant', async ({ page }) => {
   const h = await freshPage(page);
   await page.evaluate(() => {
     /* Incompressible bytes: a real photo, not a run of one character. */
@@ -44,14 +44,21 @@ test('a huge share link says so, and the plain variant is small', async ({ page 
     rebuildAll();
   });
 
+  /* Default copies the image-free link and explains why. */
   await page.click('#btn-export');
   await page.click('#x-share');
+  await expect(page.locator('#toasts')).toContainText(/would be \d+ KB/i);
+
+  /* Forcing the full link warns about the size. */
+  await page.click('#btn-export');
+  await page.click('#x-share-full');
   await expect(page.locator('#toasts')).toContainText(/KB because it includes images/i);
 
+  /* Copy the default (short) link again so the URL under test is the one
+     the app hands out. */
   await page.click('#btn-export');
-  await page.click('#x-share-plain');
-  await expect(page.locator('#toasts')).toContainText(/Short link copied/i);
-
+  await page.click('#x-share');
+  await page.waitForTimeout(300);
   const url = await page.evaluate(async () => (await navigator.clipboard.readText()));
   expect(url.length).toBeLessThan(3000);
   const decoded = await page.evaluate(u => {
