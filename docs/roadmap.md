@@ -227,6 +227,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   every load, so shared links and imported JSON can no longer script the
   app; ?sig= with work open now asks before replacing and stays undoable;
   preview message listener checks origin + source; E2E 194
+- [x] v0.68.0 — output safety: URL scheme allow-list (javascript:/vbscript:/
+  data:text/html refused, host:port preserved), checklist warnings for
+  incomplete email/phone/website and very long tokens, `<wbr>` soft breaks
+  plus word-wrap on text so long words no longer push the signature
+  sideways; E2E 197
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

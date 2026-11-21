@@ -1123,6 +1123,31 @@ function collectWarnings(s) {
       (s.socials || []).some(x => String(x.iconUrl || '').trim());
     if (hasImg) w.push({ kind: 'warn', msg: t('check.cidImages'), target: 'design.imageRef.logo' });
   }
+  /* Format checks: junk values pass silently today and only show up as a
+     dead link or an unreachable address in the sent signature. */
+  const email = String(s.contact.email || '').trim();
+  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    w.push({ kind: 'warn', msg: t('check.badEmail'), target: 'contact.email' });
+  }
+  const phone = String(s.contact.phone || '').trim();
+  if (phone && (phone.replace(/\D/g, '').length < 6)) {
+    w.push({ kind: 'warn', msg: t('check.badPhone'), target: 'contact.phone' });
+  }
+  const site = String(s.contact.website || '').trim();
+  if (site && !normalizeUrl('custom', site)) {
+    w.push({ kind: 'warn', msg: t('check.badUrl'), target: 'contact.website' });
+  }
+  /* Unbroken tokens force a horizontal scrollbar in Word-engine Outlook. */
+  const longFields = [
+    ['profile.name', s.profile.name], ['profile.company', s.profile.company],
+    ['profile.title', s.profile.title], ['contact.website', site],
+  ];
+  for (const [target, value] of longFields) {
+    if (/\S{46,}/.test(String(value || ''))) {
+      w.push({ kind: 'info', msg: t('check.longLine'), target });
+      break;
+    }
+  }
   for (const soc of s.socials) {
     if (!String(soc.url || '').trim()) {
       w.push({ kind: 'info', msg: t('check.networkNoLink', { net: esc(networkById(soc.network).name) }), target: '@section:socials' });
@@ -1994,7 +2019,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.67.0';
+const APP_VERSION = '0.68.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {

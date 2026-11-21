@@ -465,6 +465,10 @@ window.SIG_LOCALES.de = {
   'field.customHtml': 'Eigener HTML-Block (fortgeschritten)',
   'field.customHtmlHint': 'Wird exakt wie eingegeben nach dem Layout eingebettet - ohne Sicherheitsprüfung.',
   'check.networkNoLink': '{net} hat noch keinen Link — er erscheint nicht in der Signatur.',
+  'check.badEmail': "Diese E-Mail-Adresse wirkt unvollständig — Empfänger erreichen Sie evtl. nicht.",
+  'check.badPhone': "Diese Telefonnummer ist zu kurz zum Wählen.",
+  'check.badUrl': "Diese Website ist keine Webadresse — der Link wäre tot. Nutzen Sie https://… oder lassen Sie das Feld leer.",
+  'check.longLine': "Ein sehr langes, ununterbrochenes Wort kann die Signatur in Outlook seitlich verschieben.",
 
   'concise.summary': '{lines} {lineWord} · längste ~{longest} Zeichen — {verdict}',
   'concise.lineWord.one': 'Zeile',

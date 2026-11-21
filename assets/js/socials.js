@@ -51,6 +51,11 @@ function normalizeUrl(network, raw) {
   let url = String(raw || '').trim();
   if (!url) return '';
   if (/^(https?:|mailto:|tel:)/i.test(url)) return url;
+  /* Refuse every other scheme outright (javascript:, vbscript:, data:, …).
+     A host with a port ("example.com:8080/x") is not a scheme — the part
+     after the colon starts with digits. */
+  const scheme = url.match(/^([a-z][a-z0-9+.-]*):(.*)$/i);
+  if (scheme && !/^\d+(\/|$)/.test(scheme[2])) return '';
   const net = networkById(network);
   if (net.prefix) return net.prefix + url.replace(/^\/+/, '');
   if (url.includes('.') || url.includes('/')) return 'https://' + url;

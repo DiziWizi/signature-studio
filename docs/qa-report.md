@@ -1277,6 +1277,39 @@ unchanged (sanitising does not alter the rendered pixels).
 
 ---
 
+# v0.68.0 addendum (audit batch 2 — output safety)
+
+Date: 2026-11-21 · Scope: S6 (schemes + validation) and S7 (long-token
+overflow).
+
+## Schemes
+
+- `normalizeUrl()` now refuses every non-allow-listed scheme
+  (`javascript:`, `vbscript:`, `data:`, …) while keeping host:port inputs
+  working (`example.com:8080/x` → `https://example.com:8080/x`), and still
+  prefixing bare hosts. Website and social links therefore produce no href
+  rather than a live `javascript:` link.
+
+## Validation
+
+- `collectWarnings()` gains three format checks (incomplete email, phone
+  shorter than 6 digits, website that is not a web address) plus a
+  long-token hint. All four carry `target`s, so they appear as buttons in
+  the checklist and jump to the offending field — no new plumbing.
+
+## Overflow
+
+- `textStyle()` adds `word-wrap:break-word` (harmless where unsupported)
+  and a new `softBreak()` inserts `<wbr>` every 40 characters inside an
+  unbroken token for name, company, title and every contact line. Measured
+  before/after on the audit fixture (`ACME_` + 140 chars, 160-char URL):
+  971 px overflow → under 10 px.
+
+4 i18n keys ×4 (598 each). 3 new E2E tests (output-safety.spec.js).
+Suite 197/197 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

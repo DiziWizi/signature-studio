@@ -6,6 +6,13 @@
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+/* `<wbr>` after every 40 characters inside an unbroken token: Word-engine
+   Outlook wraps only at spaces, so a long URL or code otherwise forces a
+   horizontal scrollbar in the received message. */
+function softBreak(escaped, n = 40) {
+  return String(escaped).replace(new RegExp(`(\\S{${n}})(?=\\S)`, 'g'), '$1<wbr>');
+}
+
 /* CID image mode: every image is emitted as cid:sigstudio-<key> so a
    mail pipeline can attach parts with matching Content-IDs. The stored
    value (hosted URL or data URI) stays the asset's source of truth and
@@ -51,6 +58,7 @@ function textStyle(d, opts = {}) {
     `color:${opts.color ?? d.textColor}`,
     `line-height:${Math.round(size * lineHeightOf(d))}px`,
     'mso-line-height-rule:exactly',
+    'word-wrap:break-word',
   ];
   if (opts.weight) parts.push(`font-weight:${opts.weight}`);
   if (opts.style) parts.push(`font-style:${opts.style}`);
@@ -182,7 +190,7 @@ function nameHtml(s, d, { big = true, size = 0 } = {}) {
       ? `<br><span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 4, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
       : ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
     : '';
-  return `<span${dmCls(d, 'txt')} data-edit="name" style="${style}">${esc(shownWithHonorifics)}</span>${pronouns.replace('<span', '<span data-edit="pronouns"')}<br>`;
+  return `<span${dmCls(d, 'txt')} data-edit="name" style="${style}">${softBreak(esc(shownWithHonorifics))}</span>${pronouns.replace('<span', '<span data-edit="pronouns"')}<br>`;
 }
 
 /* Personal context line: location · languages, muted under the title. */
@@ -229,7 +237,7 @@ function titleHtml(s, d) {
   ].filter(Boolean);
   if (!bits.length) return '';
   const style = textStyle(d, { size: d.fontSize, color: mutedColor(d) });
-  return `<span${dmCls(d, 'mut')} data-edit="title" style="${style}">${esc(bits.join('  ·  '))}</span><br>`;
+  return `<span${dmCls(d, 'mut')} data-edit="title" style="${style}">${softBreak(esc(bits.join('  ·  ')))}</span><br>`;
 }
 
 function companyHtml(s, d) {
@@ -237,9 +245,9 @@ function companyHtml(s, d) {
   const style = textStyle(d, { size: d.fontSize, color: linkColorOf(d), weight: 'bold' });
   if (s.contact.website && d.showWebsite !== false) {
     const href = normalizeUrl('custom', s.contact.website);
-    return `<a href="${esc(href)}" data-edit="company" style="${style};text-decoration:none;">${esc(s.profile.company)}</a><br>`;
+    return `<a href="${esc(href)}" data-edit="company" style="${style};text-decoration:none;">${softBreak(esc(s.profile.company))}</a><br>`;
   }
-  return `<span data-edit="company" style="${style}">${esc(s.profile.company)}</span><br>`;
+  return `<span data-edit="company" style="${style}">${softBreak(esc(s.profile.company))}</span><br>`;
 }
 
 /* Company tagline: muted line under the company name. Subordinate to the
@@ -282,11 +290,11 @@ function contactLineHtml(d, item, { labels = true } = {}) {
   const cls = dmCls(d, 'mut');
   let inner;
   if (item.multiline) {
-    inner = item.text.split(/\r?\n/).map(l => esc(l)).join('<br>');
+    inner = item.text.split(/\r?\n/).map(l => softBreak(esc(l))).join('<br>');
   } else if (item.href) {
-    inner = `<a href="${esc(item.href)}" style="${style};text-decoration:none;">${esc(item.text)}</a>`;
+    inner = `<a href="${esc(item.href)}" style="${style};text-decoration:none;">${softBreak(esc(item.text))}</a>`;
   } else {
-    inner = esc(item.text);
+    inner = softBreak(esc(item.text));
   }
   const label = labels && item.label
     ? `<span${cls} style="${style};font-weight:bold;">${esc(item.label)}: </span>` : '';

@@ -466,6 +466,10 @@ window.SIG_LOCALES.fr = {
   'field.customHtmlHint': "Intégré exactement tel qu'écrit, après la mise en page - aucun contrôle de sécurité.",
 
   'check.networkNoLink': '{net} n’a pas encore de lien — il n’apparaîtra pas dans la signature.',
+  'check.badEmail': "Cette adresse e-mail semble incomplète — vos destinataires risquent de ne pas vous joindre.",
+  'check.badPhone': "Ce numéro semble trop court pour être appelé.",
+  'check.badUrl': "Cette adresse web n’en est pas une — le lien serait mort. Utilisez https://… ou laissez vide.",
+  'check.longLine': "Un mot très long sans espace peut décaler la signature sur le côté dans Outlook.",
 
   'concise.summary': '{lines} {lineWord} · la plus longue ~{longest} caractères — {verdict}',
   'concise.lineWord.one': 'ligne',

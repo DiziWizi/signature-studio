@@ -465,6 +465,10 @@ window.SIG_LOCALES.es = {
   'field.customHtml': 'Bloque HTML personalizado (avanzado)',
   'field.customHtmlHint': 'Se inserta exactamente como está escrito, después del diseño - sin comprobaciones de seguridad.',
   'check.networkNoLink': '{net} aún no tiene enlace — no aparecerá en la firma.',
+  'check.badEmail': "Esa dirección de correo parece incompleta: puede que no te escriban.",
+  'check.badPhone': "Ese teléfono parece demasiado corto para marcar.",
+  'check.badUrl': "Esa web no es una dirección válida: el enlace quedaría roto. Usa https://… o déjalo vacío.",
+  'check.longLine': "Una palabra muy larga sin espacios puede desplazar la firma hacia un lado en Outlook.",
 
   'concise.summary': '{lines} {lineWord} · la más larga ~{longest} caracteres — {verdict}',
   'concise.lineWord.one': 'línea',

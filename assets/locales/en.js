@@ -467,6 +467,10 @@ window.SIG_LOCALES.en = {
   'field.customHtml': 'Custom HTML block (advanced)',
   'field.customHtmlHint': 'Embedded exactly as written, after the layout - no safety checks apply.',
   'check.networkNoLink': '{net} has no link yet — it won’t show in the signature.',
+  'check.badEmail': "That email address looks incomplete — recipients may not reach you.",
+  'check.badPhone': "That phone number looks too short to dial.",
+  'check.badUrl': "That website isn’t a web address — the link would be dead. Use https://… or leave it empty.",
+  'check.longLine': "A very long unbroken word can push the signature sideways in Outlook.",
 
   'concise.summary': '{lines} {lineWord} · longest ~{longest} chars — {verdict}',
   'concise.lineWord.one': 'line',
