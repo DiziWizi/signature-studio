@@ -82,8 +82,6 @@ tracking. Works offline.
 
 ![vCard QR code](docs/screenshots/04-qr-vcard.png)
 
-![Mobile preview: stacked layout at phone width](docs/screenshots/05-mobile-stacked.png)
-
 ## The output is built for email clients
 
 Generated signatures use table-based layout with **every style inlined** — no
