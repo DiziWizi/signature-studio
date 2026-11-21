@@ -76,6 +76,11 @@
         <button role="menuitem" id="x-vcard4" data-advanced type="button" data-i18n="topbar.vcard4">Download vCard 4.0 (.vcf)</button>
         <button role="menuitem" id="x-qr" type="button" data-i18n="topbar.qr">Show QR code</button>
         <hr class="sep">
+        <span class="menu-group" role="presentation" data-i18n="menu.receiver" data-advanced>Receiver experience</span>
+        <button role="menuitem" id="x-asset-pack" data-advanced type="button" data-i18n="topbar.assetPack">Brand asset pack (ZIP)</button>
+        <button role="menuitem" id="x-bimi-svg" data-advanced type="button" data-i18n="topbar.bimiSvg">Download BIMI logo (SVG Tiny PS)</button>
+        <button role="menuitem" id="x-bimi" data-advanced type="button" data-i18n="topbar.bimi">BIMI readiness…</button>
+        <hr class="sep">
         <span class="menu-group" role="presentation" data-i18n="menu.powerTools" data-advanced>Power tools</span>
         <button role="menuitem" id="x-copy-fragment" data-advanced type="button" data-i18n="topbar.copyFragment">Copy table fragment (for CMS)</button>
         <button role="menuitem" id="x-preset-export" data-advanced type="button" data-i18n="topbar.presetExport">Export preset (.json)</button>
@@ -986,6 +991,25 @@
 </div>
 
 <!-- Bulk modal -->
+<div class="overlay hidden" id="modal-bimi" role="dialog" aria-modal="true" aria-labelledby="bimi-title">
+  <div class="modal">
+    <h2 id="bimi-title" data-i18n="bimi.title">BIMI readiness</h2>
+    <p class="micro" data-i18n="bimi.lead">Checks the DNS records that put a logo beside your name in Gmail, Apple Mail, Yahoo and Fastmail. This is domain and certificate work — not a signature setting.</p>
+    <label class="field"><span data-i18n="bimi.domain">Domain</span>
+      <input id="bimi-domain" placeholder="example.com" autocomplete="off" spellcheck="false">
+    </label>
+    <div class="modal-actions" style="justify-content:flex-start;">
+      <button class="btn btn-primary" id="bimi-check" type="button" data-i18n="bimi.check">Check</button>
+      <button class="btn" id="bimi-copy" type="button" data-i18n="bimi.copyRecord" disabled>Copy DNS record</button>
+    </div>
+    <div id="bimi-results" class="bimi-results" aria-live="polite"></div>
+    <p class="micro" data-i18n="bimi.privacy">Only when you press Check, the domain is sent to Google’s public DNS resolver. No signature data leaves the page.</p>
+    <div class="modal-actions">
+      <button class="btn" data-close type="button" data-i18n="bimi.close">Close</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="modal-bulk" role="dialog" aria-modal="true" aria-labelledby="bulk-title">
   <div class="modal">
     <h2 id="bulk-title" data-i18n="bulk.title">Bulk generate from CSV</h2>
@@ -1111,6 +1135,7 @@
 <script src="assets/js/zip.js"></script>
 <script src="assets/js/bulk.js"></script>
 <script src="assets/js/vcard-import.js"></script>
+<script src="assets/js/brand.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

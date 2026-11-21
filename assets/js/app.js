@@ -2694,7 +2694,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.81.0';
+const APP_VERSION = '0.82.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3003,6 +3003,26 @@ function init() {
     const willOpen = menu.classList.contains('hidden');
     menu.classList.toggle('hidden');
     if (willOpen) updateExportNotes();
+  });
+  $('#x-asset-pack').addEventListener('click', () => {
+    menu.classList.add('hidden');
+    doAssetPack();
+  });
+  $('#x-bimi-svg').addEventListener('click', () => {
+    menu.classList.add('hidden');
+    doBimiSvg();
+  });
+  $('#x-bimi').addEventListener('click', () => {
+    menu.classList.add('hidden');
+    openBimi();
+  });
+  $('#bimi-check').addEventListener('click', () => { runBimiCheck(); });
+  $('#bimi-copy').addEventListener('click', () => { copyBimiRecord(); });
+  $('#bimi-domain').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      runBimiCheck();
+    }
   });
   $('#x-plain').addEventListener('click', () => {
     menu.classList.add('hidden');

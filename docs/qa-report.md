@@ -1674,6 +1674,30 @@ weight meter, sender identity, time zone.
 
 ---
 
+# v0.82.0 addendum (assets & BIMI)
+
+Date: 2026-11-21 · Scope: asset pack, SVG Tiny PS, BIMI readiness.
+
+- **Asset pack** — PNG icons at 32/180/512 rendered from the logo on a
+  square canvas, plus `favicon.svg` and `logo-bimi.svg` when the source is an
+  SVG, a `<link>` snippet and a README that states what each file is and that
+  Proton's sender images are favicon-derived and unreliable.
+- **SVG Tiny PS** — `svgToTinyPs()` parses the SVG, removes scripts, foreign
+  objects, animations, `on*` handlers, filters and any non-fragment
+  `href`, squares the viewBox around the artwork, and stamps
+  `version="1.2" baseProfile="tiny-ps"`. Raster logos are refused with a
+  toast rather than silently producing an invalid file.
+- **BIMI readiness** — a modal that queries `_dmarc.<domain>` and
+  `default._bimi.<domain>` through `dns.google`, grades DMARC enforcement,
+  record presence, the logo URL and the mark certificate, and offers a
+  copyable `default._bimi` record. The privacy note is explicit: the domain
+  goes to Google only on Check.
+- **CSP** — `connect-src` now allows `https://dns.google`; the shipped
+  `e2e/selfhost.spec.js` still applies the exact policy live.
+- 5 new E2E tests (brand-bimi.spec.js, DNS mocked). Suite 260/260 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

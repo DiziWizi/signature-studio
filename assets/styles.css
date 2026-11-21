@@ -318,6 +318,26 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* BIMI readiness results */
+.bimi-results { margin: 10px 0 4px; display: flex; flex-direction: column; gap: 6px; }
+.bimi-row {
+  display: grid; grid-template-columns: 90px 1fr; gap: 2px 10px;
+  padding: 6px 8px; border: 1px solid var(--line2); border-radius: 8px; font-size: 12px;
+}
+.bimi-label { color: var(--mut); }
+.bimi-value { color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+.bimi-note { grid-column: 2; color: var(--mut); font-size: 11px; }
+.bimi-row.pass { border-color: #2f6b45; }
+.bimi-row.warn { border-color: #7a5c1f; }
+.bimi-row.fail { border-color: #8a2f33; }
+.bimi-verdict { padding: 8px 10px; border-radius: 8px; font-weight: 600; font-size: 12px; }
+.bimi-verdict.pass { background: rgba(47,107,69,.18); color: #63d489; }
+.bimi-verdict.warn { background: rgba(122,92,31,.2); color: #f0c674; }
+.bimi-verdict.fail { background: rgba(138,47,51,.2); color: #f08c8c; }
+.bimi-record { padding: 8px 10px; border: 1px dashed var(--line2); border-radius: 8px; }
+.bimi-record code { font-size: 11px; overflow-wrap: anywhere; color: var(--text); }
+.bimi-error { color: #f08c8c; font-size: 12px; }
+
 /* Export-menu notes: weight budget + sender identity */
 .menu-note {
   padding: 6px 10px; font-size: 11px; line-height: 1.45; color: var(--mut);

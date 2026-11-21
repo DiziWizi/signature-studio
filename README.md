@@ -229,9 +229,12 @@ additionally build source archives and publish them as a release when the
 
 ## Privacy
 
-The app is 100% client-side. Drafts and saved signatures live in your
-browser's `localStorage`; nothing is sent anywhere. Clear your site data to
-wipe everything.
+The app is client-side. Drafts and saved signatures live in your browser's
+`localStorage`; nothing is uploaded. Clear your site data to wipe everything.
+
+One deliberate exception: the optional **BIMI readiness** check (Export →
+BIMI readiness) asks Google's public DNS resolver about the domain you type,
+and only when you press Check. No signature content is sent with it.
 
 ## Accessibility
 

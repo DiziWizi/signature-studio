@@ -9,9 +9,10 @@ test('export menu is grouped: everyday actions first, power tools labelled', asy
   await page.click('#btn-export');
 
   const menu = page.locator('#export-menu');
-  await expect(menu.locator('.menu-group')).toHaveCount(2);
-  await expect(menu.locator('.menu-group').first()).toHaveText('Mail apps & formats');
-  await expect(menu.locator('.menu-group').nth(1)).toHaveText('Power tools');
+  await expect(menu.locator('.menu-group')).toHaveCount(3);
+  await expect(menu.locator('.menu-group').nth(0)).toHaveText('Mail apps & formats');
+  await expect(menu.locator('.menu-group').nth(1)).toHaveText('Receiver experience');
+  await expect(menu.locator('.menu-group').nth(2)).toHaveText('Power tools');
 
   /* Order: copy/download/install before any group header. */
   const labels = await menu.locator('button, .menu-group').allTextContents();
