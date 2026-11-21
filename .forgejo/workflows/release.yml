@@ -37,7 +37,11 @@ jobs:
           python3 -m http.server 8899 >/tmp/http.log 2>&1 &
           SRV=$!
           sleep 1
-          curl -sf http://127.0.0.1:8899/ | grep -q 'Signature Studio'
+          # Write to a file, then grep: `curl | grep -q` under bash's
+          # pipefail fails with curl exit 23 (EPIPE) once index.html exceeds
+          # the 64 KB pipe buffer, because grep -q exits after the first match.
+          curl -sf http://127.0.0.1:8899/ -o /tmp/index.html
+          grep -q 'Signature Studio' /tmp/index.html
           curl -sf http://127.0.0.1:8899/assets/styles.css > /dev/null
           for f in assets/js/*.js; do curl -sf "http://127.0.0.1:8899/$f" > /dev/null || exit 1; done
           kill $SRV

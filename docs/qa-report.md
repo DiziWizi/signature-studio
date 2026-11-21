@@ -1204,6 +1204,23 @@ Date: 2026-11-21 · Scope: every destructive edit is reversible.
 
 ---
 
+# v0.66.1 addendum (CI harness fix)
+
+Date: 2026-11-21 · Scope: the workflow's static smoke test, not the app.
+
+- v0.64.0–v0.66.0 tag runs all failed in the `check` job at the smoke
+  step with exit code 23 and no output. Cause: `curl -sf URL | grep -q
+  'Signature Studio'` runs under bash `-o pipefail`; `grep -q` exits
+  after the first match, so once `index.html` grew past the 64 KB pipe
+  buffer (now 87,719 B) curl is still writing and dies with EPIPE (23),
+  which pipefail then propagates. The step passed for dozens of releases
+  only because the file used to fit in one pipe write.
+- Fixed by downloading to `/tmp/index.html` and grepping the file — size
+  independent. Released as v0.66.1 so the fix is inside a tag's own tree;
+  v0.64–v0.66 remain valid releases whose CI failure was the harness.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

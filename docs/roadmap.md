@@ -218,6 +218,8 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.66.0 — destructive edits are undoable: section reset and JSON
   editor apply now push history (sample, wizard, import, start-over,
   saved-snapshot loads already did); E2E now 185
+- [x] v0.66.1 — CI smoke test no longer pipes curl into `grep -q`
+  (pipefail + 64 KB pipe buffer = exit 23 once index.html outgrew it)
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
