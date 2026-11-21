@@ -199,6 +199,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   field); the instructions page now carries its own Copy-signature
   button (all six client tabs start with it); export menu renamed
   "How to add it to Outlook, Gmail…"; E2E now 170
+- [x] v0.62.0 — Simple mode hides expert formats (Apple Mail, Thunderbird,
+  vCards, Import HTML); plainer labels (Spacing preset, Width, Text
+  size); eyes on team, tagline, status and the socials row; team field
+  dimmed as enterprise-only; E2E now 174
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

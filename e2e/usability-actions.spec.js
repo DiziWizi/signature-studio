@@ -60,8 +60,9 @@ test('template-specific controls dim with a "only in" chip off their templates',
   await expect(qr).toHaveClass(/tpl-dim/);
   await expect(qr).toHaveAttribute('data-dim-label', 'Only in Classic, Enterprise');
 
-  /* Support module dims everywhere but Enterprise. */
-  const support = page.locator('[data-used-by="enterprise"]');
+  /* Support module dims everywhere but Enterprise (the team field shares
+     the enterprise-only tag, so scope to the sub-group). */
+  const support = page.locator('details.sub[data-used-by="enterprise"]');
   await expect(support).toHaveClass(/tpl-dim/);
   await page.click('.tpl-btn[data-template="enterprise"]');
   await expect(support).not.toHaveClass(/tpl-dim/);

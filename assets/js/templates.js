@@ -245,7 +245,7 @@ function companyHtml(s, d) {
 /* Company tagline: muted line under the company name. Subordinate to the
    company — hidden when the company is hidden (or the tagline unset). */
 function taglineHtml(s, d) {
-  if (d.showCompany === false) return '';
+  if (d.showCompany === false || d.showTagline === false) return '';
   const tag = String(s.profile.tagline || '').trim();
   if (!tag) return '';
   const weight = d.taglineWeight === 'bold' ? 'bold' : undefined;

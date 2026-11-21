@@ -1078,6 +1078,30 @@ Date: 2026-11-21 · Scope: checklist jumps + copy inside instructions.
 
 ---
 
+# v0.62.0 addendum (Simple-mode sweep, plainer labels, more eyes)
+
+Date: 2026-11-21 · Scope: jargon out of Simple mode; visibility parity.
+
+## Notes
+
+- Simple mode (data-advanced) now also hides Apple Mail (.mailsignature),
+  Thunderbird, vCard and vCard 4.0 downloads and the Import HTML button.
+- Labels: "Density" → "Spacing preset"; "Signature width" → "Width";
+  "Base font size (px)" → "Text size (px)"; fine-tuning hint → "Custom
+  spacing — empty follows the preset" (×4 locales).
+- Eyes added to team, tagline, status badge and the Social links summary
+  (the summary eye toggles showSocials without collapsing the section —
+  the eye handler stops propagation). Show/hide gains Team and Tagline
+  switches; showTeam/showTagline default true; tagline now honours its
+  own toggle (previously only company's).
+- The team line only renders in Enterprise, so its field carries
+  data-used-by="enterprise" dimming.
+- 2 new i18n keys (586 each); 4 new E2E tests; two spec corrections
+  (Ada has no tagline; the enterprise dim locator is now scoped).
+  Suite 174/174 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

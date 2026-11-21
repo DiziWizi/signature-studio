@@ -40,7 +40,7 @@
       <option value="es" data-i18n="topbar.langEs">Español</option>
       <option value="fr" data-i18n="topbar.langFr">Français</option>
     </select>
-    <button class="btn" id="btn-import" type="button" data-i18n="topbar.import">Import HTML</button>
+    <button class="btn" id="btn-import" data-advanced type="button" data-i18n="topbar.import">Import HTML</button>
     <button class="btn" id="btn-saved" type="button"><span data-i18n="topbar.saved">Saved</span> <span class="pill" id="saved-count">0</span></button>
     <div class="export-wrap" id="quick-wrap">
       <button class="btn btn-icon" id="btn-quick" type="button" data-i18n-title="topbar.switchTitle" data-i18n-aria="topbar.switchAria" title="Switch between saved signatures" aria-label="Switch saved signature">⇄</button>
@@ -56,10 +56,10 @@
         <button role="menuitem" id="x-instructions" type="button" data-i18n="topbar.instructions">How to add it to Outlook, Gmail…</button>
         <hr class="sep">
         <span class="menu-group" role="presentation" data-i18n="menu.mailFormats">Mail apps &amp; formats</span>
-        <button role="menuitem" id="x-apple-mail" type="button" data-i18n="topbar.appleMail">Download for Apple Mail (.mailsignature)</button>
-        <button role="menuitem" id="x-thunderbird" type="button" data-i18n="topbar.thunderbird">Download for Thunderbird (.html)</button>
-        <button role="menuitem" id="x-vcard" type="button" data-i18n="topbar.vcard">Download vCard (.vcf)</button>
-        <button role="menuitem" id="x-vcard4" type="button" data-i18n="topbar.vcard4">Download vCard 4.0 (.vcf)</button>
+        <button role="menuitem" id="x-apple-mail" data-advanced type="button" data-i18n="topbar.appleMail">Download for Apple Mail (.mailsignature)</button>
+        <button role="menuitem" id="x-thunderbird" data-advanced type="button" data-i18n="topbar.thunderbird">Download for Thunderbird (.html)</button>
+        <button role="menuitem" id="x-vcard" data-advanced type="button" data-i18n="topbar.vcard">Download vCard (.vcf)</button>
+        <button role="menuitem" id="x-vcard4" data-advanced type="button" data-i18n="topbar.vcard4">Download vCard 4.0 (.vcf)</button>
         <button role="menuitem" id="x-qr" type="button" data-i18n="topbar.qr">Show QR code</button>
         <hr class="sep">
         <span class="menu-group" role="presentation" data-i18n="menu.powerTools" data-advanced>Power tools</span>
@@ -203,9 +203,9 @@
         <label class="field has-eye"><span data-i18n="field.title">Job title</span><button class="eye" type="button" data-eye="design.showTitle" aria-pressed="true" title="Show / hide in the signature"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><line class="eye-slash" x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="1.8"/></svg></button><input data-field="profile.title" placeholder="Head of Analytics"></label>
         <label class="field"><span data-i18n="field.languages">Languages</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.languages" placeholder="English · Deutsch"></label>
         <label class="field has-eye"><span data-i18n="field.department">Department</span><button class="eye" type="button" data-eye="design.showDepartment" aria-pressed="true" title="Show / hide in the signature"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><line class="eye-slash" x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="1.8"/></svg></button><input data-field="profile.department" placeholder="Data Science"></label>
-        <label class="field"><span data-i18n="field.team">Team / initiative</span> <span class="opt" data-i18n="opt.secondaryLine">(secondary line)</span><input data-field="profile.team" placeholder="Experience Platform"></label>
+        <label class="field has-eye" data-used-by="enterprise"><span data-i18n="field.team">Team / initiative</span> <span class="opt" data-i18n="opt.secondaryLine">(secondary line)</span><button class="eye" type="button" data-eye="design.showTeam" aria-pressed="true" title="Show / hide in the signature"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><line class="eye-slash" x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="1.8"/></svg></button><input data-field="profile.team" placeholder="Experience Platform"></label>
         <label class="field has-eye"><span data-i18n="field.company">Company</span><button class="eye" type="button" data-eye="design.showCompany" aria-pressed="true" title="Show / hide in the signature"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><line class="eye-slash" x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="1.8"/></svg></button><input data-field="profile.company" placeholder="Analytical Engines Ltd"></label>
-        <label class="field"><span data-i18n="field.tagline">Company tagline</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.tagline" placeholder="Data you can trust"></label>
+        <label class="field has-eye"><span data-i18n="field.tagline">Company tagline</span> <span class="opt" data-i18n="opt.optional">(optional)</span><button class="eye" type="button" data-eye="design.showTagline" aria-pressed="true" title="Show / hide in the signature"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><line class="eye-slash" x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="1.8"/></svg></button><input data-field="profile.tagline" placeholder="Data you can trust"></label>
           <div class="field" data-when="@pronouns">
             <span class="lbl" data-i18n="design.pronounsPosition">Pronouns position</span>
             <div class="field-inline">
@@ -305,7 +305,7 @@
     </details>
 
     <details open data-sec="socials">
-      <summary><span data-i18n="sec.socials">Social links</span> <span class="sec-count" id="count-socials">0</span> <button class="sec-reset" type="button" data-reset-sec="socials" title="Reset this section" aria-label="Reset this section">↺</button></summary>
+      <summary><span data-i18n="sec.socials">Social links</span> <span class="sec-count" id="count-socials">0</span><button class="eye" type="button" data-eye="design.showSocials" aria-pressed="true" title="Show / hide in the signature"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><line class="eye-slash" x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="1.8"/></svg></button> <button class="sec-reset" type="button" data-reset-sec="socials" title="Reset this section" aria-label="Reset this section">↺</button></summary>
       <div class="body">
         <div class="quick" id="quick-socials">
           <span class="hint" data-i18n="socials.quickAdd">Quick add:</span>
@@ -527,7 +527,7 @@
     <details open data-sec="blocks">
       <summary><span data-i18n="sec.blocks">Blocks</span> <span class="sec-count" id="count-customs" title="Custom lines">0</span> <button class="sec-reset" type="button" data-reset-sec="blocks" title="Reset this section" aria-label="Reset this section">↺</button></summary>
       <div class="body grid2">
-          <label class="field span2"><span data-i18n="design.statusBadge">Status badge</span> <span class="opt" data-i18n="opt.statusBadge">(e.g. “Open to freelance work” — leave empty to hide)</span>
+          <label class="field span2 has-eye"><span data-i18n="design.statusBadge">Status badge</span><button class="eye" type="button" data-eye="design.showStatus" aria-pressed="true" title="Show / hide in the signature"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><line class="eye-slash" x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="1.8"/></svg></button> <span class="opt" data-i18n="opt.statusBadge">(e.g. “Open to freelance work” — leave empty to hide)</span>
             <span class="url-row">
               <input data-field="design.statusText" placeholder="Open to freelance work">
               <input type="color" data-field="design.statusColor" data-when="@status" data-i18n-title="row.badgeColour" data-i18n-aria="row.badgeColour" title="Badge colour" aria-label="Badge colour" class="mini-color">
@@ -584,6 +584,8 @@
         <label class="switch"><input type="checkbox" data-field="design.showBooking"><span class="sw"></span> <span data-i18n="elements.booking">Booking button</span></label>
         <label class="switch"><input type="checkbox" data-field="design.showStatus"><span class="sw"></span> <span data-i18n="elements.status">Status badge</span></label>
         <label class="switch"><input type="checkbox" data-field="design.showSocials"><span class="sw"></span> <span data-i18n="elements.socials">Social links</span></label>
+          <label class="switch"><input type="checkbox" data-field="design.showTeam"><span class="sw"></span> <span data-i18n="elements.team">Team line</span></label>
+        <label class="switch"><input type="checkbox" data-field="design.showTagline"><span class="sw"></span> <span data-i18n="elements.tagline">Company tagline</span></label>
           <label class="switch span2"><input type="checkbox" data-field="design.showLabels"><span class="sw"></span> <span data-i18n="design.showLabels">Show contact labels (“Email:”, “Phone:”, …)</span></label>
         <span class="micro span2" data-i18n="elements.micro">Hide anything you don’t need — the preview rebuilds instantly.</span>
       </div>

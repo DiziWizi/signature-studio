@@ -111,6 +111,8 @@ function defaultState() {
       showTitle: true,
       showDepartment: true,
       showCompany: true,
+      showTeam: true,
+      showTagline: true,
       showLocation: true,
       showEmail: true,
       showPhone: true,
