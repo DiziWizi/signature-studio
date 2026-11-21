@@ -1550,6 +1550,33 @@ Date: 2026-11-21 · Scope: C3–C7.
 
 ---
 
+# v0.77.0 addendum (customisation batch 1 — styling system)
+
+Date: 2026-11-21 · Scope: palette presets, contrast meter, name font,
+social treatment, name colour.
+
+- **Palettes**: the 12 colour themes now carry a `muted` tone and apply it, so
+  one click sets the whole ramp (accent, text, muted, divider) rather than
+  leaving a stale grey behind.
+- **Contrast meter**: `#contrast-meter` shows Text / Muted / Link with the
+  computed ratio and an AA/AAA verdict against the signature background
+  (`#fff` when transparent). Recalculated on every render.
+- **Name font**: new `design.nameFont` select — body typography stays put
+  while the name can use Georgia, Courier New, Verdana, etc. Wired through
+  `textStyle({font})` and Night's separate `lightStyle`, so both renderers
+  agree. `''` = same as body (byte-identical default).
+- **Social treatment**: `design.socialColorMode` — brand colours (default),
+  monochrome (text colour) or outline (transparent fill, brand border and
+  glyph), applied to icon chips and text-link styles.
+- **Name colour** was already implemented (`design.nameColor`); this release
+  adds the regression test that was missing.
+- **Found by the meter**: the derived muted colour mixed 42 % toward white and
+  measured **3.2:1** on a white signature — a real WCAG 1.4.3 failure in the
+  default palette. It now mixes 28 % (4.6:1).
+- 5 new E2E tests (styling.spec.js). Suite 239/239 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

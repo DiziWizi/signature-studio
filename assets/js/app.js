@@ -415,6 +415,7 @@ function renderPreviewNow() {
   applyFieldVisibility();
   applyTemplateDimming();
   applyFieldErrors();
+  renderContrastMeter();
   renderThumbs();
   updateConciseness();
   updateChecklist();
@@ -1185,6 +1186,53 @@ function initQuickSwitch() {
 
 /* Every warning names the control that fixes it (data-field path or a
    section id) so the checklist can jump there. */
+/* WCAG contrast meter: a 12-hex palette is easy to get wrong, so show the
+   ratio and the AA/AAA verdict against the signature background. */
+function hexToRgb(hex) {
+  const s = String(hex || '').trim().replace('#', '');
+  if (!/^[0-9a-f]{3,8}$/i.test(s)) return null;
+  const full = s.length === 3 || s.length === 4
+    ? s.split('').map(c => c + c).join('')
+    : s;
+  return [parseInt(full.slice(0, 2), 16), parseInt(full.slice(2, 4), 16), parseInt(full.slice(4, 6), 16)];
+}
+
+function relativeLuminance(rgb) {
+  const [r, g, b] = rgb.map(v => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrastRatio(fg, bg) {
+  const a = hexToRgb(fg);
+  const b = hexToRgb(bg);
+  if (!a || !b) return null;
+  const la = relativeLuminance(a);
+  const lb = relativeLuminance(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+
+function renderContrastMeter() {
+  const el = $('#contrast-meter');
+  if (!el || !state) return;
+  const d = state.design;
+  const bg = /^#[0-9a-f]{3,8}$/i.test(String(d.background || '')) ? d.background : '#ffffff';
+  const rows = [
+    ['contrast.text', d.textColor],
+    ['contrast.muted', mutedColor(Object.assign({}, d, { mutedColor: d.mutedColor }))],
+    ['contrast.link', d.linkColor || d.primaryColor],
+  ];
+  el.innerHTML = rows.map(([key, fg]) => {
+    const ratio = contrastRatio(fg, bg);
+    const ok = ratio !== null && ratio >= 4.5;
+    const grade = ratio === null ? '—' : ok ? (ratio >= 7 ? 'AAA' : 'AA') : t('contrast.belowAA');
+    return `<span class="cm-row ${ok ? 'ok' : 'bad'}"><span>${esc(t(key))}</span>` +
+      `<b>${ratio === null ? '—' : ratio.toFixed(1) + ':1'}</b><i>${esc(grade)}</i></span>`;
+  }).join('');
+}
+
 /* One definition of "valid" for both the checklist and the inline hints. */
 function validEmail(v) {
   const s = String(v || '').trim();
@@ -1466,6 +1514,7 @@ function onThemeClick(e) {
   if (!theme) return;
   state.design.primaryColor = theme.primary;
   state.design.textColor = theme.text;
+  state.design.mutedColor = theme.muted || '';
   state.design.dividerColor = theme.divider;
   renderThemes();
   const primary = document.querySelector('[data-field="design.primaryColor"]');
@@ -2382,7 +2431,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.76.0';
+const APP_VERSION = '0.77.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {

@@ -350,6 +350,13 @@
               <label><input type="radio" name="socialStyle" value="labels" data-field="design.socialStyle"><span data-i18n="design.socialStyleText">Text links</span></label>
             </div>
           </div>
+          <label class="field" data-when="@socials"><span data-i18n="design.socialColour">Icon colour</span>
+            <select data-field="design.socialColorMode">
+              <option value="" data-i18n="design.socialColourBrand">Brand colours</option>
+              <option value="mono" data-i18n="design.socialColourMono">Monochrome</option>
+              <option value="outline" data-i18n="design.socialColourOutline">Outline</option>
+            </select>
+          </label>
           <div class="field" data-when="@socials">
             <span class="lbl" data-i18n="design.socialSize">Social icon size</span>
             <span class="range-row"><input type="range" min="16" max="28" step="1" data-field="design.socialSize" aria-label="Social icon size"><output id="social-size-out">22 px</output></span>
@@ -445,6 +452,7 @@
         <div class="themes-row" id="themes-row">
           <span class="hint" data-i18n="design.colourThemes">Colour themes:</span>
         </div>
+        <div class="contrast-meter" id="contrast-meter" aria-live="polite" aria-label="Contrast against the signature background"></div>
           <label class="field"><span data-i18n="design.accent">Accent colour</span><input type="color" data-field="design.primaryColor"></label>
           <label class="field"><span data-i18n="design.textColour">Text colour</span><input type="color" data-field="design.textColor"></label>
           <label class="field" data-when="design.showDivider"><span data-i18n="design.dividerColour">Divider colour</span><input type="color" data-field="design.dividerColor"></label>
@@ -459,6 +467,19 @@
         <details class="sub" open>
           <summary data-i18n="sub.typography">Typography</summary>
           <div class="grid2">
+          <label class="field"><span data-i18n="design.nameFont">Name font</span>
+            <select data-field="design.nameFont">
+              <option value="" data-i18n="design.sameAsBody">Same as body text</option>
+              <option value="modern">Modern (system)</option>
+              <option value="classic">Georgia (serif)</option>
+              <option value="clean">Arial</option>
+              <option value="mono">Courier New</option>
+              <option value="georgia">Georgia</option>
+              <option value="verdana">Verdana</option>
+              <option value="trebuchet">Trebuchet MS</option>
+              <option value="tahoma">Tahoma</option>
+            </select>
+          </label>
           <label class="field"><span data-i18n="design.font">Font</span>
             <select data-field="design.font">
               <option value="modern" data-i18n="design.fontModern">Modern (system)</option>

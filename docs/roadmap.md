@@ -273,6 +273,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   tooltip and toast; first-run "click the preview to edit" hint; storage
   errors carry a "Free up space" action in the toast; sizes use locale
   number formatting; E2E 234
+- [x] v0.77.0 — styling system: colour themes now set the full type ramp
+  (muted included) and a WCAG contrast meter grades text/muted/link against
+  the background; separate name font (body stays put, Night included);
+  name colour verified; social icons switch brand / monochrome / outline;
+  derived muted text fixed from 3.2:1 to 4.6:1; E2E 239
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

@@ -318,6 +318,21 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* Contrast meter under the colour themes */
+.contrast-meter { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 8px; }
+.contrast-meter:empty { display: none; }
+.contrast-meter .cm-row {
+  display: inline-flex; align-items: baseline; gap: 6px;
+  padding: 3px 8px; border: 1px solid var(--line2); border-radius: 999px;
+  font-size: 11px; color: var(--mut);
+}
+.contrast-meter .cm-row b { color: var(--text); font-weight: 600; }
+.contrast-meter .cm-row i { font-style: normal; font-size: 10px; }
+.contrast-meter .cm-row.ok { border-color: #2f6b45; }
+.contrast-meter .cm-row.ok i { color: #63d489; }
+.contrast-meter .cm-row.bad { border-color: #8a2f33; }
+.contrast-meter .cm-row.bad i { color: #f08c8c; }
+
 /* Shortcut reference sheet */
 .sc-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 6px 0 10px; }
 .sc-table td { padding: 6px 4px; border-bottom: 1px solid var(--line); vertical-align: middle; }

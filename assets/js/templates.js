@@ -40,6 +40,12 @@ const imgSrcOf = (d, key, stored) => {
   return absoluteImgUrl(stored);
 };
 
+const nameStackOf = d => {
+  const key = String(d.nameFont || '').trim();
+  if (key && FONT_STACKS[key]) return FONT_STACKS[key];
+  return stackOf(d);
+};
+
 const stackOf = d => {
   const custom = String(d.customFont || '').trim();
   if (custom) {
@@ -53,7 +59,7 @@ const stackOf = d => {
 function textStyle(d, opts = {}) {
   const size = opts.size ?? d.fontSize;
   const parts = [
-    `font-family:${stackOf(d)}`,
+    `font-family:${opts.font || stackOf(d)}`,
     `font-size:${size}px`,
     `color:${opts.color ?? d.textColor}`,
     `line-height:${Math.round(size * lineHeightOf(d))}px`,
@@ -66,9 +72,11 @@ function textStyle(d, opts = {}) {
   return parts.join(';');
 }
 
+/* Derived muted text used to mix 42 % toward white, which landed at 3.2:1 on
+   a white signature — below AA. 28 % keeps it visibly secondary at 4.6:1. */
 const mutedColor = d => (d.mutedColor && /^#[0-9a-fA-F]{3,8}$/.test(d.mutedColor))
   ? d.mutedColor
-  : mixColors(d.textColor, '#ffffff', 0.42);
+  : mixColors(d.textColor, '#ffffff', 0.28);
 
 /* Accent-coloured link text: linkColor when set (hex-validated), else the
    primary colour — byte-identical defaults. */
@@ -181,6 +189,7 @@ function nameHtml(s, d, { big = true, size = 0 } = {}) {
     weight: nameWeightOf(d),
     color: d.nameColor ? nameColorOf(d) : undefined,
     letterSpacing: spacing || undefined,
+    font: nameStackOf(d),
   });
   /* Pronouns sit after the name by default; 'underName' puts them on
      their own line beneath it in a slightly smaller size. */
@@ -324,7 +333,13 @@ function socialChipHtml(d, soc, withLabel, size = 22) {
   const net = networkById(soc.network);
   const isCustom = net.id === 'custom';
   const glyph = isCustom ? (soc.glyph || '↗') : net.glyph;
-  const color = isCustom ? (soc.color || '#5b6472') : net.color;
+  const brand = isCustom ? (soc.color || '#5b6472') : net.color;
+  /* Icon colour treatment: brand (default), monochrome, or outline. */
+  const mode = String(d.socialColorMode || '');
+  const color = mode === 'mono' ? d.textColor : brand;
+  const fg = mode === 'outline' ? brand : '#ffffff';
+  const bg = mode === 'outline' ? 'transparent' : color;
+  const rim = mode === 'outline' ? `border:1px solid ${brand};` : '';
   const raw = String(soc.url || '').trim();
   if (!raw) return '';
   const href = normalizeUrl(net.id, raw);
@@ -332,7 +347,7 @@ function socialChipHtml(d, soc, withLabel, size = 22) {
   const chip = iconUrl
     ? `<img src="${esc(imgSrcOf(d, `social-${net.id}`, iconUrl))}" width="${size}" height="${size}" alt="${esc(net.name)}" style="display:inline-block;width:${size}px;height:${size}px;border:0;${br(d, '11px')}vertical-align:middle;">`
     : `<span style="display:inline-block;width:${size}px;height:${size}px;line-height:${size}px;text-align:center;` +
-      `background-color:${color};color:#ffffff;${br(d, '11px')}` +
+      `background-color:${bg};color:${fg};${rim}${br(d, '11px')}` +
       `font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:bold;vertical-align:middle;">${esc(glyph)}</span>`;
   if (!withLabel) return `<a href="${esc(href)}" data-edit="socials" style="text-decoration:none;">${chip}</a>`;
   const clsAttr = d.darkModeFriendly ? ' class="dm-txt"' : '';
@@ -351,9 +366,10 @@ function socialsRowHtml(s, d) {
   if (style === 'labels') {
     const parts = socials.map(soc => {
       const net = networkById(soc.network);
-      const color = net.id === 'custom' ? (soc.color || '#5b6472') : net.color;
-      return `<a href="${esc(normalizeUrl(net.id, soc.url))}" data-edit="socials" style="font-family:${stackOf(d)};` +
-        `font-size:${d.fontSize - 2}px;color:${color};text-decoration:none;">${esc(net.name)}</a>`;
+      const brand = net.id === 'custom' ? (soc.color || '#5b6472') : net.color;
+      const color = String(d.socialColorMode || '') === 'mono' ? d.textColor : brand;
+      return `<a href="${esc(normalizeUrl(net.id, soc.url))}" data-edit="socials" style="font-family:${stackOf(d)};`
+        + `font-size:${d.fontSize - 2}px;color:${color};text-decoration:none;">${esc(net.name)}</a>`;
     });
     const sep = `<span style="font-size:${d.fontSize - 2}px;color:${mutedColor(d)};">&nbsp;·&nbsp;</span>`;
     return parts.join(sep);
@@ -1207,9 +1223,9 @@ function nightRows(s, d) {
   const den = densityOf(d);
   const lightName = '#f2f4f8';
   const lightMuted = '#9aa1ad';
-  const lightStyle = (size, color, { weight, style } = {}) => {
+  const lightStyle = (size, color, { weight, style, font } = {}) => {
     const parts = [
-      `font-family:${stackOf(d)}`,
+      `font-family:${font || stackOf(d)}`,
       `font-size:${size}px`,
       `color:${color}`,
       `line-height:${Math.round(size * lineHeightOf(d))}px`,
@@ -1236,7 +1252,7 @@ function nightRows(s, d) {
     const shownWithHonorifics = (prefix ? prefix + ' ' : '') + shown +
       (suffix ? ', ' + suffix : '');
     const fs = d.fontSize + 2 + nameExtraOf(d);
-    const style = lightStyle(fs, lightName, { weight: nameWeightOf(d) });
+    const style = lightStyle(fs, lightName, { weight: nameWeightOf(d), font: nameStackOf(d) });
     const pronounsUnder = d.pronounsPosition === 'underName';
     const pronouns = s.profile.pronouns
       ? pronounsUnder

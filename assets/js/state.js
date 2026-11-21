@@ -40,18 +40,18 @@ const TEMPLATES = [
 /* Curated colour themes: one click sets accent, text and divider together.
    Personal users have no brand guidelines — this is their fastest start. */
 const THEMES = [
-  { id: 'slate',      name: 'Slate',      primary: '#3b5bdb', text: '#343a40', divider: '#e9ecef' },
-  { id: 'ocean',      name: 'Ocean',      primary: '#0b7285', text: '#2b3a42', divider: '#dee7ea' },
-  { id: 'forest',     name: 'Forest',     primary: '#2f9e44', text: '#2b3a2b', divider: '#e4efe5' },
-  { id: 'midnight',   name: 'Midnight',   primary: '#1e40af', text: '#334155', divider: '#e2e8f0' },
-  { id: 'navygold',   name: 'Navy & Gold', primary: '#1e3a8a', text: '#475569', divider: '#ece6d8' },
-  { id: 'orchid',     name: 'Orchid',     primary: '#7c3aed', text: '#3f3f46', divider: '#eee7f4' },
-  { id: 'warm',       name: 'Warm Earth', primary: '#b45309', text: '#44403c', divider: '#f0e7de' },
-  { id: 'contrast',   name: 'High Contrast', primary: '#111827', text: '#111827', divider: '#d1d5db' },
-  { id: 'terracotta', name: 'Terracotta', primary: '#c94f2d', text: '#44302a', divider: '#f0e4de' },
-  { id: 'plum',       name: 'Plum',       primary: '#7048a8', text: '#33313d', divider: '#e9e4f0' },
-  { id: 'ink',        name: 'Ink',        primary: '#1c7ed6', text: '#212529', divider: '#dee2e6' },
-  { id: 'mono',       name: 'Mono',       primary: '#495057', text: '#212529', divider: '#dee2e6' },
+  { id: 'slate',      name: 'Slate',      primary: '#3b5bdb', text: '#343a40', muted: '#6b7280', divider: '#e9ecef' },
+  { id: 'ocean',      name: 'Ocean',      primary: '#0b7285', text: '#2b3a42', muted: '#5d7078', divider: '#dee7ea' },
+  { id: 'forest',     name: 'Forest',     primary: '#2f9e44', text: '#2b3a2b', muted: '#5f725f', divider: '#e4efe5' },
+  { id: 'midnight',   name: 'Midnight',   primary: '#1e40af', text: '#334155', muted: '#64748b', divider: '#e2e8f0' },
+  { id: 'navygold',   name: 'Navy & Gold', primary: '#1e3a8a', text: '#475569', muted: '#6b7280', divider: '#ece6d8' },
+  { id: 'orchid',     name: 'Orchid',     primary: '#7c3aed', text: '#3f3f46', muted: '#6f6a78', divider: '#eee7f4' },
+  { id: 'warm',       name: 'Warm Earth', primary: '#b45309', text: '#44403c', muted: '#7a6f66', divider: '#f0e7de' },
+  { id: 'contrast',   name: 'High Contrast', primary: '#111827', text: '#111827', muted: '#374151', divider: '#d1d5db' },
+  { id: 'terracotta', name: 'Terracotta', primary: '#c94f2d', text: '#44302a', muted: '#7c6258', divider: '#f0e4de' },
+  { id: 'plum',       name: 'Plum',       primary: '#7048a8', text: '#33313d', muted: '#6b6473', divider: '#e9e4f0' },
+  { id: 'ink',        name: 'Ink',        primary: '#1c7ed6', text: '#212529', muted: '#5c636a', divider: '#dee2e6' },
+  { id: 'mono',       name: 'Mono',       primary: '#495057', text: '#212529', muted: '#5c636a', divider: '#dee2e6' },
 ];
 
 function themeById(id) {
@@ -71,6 +71,8 @@ function defaultState() {
       dividerColor: '#e3e6ea',
       linkColor: '',        // accent-coloured link text ('' = primaryColor)
       nameColor: '',        // name text override ('' = textColor)
+      nameFont: '',         // name font stack key ('' = body font)
+      socialColorMode: '',  // '' = brand, 'mono', 'outline'
       mutedColor: '',       // muted/secondary text override ('' = derived)
       customFont: '',       // raw font stack override ('' = font preset)
       taglineWeight: '',    // '' = normal | 'bold'
@@ -181,6 +183,7 @@ function applyTheme(s, themeId) {
   if (!t) return;
   s.design.primaryColor = t.primary;
   s.design.textColor = t.text;
+  s.design.mutedColor = t.muted || '';
   s.design.dividerColor = t.divider;
 }
 
