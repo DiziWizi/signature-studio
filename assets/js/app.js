@@ -75,6 +75,29 @@ function normalizeLoadedState(raw) {
   out.meta = Object.assign({}, def.meta, (raw || {}).meta || {});
   if (!Array.isArray(out.socials)) out.socials = [];
   if (!Array.isArray(out.customLines)) out.customLines = [];
+  /* Coerce by the default's type: an imported file with an object where a
+     string belongs used to render "[object Object]" in the signature. */
+  const asStr = v => (typeof v === 'string' ? v : (typeof v === 'number' ? String(v) : ''));
+  for (const group of ['profile', 'contact']) {
+    for (const k of Object.keys(def[group])) out[group][k] = asStr(out[group][k]);
+  }
+  for (const [k, dv] of Object.entries(def.design)) {
+    const v = out.design[k];
+    if (k === 'imageRef') continue;
+    if (typeof dv === 'string') out.design[k] = asStr(v);
+    else if (typeof dv === 'number') out.design[k] = Number.isFinite(Number(v)) ? Number(v) : dv;
+    else if (typeof dv === 'boolean') out.design[k] = typeof v === 'boolean' ? v : dv;
+  }
+  out.design.imageRef = Object.assign({}, def.design.imageRef || {}, out.design.imageRef || {});
+  for (const k of Object.keys(def.design.imageRef || {})) {
+    out.design.imageRef[k] = asStr(out.design.imageRef[k]);
+  }
+  /* Custom lines are { label, value } (plus an optional url on older
+     saves) — coerce the two fields, never invent a new shape. */
+  out.customLines = out.customLines
+    .filter(l => l && typeof l === 'object')
+    .map(l => Object.assign({}, l, { label: asStr(l.label), value: asStr(l.value) }))
+    .filter(l => l.label || l.value);
   /* Never let executable markup in through a file, link or stale draft. */
   if (typeof out.design.customHtml === 'string' && out.design.customHtml) {
     out.design.customHtml = sanitiseHtmlFragment(out.design.customHtml);
@@ -1460,15 +1483,39 @@ async function doCopy() {
   }
 }
 
-/* Share link: compress the whole state into a URL. */
-async function doShareLink() {
-  const url = `${location.origin}${location.pathname}?sig=${lzwEncode(JSON.stringify(state))}`;
+/* Share link: compress the whole state into a URL. Embedded images ride
+   along, and random pixel data does not compress — a 120 KB logo becomes a
+   200 KB link that chat apps truncate. Say so, and offer the image-free
+   variant (menu item below). */
+const SHARE_BIG = 8000;
+
+function stateWithoutImages(s) {
+  const c = clone(s);
+  for (const k of ['logoUrl', 'bannerUrl', 'footerLeftImg', 'footerCenterImg', 'footerRightImg']) {
+    if (String(c.design[k] || '').startsWith('data:')) c.design[k] = '';
+  }
+  c.socials = (c.socials || []).map(x => Object.assign({}, x, {
+    iconUrl: String(x.iconUrl || '').startsWith('data:') ? '' : x.iconUrl,
+  }));
+  return c;
+}
+
+async function doShareLink({ plain = false } = {}) {
+  const src = plain ? stateWithoutImages(state) : state;
+  const url = `${location.origin}${location.pathname}?sig=${lzwEncode(JSON.stringify(src))}`;
   const how = await copySignature(url, url);
   if (how === 'failed') {
     showToast(t('toast.clipboardBlocked'), 'err', { key: 'toast.clipboardBlocked' });
     showManualCopy(url);
+    return;
+  }
+  if (plain) {
+    showToast(t('share.plainCopied'), '', { key: 'share.plainCopied' });
+  } else if (url.length > SHARE_BIG) {
+    showToast(t('share.tooBig', { kb: Math.round(url.length / 1024) }), 'warn',
+      { key: 'share.tooBig', params: { kb: Math.round(url.length / 1024) } });
   } else {
-    showToast(t('share.copied'), 'ok', { key: 'share.copied' });
+    showToast(t('share.copied'), '', { key: 'share.copied' });
   }
 }
 
@@ -2019,7 +2066,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.68.0';
+const APP_VERSION = '0.69.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2321,6 +2368,7 @@ function init() {
     showToast(t('toast.thunderbird'), 'ok', { key: 'toast.thunderbird' });
   });
   $('#x-share').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink(); });
+  $('#x-share-plain').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink({ plain: true }); });
   $('#x-json').addEventListener('click', () => { menu.classList.add('hidden'); openJsonEditor(); });
   $('#x-instructions').addEventListener('click', () => { menu.classList.add('hidden'); openOverlay('#modal-instructions'); });
   /* Copy from inside the instructions: one place to read the steps and

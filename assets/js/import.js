@@ -70,17 +70,52 @@ function parseSignatureHTML(html) {
       .replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'");
     lines = textish.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
   }
+  /* One line of a signature, classified. Real signatures put the phone on
+     a bare line ("+61 3 9000 0000") or behind a label ("M: …", "Tel: …");
+     neither used to import at all, and a phone in second position was
+     taken for the job title. */
+  const ROLE_RE = /\b(engineer|developer|manager|director|lead|head|principal|analyst|consultant|specialist|officer|designer|architect|coordinator|advisor|partner|founder|owner|president|ceo|cto|cfo|coo|associate|assistant|executive|administrator|supervisor|technician|scientist|professor|teacher|nurse|technician|accountant|lawyer|solicitor|agent|broker|editor|producer|planner|strategist|researcher)\b/i;
+  const phoneFromLine = line => {
+    const m = String(line).match(/^(?:[a-z]{1,6}\s*[:.)-]\s*)?(\+?\d[\d\s().-]{5,}\d)$/i);
+    if (!m) return null;
+    const digits = m[1].replace(/[^\d+]/g, '');
+    return digits.replace(/\D/g, '').length >= 6 ? digits : null;
+  };
+  const isContactLine = l => l.includes('@') || /^(https?:\/\/|www\.)/i.test(l) || !!phoneFromLine(l);
+
   if (lines.length) {
-    if (lines[0].length <= 60 && !lines[0].includes('@') && !/^https?:/i.test(lines[0])) {
-      out.profile.name = lines[0];
+    /* Pull every phone-shaped line out first, label or not. */
+    for (const raw of lines) {
+      const phone = phoneFromLine(raw);
+      if (!phone) continue;
+      if (!out.contact.phone) out.contact.phone = phone;
+      else if (!out.contact.mobile && phone !== out.contact.phone) {
+        out.contact.mobile = phone;
+        break;
+      }
     }
-    const second = lines[1] || '';
-    if (second && second.length <= 80 && !second.includes('@') && /[·|•,—]/.test(second)) {
+
+    const clean = lines.filter(l => !isContactLine(l) && l.length <= 90);
+    if (clean[0] && clean[0].length <= 60) out.profile.name = clean[0];
+    const second = clean[1] || '';
+    const third = clean[2] || '';
+    if (second && second.length <= 80 && /[·|•,—]/.test(second)) {
       const [title, department] = second.split(/\s*[·|•,—]\s*/);
       out.profile.title = (title || '').trim();
       out.profile.department = (department || '').trim();
-    } else if (second && second.length <= 80 && !second.includes('@')) {
+    } else if (second && second.length <= 80 && ROLE_RE.test(second)) {
       out.profile.title = second;
+    } else if (second && third && ROLE_RE.test(third)) {
+      /* Company first, then role (common outside ANZ). */
+      out.profile.company = second;
+      out.profile.title = third;
+    } else if (second && second.length <= 80) {
+      out.profile.title = second;
+    }
+    if (!out.profile.company) {
+      const after = clean.slice(out.profile.title === third ? 3 : (out.profile.title ? 2 : 1));
+      const cand = after.find(l => l.length <= 60 && !ROLE_RE.test(l) && l !== out.profile.name);
+      if (cand) out.profile.company = cand;
     }
   }
 

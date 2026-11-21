@@ -227,7 +227,18 @@ function bulkGenerate(state, csvText) {
       out.skipped += 1;
       continue;
     }
-    out.files.push({ name: `${slugify(name)}.html`, data: renderSignature(clone) });
+    /* Filenames must be unique inside one ZIP: two people can share a name
+       (and a whole team can share a mailbox), and extractors overwrite. */
+    const local = String(email.split('@')[0] || '').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+    const base = `${slugify(name)}${local ? '-' + slugify(local) : ''}`;
+    const key = `${name}|${email}`.toLowerCase();
+    if (out.seen && out.seen.has(key)) { out.duplicates = (out.duplicates || 0) + 1; continue; }
+    (out.seen = out.seen || new Set()).add(key);
+    let file = `${base}.html`;
+    let n = 2;
+    const used = new Set(out.files.map(f => f.name));
+    while (used.has(file)) file = `${base}-${n++}.html`;
+    out.files.push({ name: file, data: renderSignature(clone) });
     out.generated += 1;
   }
   return out;

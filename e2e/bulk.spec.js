@@ -28,8 +28,10 @@ test('bulk generate builds a ZIP with one file per valid row', async ({ page }) 
   const buf = require('fs').readFileSync(await dl.path());
   expect(buf.slice(0, 2).toString('latin1')).toBe('PK');
   const blob = buf.toString('latin1');
-  expect(blob).toContain('ada-lovelace.html');
-  expect(blob).toContain('maya-chen.html');
+  /* v0.69: filenames carry the email local part so two people with the
+     same name cannot collide inside the ZIP. */
+  expect(blob).toContain('ada-lovelace-ada.html');
+  expect(blob).toContain('maya-chen-maya.html');
   expect(blob).toContain('Head of Analytics');
   expect(blob).toContain('Freelance');
 

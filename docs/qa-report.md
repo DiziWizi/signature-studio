@@ -1310,6 +1310,45 @@ Suite 197/197 twice.
 
 ---
 
+# v0.69.0 addendum (audit batch 3 — sharing, bulk, import)
+
+Date: 2026-11-21 · Scope: S3, S4, S5 and S11.
+
+## Bulk (S3)
+
+- Filenames are now `slug(name)-<email-local>.html`, with a numeric suffix
+  only if that still collides. Exact duplicate rows (`name|email`) are
+  skipped and counted in `out.duplicates`; previously three people named
+  "Zoey DiZio" produced three identical `zoey-dizio.html` entries and
+  extractors silently kept one. bulk.spec updated to the new names.
+
+## Share (S4)
+
+- `doShareLink()` measures the URL; above 8 KB it copies anyway but warns
+  with the real size ("… it is 209 KB because it includes images"). New
+  menu item **Copy share link without images** strips `data:` sources from
+  a clone, so the link stays a few KB and the recipient's own images are
+  untouched.
+
+## Import (S5)
+
+- Phone-shaped lines are recognised with or without a label (`M:`, `Tel:`,
+  `T:`, bare `+61 …`) and fill phone/mobile before the identity heuristic
+  runs. The line classifier no longer mistakes a phone for the job title,
+  and company-first signatures (`Name / Company / Role`) are handled.
+
+## Types (S11)
+
+- `normalizeLoadedState()` coerces by the default's type: profile/contact
+  strings, design strings/numbers/booleans, `imageRef` sub-keys, and
+  `customLines` keep their real `{ label, value }` shape. Malformed JSON
+  can no longer render `[object Object]` or silently drop socials.
+
+3 i18n keys + 1 topbar key ×4 (601 each). 4 new E2E tests
+(sharing-batch.spec.js). Suite 201/201 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

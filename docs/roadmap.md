@@ -232,6 +232,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   incomplete email/phone/website and very long tokens, `<wbr>` soft breaks
   plus word-wrap on text so long words no longer push the signature
   sideways; E2E 197
+- [x] v0.69.0 — sharing batch: bulk filenames include the email local part
+  (no ZIP collisions) and exact duplicate rows are counted; share links
+  warn above 8 KB and gain "Copy share link without images"; paste-import
+  recovers phones (bare and labelled) and company, never phone-as-title;
+  imported types are coerced instead of rendering [object Object]; E2E 201
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
