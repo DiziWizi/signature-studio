@@ -237,6 +237,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   warn above 8 KB and gain "Copy share link without images"; paste-import
   recovers phones (bare and labelled) and company, never phone-as-title;
   imported types are coerced instead of rendering [object Object]; E2E 201
+- [x] v0.70.0 — polish batch: autosave is a trailing debounce with a footer
+  status (Saved locally / Saving… / Not saved — storage full); one live
+  toast per key; reset buttons and sliders meet the 24 px target minimum;
+  a "Remote images" switch stops the preview (and thumbnails) from pinging
+  image hosts; E2E 206
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

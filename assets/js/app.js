@@ -14,6 +14,12 @@ let redoStack = [];
 
 const $ = sel => document.querySelector(sel);
 
+/* Preview loads hosted images by default (visual parity with a mail client);
+   turning it off keeps the app from pinging third-party hosts. */
+function remoteImagesOn() {
+  try { return localStorage.getItem('sigstudio.remoteImg') !== '0'; } catch (e) { return true; }
+}
+
 /* ── dangerous-markup stripping ─────────────────────────────────────────
    The preview iframe is same-origin (it must be: the height sync reads
    contentDocument), and the Custom HTML block is raw by design — so a
@@ -374,8 +380,13 @@ function renderPreviewNow() {
     'var t=e.target,el=t&&t.closest?t.closest("[data-edit]"):null;' +
     'try{parent.postMessage({__sigstudio:"edit",key:el?el.getAttribute("data-edit"):""},"*");}catch(err){}' +
     '},true);<\/script>';
-  const html = sanitiseDocumentHtml(renderSignaturePreview(state))
-    .replace('</body>', previewScript + '</body>');
+  let html = sanitiseDocumentHtml(renderSignaturePreview(state));
+  /* Privacy/offline: a hosted logo pings its host on every keystroke. Let
+     the user stop that without touching what the signature stores. */
+  if (!remoteImagesOn()) {
+    html = html.replace(/(<img\b[^>]*?)\ssrc="https?:\/\/[^"]*"/gi, '$1');
+  }
+  html = html.replace('</body>', previewScript + '</body>');
   frame.srcdoc = html;
   const peek = $('#peek-frame');
   if (peek && !$('#peek-sheet').classList.contains('hidden')) peek.srcdoc = html;
@@ -420,23 +431,39 @@ function renderThumbsNow() {
   for (const iframe of thumbs) {
     const s = clone(base);
     s.design.template = iframe.dataset.tpl;
-    const html = renderSignature(s).replace(/src="data:[^"]*"/g, 'src=""');
+    let html = renderSignature(s).replace(/src="data:[^"]*"/g, 'src=""');
+    if (!remoteImagesOn()) html = html.replace(/(<img\b[^>]*?)\ssrc="https?:\/\/[^"]*"/gi, '$1');
     iframe.srcdoc = html;
   }
 }
 
-/* Time-throttled autosave: at most one write per second, plus a flush on
-   unload. No setTimeout — same background-throttling reason as above. */
+/* Autosave is a TRAILING debounce: every edit pushes the timer out, so the
+   write always reflects the latest state ~0.7 s after typing stops. The old
+   leading-edge throttle silently dropped everything typed within a second
+   of the previous save and never caught up. */
+let saveTimer = null;
+
+function setSaveStatus(kind) {
+  const el = $('#save-state');
+  if (!el) return;
+  el.dataset.state = kind;
+  const key = kind === 'error' ? 'save.error' : kind === 'saving' ? 'save.saving' : 'save.saved';
+  el.textContent = t(key);
+}
+
 function scheduleSave() {
-  const now = Date.now();
-  if (now - lastSaveAt < 1000) return;
-  lastSaveAt = now;
-  if (!saveDraft(state)) showToast(t('toast.autosaveFail'), 'warn', { key: 'toast.autosaveFail' });
+  if (saveTimer) clearTimeout(saveTimer);
+  setSaveStatus('saving');
+  saveTimer = setTimeout(() => { saveTimer = null; flushSave(); }, 700);
 }
 
 function flushSave() {
-  if (!saveDraft(state)) return;
+  if (!state) return false;
+  const ok = saveDraft(state);
   lastSaveAt = Date.now();
+  setSaveStatus(ok ? 'saved' : 'error');
+  if (!ok) showToast(t('toast.autosaveFail'), 'warn', { key: 'toast.autosaveFail' });
+  return ok;
 }
 
 window.addEventListener('beforeunload', flushSave);
@@ -1371,6 +1398,11 @@ function showToast(msg, kind = '', meta) {
   if (meta && meta.key) {
     toastEl.dataset.i18nKey = meta.key;
     if (meta.params) toastEl.dataset.i18nParams = JSON.stringify(meta.params);
+    /* One live toast per key: six identical "could not save" messages
+       stacking is noise, not information. */
+    const existing = [...document.querySelectorAll('#toasts .toast')]
+      .find(el => el.dataset.i18nKey === meta.key);
+    if (existing) existing.remove();
   }
   $('#toasts').appendChild(toastEl);
   setTimeout(() => toastEl.remove(), 3200);
@@ -2066,7 +2098,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.69.0';
+const APP_VERSION = '0.70.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2577,6 +2609,16 @@ function init() {
     revealControl(m.key);
   });
 
+  /* Remote images in the preview (off = no requests to third-party hosts). */
+  const remoteToggle = $('#remote-images');
+  if (remoteToggle) {
+    remoteToggle.checked = remoteImagesOn();
+    remoteToggle.addEventListener('change', () => {
+      try { localStorage.setItem('sigstudio.remoteImg', remoteToggle.checked ? '1' : '0'); } catch (e) { /* ignore */ }
+      renderPreviewNow();
+    });
+  }
+
   /* Narrow-window preview peek: a live bottom sheet instead of scrolling
      back and forth between the editor and the preview. */
   const peekFab = $('#peek-fab');
@@ -2654,6 +2696,7 @@ function init() {
   initMode();
   rebuildAll();
   updateUndoButtons();
+  setSaveStatus('saved');
 
   /* Report the outcome of a ?sig= share link. With work already open, the
      load is a confirmed, undoable action rather than a silent replacement. */

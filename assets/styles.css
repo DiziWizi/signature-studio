@@ -311,6 +311,20 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* Autosave status (footer) */
+.save-state { font-size: 11px; color: var(--mut); }
+.save-state[data-state="saving"] { color: var(--mut); opacity: .8; }
+.save-state[data-state="error"] { color: #f08c8c; font-weight: 600; }
+.save-state:empty { display: none; }
+
+/* Preview options row (remote images) */
+.preview-opts { display: flex; justify-content: flex-end; gap: 10px; padding: 4px 2px 0; }
+.preview-opts .switch { font-size: 11px; }
+
+/* Pointer targets: WCAG 2.2 asks for 24x24 minimum. */
+.sec-reset { min-width: 28px; min-height: 28px; display: inline-flex; align-items: center; justify-content: center; }
+.field input[type="range"] { min-height: 28px; }
+
 /* Section tools row (reset, section-level visibility) */
 .sec-tools {
   display: flex;

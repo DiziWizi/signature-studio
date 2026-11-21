@@ -9,10 +9,11 @@ test('pronouns default to inline after the name', async ({ page }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');
 
-  const doc = await previewSrcdoc(page);
-  /* Ada's sample has pronouns 'she/her' — inline, one space, then a span. */
-  expect(doc).toMatch(/Ada Lovelace<\/span> <span[^>]*>\(she\/her\)<\/span>/);
+  /* The render lands one frame after the click (see the rAF race note). */
+  await expect.poll(() => previewSrcdoc(page))
+    .toMatch(/Ada Lovelace<\/span> <span[^>]*>\(she\/her\)<\/span>/);
   /* No line break between the name and its pronouns. */
+  const doc = await previewSrcdoc(page);
   expect(doc).not.toMatch(/Ada Lovelace<\/span><br><span[^>]*>\(she\/her\)/);
 
   await expectNoErrors(h);

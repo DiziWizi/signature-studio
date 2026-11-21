@@ -1349,6 +1349,32 @@ Date: 2026-11-21 · Scope: S3, S4, S5 and S11.
 
 ---
 
+# v0.70.0 addendum (audit batch 4 — polish)
+
+Date: 2026-11-21 · Scope: S8, S9, S10, S12.
+
+- **Autosave (S8)** is now a trailing debounce (700 ms), not a leading
+  throttle: every edit resets the timer and the write always carries the
+  latest state. The footer shows the outcome — Saved locally / Saving… /
+  Not saved (storage full) — in a `role="status"` span, so failures are
+  visible for as long as they last instead of a toast that scrolls away.
+  `beforeunload` and `visibilitychange` still flush synchronously.
+- **Toasts (S9)** collapse by `key`: the newest replaces the live one, so
+  six failed saves read as one message.
+- **Targets (S10)**: `.sec-reset` is 28×28 and range inputs are 28 px tall
+  (WCAG 2.2 SC 2.5.8 asks 24×24).
+- **Remote images (S12)**: a "Remote images" switch in the preview options
+  filters `https?://` sources out of the preview AND the template
+  thumbnails when off (the stored value is untouched, exports still carry
+  the URL). Preference persists in `sigstudio.remoteImg`.
+- Visual baselines regenerated for the two intentional chrome changes
+  (footer status, preview options).
+- 5 new E2E tests (polish-batch.spec.js); one pre-existing one-shot read in
+  pronouns-position.spec converted to `expect.poll` (the rAF race the
+  skill warns about). Suite 206/206 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

@@ -618,6 +618,12 @@
       <button class="trust-badge warn" id="trust-badge" type="button"></button>
     </div>
     <div class="checklist" id="checklist" tabindex="-1"></div>
+    <div class="preview-opts">
+      <label class="switch small" title="Load hosted images in the preview">
+        <input type="checkbox" id="remote-images" checked>
+        <span data-i18n="preview.remoteImages">Remote images</span>
+      </label>
+    </div>
     <div class="stage" id="stage" tabindex="0" role="region" aria-label="Signature preview">
       <div class="compose" id="compose">
         <div class="compose-head" aria-hidden="true">
@@ -645,7 +651,8 @@
 
 </main>
 
-<footer class="app-footer"><span id="app-version"></span>
+<footer class="app-footer"><span id="save-state" class="save-state" data-state="saved" role="status"></span>
+  <span id="app-version"></span>
   <span class="app-ai" data-i18n="footer.aiDisclosure">Built largely with AI assistance.</span></footer>
 
 <!-- Update available pill (shown when a new service worker takes over) -->
