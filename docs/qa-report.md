@@ -1523,6 +1523,33 @@ Date: 2026-11-21 · Scope: C1, C2.
 
 ---
 
+# v0.76.0 addendum (accessibility batch 4 — sharing & shortcuts)
+
+Date: 2026-11-21 · Scope: C3–C7.
+
+- **C3** — **Show share QR…** draws the link on the existing QR canvas. A QR
+  caps at ~2.9 KB, so the payload is `compactStateForShare()` (drops every
+  value equal to its default; `normalizeLoadedState` restores them) with
+  images omitted: the sample signature drops from a 3,483-char link to 1,513,
+  and the compact state renders byte-identically (`sameRender: true`).
+  Oversized states get an honest "too big for a QR" toast.
+- **C4** — a shortcut sheet on the topbar `?` button and the `?` key (ignored
+  while typing or while a dialog is open), listing `/`, Ctrl+Enter,
+  Ctrl+Shift+E, undo/redo, `?` and Esc.
+- **C5** — history entries carry `{key, params}`. `pushHistory()` call sites
+  label the meaningful ones (reset section, sample, import, snapshot load,
+  share, start over, JSON, reorder, add line/social); the undo/redo buttons
+  are titled "Undo: reset Logo & photo" and the toast repeats it.
+- **C6** — a first-run hint above the preview ("Click anything in the preview
+  to edit it") with **Got it**, remembered in `sigstudio.hint.click`.
+- **C7** — autosave failures now put a **Free up space** action *inside the
+  toast* (opening the Saved panel); the footer-only button was dropped as
+  redundant. `fmtSize()` uses `Intl.NumberFormat` with the document language
+  ("3,2 MB" in German).
+- 6 new E2E tests (sharing-shortcuts.spec.js). Suite 234/234 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

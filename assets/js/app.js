@@ -119,38 +119,58 @@ function normalizeLoadedState(raw) {
 
 /* ── history (undo/redo) ──────────────────────────────────────────────── */
 
-function pushHistory() {
-  undoStack.push(clone(state));
+/* History entries carry what they will undo: an unlabelled ↶ is something
+   people don't trust, especially before a destructive-looking reset. */
+function pushHistory(key = 'undo.edit', params = null) {
+  undoStack.push({ state: clone(state), key, params });
   if (undoStack.length > HISTORY_MAX) undoStack.shift();
   redoStack = [];
   updateUndoButtons();
 }
 
+function undoWhat(entry) {
+  return entry ? t(entry.key || 'undo.edit', entry.params || {}) : '';
+}
+
 function doUndo() {
   if (!undoStack.length) return;
-  redoStack.push(clone(state));
-  state = undoStack.pop();
+  const entry = undoStack.pop();
+  redoStack.push({ state: clone(state), key: entry.key, params: entry.params });
+  state = entry.state;
   rebuildAll();
   scheduleSave();
   updateUndoButtons();
-  showToast(t('toast.undone'), '', { key: 'toast.undone' });
+  showToast(t('toast.undoneWhat', { what: undoWhat(entry) }), '', { key: 'toast.undone' });
 }
 
 function doRedo() {
   if (!redoStack.length) return;
-  undoStack.push(clone(state));
-  state = redoStack.pop();
+  const entry = redoStack.pop();
+  undoStack.push({ state: clone(state), key: entry.key, params: entry.params });
+  state = entry.state;
   rebuildAll();
   scheduleSave();
   updateUndoButtons();
-  showToast(t('toast.redone'), '', { key: 'toast.redone' });
+  showToast(t('toast.redoneWhat', { what: undoWhat(entry) }), '', { key: 'toast.redone' });
 }
 
 function updateUndoButtons() {
   const u = $('#btn-undo');
   const r = $('#btn-redo');
-  if (u) u.disabled = !undoStack.length;
-  if (r) r.disabled = !redoStack.length;
+  const top = undoStack[undoStack.length - 1];
+  const back = redoStack[redoStack.length - 1];
+  if (u) {
+    u.disabled = !top;
+    const label = top ? t('undo.label', { what: undoWhat(top) }) : '';
+    u.title = label;
+    u.setAttribute('aria-label', label || t('topbar.undoAria'));
+  }
+  if (r) {
+    r.disabled = !back;
+    const label = back ? t('undo.redoLabel', { what: undoWhat(back) }) : '';
+    r.title = label;
+    r.setAttribute('aria-label', label || t('topbar.redoAria'));
+  }
 }
 
 /* ── preview ──────────────────────────────────────────────────────────── */
@@ -359,7 +379,7 @@ const SECTION_RESET_KEYS = {
 function resetSection(sec) {
   const keys = SECTION_RESET_KEYS[sec];
   if (!keys) return;
-  pushHistory(); /* a reset is a destructive edit — undo must restore it */
+  pushHistory('undo.reset', { sec: t('sec.' + sec) });
   const def = defaultState();
   for (const k of keys) {
     const defVal = k.startsWith('imageRef.')
@@ -478,7 +498,12 @@ function flushSave() {
   const ok = saveDraft(state);
   lastSaveAt = Date.now();
   setSaveStatus(ok ? 'saved' : 'error');
-  if (!ok) showToast(t('toast.autosaveFail'), 'warn', { key: 'toast.autosaveFail' });
+  if (!ok) {
+    showToast(t('toast.autosaveFail'), 'warn', {
+      key: 'toast.autosaveFail',
+      action: { label: t('save.free'), fn: openSavedPanel },
+    });
+  }
   return ok;
 }
 
@@ -563,7 +588,7 @@ function finishDrag(type, beforeIndex) {
     renderPreview();
     return;
   }
-  pushHistory();
+  pushHistory('undo.reorder');
   const [item] = arr.splice(from, 1);
   arr.splice(to, 0, item);
   renderBoth();
@@ -657,7 +682,7 @@ function renderSocials() {
 }
 
 function addSocial(network = 'linkedin') {
-  pushHistory();
+  pushHistory('undo.addSocial');
   state.socials.push({ network, url: '', glyph: '', color: '' });
   renderSocials();
   renderPreview();
@@ -927,7 +952,7 @@ function openWizard() {
 }
 
 function finishWizard() {
-  pushHistory();
+  pushHistory('undo.wizard');
   if (wizardChoices.persona) {
     state = sampleState(wizardChoices.persona);
   }
@@ -1143,7 +1168,7 @@ function initQuickSwitch() {
     if (!b) return;
     const loaded = loadSnapshot(b.dataset.snap);
     if (loaded) {
-      pushHistory();
+      pushHistory('undo.load');
       state = normalizeLoadedState(loaded);
       menu.classList.add('hidden');
       rebuildAll();
@@ -1383,7 +1408,7 @@ function renderBlockList() {
 }
 
 function moveBlock(from, to) {
-  pushHistory();
+  pushHistory('undo.reorder');
   const order = (state.design.blockOrder || DEFAULT_BLOCK_ORDER).slice();
   const [b] = order.splice(from, 1);
   order.splice(to, 0, b);
@@ -1462,6 +1487,18 @@ function showToast(msg, kind = '', meta) {
   toastEl.textContent = msg;
   /* Remember the key (and params) so a live language switch can re-translate
      toasts that are still on screen. */
+  if (meta && meta.action) {
+    const action = document.createElement('button');
+    action.type = 'button';
+    action.className = 'toast-action';
+    action.textContent = meta.action.label;
+    action.addEventListener('click', e => {
+      e.stopPropagation();
+      meta.action.fn();
+      toastEl.remove();
+    });
+    toastEl.appendChild(action);
+  }
   if (meta && meta.key) {
     toastEl.dataset.i18nKey = meta.key;
     if (meta.params) toastEl.dataset.i18nParams = JSON.stringify(meta.params);
@@ -1622,6 +1659,26 @@ function shareUrlFor(src) {
   return `${location.origin}${location.pathname}?sig=${lzwEncode(JSON.stringify(src))}`;
 }
 
+/* A QR needs the state small enough to fit ~2.9 KB. Strip everything that
+   equals the default (normalizeLoadedState restores it on load), which cuts
+   a typical signature by more than half without changing the result. */
+function compactStateForShare(s) {
+  const prune = (obj, defaults) => {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) {
+      const dv = defaults ? defaults[k] : undefined;
+      if (v && typeof v === 'object' && !Array.isArray(v) && dv && typeof dv === 'object' && !Array.isArray(dv)) {
+        const sub = prune(v, dv);
+        if (Object.keys(sub).length) out[k] = sub;
+      } else if (JSON.stringify(v) !== JSON.stringify(dv)) {
+        out[k] = v;
+      }
+    }
+    return out;
+  };
+  return prune(clone(s), defaultState());
+}
+
 async function doShareLink({ forceFull = false } = {}) {
   const fullUrl = shareUrlFor(state);
   const overLimit = fullUrl.length > SHARE_BIG;
@@ -1765,7 +1822,7 @@ function applyJsonEditor() {
     showToast(t('json.invalid'), 'err', { key: 'json.invalid' });
     return;
   }
-  pushHistory(); /* replacing the whole state must be undoable */
+  pushHistory('undo.json'); /* replacing the whole state must be undoable */
   state = normalizeLoadedState(parsed);
   closeOverlay('#modal-json');
   rebuildAll();
@@ -1813,7 +1870,7 @@ function doImportPresetFile(file) {
       if (!parsed || typeof parsed !== 'object' || !parsed.design || !parsed.profile) {
         throw new Error('bad shape');
       }
-      pushHistory();
+      pushHistory('undo.import');
       state = normalizeLoadedState(parsed);
       rebuildAll();
       scheduleSave();
@@ -1845,15 +1902,10 @@ function doVCard4() {
   showToast(t('toast.vcard4Downloaded'), '', { key: 'toast.vcard4Downloaded' });
 }
 
-function doShowQR() {
-  const vcf = buildVCard(state);
-  const canvas = $('#qr-canvas');
-  if (typeof qrcode !== 'function') {
-    showToast(t('toast.qrFailed'), 'err', { key: 'toast.qrFailed' });
-    return;
-  }
-  const qr = qrcode(0, 'M');
-  qr.addData(vcf);
+function drawQr(canvas, text, ecc = 'M') {
+  if (typeof qrcode !== 'function') return false;
+  const qr = qrcode(0, ecc);
+  qr.addData(text);
   qr.make();
   const n = qr.getModuleCount();
   const size = 264;
@@ -1869,8 +1921,36 @@ function doShowQR() {
       if (qr.isDark(r, c)) ctx.fillRect(c * cell, r * cell, Math.ceil(cell), Math.ceil(cell));
     }
   }
+  return true;
+}
+
+function doShowQR() {
+  const vcf = buildVCard(state);
+  if (!drawQr($('#qr-canvas'), vcf, 'M')) {
+    showToast(t('toast.qrFailed'), 'err', { key: 'toast.qrFailed' });
+    return;
+  }
   $('#qr-caption').textContent =
     t('qr.caption', { name: state.profile.name || state.meta.name || 'this contact' });
+  const note = $('#qr-note');
+  if (note) { note.setAttribute('data-i18n', 'qr.note'); note.textContent = t('qr.note'); }
+  openOverlay('#modal-qr');
+}
+
+/* C3: a QR of the share link — the phone handoff without pasting 4 KB. */
+function doShowShareQR() {
+  const url = shareUrlFor(stateWithoutImages(compactStateForShare(state)));
+  if (url.length > 2900) {
+    showToast(t('share.qrTooLong'), 'warn', { key: 'share.qrTooLong' });
+    return;
+  }
+  if (!drawQr($('#qr-canvas'), url, url.length > 1200 ? 'L' : 'Q')) {
+    showToast(t('toast.qrFailed'), 'err', { key: 'toast.qrFailed' });
+    return;
+  }
+  $('#qr-caption').textContent = t('qr.shareCaption', { kb: Math.round(url.length / 1024) || 1 });
+  const note = $('#qr-note');
+  if (note) { note.setAttribute('data-i18n', 'qr.shareNote'); note.textContent = t('qr.shareNote'); }
   openOverlay('#modal-qr');
 }
 
@@ -2000,7 +2080,7 @@ function renderImportFields(p) {
 function doImportApply() {
   if (!lastParsedImport) return;
   const p = lastParsedImport;
-  pushHistory();
+  pushHistory('undo.import');
   if (p.kind === 'vcard') {
     /* Merge-only: absent fields keep their current values. */
     const v = p.vcard;
@@ -2080,7 +2160,9 @@ function storageUsageChars() {
 
 function fmtSize(chars) {
   const kb = chars / 1024;
-  return kb >= 1024 ? (kb / 1024).toFixed(1) + ' MB' : Math.round(kb) + ' KB';
+  const lang = document.documentElement.lang || 'en';
+  const nf = digits => new Intl.NumberFormat(lang, { maximumFractionDigits: digits });
+  return kb >= 1024 ? nf(1).format(kb / 1024) + ' MB' : nf(0).format(Math.round(kb)) + ' KB';
 }
 
 function renderStorageMeter() {
@@ -2300,7 +2382,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.75.0';
+const APP_VERSION = '0.76.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2439,13 +2521,13 @@ function init() {
   customList.addEventListener('click', onCustomListClick);
   bindDragDrop(customList, 'customs');
   $('#add-custom').addEventListener('click', () => {
-    pushHistory();
+    pushHistory('undo.addLine');
     state.customLines.push({ label: '', value: '' });
     renderCustoms();
     scheduleSave();
   });
   $('#add-custom-hours').addEventListener('click', () => {
-    pushHistory();
+    pushHistory('undo.addLine');
     state.customLines.push({ label: t('customs.officeHoursLabel'), value: 'Mon–Fri, 9:00–17:00' });
     renderCustoms();
     scheduleSave();
@@ -2504,7 +2586,7 @@ function init() {
   /* empty-state guide: straight to the one field that matters */
   const guideExample = $('#empty-guide-example');
   if (guideExample) guideExample.addEventListener('click', () => {
-    pushHistory();
+    pushHistory('undo.sample');
     const persona = SAMPLE_PERSONAS[0];
     state = sampleState(persona.id);
     rebuildAll();
@@ -2529,7 +2611,7 @@ function init() {
   /* topbar */
   let sampleIdx = 0;
   $('#btn-sample').addEventListener('click', () => {
-    pushHistory();
+    pushHistory('undo.sample');
     const persona = SAMPLE_PERSONAS[sampleIdx % SAMPLE_PERSONAS.length];
     state = sampleState(persona.id);
     sampleIdx++;
@@ -2563,6 +2645,15 @@ function init() {
     reader.readAsText(file);
   });
   $('#btn-saved').addEventListener('click', openSavedPanel);
+  $('#btn-shortcuts').addEventListener('click', () => openOverlay('#modal-shortcuts'));
+  document.addEventListener('keydown', e => {
+    const el = e.target;
+    if (el && (el.closest('input, textarea, select') || el.isContentEditable)) return;
+    if (e.key !== '?' || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (document.querySelector('.overlay:not(.hidden)')) return;
+    e.preventDefault();
+    openOverlay('#modal-shortcuts');
+  });
   $('#saved-cleanup').addEventListener('click', () => {
     const snaps = listSnapshots().slice().sort((a, b) => String(a.savedAt).localeCompare(String(b.savedAt)));
     const target = STORAGE_BUDGET * 0.7;
@@ -2581,7 +2672,7 @@ function init() {
   });
   $('#btn-reset').addEventListener('click', () => {
     showConfirm(t('confirm.startOverTitle'), t('confirm.startOverBody'), () => {
-      pushHistory();
+      pushHistory('undo.startOver');
       state = defaultState();
       clearDraft();
       rebuildAll();
@@ -2628,6 +2719,7 @@ function init() {
   });
   $('#x-share').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink(); });
   $('#x-share-full').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink({ forceFull: true }); });
+  $('#x-share-qr').addEventListener('click', () => { menu.classList.add('hidden'); doShowShareQR(); });
   $('#x-json').addEventListener('click', () => { menu.classList.add('hidden'); openJsonEditor(); });
   $('#x-instructions').addEventListener('click', () => { menu.classList.add('hidden'); openOverlay('#modal-instructions'); });
   /* Copy from inside the instructions: one place to read the steps and
@@ -2862,6 +2954,18 @@ function init() {
     thumbResizeRaf = requestAnimationFrame(() => { thumbResizeRaf = 0; fitThumbs(); });
   });
 
+  /* First-run hint: preview click-to-edit is otherwise hover-only. */
+  const hint = $('#preview-hint');
+  if (hint) {
+    let seen = false;
+    try { seen = localStorage.getItem('sigstudio.hint.click') === '1'; } catch (e) { /* ignore */ }
+    if (!seen) hint.classList.remove('hidden');
+    $('#preview-hint-close').addEventListener('click', () => {
+      hint.classList.add('hidden');
+      try { localStorage.setItem('sigstudio.hint.click', '1'); } catch (e) { /* ignore */ }
+    });
+  }
+
   /* Remote images in the preview (off = no requests to third-party hosts). */
   const remoteToggle = $('#remote-images');
   if (remoteToggle) {
@@ -2975,7 +3079,7 @@ function init() {
      load is a confirmed, undoable action rather than a silent replacement. */
   if (sigBootStatus === 'loaded' && sharedState) {
     const applyShared = () => {
-      pushHistory();                 /* the local draft stays one ↶ away */
+      pushHistory('undo.share');      /* the local draft stays one ↶ away */
       state = sharedState;
       rebuildAll();
       scheduleSave();

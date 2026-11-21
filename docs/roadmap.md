@@ -268,6 +268,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   (filename / no name / no email / duplicate) before generating, sniffs
   ;/tab delimiters and strips BOMs; paste-import shows per-field chips so
   you keep only what you trust; E2E 228
+- [x] v0.76.0 — sharing & shortcuts: QR of a compact (images omitted) share
+  link; a keyboard-shortcut sheet on "?"; undo/redo name their action in the
+  tooltip and toast; first-run "click the preview to edit" hint; storage
+  errors carry a "Free up space" action in the toast; sizes use locale
+  number formatting; E2E 234
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
