@@ -318,6 +318,24 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* Contact order list, status presets, starred variant */
+.order-list { display: flex; flex-direction: column; gap: 2px; }
+.order-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--mut); }
+.order-name { flex: 1; }
+.co-move {
+  font: inherit; line-height: 1; padding: 2px 7px; cursor: pointer;
+  background: transparent; color: var(--text); border: 1px solid var(--line2); border-radius: 5px;
+}
+.co-move:disabled { opacity: .35; cursor: default; }
+.preset-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.status-preset {
+  font: inherit; font-size: 11px; padding: 3px 10px; cursor: pointer;
+  background: transparent; color: var(--text); border: 1px solid var(--line2); border-radius: 999px;
+}
+.status-preset:hover { border-color: var(--accent, #7f8cf5); }
+#status-date { font: inherit; font-size: 11px; padding: 2px 6px; background: transparent; color: var(--text); border: 1px solid var(--line2); border-radius: 5px; }
+.qs-star { color: #e3b341; }
+
 /* Template category filter + honest layout chips */
 .tpl-filter { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
 .tpl-cat {

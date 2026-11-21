@@ -1621,6 +1621,33 @@ Date: 2026-11-21 · Scope: Academic, Clinic, Creator, Public sector.
 
 ---
 
+# v0.80.0 addendum (contact & QR — the last customisation batch)
+
+Date: 2026-11-21 · Scope: contact layout/order, QR target, status presets,
+audience variants.
+
+- **Contact layout** — `design.contactLayout: 'inline'` joins the contact
+  items with ` · ` on one line; stacked stays the default, so existing
+  renders are unchanged. Works through the existing `contactInlineHtml`.
+- **Contact order** — `design.contactOrder` is an array of keys; unknown keys
+  keep their original relative order (custom lines share `custom`, so they
+  stay stable). The Advanced list renders only present fields with ↑/↓
+  buttons, disables the ends, and restores focus to the same arrow after the
+  move.
+- **QR target** — `qrPayload(state)` returns the vCard by default, or the
+  user's URL when `qrTarget === 'url'`; an empty URL falls back to the vCard
+  instead of encoding nothing. The cache key includes the payload, so
+  switching targets cannot serve a stale matrix.
+- **Availability presets** — Available / Working remotely / On leave set both
+  text and colour; On leave can take a date and renders "On leave until
+  {date}" in the current locale.
+- **Audience variants** — one saved signature can be starred
+  (`sigstudio.defaultSnap`); the quick switcher floats it first with a ★.
+  Only one default is possible; starring again clears it.
+- 5 new E2E tests (contact-qr.spec.js). Suite 249/249 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

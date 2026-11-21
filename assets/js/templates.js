@@ -291,6 +291,19 @@ function contactItems(s, d = {}) {
   for (const line of s.customLines) {
     if (line.value) items.push({ key: 'custom', label: line.label, text: line.value });
   }
+  /* Contact order: keys not mentioned keep their original relative order
+     (custom lines share the 'custom' key, so they stay stable). */
+  const order = Array.isArray(d.contactOrder) ? d.contactOrder : [];
+  if (order.length) {
+    const rank = k => {
+      const i = order.indexOf(k);
+      return i === -1 ? order.length + 1 : i;
+    };
+    return items
+      .map((item, i) => ({ item, i }))
+      .sort((a, b) => (rank(a.item.key) - rank(b.item.key)) || (a.i - b.i))
+      .map(x => x.item);
+  }
   return items;
 }
 
@@ -314,6 +327,10 @@ function contactStackHtml(s, d, opts = {}) {
   const items = contactItems(s, d);
   if (!items.length) return '';
   const labels = opts.labels !== undefined ? opts.labels : d.showLabels !== false;
+  if (d.contactLayout === 'inline') {
+    const inline = contactInlineHtml(s, d, { labels });
+    return inline || '';
+  }
   let stack = items.map(it => contactLineHtml(d, it, { labels })).join('<br>');
   if (socialsPos(d) === 'inContact') {
     const socials = socialsRowHtml(s, d);
@@ -447,6 +464,16 @@ function logoCellHtml(s, d) {
    parent's doShowQR); any failure (missing generator/vCard builder, code
    length overflow) quietly renders nothing so the signature itself is
    never broken. */
+/* What the QR encodes: a vCard by default, or the user's URL when asked —
+   the honest answer, instead of silently encoding contact details. */
+function qrPayload(s, d = (s && s.design) || {}) {
+  if (String(d.qrTarget || '') === 'url') {
+    const raw = String(d.qrUrl || '').trim();
+    if (raw) return normalizeUrl('custom', raw);
+  }
+  return buildVCard(s);
+}
+
 function qrTableHtml(s, d) {
   if (!d.showQr) return '';
   if (typeof buildVCard !== 'function' || typeof qrcode !== 'function') return '';
@@ -458,7 +485,7 @@ function qrTableHtml(s, d) {
   })();
   /* The matrix + cell table are pure functions of (vCard, size): cache the
      built table so keystrokes never re-encode an 11k-cell grid. */
-  const vcard = buildVCard(s);
+  const vcard = qrPayload(s, d);
   const key = `${vcard}|${target}`;
   const cached = qrTableCache.get(key);
   if (cached) return cached;

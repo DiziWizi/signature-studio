@@ -416,6 +416,7 @@ function renderPreviewNow() {
   applyTemplateDimming();
   applyFieldErrors();
   renderContrastMeter();
+  renderContactOrder();
   renderThumbs();
   updateConciseness();
   updateChecklist();
@@ -1144,11 +1145,13 @@ function renderQuickMenu() {
     menu.innerHTML = '<span class="menu-empty">' + t('quick.empty') + '</span>';
     return;
   }
-  menu.innerHTML = snaps.slice(0, 6).map(snap => {
+  const def = defaultSnapId();
+  const ordered = snaps.slice().sort((a, b) => (b.id === def) - (a.id === def));
+  menu.innerHTML = ordered.slice(0, 6).map(snap => {
     const d = new Date(snap.savedAt);
     const when = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
     return `<button role="menuitem" type="button" data-snap="${snap.id}">
-      <span class="qs-name">${esc(snap.name)}</span>
+      <span class="qs-name">${snap.id === def ? '<span class="qs-star" aria-hidden="true">★</span> ' : ''}${esc(snap.name)}</span>
       <span class="qs-date">${when}</span>
     </button>`;
   }).join('');
@@ -1231,6 +1234,105 @@ function renderContrastMeter() {
     return `<span class="cm-row ${ok ? 'ok' : 'bad'}"><span>${esc(t(key))}</span>` +
       `<b>${ratio === null ? '—' : ratio.toFixed(1) + ':1'}</b><i>${esc(grade)}</i></span>`;
   }).join('');
+}
+
+/* ── contact line order (Advanced) ─────────────────────────────────────── */
+const CONTACT_ORDER_KEYS = ['email', 'email2', 'phone', 'mobile', 'website', 'portfolio', 'pgp', 'address'];
+let contactOrderSig = '';
+
+function contactOrderKeys() {
+  const present = contactItems(state, state.design).map(i => i.key);
+  const known = CONTACT_ORDER_KEYS.filter(k => present.includes(k));
+  const stored = Array.isArray(state.design.contactOrder) ? state.design.contactOrder : [];
+  return [...new Set([...stored.filter(k => known.includes(k)), ...known])];
+}
+
+function renderContactOrder() {
+  const el = $('#contact-order');
+  if (!el) return;
+  const keys = contactOrderKeys();
+  const sig = keys.join(',');
+  if (sig === contactOrderSig) return;
+  contactOrderSig = sig;
+  if (!keys.length) {
+    el.innerHTML = `<span class="micro">${esc(t('order.empty'))}</span>`;
+    return;
+  }
+  el.innerHTML = keys.map((k, i) => {
+    const label = t('field.' + k);
+    return `<span class="order-row">
+      <span class="order-name">${esc(label)}</span>
+      <button type="button" class="co-move" data-key="${k}" data-dir="-1"${i === 0 ? ' disabled' : ''}
+        aria-label="${esc(t('order.moveUp'))}: ${esc(label)}">↑</button>
+      <button type="button" class="co-move" data-key="${k}" data-dir="1"${i === keys.length - 1 ? ' disabled' : ''}
+        aria-label="${esc(t('order.moveDown'))}: ${esc(label)}">↓</button>
+    </span>`;
+  }).join('');
+}
+
+function initContactOrder() {
+  const el = $('#contact-order');
+  if (!el) return;
+  el.addEventListener('click', ev => {
+    const b = ev.target.closest('.co-move');
+    if (!b) return;
+    const keys = contactOrderKeys();
+    const i = keys.indexOf(b.dataset.key);
+    const j = i + Number(b.dataset.dir);
+    if (i < 0 || j < 0 || j >= keys.length) return;
+    [keys[i], keys[j]] = [keys[j], keys[i]];
+    state.design.contactOrder = keys;
+    contactOrderSig = '';
+    renderContactOrder();
+    renderPreview();
+    scheduleSave();
+    const again = el.querySelector(`.co-move[data-key="${b.dataset.key}"][data-dir="${b.dataset.dir}"]`);
+    if (again) again.focus();
+  });
+}
+
+/* Availability presets write the badge text and colour in one click; the
+   date only matters for "on leave". */
+function initStatusPresets() {
+  document.addEventListener('click', ev => {
+    const b = ev.target.closest('.status-preset');
+    if (!b) return;
+    const preset = b.dataset.status;
+    const colors = { available: '#2f9e44', remote: '#1c7ed6', leave: '#b45309' };
+    let text = t('status.' + preset);
+    if (preset === 'leave') {
+      const dateEl = $('#status-date');
+      if (dateEl && dateEl.value) {
+        const dt = new Date(dateEl.value + 'T00:00:00');
+        if (!Number.isNaN(dt.getTime())) {
+          text = t('status.leaveUntil', { date: dt.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) });
+        }
+      }
+    }
+    state.design.statusText = text;
+    state.design.statusColor = colors[preset] || '#2f9e44';
+    const input = document.querySelector('[data-field="design.statusText"]');
+    const colour = document.querySelector('[data-field="design.statusColor"]');
+    if (input) input.value = text;
+    if (colour) colour.value = state.design.statusColor;
+    renderPreview();
+    scheduleSave();
+    showToast(text, '', { key: 'toast.status' });
+  });
+}
+
+/* One starred snapshot is the default variant; the quick menu floats it. */
+const DEFAULT_SNAP_KEY = 'sigstudio.defaultSnap';
+
+function defaultSnapId() {
+  try { return localStorage.getItem(DEFAULT_SNAP_KEY) || ''; } catch (e) { return ''; }
+}
+
+function setDefaultSnap(id) {
+  try {
+    if (id) localStorage.setItem(DEFAULT_SNAP_KEY, id);
+    else localStorage.removeItem(DEFAULT_SNAP_KEY);
+  } catch (e) { /* ignore */ }
 }
 
 /* One definition of "valid" for both the checklist and the inline hints. */
@@ -2221,6 +2323,8 @@ function savedItemHtml(snap) {
       <div class="si-size">${fmtSize(JSON.stringify(snap.state).length)}</div>
     </div>
     <div class="si-actions">
+      <button class="btn btn-sm snap-default" aria-pressed="${defaultSnapId() === snap.id}"
+        title="${esc(t('saved.defaultHint'))}" aria-label="${esc(t('saved.defaultHint'))}">${defaultSnapId() === snap.id ? '★' : '☆'}</button>
       <button class="btn btn-sm snap-load">${t('saved.load')}</button>
       <button class="btn btn-sm snap-del">${t('saved.delete')}</button>
     </div>
@@ -2464,7 +2568,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.79.0';
+const APP_VERSION = '0.80.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2570,6 +2674,8 @@ function init() {
   }
 
   initTemplatePicker();
+  initContactOrder();
+  initStatusPresets();
 
   document.addEventListener('input', onFieldInput);
   document.addEventListener('change', onFieldInput);
@@ -2885,6 +2991,13 @@ function init() {
         scheduleSave();
         showToast(t('toast.loaded'), '', { key: 'toast.loaded' });
       }
+    } else if (e.target.classList.contains('snap-default')) {
+      const isDefault = defaultSnapId() === id;
+      setDefaultSnap(isDefault ? '' : id);
+      renderSavedList();
+      const again = document.querySelector(`.saved-item[data-id="${id}"] .snap-default`);
+      if (again) again.focus();
+      showToast(t(isDefault ? 'saved.defaultCleared' : 'saved.defaultSet'), '', { key: 'toast.default' });
     } else if (e.target.classList.contains('snap-del')) {
       /* Keep the keyboard user in the list: focus the same row's Load
          button after the re-render (or the last row if it was the end). */

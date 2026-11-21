@@ -285,6 +285,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.79.0 — templates II: Academic (CV split), Clinic (appointments
   first), Creator (social hero) and Public sector (image-free, high
   contrast, land acknowledgement); picker gains a Public filter; E2E 244
+- [x] v0.80.0 — contact & QR: contact lines can be inline and reordered
+  (Advanced), the QR can encode a link instead of the vCard, availability
+  presets set the status badge (with an optional return date), and one saved
+  signature can be starred as the default variant for the quick switcher;
+  E2E 249
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

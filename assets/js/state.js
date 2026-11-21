@@ -83,6 +83,10 @@ function defaultState() {
       nameColor: '',        // name text override ('' = textColor)
       nameFont: '',         // name font stack key ('' = body font)
       socialColorMode: '',  // '' = brand, 'mono', 'outline'
+      contactLayout: '',    // '' = stacked (one per line), 'inline'
+      contactOrder: [],     // keys, e.g. ['phone','email','website']
+      qrTarget: '',         // '' = vCard, 'url'
+      qrUrl: '',            // the URL when qrTarget === 'url'
       mutedColor: '',       // muted/secondary text override ('' = derived)
       customFont: '',       // raw font stack override ('' = font preset)
       taglineWeight: '',    // '' = normal | 'bold'

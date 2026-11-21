@@ -350,6 +350,16 @@
           <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom" autocomplete="street-address"></textarea>
         </label>
         <label class="field span2" data-when="design.showLabels design.showAddress"><span data-i18n="field.addressLabel">Address label</span> <span class="opt" data-i18n="opt.defaultAddress">(default “Address” — shown only when labels are on)</span><input data-field="contact.addressLabel" placeholder="Address"></label>
+        <label class="field" data-advanced><span data-i18n="design.contactLayout">Contact layout</span>
+          <select data-field="design.contactLayout">
+            <option value="" data-i18n="design.contactStacked">One per line</option>
+            <option value="inline" data-i18n="design.contactInline">Inline, separated by ·</option>
+          </select>
+        </label>
+        <div class="field span2" data-advanced>
+          <span class="lbl" data-i18n="design.contactOrder">Contact line order</span>
+          <div id="contact-order" class="order-list"></div>
+        </div>
       </div>
     </details>
 
@@ -609,12 +619,27 @@
               <input type="color" data-field="design.statusColor" data-when="@status" data-i18n-title="row.badgeColour" data-i18n-aria="row.badgeColour" title="Badge colour" aria-label="Badge colour" class="mini-color">
             </span>
           </label>
+          <div class="preset-row span2" role="group" aria-label="Status presets" data-i18n-aria="status.presetsAria">
+            <button type="button" class="status-preset" data-status="available" data-i18n="status.available">Available</button>
+            <button type="button" class="status-preset" data-status="remote" data-i18n="status.remote">Working remotely</button>
+            <button type="button" class="status-preset" data-status="leave" data-i18n="status.leave">On leave</button>
+            <input type="date" id="status-date" aria-label="On-leave end date" data-i18n-aria="status.untilAria">
+          </div>
           <label class="switch span2" data-advanced data-used-by="classic,enterprise"><input type="checkbox" data-field="design.showQr"><span class="sw"></span> <span data-i18n="design.showQr">Embed a scannable vCard QR (Classic + Enterprise)</span></label>
           <div class="field" data-advanced data-when="design.showQr">
             <span class="lbl" data-i18n="design.qrSize">QR size</span>
             <span class="range-row"><input type="range" min="32" max="96" step="4" data-field="design.qrSize" aria-label="QR size"><output id="qr-size-out">60 px</output></span>
             <span class="micro" data-i18n="design.qrMicro">Target size — the QR grows a little when your contact data is long (scannability wins). Rendered as an Outlook-safe grid; Gmail and Apple Mail scan fine.</span>
           </div>
+          <label class="field" data-advanced data-when="design.showQr"><span data-i18n="design.qrTarget">QR encodes</span>
+            <select data-field="design.qrTarget">
+              <option value="" data-i18n="design.qrVcard">Your contact card (vCard)</option>
+              <option value="url" data-i18n="design.qrLink">A link</option>
+            </select>
+          </label>
+          <label class="field" data-advanced data-when="design.showQr"><span data-i18n="design.qrUrl">QR link</span> <span class="opt" data-i18n="opt.qrUrl">(booking page, portfolio — used when “A link” is selected)</span>
+            <input data-field="design.qrUrl" type="url" inputmode="url" placeholder="example.com/hello">
+          </label>
           <label class="field span2" data-used-by="quote"><span data-i18n="design.quoteText">Favourite quote</span> <span class="opt" data-i18n="opt.usedByQuote">(used by the Quote template — leave empty to skip)</span>
             <input data-field="design.quoteText" placeholder="Small team, big care.">
           </label>
