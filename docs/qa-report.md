@@ -1208,8 +1208,8 @@ Date: 2026-11-21 · Scope: every destructive edit is reversible.
 
 Date: 2026-11-21 · Scope: the workflow's static smoke test, not the app.
 
-- v0.64.0–v0.66.0 tag runs all failed in the `check` job at the smoke
-  step with exit code 23 and no output. Cause: `curl -sf URL | grep -q
+- v0.63.0–v0.66.0 tag runs all failed in the `check` job at the smoke
+  step with exit code 23 and no output (v0.62.0 was the last green). Cause: `curl -sf URL | grep -q
   'Signature Studio'` runs under bash `-o pipefail`; `grep -q` exits
   after the first match, so once `index.html` grew past the 64 KB pipe
   buffer (now 87,719 B) curl is still writing and dies with EPIPE (23),
