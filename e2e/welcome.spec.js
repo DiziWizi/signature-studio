@@ -63,13 +63,13 @@ test('a reload that flushes an empty default draft still gets the tour', async (
   expect(await page.evaluate(() => localStorage.getItem('sigstudio.tour.done'))).toBe('1');
 });
 
-test('essentials-first: a genuine first visit opens only Profile and Design', async ({ page }) => {
+test('essentials-first: a genuine first visit opens only Template and Identity', async ({ page }) => {
   await firstVisitBoot(page);
   const open = sel =>
     page.locator(`details[data-sec="${sel}"]`).evaluate(el => el.open);
+  expect(await open('tpl')).toBe(true);
   expect(await open('profile')).toBe(true);
-  expect(await open('design')).toBe(true);
-  for (const sec of ['contact', 'org', 'socials', 'customs', 'elements']) {
+  for (const sec of ['logo', 'contact', 'socials', 'org', 'type', 'blocks', 'adv', 'elements']) {
     expect(await open(sec), `${sec} should start closed on a first visit`).toBe(false);
   }
   /* Nothing persisted: the map is only written when the user toggles. */

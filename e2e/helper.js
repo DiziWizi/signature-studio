@@ -78,12 +78,15 @@ async function freshPage(page) {
      data-sec values in index.html. */
   await page.evaluate(() => {
     localStorage.setItem('sigstudio.sections', JSON.stringify({
+      tpl: true,
       profile: true,
+      logo: true,
       contact: true,
-      org: true,
       socials: true,
-      customs: true,
-      design: true,
+      org: true,
+      type: true,
+      blocks: true,
+      adv: true,
       elements: true,
     }));
     localStorage.setItem('sigstudio.tour.done', '1');
@@ -127,9 +130,22 @@ async function previewSrcdoc(page) {
   return (await page.locator('#preview-frame').getAttribute('srcdoc')) || '';
 }
 
+/* Sections and nested sub-groups: open them before interacting with
+   controls inside (collapsed groups are display:none). */
+async function openSection(page, sec) {
+  const el = page.locator(`details[data-sec="${sec}"]`);
+  if (!(await el.evaluate(d => d.open))) await el.locator('> summary').click();
+}
+async function openSub(page, i18nKey) {
+  const el = page.locator(`details.sub:has(> summary[data-i18n="${i18nKey}"])`).first();
+  if (!(await el.evaluate(d => d.open))) await el.locator('> summary').click();
+}
+
 module.exports = {
   BASE_URL,
   freshPage,
+  openSection,
+  openSub,
   expectNoErrors,
   rawErrors,
   SANDBOX_INSTRUMENTATION_NOISE,

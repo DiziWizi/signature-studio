@@ -9,7 +9,7 @@ test('thumbnails rebuild when the Design section reopens after edits', async ({ 
   await page.click('#btn-sample');
 
   /* Close the Design section and edit the name while it is closed. */
-  const design = page.locator('details[data-sec="design"]');
+  const design = page.locator('details[data-sec="tpl"]');
   await design.locator('> summary').click();
   await expect(design).not.toHaveAttribute('open', '');
   await page.fill('[data-field="profile.name"]', 'Zed Zephyr');

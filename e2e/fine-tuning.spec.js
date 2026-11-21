@@ -2,12 +2,13 @@
 'use strict';
 
 const { test, expect } = require('@playwright/test');
-const { freshPage, expectNoErrors, previewSrcdoc } = require('./helper');
+const { freshPage, expectNoErrors, previewSrcdoc, openSub } = require('./helper');
 
 test('spacing overrides apply and clear back to auto', async ({ page }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');
 
+  await openSub(page, 'sub.spacing');
   await page.fill('[data-field="design.rowGap"]', '24');
   /* Spacers are the only elements with a height attribute. */
   await expect.poll(async () => {
@@ -30,6 +31,7 @@ test('spacing overrides apply and clear back to auto', async ({ page }) => {
 test('global text alignment overrides the layout default', async ({ page }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');
+  await openSub(page, 'sub.spacing');
 
   /* Classic defaults to left. */
   await expect.poll(() => previewSrcdoc(page)).toContain('<td align="left"');

@@ -91,6 +91,33 @@ function renderPreview() {
   });
 }
 
+/* Conditional visibility: hide controls whose feature is off, whose
+   data they need is empty, or whose subject doesn't exist yet. Rules ride
+   on data-when (space-separated = ALL must be on) and data-when-fill
+   (field must be non-empty). Special subjects: @socials, @pronouns,
+   @status. */
+function visOn(v) {
+  return !(v === false || v === '' || v === null || v === undefined);
+}
+function applyFieldVisibility() {
+  if (!state) return;
+  const hasSocials = (state.socials || []).some(x => String(x.url || '').trim());
+  const specials = {
+    '@socials': hasSocials,
+    '@pronouns': String(state.profile.pronouns || '').trim() !== '',
+    '@status': String(state.design.statusText || '').trim() !== '',
+  };
+  for (const el of document.querySelectorAll('[data-when]')) {
+    const keys = el.dataset.when.split(/\s+/).filter(Boolean);
+    const show = keys.every(k => (k in specials) ? specials[k] : visOn(getPath(state, k)));
+    el.classList.toggle('hidden', !show);
+  }
+  for (const el of document.querySelectorAll('[data-when-fill]')) {
+    const v = getPath(state, el.dataset.whenFill);
+    el.classList.toggle('hidden', String(v || '').trim() === '');
+  }
+}
+
 function renderPreviewNow() {
   const frame = $('#preview-frame');
   const html = renderSignature(state).replace(
@@ -98,6 +125,7 @@ function renderPreviewNow() {
     '<script>document.addEventListener("click",function(e){e.preventDefault();},true);<\/script></body>'
   );
   frame.srcdoc = html;
+  applyFieldVisibility();
   renderThumbs();
   updateConciseness();
   updateChecklist();
@@ -113,7 +141,7 @@ function renderPreviewNow() {
 let thumbsScheduled = false;
 let thumbsNeedsRebuild = true;
 function renderThumbs() {
-  const sec = document.querySelector('details[data-sec="design"]');
+  const sec = document.querySelector('details[data-sec="tpl"]');
   if (!sec || !sec.open) { thumbsNeedsRebuild = true; return; }
   /* Render on idle, at most once per quiet period: continuous typing never
      pays for 17 iframe parses; the tiles refresh when the user pauses (or
@@ -1659,7 +1687,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.56.0';
+const APP_VERSION = '0.57.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2094,7 +2122,7 @@ function init() {
   const programmaticClose = new WeakSet();
   if (firstVisit) {
     document.querySelectorAll('details[data-sec]').forEach(d => {
-      if (d.dataset.sec !== 'profile' && d.dataset.sec !== 'design') {
+      if (d.dataset.sec !== 'profile' && d.dataset.sec !== 'tpl') {
         programmaticClose.add(d);
         d.removeAttribute('open');
       }
@@ -2112,7 +2140,7 @@ function init() {
           cur[id] = d.open;
           localStorage.setItem(SECTIONS_KEY, JSON.stringify(cur));
         } catch (e) { /* ignore */ }
-        if (id === 'design' && d.open && thumbsNeedsRebuild) renderThumbs();
+        if (id === 'tpl' && d.open && thumbsNeedsRebuild) renderThumbs();
       });
     });
   } catch (e) { /* ignore */ }

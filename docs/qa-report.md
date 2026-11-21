@@ -946,6 +946,35 @@ Date: 2026-11-21 · Scope: controls cut off at the sidebar's right edge
 
 ---
 
+# v0.57.0 addendum (progressive settings restructure)
+
+Date: 2026-11-21 · Scope: proposal C — section order, placement, and
+conditional visibility.
+
+## Notes
+
+- Ten sections in signature order: tpl, profile (renamed Identity),
+  logo, contact, socials, org, type, blocks, adv, elements. The old
+  64-field Design section is split into Template & layout, Logo & photo,
+  Colours & type (nested Colours / Typography / Spacing / Divider) and
+  Advanced (collapsed: custom HTML, signature name).
+- All socials controls (style, icon size, chip gap, position, icon
+  image mode) moved into Social links ▸ Style & position.
+- Blocks absorbs status badge, QR, quote, legal line and custom lines;
+  Show/hide gains the contact-labels toggle.
+- Conditional visibility (applyFieldVisibility in app.js): data-when
+  (space-separated = AND) + data-when-fill, specials @socials/@pronouns/
+  @status. Hidden: QR size without QR, divider controls without the
+  divider, card padding without the card, label fields without labels,
+  contact fields whose Show/hide toggle is off, socials styling with no
+  socials, status colour without badge text, pronouns position without
+  pronouns, image-use selects with an empty image field.
+- First visit now opens Template & layout + Identity; thumbnails gate
+  on the tpl section; helpers gained openSection/openSub. Suite
+  152/152 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

@@ -3,13 +3,15 @@
 'use strict';
 
 const { test, expect } = require('@playwright/test');
-const { freshPage, expectNoErrors, previewSrcdoc } = require('./helper');
+const { freshPage, expectNoErrors, previewSrcdoc, openSection, openSub } = require('./helper');
 
 test('Enterprise template renders every organisational section in order', async ({ page }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');
 
   await page.fill('[data-field="profile.team"]', 'Experience Platform');
+  await openSection(page, 'org');
+  await openSub(page, 'sub.support');
   await page.fill('[data-field="design.supportTitle"]', 'IT Support');
   await page.fill('[data-field="design.supportChatUrl"]', 'https://chat.example.com');
   await page.fill('[data-field="design.supportChatLabel"]', 'Chat with us');

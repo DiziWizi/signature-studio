@@ -2,7 +2,7 @@
 'use strict';
 
 const { test, expect } = require('@playwright/test');
-const { freshPage, expectNoErrors, previewSrcdoc } = require('./helper');
+const { freshPage, expectNoErrors, previewSrcdoc, openSection, openSub } = require('./helper');
 
 test('support module title stays dark on its light box in dark-mode friendly', async ({ page }) => {
   const h = await freshPage(page);
@@ -10,6 +10,8 @@ test('support module title stays dark on its light box in dark-mode friendly', a
 
   /* Enterprise + support fields + dark-mode friendly. */
   await page.click('.tpl-btn[data-template="enterprise"]');
+  await openSection(page, 'org');
+  await openSub(page, 'sub.support');
   await page.fill('[data-field="design.supportTitle"]', 'IT Support');
   await page.fill('[data-field="design.supportChatLabel"]', 'Chat with us');
   await page.fill('[data-field="design.supportChatUrl"]', 'https://chat.example.com');
@@ -49,6 +51,8 @@ test('without dark-mode friendly the support box markup is unchanged', async ({ 
   const h = await freshPage(page);
   await page.click('#btn-sample');
   await page.click('.tpl-btn[data-template="enterprise"]');
+  await openSection(page, 'org');
+  await openSub(page, 'sub.support');
   await page.fill('[data-field="design.supportTitle"]', 'IT Support');
 
   const doc = await previewSrcdoc(page);

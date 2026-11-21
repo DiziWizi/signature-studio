@@ -170,6 +170,13 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.56.0 — Design section right column no longer clipped: grid
   tracks can shrink (minmax(0,1fr) + min-width:0), range rows wrap;
   E2E now 147
+- [x] v0.57.0 — progressive settings (proposal C): sections follow the
+  signature top-to-bottom (Template & layout → Identity → Logo & photo
+  → Contact → Social links → Organisation → Colours & type → Blocks →
+  Advanced → Show/hide); all socials controls live in Social links;
+  nested sub-groups (Colours/Typography/Spacing/Divider, Style &
+  position, vCard extras, Support module); conditional visibility hides
+  controls whose feature is off or whose subject is empty; E2E now 152
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

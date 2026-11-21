@@ -2,7 +2,7 @@
 'use strict';
 
 const { test, expect } = require('@playwright/test');
-const { freshPage, expectNoErrors } = require('./helper');
+const { freshPage, expectNoErrors, openSub } = require('./helper');
 
 const BASE = 'http://127.0.0.1:8137';
 
@@ -25,7 +25,7 @@ test('new visitors start in Simple mode with expert controls hidden', async ({ p
   /* Expert sections hidden, fields intact. Custom lines stay: they carry
      everyday things like office hours. */
   await expect(page.locator('details[data-sec="org"]')).toBeHidden();
-  await expect(page.locator('details[data-sec="customs"]')).toBeVisible();
+  await expect(page.locator('details[data-sec="blocks"]')).toBeVisible();
   await expect(page.locator('[data-field="design.customHtml"]')).toBeHidden();
   await expect(page.locator('[data-field="design.rowGap"]')).toBeHidden();
 
@@ -46,6 +46,7 @@ test('switching to Advanced reveals controls and preserves state', async ({ page
   await expect(page.locator('details[data-sec="org"]')).toBeVisible();
 
   /* Set an enterprise value, then drop to Simple: hidden but kept. */
+  await openSub(page, 'sub.support');
   await page.fill('[data-field="design.supportTitle"]', 'IT Helpdesk');
   await page.click('#mode-simple');
   await expect(page.locator('html')).toHaveClass(/mode-simple/);

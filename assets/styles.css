@@ -199,6 +199,13 @@ details[open] summary::before { transform: rotate(90deg); }
 
 .body { padding: 2px 16px 18px; }
 
+/* Nested sub-groups inside a section body (Progressive sections):
+   flat, quiet headings — the section keeps the card frame. */
+.body .sub { border: 0; background: transparent; margin: 2px 0 10px; }
+.body .sub > summary { padding: 7px 0; font-size: 12px; color: var(--mut); text-transform: uppercase; letter-spacing: .03em; gap: 7px; }
+.body .sub > summary::before { font-size: 9px; }
+.body .sub .grid2 { padding-top: 2px; }
+
 /* minmax(0, 1fr): tracks may shrink below their content's min-content
    width. Plain 1fr tracks take the widest select's intrinsic minimum
    (long option labels) and overflow the section, which

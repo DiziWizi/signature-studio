@@ -81,143 +81,8 @@
 
   <section class="editor" aria-label="Signature editor" data-i18n-aria="sec.editorAria">
 
-    <details open data-sec="profile">
-      <summary data-i18n="sec.profile">Profile</summary>
-      <div class="body grid2">
-        <label class="field"><span data-i18n="field.name">Full name</span><input data-field="profile.name" placeholder="Ada Lovelace"></label>
-        <label class="field"><span data-i18n="field.displayName">Preferred name</span> <span class="opt" data-i18n="opt.shownInSignature">(shown in the signature)</span><input data-field="profile.displayName" placeholder="Ada"></label>
-        <label class="field"><span data-i18n="field.honorificPrefix">Honorific</span> <span class="opt" data-i18n="opt.beforeName">(before the name)</span><input data-field="profile.honorificPrefix" placeholder="Dr., Prof."></label>
-        <label class="field"><span data-i18n="field.honorificSuffix">Post-nominals</span> <span class="opt" data-i18n="opt.afterName">(after the name)</span><input data-field="profile.honorificSuffix" placeholder="PhD, PMP"></label>
-        <label class="field"><span data-i18n="field.pronouns">Pronouns</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.pronouns" placeholder="she/her"></label>
-        <label class="field"><span data-i18n="field.birthday">Birthday</span> <span class="opt" data-i18n="opt.vcardOnly">(vCard only)</span><input type="date" data-field="profile.birthday"></label>
-        <label class="field"><span data-i18n="field.timezone">Timezone</span> <span class="opt" data-i18n="opt.vcardOnly">(vCard only)</span><input data-field="profile.timezone" placeholder="Europe/Berlin or UTC+1"></label>
-        <label class="field"><span data-i18n="field.location">Location</span> <span class="opt" data-i18n="opt.cityTimezone">(city, timezone)</span><input data-field="profile.location" placeholder="Melbourne, AU · UTC+11"></label>
-        <label class="field"><span data-i18n="field.title">Job title</span><input data-field="profile.title" placeholder="Head of Analytics"></label>
-        <label class="field"><span data-i18n="field.languages">Languages</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.languages" placeholder="English · Deutsch"></label>
-        <label class="field"><span data-i18n="field.department">Department</span><input data-field="profile.department" placeholder="Data Science"></label>
-        <label class="field"><span data-i18n="field.team">Team / initiative</span> <span class="opt" data-i18n="opt.secondaryLine">(secondary line)</span><input data-field="profile.team" placeholder="Experience Platform"></label>
-        <label class="field"><span data-i18n="field.company">Company</span><input data-field="profile.company" placeholder="Analytical Engines Ltd"></label>
-        <label class="field"><span data-i18n="field.tagline">Company tagline</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.tagline" placeholder="Data you can trust"></label>
-      </div>
-    </details>
-
-    <details open data-sec="contact">
-      <summary data-i18n="sec.contact">Contact details</summary>
-      <div class="body grid2">
-        <label class="field"><span data-i18n="field.email">Email</span><input type="email" data-field="contact.email" placeholder="ada@example.com"></label>
-        <label class="field"><span data-i18n="field.emailLabel">Email label</span> <span class="opt" data-i18n="opt.defaultEmail">(default “Email”)</span><input data-field="contact.emailLabel" placeholder="Email"></label>
-        <label class="field"><span data-i18n="field.email2">Secondary email</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input type="email" data-field="contact.email2" placeholder="ada.personal@example.com"></label>
-        <label class="field"><span data-i18n="field.email2Label">Secondary email label</span> <span class="opt" data-i18n="opt.defaultEmail2">(default “Email 2”)</span><input data-field="contact.email2Label" placeholder="Email 2"></label>
-        <label class="field"><span data-i18n="field.phone">Phone</span><input data-field="contact.phone" placeholder="+44 20 7946 0958"></label>
-        <label class="field"><span data-i18n="field.phoneLabel">Phone label</span> <span class="opt" data-i18n="opt.defaultPhone">(default “Phone”)</span><input data-field="contact.phoneLabel" placeholder="Phone"></label>
-        <label class="field"><span data-i18n="field.mobile">Mobile</span><input data-field="contact.mobile" placeholder="+44 7700 900123"></label>
-        <label class="field"><span data-i18n="field.mobileLabel">Mobile label</span> <span class="opt" data-i18n="opt.defaultMobile">(default “Mobile”)</span><input data-field="contact.mobileLabel" placeholder="Mobile"></label>
-        <label class="field"><span data-i18n="field.website">Website</span><input data-field="contact.website" placeholder="example.com"></label>
-        <label class="field"><span data-i18n="field.websiteLabel">Website label</span><input data-field="contact.websiteLabel" placeholder="Leave empty to use the URL"></label>
-        <label class="field"><span data-i18n="field.booking">Booking link</span> <span class="opt" data-i18n="opt.calendly">(Calendly, Cal.com…)</span><input data-field="contact.booking" placeholder="cal.com/you"></label>
-        <label class="field"><span data-i18n="field.bookingLabel">Booking label</span><input data-field="contact.bookingLabel" placeholder="Book a call"></label>
-        <label class="field"><span data-i18n="field.portfolio">Portfolio URL</span> <span class="opt" data-i18n="opt.creators">(creators, freelancers)</span><input data-field="contact.portfolio" placeholder="yourwork.example"></label>
-        <label class="field"><span data-i18n="field.portfolioLabel">Portfolio label</span><input data-field="contact.portfolioLabel" placeholder="Portfolio"></label>
-        <label class="field"><span data-i18n="field.pgp">PGP public key</span> <span class="opt" data-i18n="opt.fingerprint">(fingerprint or URL)</span><input data-field="contact.pgpKey" placeholder="0x1234… or https://keys.example/ada.asc"></label>
-        <label class="field span2"><span data-i18n="field.address">Address (one line or multiple)</span>
-          <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom"></textarea>
-        </label>
-        <label class="field span2"><span data-i18n="field.addressLabel">Address label</span> <span class="opt" data-i18n="opt.defaultAddress">(default “Address” — shown only when labels are on)</span><input data-field="contact.addressLabel" placeholder="Address"></label>
-      </div>
-    </details>
-
-    <details open data-sec="org" data-advanced>
-      <summary data-i18n="sec.org">Organisation</summary>
-      <div class="body grid2">
-        <label class="field span2"><span data-i18n="field.supportTitle">Support module title</span> <span class="opt" data-i18n="opt.emptyHidesBox">(empty hides the box)</span><input data-field="design.supportTitle" placeholder="IT Support"></label>
-        <label class="field"><span data-i18n="field.supportChat">Support chat link</span><input data-field="design.supportChatUrl" placeholder="https://chat.example"></label>
-        <label class="field"><span data-i18n="field.supportButtonLabel">Support button label</span><input data-field="design.supportButtonLabel" placeholder="Try first"></label>
-        <label class="field"><span data-i18n="field.supportChatLabel">Support chat label</span> <span class="opt" data-i18n="opt.linkText">(link text)</span><input data-field="design.supportChatLabel" placeholder="Chat with us"></label>
-        <label class="field span2"><span data-i18n="field.supportTagline">Support tagline</span><input data-field="design.supportTagline" placeholder="The fastest way to get help"></label>
-        <label class="field"><span data-i18n="field.supportPhoneLocal">Support phone — local</span><input data-field="design.supportPhoneLocal" placeholder="+61 …"></label>
-        <label class="field"><span data-i18n="field.supportPhoneIntl">Support phone — international</span><input data-field="design.supportPhoneIntl" placeholder="+61 …"></label>
-        <label class="field span2"><span data-i18n="field.supportAltText">Alternative support instructions</span> <span class="opt" data-i18n="opt.egTeams">(e.g. MS Teams)</span><input data-field="design.supportAltText" placeholder="Or reach us on Teams"></label>
-
-        <label class="field span2"><span data-i18n="field.recogniseText">Recognise line</span> <span class="opt" data-i18n="opt.introSentence">(intro sentence)</span><input data-field="design.recogniseText" placeholder="See someone living our values?"></label>
-        <label class="field"><span data-i18n="field.recogniseUrl">Recognise link</span><input data-field="design.recogniseUrl" placeholder="https://recognise.example"></label>
-        <label class="field"><span data-i18n="field.recogniseLabel">Recognise link label</span><input data-field="design.recogniseLabel" placeholder="Recognise them now"></label>
-
-        <label class="field span2"><span data-i18n="field.purposeText">Purpose statement</span> <span class="opt" data-i18n="opt.renderedOurPurpose">(rendered as “Our purpose: …”)</span><input data-field="design.purposeText" placeholder="We exist to…"></label>
-
-        <label class="switch span2"><input type="checkbox" data-field="design.showAcknowledgement"><span class="sw"></span> <span data-i18n="field.showAcknowledgement">Show land acknowledgement</span></label>
-        <label class="field span2"><span data-i18n="field.landAcknowledgement">Land acknowledgement</span>
-          <textarea rows="2" data-field="design.landAcknowledgement" placeholder="We acknowledge the Traditional Owners…"></textarea>
-        </label>
-
-        <span class="hint span2" data-i18n="field.footerHint">Brand footer — three slots (image + text)</span>
-        <label class="field"><span data-i18n="field.footerLeftImg">Left image</span>
-          <span class="url-row"><input data-field="design.footerLeftImg" placeholder="https://…/left.png"><button class="btn btn-sm" id="upload-footer-left" type="button" data-i18n="design.upload">Upload</button></span>
-          <select data-field="design.imageRef.footerLeft">
-            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
-            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
-          </select>
-        </label>
-        <label class="field"><span data-i18n="field.footerLeftText">Left text</span><input data-field="design.footerLeftText" placeholder="Tagline"></label>
-        <label class="field"><span data-i18n="field.footerCenterImg">Centre image</span>
-          <span class="url-row"><input data-field="design.footerCenterImg" placeholder="https://…/centre.png"><button class="btn btn-sm" id="upload-footer-center" type="button" data-i18n="design.upload">Upload</button></span>
-          <select data-field="design.imageRef.footerCenter">
-            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
-            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
-          </select>
-        </label>
-        <label class="field"><span data-i18n="field.footerCenterText">Centre text</span><input data-field="design.footerCenterText" placeholder="Tagline"></label>
-        <label class="field"><span data-i18n="field.footerRightImg">Right image</span>
-          <span class="url-row"><input data-field="design.footerRightImg" placeholder="https://…/right.png"><button class="btn btn-sm" id="upload-footer-right" type="button" data-i18n="design.upload">Upload</button></span>
-          <select data-field="design.imageRef.footerRight">
-            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
-            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
-          </select>
-        </label>
-        <label class="field"><span data-i18n="field.footerRightText">Right text</span><input data-field="design.footerRightText" placeholder="Tagline"></label>
-        <input type="file" id="footer-left-file" accept="image/*" hidden>
-        <input type="file" id="footer-center-file" accept="image/*" hidden>
-        <input type="file" id="footer-right-file" accept="image/*" hidden>
-      </div>
-    </details>
-
-    <details open data-sec="socials">
-      <summary><span data-i18n="sec.socials">Social links</span> <span class="sec-count" id="count-socials">0</span></summary>
-      <div class="body">
-        <span class="field-inline"><span data-i18n="design.socialsImageRef">Icon images use</span>
-          <select data-field="design.imageRef.socials">
-            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
-            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches them</option>
-          </select>
-        </span>
-        <div class="quick" id="quick-socials">
-          <span class="hint" data-i18n="socials.quickAdd">Quick add:</span>
-          <button class="chip-btn" data-net="linkedin" data-i18n-title="socials.titleLinkedIn" data-i18n-aria="socials.addLinkedIn" title="LinkedIn" aria-label="Add LinkedIn" type="button" style="background:#0a66c2;color:#fff;border-color:transparent;">in</button>
-          <button class="chip-btn" data-net="x" data-i18n-title="socials.titleX" data-i18n-aria="socials.addX" title="X / Twitter" aria-label="Add X / Twitter" type="button" style="background:#000;color:#fff;border-color:transparent;">𝕏</button>
-          <button class="chip-btn" data-net="github" data-i18n-title="socials.titleGitHub" data-i18n-aria="socials.addGitHub" title="GitHub" aria-label="Add GitHub" type="button" style="background:#24292f;color:#fff;border-color:transparent;">gh</button>
-          <button class="chip-btn" data-net="instagram" data-i18n-title="socials.titleInstagram" data-i18n-aria="socials.addInstagram" title="Instagram" aria-label="Add Instagram" type="button" style="background:#e4405f;color:#fff;border-color:transparent;">◉</button>
-          <button class="chip-btn" data-net="youtube" data-i18n-title="socials.titleYouTube" data-i18n-aria="socials.addYouTube" title="YouTube" aria-label="Add YouTube" type="button" style="background:#ff0000;color:#fff;border-color:transparent;">▶</button>
-          <button class="chip-btn" data-net="whatsapp" data-i18n-title="socials.titleWhatsApp" data-i18n-aria="socials.addWhatsApp" title="WhatsApp" aria-label="Add WhatsApp" type="button" style="background:#25d366;color:#fff;border-color:transparent;">✆</button>
-          <button class="chip-btn" data-net="signal" data-i18n-title="socials.titleSignal" data-i18n-aria="socials.addSignal" title="Signal" aria-label="Add Signal" type="button" style="background:#3a76f0;color:#fff;border-color:transparent;">S</button>
-          <button class="chip-btn" data-net="telegram" data-i18n-title="socials.titleTelegram" data-i18n-aria="socials.addTelegram" title="Telegram" aria-label="Add Telegram" type="button" style="background:#26a5e4;color:#fff;border-color:transparent;">T</button>
-          <button class="chip-btn" data-net="mastodon" data-i18n-title="socials.titleMastodon" data-i18n-aria="socials.addMastodon" title="Mastodon" aria-label="Add Mastodon" type="button" style="background:#6364ff;color:#fff;border-color:transparent;">M</button>
-        </div>
-        <div id="socials-list"></div>
-        <button class="btn btn-ghost" id="add-social" type="button" data-i18n="socials.addButton">+ Add social link</button>
-      </div>
-    </details>
-
-    <details open data-sec="customs">
-      <summary><span data-i18n="sec.customs">Custom lines</span> <span class="sec-count" id="count-customs">0</span></summary>
-      <div class="body">
-        <p class="hint" data-i18n="customs.hint">Extra rows like “Office hours”, “Direct line”, or anything else you need.</p>
-        <div id="custom-list"></div>
-        <button class="btn btn-ghost" id="add-custom" type="button" data-i18n="customs.addButton">+ Add custom line</button>
-        <button class="btn btn-ghost" id="add-custom-hours" type="button" data-i18n="customs.officeHours">+ Office hours</button>
-      </div>
-    </details>
-
-    <details open data-sec="design">
-      <summary data-i18n="sec.design">Design</summary>
+    <details open data-sec="tpl">
+      <summary data-i18n="sec.tpl">Template &amp; layout</summary>
       <div class="body">
         <div class="tpl-picker" id="tpl-picker">
           <button class="tpl-btn" data-template="classic" type="button" aria-pressed="true">
@@ -293,50 +158,282 @@
             <span class="tpl-name" data-i18n="tpl.custom">Custom</span>
           </button>
         </div>
-
         <div id="custom-blocks" class="hidden">
           <span class="hint" data-i18n="custom.blocksHint">Drag or use the arrows to set the signature's section order. Empty sections simply don't render.</span>
           <div id="blocks-list"></div>
         </div>
+        <div class="grid2">
+          <div class="field">
+            <span class="lbl" data-i18n="design.width">Signature width</span>
+            <span class="range-row"><input type="range" min="400" max="600" step="10" data-field="design.signatureWidth"><output id="width-out">600 px</output></span>
+            <span class="micro" data-i18n="design.widthMicro">Narrower widths suit small client panes and short layouts.</span>
+          </div>
+          <label class="field"><span data-i18n="design.density">Density</span>
+            <select data-field="design.density">
+              <option value="airy" data-i18n="design.densityAiry">Airy</option>
+              <option value="regular" data-i18n="design.densityRegular">Regular</option>
+              <option value="compact" data-i18n="design.densityCompact">Compact</option>
+            </select>
+          </label>
+          <label class="switch span2"><input type="checkbox" data-field="design.showCard"><span class="sw"></span> <span data-i18n="design.showCard">Wrap the signature in a card (tint + border)</span></label>
+          <label class="field" data-when="design.showCard"><span data-i18n="design.cardPadding">Card padding (px)</span><input type="number" min="8" max="40" step="1" data-field="design.cardPadding" placeholder="16"></label>
+          <label class="field" data-when="design.showCard"><span data-i18n="design.cardBorderWidth">Card border (px)</span><input type="number" min="0" max="4" step="1" data-field="design.cardBorderWidth" placeholder="1"></label>
+          <label class="switch span2"><input type="checkbox" data-field="design.strictOutlook"><span class="sw"></span> <span data-i18n="design.strictOutlook">Strict mode — render as Outlook desktop shows it</span></label>
+          <span class="micro span2" data-i18n="design.strictMicro">Strict mode removes rounded corners from badges, chips, monograms, round photos and the card — Word-engine Outlook ignores them. What you preview is what Outlook users see, and exports match.</span>
+          <label class="switch span2"><input type="checkbox" data-field="design.stackMobile"><span class="sw"></span> <span data-i18n="design.stackMobile">Stack columns on mobile (media query; ignored by Outlook)</span></label>
+        </div>
+      </div>
+    </details>
 
+    <details open data-sec="profile">
+      <summary data-i18n="sec.profile">Identity</summary>
+      <div class="body grid2">
+        <label class="field"><span data-i18n="field.name">Full name</span><input data-field="profile.name" placeholder="Ada Lovelace"></label>
+        <label class="field"><span data-i18n="field.displayName">Preferred name</span> <span class="opt" data-i18n="opt.shownInSignature">(shown in the signature)</span><input data-field="profile.displayName" placeholder="Ada"></label>
+        <label class="field"><span data-i18n="field.honorificPrefix">Honorific</span> <span class="opt" data-i18n="opt.beforeName">(before the name)</span><input data-field="profile.honorificPrefix" placeholder="Dr., Prof."></label>
+        <label class="field"><span data-i18n="field.honorificSuffix">Post-nominals</span> <span class="opt" data-i18n="opt.afterName">(after the name)</span><input data-field="profile.honorificSuffix" placeholder="PhD, PMP"></label>
+        <label class="field"><span data-i18n="field.pronouns">Pronouns</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.pronouns" placeholder="she/her"></label>
+        <label class="field" data-when="design.showLocation"><span data-i18n="field.location">Location</span> <span class="opt" data-i18n="opt.cityTimezone">(city, timezone)</span><input data-field="profile.location" placeholder="Melbourne, AU · UTC+11"></label>
+        <label class="field" data-when="design.showTitle"><span data-i18n="field.title">Job title</span><input data-field="profile.title" placeholder="Head of Analytics"></label>
+        <label class="field"><span data-i18n="field.languages">Languages</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.languages" placeholder="English · Deutsch"></label>
+        <label class="field" data-when="design.showDepartment"><span data-i18n="field.department">Department</span><input data-field="profile.department" placeholder="Data Science"></label>
+        <label class="field"><span data-i18n="field.team">Team / initiative</span> <span class="opt" data-i18n="opt.secondaryLine">(secondary line)</span><input data-field="profile.team" placeholder="Experience Platform"></label>
+        <label class="field" data-when="design.showCompany"><span data-i18n="field.company">Company</span><input data-field="profile.company" placeholder="Analytical Engines Ltd"></label>
+        <label class="field"><span data-i18n="field.tagline">Company tagline</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input data-field="profile.tagline" placeholder="Data you can trust"></label>
+          <div class="field" data-when="@pronouns">
+            <span class="lbl" data-i18n="design.pronounsPosition">Pronouns position</span>
+            <div class="field-inline">
+              <label><input type="radio" name="pronounsPosition" value="" data-field="design.pronounsPosition" checked><span data-i18n="design.pronounsPosInline">After the name</span></label>
+              <label><input type="radio" name="pronounsPosition" value="underName" data-field="design.pronounsPosition"><span data-i18n="design.pronounsPosUnder">Under the name</span></label>
+            </div>
+            <span class="micro" data-i18n="design.pronounsPosMicro">Under the name puts them on their own line in a slightly smaller size. Only shown when pronouns are set in your profile.</span>
+          </div>
+        <details class="sub span2" data-advanced>
+          <summary data-i18n="sub.vcard">vCard extras</summary>
+          <div class="grid2">
+        <label class="field"><span data-i18n="field.birthday">Birthday</span> <span class="opt" data-i18n="opt.vcardOnly">(vCard only)</span><input type="date" data-field="profile.birthday"></label>
+        <label class="field"><span data-i18n="field.timezone">Timezone</span> <span class="opt" data-i18n="opt.vcardOnly">(vCard only)</span><input data-field="profile.timezone" placeholder="Europe/Berlin or UTC+1"></label>
+          </div>
+        </details>
+      </div>
+    </details>
+
+    <details open data-sec="logo">
+      <summary data-i18n="sec.logo">Logo &amp; photo</summary>
+      <div class="body grid2">
+          <div class="field span2">
+            <span class="lbl" data-i18n="design.logoUrl">Logo / photo URL</span>
+            <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button" data-i18n="design.upload">Upload</button><button class="btn btn-sm" id="recrop-btn" type="button" data-i18n-title="design.recropTitle" data-i18n="design.recrop">Re-crop</button></span>
+            <input data-field="design.logoAlt" placeholder="Alt text — e.g. “Maya’s portrait”">
+            <span class="field-inline"><span data-i18n="design.imageRef">Image use</span>
+              <select data-field="design.imageRef.logo" data-when-fill="design.logoUrl">
+                <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+                <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
+              </select>
+            </span>
+            <input type="file" id="logo-file" accept="image/*" hidden>
+            <span class="range-row"><input type="range" min="40" max="160" step="4" data-field="design.logoWidth" id="logo-width"><output id="logo-width-out"></output></span>
+            <span class="field-inline"><span data-i18n="design.position">Position</span>
+              <select data-field="design.logoPosition" id="logo-position">
+                <option value="left" data-i18n="design.logoPosLeft">Left of name</option>
+                <option value="right" data-i18n="design.logoPosRight">Right of name</option>
+              </select>
+            </span>
+            <span class="micro" id="logo-pos-hint" hidden data-i18n="design.logoPosHint">Position applies to the Classic, Compact, Split and Banner layouts — Centered, Roundel and Monogram place it top-centre by design.</span>
+            <details class="host-help">
+              <summary class="micro" data-i18n="design.hostHelp">Where can I host my image?</summary>
+              <ul class="micro host-list">
+                <li data-i18n="design.hostHelp1">Your own website or CMS — upload and copy the URL.</li>
+                <li data-i18n="design.hostHelp2">GitHub repo — use the raw file URL.</li>
+                <li data-i18n="design.hostHelp3">Imgur or Cloudinary (free tiers).</li>
+                <li data-i18n="design.hostHelp4">Keep the URL stable — changing it breaks already-sent emails.</li>
+              </ul>
+            </details>
+            <span class="micro" data-i18n="design.hostMicro">Most clients block embedded (data:) images — host the file and paste its URL for reliable delivery.</span>
+          </div>
+          <label class="field span2"><span data-i18n="design.bannerUrl">Banner URL (banner template)</span>
+            <span class="url-row"><input data-field="design.bannerUrl" placeholder="https://…/banner.png"><button class="btn btn-sm" id="upload-banner" type="button" data-i18n="design.upload">Upload</button></span>
+            <select data-field="design.imageRef.banner" data-when-fill="design.bannerUrl">
+              <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+              <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
+            </select>
+            <input data-field="design.bannerAlt" placeholder="Alt text — e.g. “Analytical Engines logo”">
+            <input data-field="design.bannerLink" placeholder="Click-through link (optional)">
+            <input type="file" id="banner-file" accept="image/*" hidden>
+          </label>
+          <label class="switch span2"><input type="checkbox" data-field="design.useMonogram"><span class="sw"></span> <span data-i18n="design.useMonogram">Use initials monogram when no logo is set</span></label>
+          <div class="field span2">
+            <span class="lbl" data-i18n="design.photoShape">Photo shape (side logo)</span>
+            <div class="seg" id="seg-photo-shape">
+              <label><input type="radio" name="photoShape" value="square" data-field="design.photoShape"><span data-i18n="design.photoSquare">Square</span></label>
+              <label><input type="radio" name="photoShape" value="rounded" data-field="design.photoShape"><span data-i18n="design.photoRounded">Rounded</span></label>
+              <label><input type="radio" name="photoShape" value="circle" data-field="design.photoShape"><span data-i18n="design.photoCircle">Circle</span></label>
+            </div>
+          </div>
+      </div>
+    </details>
+
+    <details open data-sec="contact">
+      <summary data-i18n="sec.contact">Contact details</summary>
+      <div class="body grid2">
+        <label class="field" data-when="design.showEmail"><span data-i18n="field.email">Email</span><input type="email" data-field="contact.email" placeholder="ada@example.com"></label>
+        <label class="field" data-when="design.showLabels design.showEmail"><span data-i18n="field.emailLabel">Email label</span> <span class="opt" data-i18n="opt.defaultEmail">(default “Email”)</span><input data-field="contact.emailLabel" placeholder="Email"></label>
+        <label class="field" data-when="design.showEmail"><span data-i18n="field.email2">Secondary email</span> <span class="opt" data-i18n="opt.optional">(optional)</span><input type="email" data-field="contact.email2" placeholder="ada.personal@example.com"></label>
+        <label class="field" data-when="design.showLabels design.showEmail"><span data-i18n="field.email2Label">Secondary email label</span> <span class="opt" data-i18n="opt.defaultEmail2">(default “Email 2”)</span><input data-field="contact.email2Label" placeholder="Email 2"></label>
+        <label class="field" data-when="design.showPhone"><span data-i18n="field.phone">Phone</span><input data-field="contact.phone" placeholder="+44 20 7946 0958"></label>
+        <label class="field" data-when="design.showLabels design.showPhone"><span data-i18n="field.phoneLabel">Phone label</span> <span class="opt" data-i18n="opt.defaultPhone">(default “Phone”)</span><input data-field="contact.phoneLabel" placeholder="Phone"></label>
+        <label class="field" data-when="design.showMobile"><span data-i18n="field.mobile">Mobile</span><input data-field="contact.mobile" placeholder="+44 7700 900123"></label>
+        <label class="field" data-when="design.showLabels design.showMobile"><span data-i18n="field.mobileLabel">Mobile label</span> <span class="opt" data-i18n="opt.defaultMobile">(default “Mobile”)</span><input data-field="contact.mobileLabel" placeholder="Mobile"></label>
+        <label class="field" data-when="design.showWebsite"><span data-i18n="field.website">Website</span><input data-field="contact.website" placeholder="example.com"></label>
+        <label class="field" data-when="design.showLabels design.showWebsite"><span data-i18n="field.websiteLabel">Website label</span><input data-field="contact.websiteLabel" placeholder="Leave empty to use the URL"></label>
+        <label class="field" data-when="design.showBooking"><span data-i18n="field.booking">Booking link</span> <span class="opt" data-i18n="opt.calendly">(Calendly, Cal.com…)</span><input data-field="contact.booking" placeholder="cal.com/you"></label>
+        <label class="field" data-when="design.showLabels design.showBooking"><span data-i18n="field.bookingLabel">Booking label</span><input data-field="contact.bookingLabel" placeholder="Book a call"></label>
+        <label class="field"><span data-i18n="field.portfolio">Portfolio URL</span> <span class="opt" data-i18n="opt.creators">(creators, freelancers)</span><input data-field="contact.portfolio" placeholder="yourwork.example"></label>
+        <label class="field"><span data-i18n="field.portfolioLabel">Portfolio label</span><input data-field="contact.portfolioLabel" placeholder="Portfolio"></label>
+        <label class="field"><span data-i18n="field.pgp">PGP public key</span> <span class="opt" data-i18n="opt.fingerprint">(fingerprint or URL)</span><input data-field="contact.pgpKey" placeholder="0x1234… or https://keys.example/ada.asc"></label>
+        <label class="field span2" data-when="design.showAddress"><span data-i18n="field.address">Address (one line or multiple)</span>
+          <textarea rows="2" data-field="contact.address" placeholder="17 Analytical Lane&#10;London, United Kingdom"></textarea>
+        </label>
+        <label class="field span2" data-when="design.showLabels design.showAddress"><span data-i18n="field.addressLabel">Address label</span> <span class="opt" data-i18n="opt.defaultAddress">(default “Address” — shown only when labels are on)</span><input data-field="contact.addressLabel" placeholder="Address"></label>
+      </div>
+    </details>
+
+    <details open data-sec="socials">
+      <summary><span data-i18n="sec.socials">Social links</span> <span class="sec-count" id="count-socials">0</span></summary>
+      <div class="body">
+        <div class="quick" id="quick-socials">
+          <span class="hint" data-i18n="socials.quickAdd">Quick add:</span>
+          <button class="chip-btn" data-net="linkedin" data-i18n-title="socials.titleLinkedIn" data-i18n-aria="socials.addLinkedIn" title="LinkedIn" aria-label="Add LinkedIn" type="button" style="background:#0a66c2;color:#fff;border-color:transparent;">in</button>
+          <button class="chip-btn" data-net="x" data-i18n-title="socials.titleX" data-i18n-aria="socials.addX" title="X / Twitter" aria-label="Add X / Twitter" type="button" style="background:#000;color:#fff;border-color:transparent;">𝕏</button>
+          <button class="chip-btn" data-net="github" data-i18n-title="socials.titleGitHub" data-i18n-aria="socials.addGitHub" title="GitHub" aria-label="Add GitHub" type="button" style="background:#24292f;color:#fff;border-color:transparent;">gh</button>
+          <button class="chip-btn" data-net="instagram" data-i18n-title="socials.titleInstagram" data-i18n-aria="socials.addInstagram" title="Instagram" aria-label="Add Instagram" type="button" style="background:#e4405f;color:#fff;border-color:transparent;">◉</button>
+          <button class="chip-btn" data-net="youtube" data-i18n-title="socials.titleYouTube" data-i18n-aria="socials.addYouTube" title="YouTube" aria-label="Add YouTube" type="button" style="background:#ff0000;color:#fff;border-color:transparent;">▶</button>
+          <button class="chip-btn" data-net="whatsapp" data-i18n-title="socials.titleWhatsApp" data-i18n-aria="socials.addWhatsApp" title="WhatsApp" aria-label="Add WhatsApp" type="button" style="background:#25d366;color:#fff;border-color:transparent;">✆</button>
+          <button class="chip-btn" data-net="signal" data-i18n-title="socials.titleSignal" data-i18n-aria="socials.addSignal" title="Signal" aria-label="Add Signal" type="button" style="background:#3a76f0;color:#fff;border-color:transparent;">S</button>
+          <button class="chip-btn" data-net="telegram" data-i18n-title="socials.titleTelegram" data-i18n-aria="socials.addTelegram" title="Telegram" aria-label="Add Telegram" type="button" style="background:#26a5e4;color:#fff;border-color:transparent;">T</button>
+          <button class="chip-btn" data-net="mastodon" data-i18n-title="socials.titleMastodon" data-i18n-aria="socials.addMastodon" title="Mastodon" aria-label="Add Mastodon" type="button" style="background:#6364ff;color:#fff;border-color:transparent;">M</button>
+        </div>
+        <div id="socials-list"></div>
+        <button class="btn btn-ghost" id="add-social" type="button" data-i18n="socials.addButton">+ Add social link</button>
+        <details class="sub" open>
+          <summary data-i18n="sub.socialStylePos">Style &amp; position</summary>
+          <div class="grid2">
+          <div class="field span2" data-when="@socials">
+            <span class="lbl" data-i18n="design.socialStyle">Social link style</span>
+            <div class="seg" id="seg-social-style">
+              <label><input type="radio" name="socialStyle" value="icons" data-field="design.socialStyle"><span data-i18n="design.socialStyleIcons">Icons</span></label>
+              <label><input type="radio" name="socialStyle" value="icons_labels" data-field="design.socialStyle"><span data-i18n="design.socialStyleIconsLabels">Icons + labels</span></label>
+              <label><input type="radio" name="socialStyle" value="labels" data-field="design.socialStyle"><span data-i18n="design.socialStyleText">Text links</span></label>
+            </div>
+          </div>
+          <div class="field" data-when="@socials">
+            <span class="lbl" data-i18n="design.socialSize">Social icon size</span>
+            <span class="range-row"><input type="range" min="16" max="28" step="1" data-field="design.socialSize"><output id="social-size-out">22 px</output></span>
+          </div>
+            <label class="field" data-when="@socials"><span data-i18n="design.socialGap">Social chip gap (px)</span><input type="number" min="0" max="24" step="1" data-field="design.socialGap" placeholder="auto"></label>
+          <div class="field span2" data-when="@socials">
+            <span class="lbl" data-i18n="design.socialsPosition">Socials position</span>
+            <div class="seg" id="seg-social-pos">
+              <label><input type="radio" name="socialsPosition" value="bottom" data-field="design.socialsPosition"><span data-i18n="design.socialsPosBottom">Bottom</span></label>
+              <label><input type="radio" name="socialsPosition" value="underName" data-field="design.socialsPosition"><span data-i18n="design.socialsPosUnderName">Under the name</span></label>
+              <label><input type="radio" name="socialsPosition" value="inContact" data-field="design.socialsPosition"><span data-i18n="design.socialsPosInContact">With contact details</span></label>
+            </div>
+            <span class="micro" data-i18n="design.socialsPosMicro">“Under the name” places the icons right below your name on every template; on the Custom layout the block order wins.</span>
+          </div>
+            <div class="field span2" data-when="@socials">
+              <span class="lbl" data-i18n="design.socialsImageRef">Icon images use</span>
+              <select data-field="design.imageRef.socials">
+                <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+                <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches them</option>
+              </select>
+            </div>
+          </div>
+        </details>
+      </div>
+    </details>
+
+    <details open data-sec="org" data-advanced>
+      <summary data-i18n="sec.org">Organisation</summary>
+      <div class="body grid2">
+        <details class="sub span2">
+          <summary data-i18n="sub.support">Support module (Enterprise)</summary>
+          <div class="grid2">
+        <label class="field span2"><span data-i18n="field.supportTitle">Support module title</span> <span class="opt" data-i18n="opt.emptyHidesBox">(empty hides the box)</span><input data-field="design.supportTitle" placeholder="IT Support"></label>
+        <label class="field"><span data-i18n="field.supportChat">Support chat link</span><input data-field="design.supportChatUrl" placeholder="https://chat.example"></label>
+        <label class="field"><span data-i18n="field.supportButtonLabel">Support button label</span><input data-field="design.supportButtonLabel" placeholder="Try first"></label>
+        <label class="field"><span data-i18n="field.supportChatLabel">Support chat label</span> <span class="opt" data-i18n="opt.linkText">(link text)</span><input data-field="design.supportChatLabel" placeholder="Chat with us"></label>
+        <label class="field span2"><span data-i18n="field.supportTagline">Support tagline</span><input data-field="design.supportTagline" placeholder="The fastest way to get help"></label>
+        <label class="field"><span data-i18n="field.supportPhoneLocal">Support phone — local</span><input data-field="design.supportPhoneLocal" placeholder="+61 …"></label>
+        <label class="field"><span data-i18n="field.supportPhoneIntl">Support phone — international</span><input data-field="design.supportPhoneIntl" placeholder="+61 …"></label>
+        <label class="field span2"><span data-i18n="field.supportAltText">Alternative support instructions</span> <span class="opt" data-i18n="opt.egTeams">(e.g. MS Teams)</span><input data-field="design.supportAltText" placeholder="Or reach us on Teams"></label>
+          </div>
+        </details>
+
+        <label class="field span2"><span data-i18n="field.recogniseText">Recognise line</span> <span class="opt" data-i18n="opt.introSentence">(intro sentence)</span><input data-field="design.recogniseText" placeholder="See someone living our values?"></label>
+        <label class="field"><span data-i18n="field.recogniseUrl">Recognise link</span><input data-field="design.recogniseUrl" placeholder="https://recognise.example"></label>
+        <label class="field"><span data-i18n="field.recogniseLabel">Recognise link label</span><input data-field="design.recogniseLabel" placeholder="Recognise them now"></label>
+
+        <label class="field span2"><span data-i18n="field.purposeText">Purpose statement</span> <span class="opt" data-i18n="opt.renderedOurPurpose">(rendered as “Our purpose: …”)</span><input data-field="design.purposeText" placeholder="We exist to…"></label>
+
+        <label class="switch span2"><input type="checkbox" data-field="design.showAcknowledgement"><span class="sw"></span> <span data-i18n="field.showAcknowledgement">Show land acknowledgement</span></label>
+        <label class="field span2"><span data-i18n="field.landAcknowledgement">Land acknowledgement</span>
+          <textarea rows="2" data-field="design.landAcknowledgement" placeholder="We acknowledge the Traditional Owners…"></textarea>
+        </label>
+
+        <span class="hint span2" data-i18n="field.footerHint">Brand footer — three slots (image + text)</span>
+        <label class="field"><span data-i18n="field.footerLeftImg">Left image</span>
+          <span class="url-row"><input data-field="design.footerLeftImg" placeholder="https://…/left.png"><button class="btn btn-sm" id="upload-footer-left" type="button" data-i18n="design.upload">Upload</button></span>
+          <select data-field="design.imageRef.footerLeft">
+            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
+          </select>
+        </label>
+        <label class="field"><span data-i18n="field.footerLeftText">Left text</span><input data-field="design.footerLeftText" placeholder="Tagline"></label>
+        <label class="field"><span data-i18n="field.footerCenterImg">Centre image</span>
+          <span class="url-row"><input data-field="design.footerCenterImg" placeholder="https://…/centre.png"><button class="btn btn-sm" id="upload-footer-center" type="button" data-i18n="design.upload">Upload</button></span>
+          <select data-field="design.imageRef.footerCenter">
+            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
+          </select>
+        </label>
+        <label class="field"><span data-i18n="field.footerCenterText">Centre text</span><input data-field="design.footerCenterText" placeholder="Tagline"></label>
+        <label class="field"><span data-i18n="field.footerRightImg">Right image</span>
+          <span class="url-row"><input data-field="design.footerRightImg" placeholder="https://…/right.png"><button class="btn btn-sm" id="upload-footer-right" type="button" data-i18n="design.upload">Upload</button></span>
+          <select data-field="design.imageRef.footerRight">
+            <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
+            <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
+          </select>
+        </label>
+        <label class="field"><span data-i18n="field.footerRightText">Right text</span><input data-field="design.footerRightText" placeholder="Tagline"></label>
+        <input type="file" id="footer-left-file" accept="image/*" hidden>
+        <input type="file" id="footer-center-file" accept="image/*" hidden>
+        <input type="file" id="footer-right-file" accept="image/*" hidden>
+      </div>
+    </details>
+
+    <details open data-sec="type">
+      <summary data-i18n="sec.type">Colours &amp; type</summary>
+      <div class="body">
+        <details class="sub" open>
+          <summary data-i18n="sub.colours">Colours</summary>
+          <div class="grid2">
         <div class="themes-row" id="themes-row">
           <span class="hint" data-i18n="design.colourThemes">Colour themes:</span>
         </div>
-
-        <div class="grid2">
           <label class="field"><span data-i18n="design.accent">Accent colour</span><input type="color" data-field="design.primaryColor"></label>
           <label class="field"><span data-i18n="design.textColour">Text colour</span><input type="color" data-field="design.textColor"></label>
-          <label class="field"><span data-i18n="design.dividerColour">Divider colour</span><input type="color" data-field="design.dividerColor"></label>
+          <label class="field" data-when="design.showDivider"><span data-i18n="design.dividerColour">Divider colour</span><input type="color" data-field="design.dividerColor"></label>
           <label class="field" data-advanced><span data-i18n="design.linkColour">Link colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = accent)</span><input data-field="design.linkColor" placeholder="#2f6fed"></label>
           <label class="field" data-advanced><span data-i18n="design.nameColour">Name colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = text colour)</span><input data-field="design.nameColor" placeholder="#3a3f47"></label>
           <label class="field" data-advanced><span data-i18n="design.mutedColour">Muted text colour</span> <span class="opt" data-i18n="opt.hexOrEmpty">(hex — empty = derived)</span><input data-field="design.mutedColor" placeholder="#8a90a0"></label>
           <label class="field"><span data-i18n="design.cardColour">Card colour</span><input type="color" data-field="design.cardColor"></label>
           <label class="field"><span data-i18n="design.background">Signature background</span> <span class="opt" data-i18n="opt.fullWidthBand">(full-width band)</span><input data-field="design.background" placeholder="#f0f2f5 — empty = transparent"></label>
-
-          <div class="field span2" data-advanced>
-            <span class="lbl" data-i18n="field.customHtml">Custom HTML block (advanced)</span>
-            <textarea data-field="design.customHtml" rows="3" placeholder="Paste raw HTML here — empty = off"></textarea>
-            <span class="micro" data-i18n="field.customHtmlHint">Embedded exactly as written, after the layout — no safety checks apply.</span>
+          <label class="switch span2"><input type="checkbox" data-field="design.darkModeFriendly"><span class="sw"></span> <span data-i18n="design.darkModeFriendly">Dark-mode friendly (adds dark-theme colours for Gmail / Apple Mail)</span></label>
           </div>
-          <label class="field"><span data-i18n="design.dividerStyle">Divider style</span>
-            <select data-field="design.dividerStyle">
-              <option value="solid" data-i18n="design.dividerSolid">Solid</option>
-              <option value="dashed" data-i18n="design.dividerDashed">Dashed</option>
-              <option value="dotted" data-i18n="design.dividerDotted">Dotted</option>
-            </select>
-          </label>
-          <label class="field"><span data-i18n="design.dividerLength">Divider length</span>
-            <select data-field="design.dividerLength">
-              <option value="full" data-i18n="design.dividerFull">Full width</option>
-              <option value="short" data-i18n="design.dividerShort">Short</option>
-            </select>
-          </label>
-          <label class="field"><span data-i18n="design.dividerPosition">Divider position</span>
-            <select data-field="design.dividerPosition">
-              <option value="belowName" data-i18n="design.dividerBelowName">Under the name</option>
-              <option value="belowContact" data-i18n="design.dividerBelowContact">Under contact details</option>
-            </select>
-          </label>
+        </details>
+        <details class="sub" open>
+          <summary data-i18n="sub.typography">Typography</summary>
+          <div class="grid2">
           <label class="field"><span data-i18n="design.font">Font</span>
             <select data-field="design.font">
               <option value="modern" data-i18n="design.fontModern">Modern (system)</option>
@@ -362,19 +459,26 @@
             </select>
           </label>
           <span class="range-row" data-advanced><span class="lbl" data-i18n="field.nameSpacing">Name letter-spacing</span><input type="range" min="0" max="4" step="1" data-field="design.nameSpacing"><output id="name-spacing-out">0 px</output></span>
-
-          <label class="field"><span data-i18n="design.density">Density</span>
-            <select data-field="design.density">
-              <option value="airy" data-i18n="design.densityAiry">Airy</option>
-              <option value="regular" data-i18n="design.densityRegular">Regular</option>
-              <option value="compact" data-i18n="design.densityCompact">Compact</option>
+          <div class="field">
+            <span class="lbl" data-i18n="design.nameSizeBoost">Name size boost</span>
+            <span class="range-row"><input type="range" min="0" max="10" step="1" data-field="design.nameSizeExtra"><output id="name-size-out">+3 px</output></span>
+            <span class="micro" data-i18n="design.nameSizeMicro">Added to the base font size for your name.</span>
+          </div>
+          <label class="field span2"><span data-i18n="design.nameWeight">Name weight</span>
+            <select data-field="design.nameWeight">
+              <option value="bold" data-i18n="design.nameWeightBold">Bold</option>
+              <option value="semibold" data-i18n="design.nameWeightSemibold">Semibold</option>
+              <option value="normal" data-i18n="design.nameWeightNormal">Normal</option>
             </select>
           </label>
-
+          </div>
+        </details>
+        <details class="sub" data-advanced>
+          <summary data-i18n="sub.spacing">Spacing</summary>
+          <div class="grid2">
           <span class="hint span2" data-advanced data-i18n="design.fineTuneHint">Fine-tuning — leave empty to follow the density preset</span>
           <label class="field" data-advanced><span data-i18n="design.rowGap">Section gap (px)</span><input type="number" min="0" max="40" step="1" data-field="design.rowGap" placeholder="auto"></label>
           <label class="field" data-advanced><span data-i18n="design.cellPad">Cell padding (px)</span><input type="number" min="0" max="48" step="1" data-field="design.cellPad" placeholder="auto"></label>
-          <label class="field" data-advanced><span data-i18n="design.socialGap">Social chip gap (px)</span><input type="number" min="0" max="24" step="1" data-field="design.socialGap" placeholder="auto"></label>
           <label class="field" data-advanced><span data-i18n="design.lineHeight">Line height (×)</span><input type="number" min="1" max="2" step="0.1" data-field="design.lineHeight" placeholder="1.5"></label>
           <label class="field" data-advanced><span data-i18n="design.textAlign">Text alignment</span>
             <select data-field="design.textAlign">
@@ -384,141 +488,78 @@
               <option value="right" data-i18n="design.alignRight">Right</option>
             </select>
           </label>
-          <div class="field">
-            <span class="lbl" data-i18n="design.nameSizeBoost">Name size boost</span>
-            <span class="range-row"><input type="range" min="0" max="10" step="1" data-field="design.nameSizeExtra"><output id="name-size-out">+3 px</output></span>
-            <span class="micro" data-i18n="design.nameSizeMicro">Added to the base font size for your name.</span>
           </div>
-          <div class="field">
-            <span class="lbl" data-i18n="design.width">Signature width</span>
-            <span class="range-row"><input type="range" min="400" max="600" step="10" data-field="design.signatureWidth"><output id="width-out">600 px</output></span>
-            <span class="micro" data-i18n="design.widthMicro">Narrower widths suit small client panes and short layouts.</span>
+        </details>
+        <details class="sub" open>
+          <summary data-i18n="sub.divider">Divider</summary>
+          <div class="grid2">
+          <label class="switch span2"><input type="checkbox" data-field="design.showDivider"><span class="sw"></span> <span data-i18n="design.showDivider">Show divider line</span></label>
+          <label class="field" data-when="design.showDivider"><span data-i18n="design.dividerStyle">Divider style</span>
+            <select data-field="design.dividerStyle">
+              <option value="solid" data-i18n="design.dividerSolid">Solid</option>
+              <option value="dashed" data-i18n="design.dividerDashed">Dashed</option>
+              <option value="dotted" data-i18n="design.dividerDotted">Dotted</option>
+            </select>
+          </label>
+          <label class="field" data-when="design.showDivider"><span data-i18n="design.dividerLength">Divider length</span>
+            <select data-field="design.dividerLength">
+              <option value="full" data-i18n="design.dividerFull">Full width</option>
+              <option value="short" data-i18n="design.dividerShort">Short</option>
+            </select>
+          </label>
+          <label class="field" data-when="design.showDivider"><span data-i18n="design.dividerPosition">Divider position</span>
+            <select data-field="design.dividerPosition">
+              <option value="belowName" data-i18n="design.dividerBelowName">Under the name</option>
+              <option value="belowContact" data-i18n="design.dividerBelowContact">Under contact details</option>
+            </select>
+          </label>
           </div>
+        </details>
+      </div>
+    </details>
 
-          <div class="field span2">
-            <span class="lbl" data-i18n="design.socialStyle">Social link style</span>
-            <div class="seg" id="seg-social-style">
-              <label><input type="radio" name="socialStyle" value="icons" data-field="design.socialStyle"><span data-i18n="design.socialStyleIcons">Icons</span></label>
-              <label><input type="radio" name="socialStyle" value="icons_labels" data-field="design.socialStyle"><span data-i18n="design.socialStyleIconsLabels">Icons + labels</span></label>
-              <label><input type="radio" name="socialStyle" value="labels" data-field="design.socialStyle"><span data-i18n="design.socialStyleText">Text links</span></label>
-            </div>
-          </div>
-
-          <div class="field">
-            <span class="lbl" data-i18n="design.socialSize">Social icon size</span>
-            <span class="range-row"><input type="range" min="16" max="28" step="1" data-field="design.socialSize"><output id="social-size-out">22 px</output></span>
-          </div>
-
+    <details open data-sec="blocks">
+      <summary><span data-i18n="sec.blocks">Blocks</span> <span class="sec-count" id="count-customs" title="Custom lines">0</span></summary>
+      <div class="body grid2">
+          <label class="field span2"><span data-i18n="design.statusBadge">Status badge</span> <span class="opt" data-i18n="opt.statusBadge">(e.g. “Open to freelance work” — leave empty to hide)</span>
+            <span class="url-row">
+              <input data-field="design.statusText" placeholder="Open to freelance work">
+              <input type="color" data-field="design.statusColor" data-when="@status" data-i18n-title="row.badgeColour" data-i18n-aria="row.badgeColour" title="Badge colour" aria-label="Badge colour" class="mini-color">
+            </span>
+          </label>
           <label class="switch span2" data-advanced><input type="checkbox" data-field="design.showQr"><span class="sw"></span> <span data-i18n="design.showQr">Embed a scannable vCard QR (Classic + Enterprise)</span></label>
-          <div class="field" data-advanced>
+          <div class="field" data-advanced data-when="design.showQr">
             <span class="lbl" data-i18n="design.qrSize">QR size</span>
             <span class="range-row"><input type="range" min="32" max="96" step="4" data-field="design.qrSize"><output id="qr-size-out">60 px</output></span>
             <span class="micro" data-i18n="design.qrMicro">Target size — the QR grows a little when your contact data is long (scannability wins). Rendered as an Outlook-safe grid; Gmail and Apple Mail scan fine.</span>
           </div>
-
-          <div class="field span2">
-            <span class="lbl" data-i18n="design.socialsPosition">Socials position</span>
-            <div class="seg" id="seg-social-pos">
-              <label><input type="radio" name="socialsPosition" value="bottom" data-field="design.socialsPosition"><span data-i18n="design.socialsPosBottom">Bottom</span></label>
-              <label><input type="radio" name="socialsPosition" value="underName" data-field="design.socialsPosition"><span data-i18n="design.socialsPosUnderName">Under the name</span></label>
-              <label><input type="radio" name="socialsPosition" value="inContact" data-field="design.socialsPosition"><span data-i18n="design.socialsPosInContact">With contact details</span></label>
-            </div>
-            <span class="micro" data-i18n="design.socialsPosMicro">“Under the name” places the icons right below your name on every template; on the Custom layout the block order wins.</span>
-          </div>
-
-          <div class="field">
-            <span class="lbl" data-i18n="design.pronounsPosition">Pronouns position</span>
-            <div class="field-inline">
-              <label><input type="radio" name="pronounsPosition" value="" data-field="design.pronounsPosition" checked><span data-i18n="design.pronounsPosInline">After the name</span></label>
-              <label><input type="radio" name="pronounsPosition" value="underName" data-field="design.pronounsPosition"><span data-i18n="design.pronounsPosUnder">Under the name</span></label>
-            </div>
-            <span class="micro" data-i18n="design.pronounsPosMicro">Under the name puts them on their own line in a slightly smaller size. Only shown when pronouns are set in your profile.</span>
-          </div>
-
-          <div class="field">
-            <span class="lbl" data-i18n="design.logoUrl">Logo / photo URL</span>
-            <span class="url-row"><input data-field="design.logoUrl" placeholder="https://…/logo.png"><button class="btn btn-sm" id="upload-logo" type="button" data-i18n="design.upload">Upload</button><button class="btn btn-sm" id="recrop-btn" type="button" data-i18n-title="design.recropTitle" data-i18n="design.recrop">Re-crop</button></span>
-            <input data-field="design.logoAlt" placeholder="Alt text — e.g. “Maya’s portrait”">
-            <span class="field-inline"><span data-i18n="design.imageRef">Image use</span>
-              <select data-field="design.imageRef.logo">
-                <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
-                <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
-              </select>
-            </span>
-            <input type="file" id="logo-file" accept="image/*" hidden>
-            <span class="range-row"><input type="range" min="40" max="160" step="4" data-field="design.logoWidth" id="logo-width"><output id="logo-width-out"></output></span>
-            <span class="field-inline"><span data-i18n="design.position">Position</span>
-              <select data-field="design.logoPosition" id="logo-position">
-                <option value="left" data-i18n="design.logoPosLeft">Left of name</option>
-                <option value="right" data-i18n="design.logoPosRight">Right of name</option>
-              </select>
-            </span>
-            <span class="micro" id="logo-pos-hint" hidden data-i18n="design.logoPosHint">Position applies to the Classic, Compact, Split and Banner layouts — Centered, Roundel and Monogram place it top-centre by design.</span>
-            <details class="host-help">
-              <summary class="micro" data-i18n="design.hostHelp">Where can I host my image?</summary>
-              <ul class="micro host-list">
-                <li data-i18n="design.hostHelp1">Your own website or CMS — upload and copy the URL.</li>
-                <li data-i18n="design.hostHelp2">GitHub repo — use the raw file URL.</li>
-                <li data-i18n="design.hostHelp3">Imgur or Cloudinary (free tiers).</li>
-                <li data-i18n="design.hostHelp4">Keep the URL stable — changing it breaks already-sent emails.</li>
-              </ul>
-            </details>
-            <span class="micro" data-i18n="design.hostMicro">Most clients block embedded (data:) images — host the file and paste its URL for reliable delivery.</span>
-          </div>
-
-          <label class="field"><span data-i18n="design.bannerUrl">Banner URL (banner template)</span>
-            <span class="url-row"><input data-field="design.bannerUrl" placeholder="https://…/banner.png"><button class="btn btn-sm" id="upload-banner" type="button" data-i18n="design.upload">Upload</button></span>
-            <select data-field="design.imageRef.banner">
-              <option value="" data-i18n="design.imageRefAsStored">As stored — URL or uploaded image</option>
-              <option value="cid" data-i18n="design.imageRefCid">Inline CID — mail pipeline attaches it</option>
-            </select>
-            <input data-field="design.bannerAlt" placeholder="Alt text — e.g. “Analytical Engines logo”">
-            <input data-field="design.bannerLink" placeholder="Click-through link (optional)">
-            <input type="file" id="banner-file" accept="image/*" hidden>
-          </label>
-
-          <label class="switch span2"><input type="checkbox" data-field="design.showDivider"><span class="sw"></span> <span data-i18n="design.showDivider">Show divider line</span></label>
-          <label class="switch span2"><input type="checkbox" data-field="design.darkModeFriendly"><span class="sw"></span> <span data-i18n="design.darkModeFriendly">Dark-mode friendly (adds dark-theme colours for Gmail / Apple Mail)</span></label>
-          <label class="switch span2"><input type="checkbox" data-field="design.stackMobile"><span class="sw"></span> <span data-i18n="design.stackMobile">Stack columns on mobile (media query; ignored by Outlook)</span></label>
-          <label class="switch span2"><input type="checkbox" data-field="design.showLabels"><span class="sw"></span> <span data-i18n="design.showLabels">Show contact labels (“Email:”, “Phone:”, …)</span></label>
-          <label class="switch span2"><input type="checkbox" data-field="design.useMonogram"><span class="sw"></span> <span data-i18n="design.useMonogram">Use initials monogram when no logo is set</span></label>
-          <label class="field span2"><span data-i18n="design.statusBadge">Status badge</span> <span class="opt" data-i18n="opt.statusBadge">(e.g. “Open to freelance work” — leave empty to hide)</span>
-            <span class="url-row">
-              <input data-field="design.statusText" placeholder="Open to freelance work">
-              <input type="color" data-field="design.statusColor" data-i18n-title="row.badgeColour" data-i18n-aria="row.badgeColour" title="Badge colour" aria-label="Badge colour" class="mini-color">
-            </span>
-          </label>
-          <label class="switch span2"><input type="checkbox" data-field="design.showCard"><span class="sw"></span> <span data-i18n="design.showCard">Wrap the signature in a card (tint + border)</span></label>
-          <label class="field"><span data-i18n="design.cardPadding">Card padding (px)</span><input type="number" min="8" max="40" step="1" data-field="design.cardPadding" placeholder="16"></label>
-          <label class="field"><span data-i18n="design.cardBorderWidth">Card border (px)</span><input type="number" min="0" max="4" step="1" data-field="design.cardBorderWidth" placeholder="1"></label>
-          <label class="switch span2"><input type="checkbox" data-field="design.strictOutlook"><span class="sw"></span> <span data-i18n="design.strictOutlook">Strict mode — render as Outlook desktop shows it</span></label>
-          <span class="micro span2" data-i18n="design.strictMicro">Strict mode removes rounded corners from badges, chips, monograms, round photos and the card — Word-engine Outlook ignores them. What you preview is what Outlook users see, and exports match.</span>
-          <div class="field span2">
-            <span class="lbl" data-i18n="design.photoShape">Photo shape (side logo)</span>
-            <div class="seg" id="seg-photo-shape">
-              <label><input type="radio" name="photoShape" value="square" data-field="design.photoShape"><span data-i18n="design.photoSquare">Square</span></label>
-              <label><input type="radio" name="photoShape" value="rounded" data-field="design.photoShape"><span data-i18n="design.photoRounded">Rounded</span></label>
-              <label><input type="radio" name="photoShape" value="circle" data-field="design.photoShape"><span data-i18n="design.photoCircle">Circle</span></label>
-            </div>
-          </div>
-          <label class="field span2"><span data-i18n="design.nameWeight">Name weight</span>
-            <select data-field="design.nameWeight">
-              <option value="bold" data-i18n="design.nameWeightBold">Bold</option>
-              <option value="semibold" data-i18n="design.nameWeightSemibold">Semibold</option>
-              <option value="normal" data-i18n="design.nameWeightNormal">Normal</option>
-            </select>
-          </label>
-          <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> <span data-i18n="design.showLegal">Show legal / disclaimer line</span></label>
-          <label class="field span2"><span data-i18n="design.legalText">Legal / disclaimer text</span>
-            <textarea rows="2" data-field="design.legalText" placeholder="This message and any attachments are confidential…"></textarea>
-          </label>
           <label class="field span2"><span data-i18n="design.quoteText">Favourite quote</span> <span class="opt" data-i18n="opt.usedByQuote">(used by the Quote template — leave empty to skip)</span>
             <input data-field="design.quoteText" placeholder="Small team, big care.">
           </label>
+          <label class="switch span2"><input type="checkbox" data-field="design.showLegal"><span class="sw"></span> <span data-i18n="design.showLegal">Show legal / disclaimer line</span></label>
+          <label class="field span2" data-when="design.showLegal"><span data-i18n="design.legalText">Legal / disclaimer text</span>
+            <textarea rows="2" data-field="design.legalText" placeholder="This message and any attachments are confidential…"></textarea>
+          </label>
+        <div class="span2">
+        <p class="hint" data-i18n="customs.hint">Extra rows like “Office hours”, “Direct line”, or anything else you need.</p>
+        <div id="custom-list"></div>
+        <button class="btn btn-ghost" id="add-custom" type="button" data-i18n="customs.addButton">+ Add custom line</button>
+        <button class="btn btn-ghost" id="add-custom-hours" type="button" data-i18n="customs.officeHours">+ Office hours</button>
+        </div>
+      </div>
+    </details>
+
+    <details data-sec="adv" data-advanced>
+      <summary data-i18n="sec.adv">Advanced</summary>
+      <div class="body">
+          <div class="field span2" data-advanced>
+            <span class="lbl" data-i18n="field.customHtml">Custom HTML block (advanced)</span>
+            <textarea data-field="design.customHtml" rows="3" placeholder="Paste raw HTML here — empty = off"></textarea>
+            <span class="micro" data-i18n="field.customHtmlHint">Embedded exactly as written, after the layout — no safety checks apply.</span>
+          </div>
           <label class="field span2"><span data-i18n="design.signatureName">Signature name</span> <span class="opt" data-i18n="opt.fileNames">(used for file names and the Saved panel)</span>
             <input data-field="meta.name" placeholder="My signature">
           </label>
-        </div>
       </div>
     </details>
 
@@ -537,6 +578,7 @@
         <label class="switch"><input type="checkbox" data-field="design.showBooking"><span class="sw"></span> <span data-i18n="elements.booking">Booking button</span></label>
         <label class="switch"><input type="checkbox" data-field="design.showStatus"><span class="sw"></span> <span data-i18n="elements.status">Status badge</span></label>
         <label class="switch"><input type="checkbox" data-field="design.showSocials"><span class="sw"></span> <span data-i18n="elements.socials">Social links</span></label>
+          <label class="switch span2"><input type="checkbox" data-field="design.showLabels"><span class="sw"></span> <span data-i18n="design.showLabels">Show contact labels (“Email:”, “Phone:”, …)</span></label>
         <span class="micro span2" data-i18n="elements.micro">Hide anything you don’t need — the preview rebuilds instantly.</span>
       </div>
     </details>

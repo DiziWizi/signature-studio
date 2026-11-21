@@ -2,12 +2,13 @@
 'use strict';
 
 const { test, expect } = require('@playwright/test');
-const { freshPage, expectNoErrors, previewSrcdoc } = require('./helper');
+const { freshPage, expectNoErrors, previewSrcdoc, openSection } = require('./helper');
 
 test('custom HTML block is embedded verbatim in every template', async ({ page }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');
 
+  await openSection(page, 'adv');
   await page.fill('[data-field="design.customHtml"]', '<!--TESTBLOCK--><p id="raw">raw line</p>');
   await expect.poll(() => previewSrcdoc(page)).toContain('<!--TESTBLOCK--><p id="raw">raw line</p>');
   await expect(page.locator('#checklist')).toContainText('no safety checks');

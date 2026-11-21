@@ -3,7 +3,7 @@
 
 const { test, expect } = require('@playwright/test');
 const fs = require('fs');
-const { freshPage, expectNoErrors } = require('./helper');
+const { freshPage, expectNoErrors, openSub } = require('./helper');
 
 test.use({ acceptDownloads: true });
 
@@ -22,6 +22,7 @@ test('vCards carry nickname, timezone, languages, birthday and a stable UID', as
   await page.click('#btn-sample'); /* Ada Lovelace */
 
   await page.fill('[data-field="profile.displayName"]', 'Ada L.');
+  await openSub(page, 'sub.vcard');
   await page.fill('[data-field="profile.timezone"]', 'Australia/Melbourne');
   await page.fill('[data-field="profile.languages"]', 'English · Deutsch');
   await page.fill('[data-field="profile.birthday"]', '1815-12-10');
