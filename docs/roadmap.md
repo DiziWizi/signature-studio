@@ -162,6 +162,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   narrow widths still scroll the page as a whole; E2E now 143
 - [x] v0.53.0 — AI-built disclosure added to the README (Roost-style
   blockquote) and as a small line in the app footer; E2E still 143
+- [x] v0.54.0 — footer disclosure shortened to "Built largely with AI
+  assistance."
+- [x] v0.55.0 — pronouns position: optional "Under the name" places
+  them on their own line in a slightly smaller size (default stays
+  inline, byte-identical); E2E now 146
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

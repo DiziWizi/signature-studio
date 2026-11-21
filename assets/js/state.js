@@ -130,7 +130,9 @@ function defaultState() {
       textAlign: '',        // '' = layout default | left | center | right
       cardPadding: '',      // px override for card padding ('' = 16x18)
       cardBorderWidth: '',  // px override for the card border ('' = 1)
-      imageMode: '',
+      /* '' = pronouns follow the name inline; 'underName' = own line below. */
+  pronounsPosition: '',
+  imageMode: '',
   /* Per-image reference mode ('' = as stored, 'cid' = inline CID). */
   imageRef: { logo: '', banner: '', footerLeft: '', footerCenter: '', footerRight: '', socials: '' },        // '' = as stored (hosted URL / data URI) | 'cid' = cid:sigstudio-<key> refs
       blockOrder: ['identity', 'divider', 'contact', 'socials', 'banner', 'footer', 'qr', 'custom'], // custom template section order

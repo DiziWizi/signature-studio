@@ -163,8 +163,13 @@ function nameHtml(s, d, { big = true, size = 0 } = {}) {
     color: d.nameColor ? nameColorOf(d) : undefined,
     letterSpacing: spacing || undefined,
   });
+  /* Pronouns sit after the name by default; 'underName' puts them on
+     their own line beneath it in a slightly smaller size. */
+  const pronounsUnder = d.pronounsPosition === 'underName';
   const pronouns = s.profile.pronouns
-    ? ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
+    ? pronounsUnder
+      ? `<br><span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 4, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
+      : ` <span${dmCls(d, 'mut')} style="${textStyle(d, { size: fs - 3, color: mutedColor(d) })}">(${esc(s.profile.pronouns)})</span>`
     : '';
   return `<span${dmCls(d, 'txt')} style="${style}">${esc(shownWithHonorifics)}</span>${pronouns}<br>`;
 }
@@ -1213,8 +1218,11 @@ function nightRows(s, d) {
       (suffix ? ', ' + suffix : '');
     const fs = d.fontSize + 2 + nameExtraOf(d);
     const style = lightStyle(fs, lightName, { weight: nameWeightOf(d) });
+    const pronounsUnder = d.pronounsPosition === 'underName';
     const pronouns = s.profile.pronouns
-      ? ` <span style="${lightStyle(fs - 3, lightMuted)}">(${esc(s.profile.pronouns)})</span>`
+      ? pronounsUnder
+        ? `<br><span style="${lightStyle(fs - 4, lightMuted)}">(${esc(s.profile.pronouns)})</span>`
+        : ` <span style="${lightStyle(fs - 3, lightMuted)}">(${esc(s.profile.pronouns)})</span>`
       : '';
     nameLine = `<span style="${style}">${esc(shownWithHonorifics)}</span>${pronouns}<br>`;
   }

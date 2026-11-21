@@ -904,6 +904,25 @@ Date: 2026-11-20 · Scope: transparency, mirroring Roost.
 - App footer: second line under the version ("Built largely with AI
   assistance — human-directed and tested."), key footer.aiDisclosure
   in all four locales (561 each), styled as a dimmer sub-line.
+  v0.54.0 shortened the wording to "Built largely with AI assistance."
+
+---
+
+# v0.55.0 addendum (pronouns position)
+
+Date: 2026-11-21 · Scope: pronouns under the name, requested.
+
+## Notes
+
+- design.pronounsPosition: '' (default — inline after the name,
+  byte-identical: name + space + "(pronouns)" at fs-3) | 'underName'
+  (own line via <br>, fs-4 — one step smaller still).
+- Both name renderers honour it: nameHtml and night's dedicated
+  lightStyle name line. Letterhead/quote/etc. inherit via nameHtml.
+- UI: "Pronouns position" radios next to Socials position in Design.
+- 4 new i18n keys ×4 locales (565 each).
+- E2E: inline default byte-shape, underName placement + exact 4px
+  delta, switch-back, night variant. Suite 146/146 twice locally.
 
 ---
 
