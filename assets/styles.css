@@ -318,6 +318,18 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* Windows High Contrast / forced colours: surfaces that rely on background
+   colour alone lose it (toasts, status text, dashed dim outlines). Give them
+   a real border in CanvasText and keep the status chip's colour meaning. */
+@media (forced-colors: active) {
+  .toast, .save-state, .tpl-dim, .storage-meter .sm-bar, .pill {
+    border: 1px solid CanvasText;
+  }
+  .toast { background: Canvas; color: CanvasText; }
+  .field-error { color: CanvasText; }
+  .status-chip, .pill { forced-color-adjust: none; }
+}
+
 /* Visually hidden but available to assistive tech. */
 .sr-only {
   position: absolute !important;

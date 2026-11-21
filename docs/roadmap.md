@@ -259,6 +259,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   aria-describedby; checklist/search/saved-count live regions; a real h1
   and ten h2-level section headings; template dimming no longer lowers text
   contrast (dashed outline + chip instead); E2E 219
+- [x] v0.74.0 — modals & contrast: the Saved panel is a labelled
+  aria-modal dialog with a Tab trap and Escape; deleting a snapshot keeps
+  focus in the list; the preview sheet is an honest non-modal region;
+  forced-colours rules border the toast/status surfaces; thumbnail previews
+  scale to their tile instead of clipping at 320 px; E2E 224
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

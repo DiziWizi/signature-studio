@@ -426,10 +426,23 @@ function renderThumbs() {
   else setTimeout(run, 500);
 }
 
+/* The thumbnail iframes render at a fixed 600 px viewport and are scaled
+   down; the scale must follow the tile's real width or the preview is
+   clipped at narrow viewports. */
+function fitThumbs() {
+  document.querySelectorAll('.thumb').forEach(tile => {
+    const frame = tile.querySelector('.tthumb');
+    if (!frame) return;
+    const w = tile.clientWidth || 78;
+    frame.style.transform = `scale(${Math.max(0.05, Math.min(0.2, w / 600))})`;
+  });
+}
+
 function renderThumbsNow() {
   thumbsNeedsRebuild = false;
   const thumbs = document.querySelectorAll('.tthumb');
   if (!thumbs.length) return;
+  fitThumbs();
   const base = clone(state);
   for (const iframe of thumbs) {
     const s = clone(base);
@@ -1475,6 +1488,23 @@ function getFocusables(container) {
   return [...container.querySelectorAll(FOCUSABLE_SEL)].filter(el => el.getClientRects().length > 0);
 }
 
+/* Keep Tab inside a modal panel and close it on Escape. Returns a disposer
+   so the listener disappears with the panel. */
+function trapInPanel(container, onEscape) {
+  const onKey = e => {
+    if (e.key === 'Escape') { e.preventDefault(); onEscape(); return; }
+    if (e.key !== 'Tab') return;
+    const f = getFocusables(container);
+    if (!f.length) return;
+    const first = f[0];
+    const last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
+  container.addEventListener('keydown', onKey);
+  return () => container.removeEventListener('keydown', onKey);
+}
+
 /* Opening an overlay records the invoking control and moves focus into the
    dialog (WCAG 2.4.3 focus order); closing restores focus to the invoker.
    Restore is skipped when the invoker has since been hidden or removed. */
@@ -2006,6 +2036,8 @@ function renderSavedList() {
 
 let savedPanelReturn = null;
 
+let releaseSavedTrap = null;
+
 function openSavedPanel() {
   savedPanelReturn = document.activeElement;
   $('#saved-panel').classList.add('open');
@@ -2013,12 +2045,14 @@ function openSavedPanel() {
   renderSavedList();
   $('#save-name').value = state.meta.name || '';
   $('#save-name').focus();
+  if (!releaseSavedTrap) releaseSavedTrap = trapInPanel($('#saved-panel'), closeSavedPanel);
 }
 
 function closeSavedPanel() {
   const panel = $('#saved-panel');
   panel.classList.remove('open');
   $('#scrim').classList.add('hidden');
+  if (releaseSavedTrap) { releaseSavedTrap(); releaseSavedTrap = null; }
   const back = savedPanelReturn;
   savedPanelReturn = null;
   if (back && back.isConnected && back.getClientRects().length > 0) back.focus();
@@ -2195,7 +2229,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.73.0';
+const APP_VERSION = '0.74.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2600,9 +2634,17 @@ function init() {
         showToast(t('toast.loaded'), '', { key: 'toast.loaded' });
       }
     } else if (e.target.classList.contains('snap-del')) {
+      /* Keep the keyboard user in the list: focus the same row's Load
+         button after the re-render (or the last row if it was the end). */
+      const rows = [...document.querySelectorAll('#saved-list .saved-item')];
+      const idx = Math.max(0, rows.indexOf(e.target.closest('.saved-item')));
       deleteSnapshot(id);
       renderSavedList();
       showToast(t('toast.deleted'), '', { key: 'toast.deleted' });
+      const after = [...document.querySelectorAll('#saved-list .saved-item')];
+      const target = after[idx] || after[after.length - 1];
+      const btn = target && (target.querySelector('.snap-load') || target.querySelector('.snap-del'));
+      (btn || $('#save-name')).focus();
     }
   });
 
@@ -2735,6 +2777,13 @@ function init() {
     if (e.origin !== location.origin) return;
     if (frame && e.source !== frame.contentWindow) return;
     revealControl(m.key);
+  });
+
+  /* Keep the template thumbnails scaled to their tiles on resize. */
+  let thumbResizeRaf = 0;
+  window.addEventListener('resize', () => {
+    if (thumbResizeRaf) return;
+    thumbResizeRaf = requestAnimationFrame(() => { thumbResizeRaf = 0; fitThumbs(); });
   });
 
   /* Remote images in the preview (off = no requests to third-party hosts). */

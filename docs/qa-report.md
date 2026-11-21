@@ -1481,6 +1481,29 @@ Date: 2026-11-21 · Scope: A1, A2, A3, A5 from the accessibility review.
 
 ---
 
+# v0.74.0 addendum (accessibility batch 2 — modals & contrast)
+
+Date: 2026-11-21 · Scope: A4, B1, B2.
+
+- **A4** — `#saved-panel` is now `role="dialog" aria-modal="true"
+  aria-labelledby="saved-title"` with a real Tab trap (25 forward + 5 back
+  tabs stay inside) and Escape-to-close; focus returns to the Saved button.
+  Deleting a snapshot re-focuses the same row's Load button instead of
+  dropping to `<body>`. The preview sheet was claiming `role="dialog"`
+  without modal behaviour, so it is now a labelled `region` that still
+  closes on Escape.
+- **B1** — `@media (forced-colors: active)` gives toasts, the save status,
+  dim outlines, the storage bar and pills a `CanvasText` border, paints the
+  toast on `Canvas`, and pins the status chip's colours with
+  `forced-color-adjust: none` (colour carries meaning there).
+- **B2** — thumbnails were a fixed `scale(0.13)`; at 320 px that overflowed
+  a 63 px tile by 15 px. `fitThumbs()` now sets the scale from the tile's
+  real width on render and on resize.
+- 5 new E2E tests (modal-contrast.spec.js, including CDP forced-colours
+  emulation and the 320 px fit check). Suite 224/224 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
