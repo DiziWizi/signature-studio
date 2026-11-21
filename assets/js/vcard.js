@@ -129,7 +129,7 @@ function vcardUid(seed) {
 }
 
 /* Build a vCard 3.0 string from the Signature Studio state shape. */
-function buildVCard(state) {
+function buildVCard(state, opts = {}) {
   const s = state || {};
   const p = s.profile || {};
   const c = s.contact || {};
@@ -152,6 +152,14 @@ function buildVCard(state) {
   }
   const logoUrl = String(d.logoUrl || '').trim();
   if (/^http/i.test(logoUrl)) lines.push(vcardField('PHOTO', ['VALUE=URI'], logoUrl));
+  /* Uploaded images live as data: URLs — embed a downscaled copy so the
+     recipient's address book gets a picture, not just a placeholder. */
+  const photo = String(opts.photoDataUrl || '');
+  const photoMatch = /^data:image\/(png|jpe?g|webp);base64,([A-Za-z0-9+/=\s]+)$/i.exec(photo);
+  if (photoMatch) {
+    const type = photoMatch[1].toLowerCase() === 'png' ? 'PNG' : 'JPEG';
+    lines.push(vcardField('PHOTO', ['ENCODING=b', 'TYPE=' + type], photoMatch[2].replace(/\s+/g, '')));
+  }
 
   const orgParts = [p.company, p.department]
     .map(x => String(x || '').trim())

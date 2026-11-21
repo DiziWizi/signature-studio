@@ -2068,11 +2068,137 @@ function doImportPresetFile(file) {
 
 /* ── vCard + QR ───────────────────────────────────────────────────────── */
 
-function doVCard() {
-  const vcf = buildVCard(state);
+function loadImageAsync(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('image'));
+    img.src = src;
+  });
+}
+
+/* A 240 px square JPEG for vCard PHOTO — small enough to keep the card
+   portable, big enough to read in a contact list. */
+async function vcardPhotoDataUrl() {
+  const src = String(state.design.logoUrl || '');
+  if (!/^data:image\/(png|jpe?g|webp);base64,/i.test(src)) return '';
+  try {
+    const img = await loadImageAsync(src);
+    const side = Math.min(img.naturalWidth, img.naturalHeight);
+    if (!side) return '';
+    const out = Math.min(240, side);
+    const canvas = document.createElement('canvas');
+    canvas.width = out;
+    canvas.height = out;
+    const ctx = canvas.getContext('2d');
+    const sx = (img.naturalWidth - side) / 2;
+    const sy = (img.naturalHeight - side) / 2;
+    ctx.drawImage(img, sx, sy, side, side, 0, 0, out, out);
+    return canvas.toDataURL('image/jpeg', 0.85);
+  } catch (e) {
+    return '';
+  }
+}
+
+async function doVCard() {
+  const photo = await vcardPhotoDataUrl();
+  const vcf = buildVCard(state, photo ? { photoDataUrl: photo } : {});
   const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
   downloadBlob(blob, `${slugify(state.meta.name)}.vcf`);
   showToast(t('toast.vcardDownloaded'), '', { key: 'toast.vcardDownloaded' });
+}
+
+/* Plain text for list mail, text-only clients and screen readers. */
+function plainTextSignature(s) {
+  const p = s.profile || {};
+  const c = s.contact || {};
+  const d = s.design || {};
+  const lines = [];
+  const name = [p.honorificPrefix, p.name, p.honorificSuffix].filter(Boolean).join(' ').trim();
+  lines.push(name + (p.pronouns ? ` (${p.pronouns})` : ''));
+  const role = [p.title, p.department].filter(Boolean).join(' · ');
+  if (role) lines.push(role);
+  if (p.company) lines.push(p.company);
+  if (p.tagline && d.showTagline !== false) lines.push(p.tagline);
+  const ctx = [p.location, p.languages, p.timezone].filter(Boolean).join(' · ');
+  if (ctx) lines.push(ctx);
+  lines.push('');
+  for (const it of contactItems(s, d)) {
+    lines.push(`${it.label ? it.label + ': ' : ''}${it.text}`);
+  }
+  const socialBits = (Array.isArray(s.socials) ? s.socials : [])
+    .map(sc => {
+      const url = typeof socialUrlFor === 'function' ? socialUrlFor(sc) : '';
+      return url ? `${sc.label || sc.network || 'Link'}: ${url}` : '';
+    })
+    .filter(Boolean);
+  if (socialBits.length) {
+    lines.push('');
+    lines.push(...socialBits);
+  }
+  if (c.booking && d.showBooking !== false) {
+    lines.push(`Booking: ${normalizeUrl('custom', c.booking)}`);
+  }
+  const legal = String(d.legalText || '').trim();
+  if (d.showLegal && legal) {
+    lines.push('');
+    lines.push(legal);
+  }
+  return lines.join('\n').replace(/\n{3,}/g, '\n\n') + '\n';
+}
+
+function doPlainText() {
+  const blob = new Blob([plainTextSignature(state)], { type: 'text/plain;charset=utf-8' });
+  downloadBlob(blob, `${slugify(state.meta.name)}.txt`);
+  showToast(t('toast.plainDownloaded'), '', { key: 'toast.plainDownloaded' });
+}
+
+/* Gmail clips around 102 KB of HTML; surfacing the real size stops a heavy
+   signature from silently eating the message budget. */
+function signatureWeight() {
+  const html = renderSignature(state);
+  const bytes = new TextEncoder().encode(html).length;
+  return { bytes, kb: bytes / 1024 };
+}
+
+function senderIdentity() {
+  const p = state.profile || {};
+  const name = [p.honorificPrefix, p.name, p.honorificSuffix].filter(Boolean).join(' ').trim();
+  return `${name || t('menu.noName')} <${(state.contact && state.contact.email) || t('menu.noEmail')}>`;
+}
+
+function updateExportNotes() {
+  const note = $('#weight-note');
+  if (note) {
+    const w = signatureWeight();
+    note.textContent = t('menu.weight', { kb: w.kb.toFixed(1), limit: 102 });
+    note.classList.toggle('warn', w.kb >= 60);
+  }
+  const sender = $('#sender-note');
+  if (sender) sender.textContent = senderIdentity();
+}
+
+function contactCardFiles(photoDataUrl) {
+  const csv = String(($('#bulk-csv') && $('#bulk-csv').value) || '');
+  const plan = bulkPlan(state, csv);
+  return plan.rows
+    .filter(r => r.status === 'ready')
+    .map(r => ({
+      name: r.filename.replace(/\.html$/i, '.vcf'),
+      data: buildVCard(r.state, photoDataUrl ? { photoDataUrl } : {}),
+    }));
+}
+
+async function doContactCardsZip() {
+  const files = contactCardFiles(await vcardPhotoDataUrl());
+  if (!files.length) {
+    showToast(t('toast.cardsNone'), 'warn', { key: 'toast.cardsNone' });
+    return;
+  }
+  const zip = zipStore(files);
+  const blob = new Blob([zip], { type: 'application/zip' });
+  downloadBlob(blob, `${slugify(state.meta.name)}-contact-cards.zip`);
+  showToast(t('toast.cardsDownloaded', { n: files.length }), '', { key: 'toast.cardsDownloaded', params: { n: files.length } });
 }
 
 function doVCard4() {
@@ -2568,7 +2694,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.80.0';
+const APP_VERSION = '0.81.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2874,7 +3000,22 @@ function init() {
   const menu = $('#export-menu');
   $('#btn-export').addEventListener('click', e => {
     e.stopPropagation();
+    const willOpen = menu.classList.contains('hidden');
     menu.classList.toggle('hidden');
+    if (willOpen) updateExportNotes();
+  });
+  $('#x-plain').addEventListener('click', () => {
+    menu.classList.add('hidden');
+    doPlainText();
+  });
+  $('#x-sender-copy').addEventListener('click', async () => {
+    const text = senderIdentity();
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(t('toast.senderCopied'), '', { key: 'toast.senderCopied' });
+    } catch (e) {
+      showToast(t('toast.copyFail'), 'err', { key: 'toast.copyFail' });
+    }
   });
 
   /* Keyboard shortcuts: Ctrl+Enter copies, Ctrl+Shift+E opens the export
@@ -2920,6 +3061,7 @@ function init() {
   $('#x-bulk').addEventListener('click', () => { menu.classList.add('hidden'); openBulk(); });
   $('#x-cid-zip').addEventListener('click', () => { menu.classList.add('hidden'); doCidZip(); });
   $('#bulk-generate').addEventListener('click', runBulk);
+  $('#bulk-vcards').addEventListener('click', () => { doContactCardsZip(); });
   let bulkPreviewTimer = 0;
   $('#bulk-csv').addEventListener('input', () => {
     clearTimeout(bulkPreviewTimer);

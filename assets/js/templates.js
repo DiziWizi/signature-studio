@@ -205,7 +205,7 @@ function nameHtml(s, d, { big = true, size = 0 } = {}) {
 /* Personal context line: location · languages, muted under the title. */
 function contextLineHtml(s, d) {
   if (d.showLocation === false) return '';
-  const bits = [s.profile.location, s.profile.languages].filter(Boolean);
+  const bits = [s.profile.location, s.profile.languages, s.profile.timezone].filter(Boolean);
   if (!bits.length) return '';
   return `<span${dmCls(d, 'mut')} data-edit="location" style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d) })}">${esc(bits.join('  ·  '))}</span><br>`;
 }

@@ -1648,6 +1648,32 @@ audience variants.
 
 ---
 
+# v0.81.0 addendum (receiver metadata I)
+
+Date: 2026-11-21 · Scope: vCard photo, contact-card pack, plain text,
+weight meter, sender identity, time zone.
+
+- **vCard photo** — uploaded images are data: URLs, so Apple/Outlook address
+  books previously got no picture. `vcardPhotoDataUrl()` centre-crops the logo
+  to ≤240 px JPEG and `buildVCard(state, {photoDataUrl})` embeds it as
+  `PHOTO;ENCODING=b`, folded at 72 octets. The QR path still calls
+  `buildVCard(state)` with no photo, so QR density is unchanged.
+- **Contact-card pack** — `contactCardFiles()` runs `bulkPlan` and emits one
+  `.vcf` per ready row (same filename stem as the HTML export); the bulk
+  modal gains "Contact cards (ZIP)".
+- **Plain text** — `plainTextSignature()` produces a tag-free block from the
+  same `contactItems` and socials the HTML uses, including time zone and
+  legal text. Downloadable from the export menu.
+- **Weight meter** — the export menu opens with "Signature HTML: X KB ·
+  Gmail clips near 102 KB" and turns amber at 60 KB.
+- **Sender identity** — shows `Name <email>` and copies it, with copy that
+  says it belongs in the account's display-name setting, not the signature.
+- **Time zone** — `profile.timezone` gains a field and renders in the context
+  line (and plain text).
+- 6 new E2E tests (receiver-metadata.spec.js). Suite 255/255 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

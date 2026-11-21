@@ -318,6 +318,14 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* Export-menu notes: weight budget + sender identity */
+.menu-note {
+  padding: 6px 10px; font-size: 11px; line-height: 1.45; color: var(--mut);
+  border-bottom: 1px solid var(--line2); max-width: 340px;
+}
+.menu-note.warn { color: #f0c674; }
+.menu-note.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; }
+
 /* Contact order list, status presets, starred variant */
 .order-list { display: flex; flex-direction: column; gap: 2px; }
 .order-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--mut); }

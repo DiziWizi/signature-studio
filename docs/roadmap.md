@@ -290,6 +290,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   presets set the status badge (with an optional return date), and one saved
   signature can be starred as the default variant for the quick switcher;
   E2E 249
+- [x] v0.81.0 — receiver metadata I: vCards embed a downscaled photo and a
+  team CSV becomes a pack of contact cards; plain-text signature export; the
+  export menu reports HTML weight against Gmail's ~102 KB clip; sender name &
+  address copy helper; time zone joins the context line; E2E 255
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
