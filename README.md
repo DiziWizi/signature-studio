@@ -10,6 +10,8 @@ A web-based tool for **creating and editing HTML email signatures** — in your
 browser, with your data staying on your machine. No account, no backend, no
 tracking. Works offline.
 
+**Live demo:** <https://diziwizi.github.io/signature-studio/>
+
 ![Signature Studio overview](docs/screenshots/01-overview.png)
 
 ## Features
