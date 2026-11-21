@@ -222,6 +222,72 @@ function applyFieldVisibility() {
     const v = getPath(state, el.dataset.whenFill);
     el.classList.toggle('hidden', String(v || '').trim() === '');
   }
+  /* Inline visibility eyes: the field stays editable but dims when its
+     item is switched out of the signature. */
+  for (const btn of document.querySelectorAll('[data-eye]')) {
+    const on = getPath(state, btn.dataset.eye) !== false;
+    btn.classList.toggle('eye-off', !on);
+    btn.setAttribute('aria-pressed', String(on));
+    const field = btn.closest('.field, label.switch');
+    if (field) field.classList.toggle('vis-off', !on);
+  }
+}
+
+/* Template-aware dimming: controls that only affect some layouts are
+   dimmed (never hidden) with a "Only in …" chip when the current
+   template doesn't use them. */
+const TEMPLATE_LABEL_KEY = {
+  classic: 'tpl.classic', centered: 'tpl.centered', compact: 'tpl.compact',
+  banner: 'tpl.banner', minimal: 'tpl.minimal', split: 'tpl.split',
+  roundel: 'tpl.roundel', masthead: 'tpl.masthead', monogram: 'tpl.monogram',
+  photocard: 'tpl.photocard', postcard: 'tpl.postcard', line: 'tpl.line',
+  duotone: 'tpl.duotone', quote: 'tpl.quote', enterprise: 'tpl.enterprise',
+  night: 'tpl.night', letterhead: 'tpl.letterhead', custom: 'tpl.custom',
+};
+function applyTemplateDimming() {
+  if (!state) return;
+  const current = (state.design && state.design.template) || 'classic';
+  for (const el of document.querySelectorAll('[data-used-by]')) {
+    const list = el.dataset.usedBy.split(',').map(x => x.trim()).filter(Boolean);
+    const used = list.includes(current);
+    el.classList.toggle('tpl-dim', !used);
+    if (!used) {
+      const names = list.map(id => (TEMPLATE_LABEL_KEY[id] ? t(TEMPLATE_LABEL_KEY[id]) : id)).join(', ');
+      el.dataset.dimLabel = t('dim.usedBy', { names });
+    } else {
+      delete el.dataset.dimLabel;
+    }
+  }
+}
+
+/* Per-section reset: design settings only — never content fields. */
+const SECTION_RESET_KEYS = {
+  tpl: ['signatureWidth', 'density', 'showCard', 'cardPadding', 'cardBorderWidth', 'strictOutlook', 'stackMobile'],
+  logo: ['logoWidth', 'logoPosition', 'photoShape', 'useMonogram', 'imageRef.logo'],
+  socials: ['socialStyle', 'socialSize', 'socialGap', 'socialsPosition', 'imageRef.socials'],
+  type: ['primaryColor', 'textColor', 'dividerColor', 'linkColor', 'nameColor', 'mutedColor',
+         'cardColor', 'background', 'darkModeFriendly', 'font', 'customFont', 'fontSize',
+         'nameSizeExtra', 'nameWeight', 'taglineWeight', 'nameSpacing', 'density',
+         'rowGap', 'cellPad', 'lineHeight', 'textAlign', 'showDivider', 'dividerStyle',
+         'dividerLength', 'dividerPosition'],
+  blocks: ['showQr', 'qrSize', 'showLegal', 'showStatus'],
+  elements: ['showTitle', 'showCompany', 'showDepartment', 'showLocation', 'showEmail',
+             'showPhone', 'showMobile', 'showWebsite', 'showAddress', 'showBooking',
+             'showStatus', 'showSocials', 'showLabels'],
+};
+function resetSection(sec) {
+  const keys = SECTION_RESET_KEYS[sec];
+  if (!keys) return;
+  const def = defaultState();
+  for (const k of keys) {
+    const defVal = k.startsWith('imageRef.')
+      ? def.design.imageRef[k.split('.')[1]]
+      : def.design[k];
+    setPath(state, 'design.' + k, defVal);
+  }
+  rebuildAll();
+  scheduleSave();
+  showToast(t('reset.done'), '', { key: 'reset.done' });
 }
 
 function renderPreviewNow() {
@@ -237,6 +303,7 @@ function renderPreviewNow() {
   const html = renderSignaturePreview(state).replace('</body>', previewScript + '</body>');
   frame.srcdoc = html;
   applyFieldVisibility();
+  applyTemplateDimming();
   renderThumbs();
   updateConciseness();
   updateChecklist();
@@ -1798,7 +1865,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.58.0';
+const APP_VERSION = '0.59.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2285,6 +2352,29 @@ function init() {
   window.addEventListener('message', e => {
     const m = e.data || {};
     if (m.__sigstudio === 'edit') revealControl(m.key);
+  });
+
+  /* Inline visibility eyes: toggle the show/hide state from the field. */
+  document.querySelectorAll('[data-eye]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      const key = btn.dataset.eye;
+      const next = getPath(state, key) === false;
+      setPath(state, key, next);
+      const cb = document.querySelector(`input[data-field="${key}"]`);
+      if (cb) cb.checked = next;
+      renderPreview();
+      scheduleSave();
+    });
+  });
+
+  /* Per-section reset buttons. */
+  document.querySelectorAll('.sec-reset').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation(); /* never toggle the section */
+      resetSection(btn.dataset.resetSec);
+    });
   });
   $('#recrop-btn').addEventListener('click', openRecrop);
   $('#recrop-apply').addEventListener('click', applyRecrop);

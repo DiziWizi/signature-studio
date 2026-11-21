@@ -197,6 +197,60 @@ summary::before {
 }
 details[open] summary::before { transform: rotate(90deg); }
 
+/* Inline visibility eyes */
+.field.has-eye { position: relative; }
+.field .eye {
+  position: absolute;
+  top: -2px;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--mut);
+  cursor: pointer;
+}
+.field .eye:hover { color: var(--text); background: var(--panel2); }
+.field .eye .eye-slash { display: none; }
+.field .eye.eye-off { color: var(--muted, var(--mut)); opacity: .5; }
+.field .eye.eye-off .eye-slash { display: inline; }
+.field.vis-off { opacity: .55; }
+.field.vis-off input:not([type="checkbox"]) { text-decoration: line-through; }
+
+/* Template-aware dimming */
+.tpl-dim { opacity: .45; }
+.tpl-dim .eye { opacity: .45; }
+.tpl-dim::after {
+  content: attr(data-dim-label);
+  display: inline-block;
+  margin-top: 3px;
+  padding: 1px 7px;
+  border: 1px dashed var(--line2);
+  border-radius: 20px;
+  font-size: 10.5px;
+  color: var(--mut);
+  letter-spacing: .02em;
+}
+
+/* Per-section reset */
+.sec-reset {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--mut);
+  font-size: 13px;
+  line-height: 1;
+  padding: 3px 7px;
+  cursor: pointer;
+}
+.sec-reset:hover { color: var(--text); border-color: var(--line2); background: var(--panel2); }
+
 /* Settings search: sticky above the section list. */
 .sec-search { position: sticky; top: 0; z-index: 6; background: var(--bg); padding: 2px 0 10px; }
 .sec-search input {

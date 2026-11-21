@@ -13,8 +13,10 @@ test('divider position belowContact moves the rule under the contact details', a
   expect(doc.indexOf('border-top:1px')).toBeLessThan(doc.indexOf('ada@example.com'));
 
   await page.selectOption('[data-field="design.dividerPosition"]', 'belowContact');
-  doc = await previewSrcdoc(page);
-  expect(doc.indexOf('ada@example.com')).toBeLessThan(doc.indexOf('border-top:1px'));
+  await expect.poll(async () => {
+    const cur = await previewSrcdoc(page);
+    return cur.indexOf('ada@example.com') < cur.indexOf('border-top:1px');
+  }).toBe(true);
 
   await expectNoErrors(h);
 });

@@ -506,6 +506,8 @@ window.SIG_LOCALES.en = {
   'audit.allGood': "Nothing to report.",
   'audit.summaryClean': "No warnings — this signature is clean.",
   'audit.summaryWarn': "{n} warning(s) found.",
+  'dim.usedBy': "Only in {names}",
+  'reset.done': "Section reset to defaults.",
   'search.placeholder': "Search settings… (Ctrl+K)",
   'search.none': "No settings match",
   'sec.tpl': "Template & layout",

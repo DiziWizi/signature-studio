@@ -504,6 +504,8 @@ window.SIG_LOCALES.es = {
   'audit.allGood': "Nada que informar.",
   'audit.summaryClean': "Sin avisos — esta firma está limpia.",
   'audit.summaryWarn': "{n} aviso(s) encontrados.",
+  'dim.usedBy': "Solo en {names}",
+  'reset.done': "Sección restablecida a los valores predeterminados.",
   'search.placeholder': "Buscar ajustes… (Ctrl+K)",
   'search.none': "Ningún ajuste coincide",
   'sec.tpl': "Plantilla y diseño",

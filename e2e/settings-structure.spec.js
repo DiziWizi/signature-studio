@@ -56,9 +56,10 @@ test('controls hide while their feature is off, and reveal when enabled', async 
   await page.locator('label.switch:has(input[data-field="design.showLabels"])').click();
   await expect.poll(() => visible(page, '[data-field="contact.phoneLabel"]')).toBe(false);
 
-  /* Hiding a contact item hides its field too. */
+  /* Hiding a contact item keeps its field reachable (inline eye), dimmed. */
   await page.locator('label.switch:has(input[data-field="design.showPhone"])').click();
-  await expect.poll(() => visible(page, '[data-field="contact.phone"]')).toBe(false);
+  await expect.poll(() => page.locator('label.field:has(input[data-field="contact.phone"])')
+    .evaluate(el => el.classList.contains('vis-off'))).toBe(true);
 
   await expectNoErrors(h);
 });

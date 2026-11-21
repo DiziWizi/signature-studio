@@ -504,6 +504,8 @@ window.SIG_LOCALES.de = {
   'audit.allGood': "Nichts zu melden.",
   'audit.summaryClean': "Keine Warnungen — diese Signatur ist sauber.",
   'audit.summaryWarn': "{n} Warnung(en) gefunden.",
+  'dim.usedBy': "Nur bei {names}",
+  'reset.done': "Abschnitt auf Standard zurückgesetzt.",
   'search.placeholder': "Einstellungen durchsuchen… (Strg+K)",
   'search.none': "Keine Einstellungen gefunden",
   'sec.tpl': "Vorlage & Layout",

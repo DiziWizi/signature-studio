@@ -999,6 +999,31 @@ Date: 2026-11-21 · Scope: recommendations 1 and 2 from the usability pass.
 
 ---
 
+# v0.59.0 addendum (dimming, eyes, section reset)
+
+Date: 2026-11-21 · Scope: usability batch 3, 4 and 6.
+
+## Notes
+
+- Template dimming: data-used-by lists on template-specific controls;
+  off-template controls keep working but dim (opacity .45) with a
+  dashed "Only in {names}" chip using translated template names.
+  Covers banner fields, quote, QR (classic+enterprise), support module
+  (enterprise), logo position and photo shape.
+- Inline eyes: 10 identity/contact fields carry an eye button that
+  toggles their show/hide state — the field dims and strikes through
+  instead of disappearing (reversible), the Show/hide checkbox mirrors
+  it, and the two stay in sync both ways. The primary fields no longer
+  use data-when (their label rows still do).
+- Per-section reset: whitelist per section (tpl, logo, socials, type,
+  blocks, elements) — resets design settings to defaults, never content
+  (names, contacts, legal text, support copy, images). Toast on reset;
+  the summary click never toggles the section.
+- Fixed a one-shot srcdoc race in divider-night.spec exposed by the
+  added render work. Suite 162/162 twice locally.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
