@@ -154,7 +154,7 @@ function imageSlots(state) {
   const slots = [];
   const d = state && state.design;
   if (d) {
-    for (const key of ['logoUrl', 'portraitUrl', 'bannerUrl', 'footerLeftImg', 'footerCenterImg', 'footerRightImg']) {
+    for (const key of ['logoUrl', 'logoDarkUrl', 'portraitUrl', 'bannerUrl', 'footerLeftImg', 'footerCenterImg', 'footerRightImg']) {
       if (typeof d[key] === 'string') slots.push({ obj: d, key });
     }
   }

@@ -2063,6 +2063,23 @@ Date: 2026-11-23 · Scope: verification across the whole library.
 
 ---
 
+# v0.97.0 addendum (dark-mode logo)
+
+Date: 2026-11-23 · Scope: optional light/dark logo pair.
+
+- **State** — `design.logoDarkUrl`, included in image slots, IndexedDB refs,
+  CID manifests (`sigstudio-logo-dark`), test-email attachments and backups.
+- **Render** — light and dark `<img>` marks, the dark one inline
+  `display:none` so clients that ignore `<style>` (Outlook) keep the light
+  logo; `prefers-color-scheme: dark` swaps them for Apple Mail/iOS and other
+  dark-aware clients.
+- **UI** — optional upload beside the logo, with a blunt note that Outlook
+  will not swap.
+- 2 tests (dark swap computed styles, CID/backup assets). Suite 325/325
+  twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

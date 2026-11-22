@@ -1755,6 +1755,7 @@ function initTemplatePicker() {
     const btn = picker.querySelector(`.tpl-btn[data-template="${def.id}"]`);
     if (!btn) return;
     btn.dataset.category = def.category || 'personal';
+    btn.dataset.rec = RECOMMENDED_TEMPLATES.has(def.id) ? '1' : '0';
     if (def.badge && !btn.querySelector('.tpl-badge')) {
       const chip = document.createElement('span');
       chip.className = `tpl-badge tpl-badge-${def.badge}`;
@@ -1767,16 +1768,46 @@ function initTemplatePicker() {
   bar.addEventListener('click', ev => {
     const b = ev.target.closest('.tpl-cat');
     if (!b) return;
-    const cat = b.dataset.cat;
     bar.querySelectorAll('.tpl-cat').forEach(x => {
       const on = x === b;
       x.classList.toggle('is-on', on);
       x.setAttribute('aria-pressed', String(on));
     });
-    picker.querySelectorAll('.tpl-btn').forEach(btn => {
-      btn.classList.toggle('hidden', cat !== 'all' && btn.dataset.category !== cat);
-    });
+    applyTemplateFilter();
   });
+  const search = $('#tpl-search');
+  if (search) search.addEventListener('input', applyTemplateFilter);
+  applyTemplateFilter();
+}
+
+/* Picker curation: the six layouts a first-time user should see, plus a
+   text search over the 25 names and categories. */
+const RECOMMENDED_TEMPLATES = new Set(['classic', 'minimal', 'photocard', 'split', 'booking', 'reply']);
+
+function applyTemplateFilter() {
+  const picker = $('#tpl-picker');
+  const bar = $('#tpl-filter');
+  const search = $('#tpl-search');
+  if (!picker || !bar) return;
+  const active = bar.querySelector('.tpl-cat.is-on');
+  const cat = active ? active.dataset.cat : 'all';
+  const q = String((search && search.value) || '').trim().toLowerCase();
+  let shown = 0;
+  picker.querySelectorAll('.tpl-btn').forEach(btn => {
+    const name = (btn.querySelector('.tpl-name') || {}).textContent || '';
+    const id = btn.dataset.template || '';
+    const category = btn.dataset.category || '';
+    const rec = btn.dataset.rec === '1';
+    const catOk = cat === 'all' || (cat === 'start' ? rec : category === cat);
+    const qOk = !q || name.toLowerCase().includes(q) || id.toLowerCase().includes(q) || category.includes(q);
+    const on = catOk && qOk;
+    btn.classList.toggle('hidden', !on);
+    if (on) shown += 1;
+  });
+  const count = $('#tpl-count');
+  if (count) count.textContent = t('tpl.count', { n: shown });
+  const empty = $('#tpl-empty');
+  if (empty) empty.classList.toggle('hidden', shown > 0);
 }
 
 function renderThemes() {
@@ -2193,12 +2224,18 @@ function testEmailHtml() {
   /* Only inline what can travel inside the message. A hosted image stays a
      URL; turning it into a cid: without a part would guarantee a hole. */
   const pairs = [
-    ['logo', 'logoUrl'], ['banner', 'bannerUrl'],
+    ['banner', 'bannerUrl'],
     ['footerLeft', 'footerLeftImg'], ['footerCenter', 'footerCenterImg'],
     ['footerRight', 'footerRightImg'],
   ];
   for (const [ref, field] of pairs) {
     if (/^data:image\//i.test(String(d[field] || ''))) d.imageRef[ref] = 'cid';
+  }
+  /* The light and dark logos share one CID switch; only use it when every
+     present variant can travel as an attachment. */
+  const logoPair = [d.logoUrl, d.logoDarkUrl].filter(v => String(v || '').trim());
+  if (logoPair.length && logoPair.every(v => /^data:image\//i.test(String(v)))) {
+    d.imageRef.logo = 'cid';
   }
   const socials = (copy.socials || []).filter(x => String(x.iconUrl || '').trim());
   if (socials.length && socials.every(x => /^data:image\//i.test(String(x.iconUrl)))) {
@@ -3238,7 +3275,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.96.0';
+const APP_VERSION = '0.97.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3868,6 +3905,7 @@ function init() {
 
   /* image uploads */
   bindImageUpload('#upload-logo', '#logo-file', 'design.logoUrl', { square: true });
+  bindImageUpload('#upload-logo-dark', '#logo-dark-file', 'design.logoDarkUrl', { square: true });
   bindImageUpload('#upload-portrait', '#portrait-file', 'design.portraitUrl', { square: true });
   bindImageUpload('#upload-banner', '#banner-file', 'design.bannerUrl');
   bindImageUpload('#upload-footer-left', '#footer-left-file', 'design.footerLeftImg');

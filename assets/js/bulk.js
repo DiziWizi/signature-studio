@@ -152,6 +152,7 @@ async function bulkAssetsAsync(state) {
   const d = state.design || {};
   const fields = [
     ['logo', d.logoUrl],
+    ['logo-dark', d.logoDarkUrl],
     ['banner', d.bannerUrl],
     ['footer-left', d.footerLeftImg],
     ['footer-center', d.footerCenterImg],

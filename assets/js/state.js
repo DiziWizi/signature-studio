@@ -99,6 +99,7 @@ function defaultState() {
       font: 'modern',
       fontSize: 14,
       logoUrl: '',
+      logoDarkUrl: '',
       portraitUrl: '',   // headshot for vCard PHOTO + photo templates ('' = logo)
       logoAlt: '',
       logoWidth: 72,
