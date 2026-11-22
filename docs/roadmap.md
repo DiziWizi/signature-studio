@@ -380,6 +380,9 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.98.0 — picker curation: search across 25 names/descriptions,
   a "Start here" six, live visible count and an honest empty state; the
   existing category chips now intersect with the query; E2E 327
+- [x] v0.99.0 — classic Outlook install pack: a ZIP with `<name>.htm`,
+  `<name>_files/` relative images and a README for
+  `%APPDATA%\Microsoft\Signatures`; hosted URLs stay remote; E2E 330
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

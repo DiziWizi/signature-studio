@@ -2454,6 +2454,55 @@ async function doBackup() {
   updateImageNote();
 }
 
+/* Classic Outlook on Windows reads a signature from a folder:
+   %APPDATA%\Microsoft\Signatures\<name>.htm plus a sibling <name>_files
+   folder. Hosted URLs stay remote; only data URIs become local files. */
+function outlookPackFiles() {
+  const copy = JSON.parse(JSON.stringify(state));
+  copy.design.imageRef = {};
+  delete copy.design.imageMode;
+  const slug = slugify(state.meta.name || (state.profile && state.profile.name) || 'signature') || 'signature';
+  const folder = `${slug}_files`;
+  let html = renderSignature(copy);
+  const files = [];
+  const addImage = (b64, mime) => {
+    let ext = String(mime || 'png').toLowerCase();
+    if (ext === 'jpeg') ext = 'jpg';
+    if (ext === 'svg+xml') ext = 'svg';
+    ext = ext.replace(/[^a-z0-9]/g, '') || 'png';
+    const name = `${folder}/image-${files.length + 1}.${ext}`;
+    try {
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      files.push({ name, data: bytes });
+    } catch (e) {
+      return '';
+    }
+    return name;
+  };
+  html = html.replace(/(src=")data:image\/([a-zA-Z0-9.+-]+);base64,([^"]+)"/g,
+    (m, pre, mime, b64) => {
+      const name = addImage(b64, mime);
+      return name ? `${pre}${name}"` : m;
+    });
+  html = html.replace(/url\(data:image\/([a-zA-Z0-9.+-]+);base64,([^)]+)\)/g,
+    (m, mime, b64) => {
+      const name = addImage(b64, mime);
+      return name ? `url(${name})` : m;
+    });
+  return [{ name: `${slug}.htm`, data: html }]
+    .concat(files)
+    .concat([{ name: 'README.txt', data: t('outlookPack.readme', { name: `${slug}.htm`, folder }) }]);
+}
+
+function doOutlookPack() {
+  const files = outlookPackFiles();
+  const slug = slugify(state.meta.name || 'signature') || 'signature';
+  downloadBlob(new Blob([zipStore(files)], { type: 'application/zip' }), `${slug}-outlook.zip`);
+  showToast(t('toast.outlookPack'), '', { key: 'toast.outlookPack' });
+}
+
 /* Restore a backup ZIP: draft, saved signatures, or both. Merge keeps what
    is already saved; replace clears the saved list first. */
 let pendingRestore = null;
@@ -3275,7 +3324,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.98.0';
+const APP_VERSION = '0.99.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3694,6 +3743,7 @@ function init() {
     downloadRawFile(thunderbirdSignature(state), `${slugify(state.meta.name)}-thunderbird.html`, 'text/html');
     showToast(t('toast.thunderbird'), 'ok', { key: 'toast.thunderbird' });
   });
+  $('#x-outlook-pack').addEventListener('click', () => { menu.classList.add('hidden'); doOutlookPack(); });
   $('#x-share').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink(); });
   $('#x-share-full').addEventListener('click', () => { menu.classList.add('hidden'); doShareLink({ forceFull: true }); });
   $('#x-share-qr').addEventListener('click', () => { menu.classList.add('hidden'); doShowShareQR(); });

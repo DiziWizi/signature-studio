@@ -2095,6 +2095,21 @@ Date: 2026-11-23 · Scope: finding a template.
 
 ---
 
+# v0.99.0 addendum (classic Outlook install pack)
+
+Date: 2026-11-23 · Scope: native Outlook desktop installation.
+
+- **ZIP** — `<slug>.htm`, `<slug>_files/image-N.<ext>` and a localized
+  README. Data-URI images are decoded to relative files; hosted URLs remain
+  URLs. Unzip into `%APPDATA%\Microsoft\Signatures`, restart Outlook.
+- **Honest scope** — classic Outlook on Windows only; new Outlook, Outlook
+  on the web and Outlook for Mac use their own editors, which the guide says.
+- **Guide** — Outlook tab gains the folder step.
+- 3 tests (archive shape/relative paths, hosted URLs untouched, guide copy).
+  Suite 330/330 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
