@@ -341,6 +341,18 @@ details[open] summary::before { transform: rotate(90deg); }
 .variant-row .field { margin: 0; }
 .variant-row select { font-size: 12px; padding: 4px 6px; }
 
+.linklike {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.backup-nudge.hidden { display: none; }
+.backup-nudge { color: #f0c674; margin: 0 0 8px; }
+
 /* Test-in-a-real-inbox */
 .test-steps { margin: 0 0 12px; padding-left: 20px; }
 .test-steps li { margin: 0 0 6px; font-size: 13px; }

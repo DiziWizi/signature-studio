@@ -2387,11 +2387,34 @@ async function backupFiles() {
   return files;
 }
 
+const LAST_BACKUP_KEY = 'sigstudio.lastBackup.v1';
+
+function lastBackupAt() {
+  const raw = localStorage.getItem(LAST_BACKUP_KEY);
+  const t0 = raw ? Date.parse(raw) : NaN;
+  return Number.isFinite(t0) ? t0 : 0;
+}
+
+/* Write, then read the archive back before calling it a backup. A ZIP that
+   cannot be re-opened is worse than no backup: it looks like safety. */
 async function doBackup() {
   const files = await backupFiles();
+  const zip = zipStore(files);
+  try {
+    const entries = unzipStore(zip);
+    const index = entries.find(e => e.name === 'backup.json');
+    if (!index) throw new Error('missing index');
+    const parsed = JSON.parse(new TextDecoder().decode(index.data));
+    if (!parsed || parsed.app !== 'signature-studio') throw new Error('bad index');
+  } catch (e) {
+    showToast(t('backup.verifyFail'), 'err', { key: 'backup.verifyFail' });
+    return;
+  }
   const stamp = new Date().toISOString().slice(0, 10);
-  downloadBlob(new Blob([zipStore(files)], { type: 'application/zip' }), `signature-studio-backup-${stamp}.zip`);
+  localStorage.setItem(LAST_BACKUP_KEY, new Date().toISOString());
+  downloadBlob(new Blob([zip], { type: 'application/zip' }), `signature-studio-backup-${stamp}.zip`);
   showToast(t('toast.backupDone', { n: listSnapshots().length }), '', { key: 'toast.backupDone' });
+  updateImageNote();
 }
 
 /* Restore a backup ZIP: draft, saved signatures, or both. Merge keeps what
@@ -2943,12 +2966,29 @@ async function updateImageNote() {
     el.textContent = '';
   }
   const pnote = $('#storage-persist-note');
+  let mode = 'unsupported';
   if (pnote) {
-    const mode = typeof persistenceStatus === 'function' ? await persistenceStatus() : 'unsupported';
+    mode = typeof persistenceStatus === 'function' ? await persistenceStatus() : 'unsupported';
     const key = mode === 'granted' ? 'saved.persistGranted'
       : mode === 'denied' ? 'saved.persistDenied' : 'saved.persistUnsupported';
     pnote.textContent = t(key);
     pnote.dataset.state = mode;
+  }
+  const ageEl = $('#backup-age');
+  if (ageEl) {
+    const at = typeof lastBackupAt === 'function' ? lastBackupAt() : 0;
+    if (!at) {
+      ageEl.textContent = t('saved.backupNever');
+    } else {
+      const days = Math.floor((Date.now() - at) / 86400000);
+      ageEl.textContent = days <= 0 ? t('saved.backupToday') : t('saved.backupDays', { n: days });
+    }
+  }
+  const nudge = $('#backup-nudge');
+  if (nudge) {
+    const at = typeof lastBackupAt === 'function' ? lastBackupAt() : 0;
+    const stale = !at || (Date.now() - at) > 7 * 86400000;
+    nudge.classList.toggle('hidden', !(stale && mode !== 'granted'));
   }
 }
 
@@ -3198,7 +3238,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.94.0';
+const APP_VERSION = '0.95.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3516,6 +3556,7 @@ function init() {
     menu.classList.toggle('hidden');
     if (willOpen) updateExportNotes();
   });
+  $('#backup-now').addEventListener('click', () => { doBackup(); });
   $('#x-backup').addEventListener('click', () => {
     menu.classList.add('hidden');
     doBackup();

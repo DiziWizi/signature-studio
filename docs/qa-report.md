@@ -2011,6 +2011,24 @@ Date: 2026-11-22 · Scope: right-to-left signatures.
 
 ---
 
+# v0.95.0 addendum (backup health)
+
+Date: 2026-11-22 · Scope: backup age, verification, honest nudge.
+
+- **Verify before download** — `doBackup()` re-opens the stored ZIP with
+  `unzipStore()`, parses `backup.json`, checks `app === 'signature-studio'`,
+  and refuses to download (with a toast) if anything is wrong. A corrupt
+  archive that looks like safety is worse than none.
+- **Last backup age** — timestamp in `sigstudio.lastBackup.v1`; the Saved
+  panel says "No backup yet", "Last backup: today", or "N days ago".
+- **Nudge** — amber paragraph when persistence is not granted and the last
+  backup is missing or older than seven days, with a *Back up now* button.
+  It disappears after a verified backup; no modal, no repetition.
+- 3 tests (never-backed-up nudge, verified archive + date, persistent
+  storage suppresses the nudge). Suite 321/321 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
