@@ -1944,6 +1944,29 @@ Date: 2026-11-22 · Scope: persistence, eviction recovery, malformed input.
 
 ---
 
+# v0.92.0 addendum (mailbox.org fit)
+
+Date: 2026-11-22 · Scope: install guidance, paired reply signature.
+
+- **mailbox.org tab** — six steps covering paste-rendered installation, the
+  separate reply slot, per-sending-address defaults for aliases, the image
+  caveat (attachments / dropped data: URIs / remote images blocked by
+  recipients), and "if your Suite shows *New from template*" because feature
+  flags vary. Note: no BIMI in mailbox webmail; custom domains only.
+- **Save reply variant** — clones the open signature, switches the copy to
+  the Reply template, names it `<name> — Reply` and saves it, leaving the
+  editor untouched. Matches OX's separate defaults for new vs replies.
+- **Fixed** — `packCurrentImages()` packed the live state, replacing image
+  data URLs with `idb:` refs; after autosave the preview's images broke until
+  a reload. It now packs a copy, so storage gets refs and the editor keeps
+  its pixels. Test asserts both the draft ref and the rendered data URL.
+- **i18n guard refined** — only flags fallback text equal to its key, so
+  labels like "mailbox.org" no longer false-positive.
+- 3 new tests (guide copy, reply pairing, live preview). Suite 310/310 twice;
+  Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

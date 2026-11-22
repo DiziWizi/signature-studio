@@ -2880,6 +2880,29 @@ async function doSaveSnapshot() {
   showToast(t('toast.saved', { name }), '', { key: 'toast.saved', params: { name } });
 }
 
+/* Open-Xchange (mailbox.org) keeps a separate signature for replies and
+   forwards, per sending address. Save a paired copy without disturbing the
+   signature currently being edited. */
+async function doSaveReplyVariant() {
+  await packCurrentImages();
+  const typed = ($('#save-name') && $('#save-name').value.trim()) || '';
+  const base = typed || state.meta.name || (state.profile && state.profile.name) || 'Signature';
+  const name = `${base} — Reply`;
+  const copy = JSON.parse(JSON.stringify(state));
+  copy.design.template = 'reply';
+  copy.meta.name = name;
+  const snap = saveSnapshot(copy, name);
+  if (!snap) {
+    showToast(t('toast.saveFail'), 'err', { key: 'toast.saveFail' });
+    return;
+  }
+  renderSavedList();
+  showToast(t('toast.replyVariantSaved', { name }), '', {
+    key: 'toast.replyVariantSaved',
+    params: { name },
+  });
+}
+
 /* ── image uploads ────────────────────────────────────────────────────── */
 
 /* The last ORIGINAL (uncropped) upload per field, kept in memory for the
@@ -3035,7 +3058,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.91.0';
+const APP_VERSION = '0.92.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3527,6 +3550,7 @@ function init() {
   $('#saved-close').addEventListener('click', closeSavedPanel);
   $('#scrim').addEventListener('click', closeSavedPanel);
   $('#save-now').addEventListener('click', doSaveSnapshot);
+  $('#save-reply').addEventListener('click', doSaveReplyVariant);
   $('#save-name').addEventListener('keydown', e => {
     if (e.key === 'Enter') doSaveSnapshot();
   });

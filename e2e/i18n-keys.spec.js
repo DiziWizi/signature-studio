@@ -23,14 +23,18 @@ for (const lang of LANGS) {
     const leaked = await page.evaluate(() => {
       const KEY = /^[a-z][a-zA-Z0-9]*(\.[a-zA-Z0-9]+)+$/;
       const out = [];
+      /* Only a fallback that equals the key is a leak — a domain such as
+         "mailbox.org" or "gmail.com" also looks like a dotted key. */
       for (const el of document.querySelectorAll('[data-i18n]')) {
         const txt = (el.textContent || '').trim();
-        if (KEY.test(txt)) out.push({ key: el.getAttribute('data-i18n'), txt });
+        const key = el.getAttribute('data-i18n');
+        if (KEY.test(txt) && txt === key) out.push({ key, txt });
       }
       for (const el of document.querySelectorAll('[data-i18n-title],[data-i18n-ph],[data-i18n-aria]')) {
-        for (const a of ['title', 'placeholder', 'aria-label']) {
+        for (const [a, k] of [['title', 'data-i18n-title'], ['placeholder', 'data-i18n-ph'], ['aria-label', 'data-i18n-aria']]) {
           const v = (el.getAttribute(a) || '').trim();
-          if (v && KEY.test(v)) out.push({ attr: a, txt: v });
+          const key = el.getAttribute(k);
+          if (v && KEY.test(v) && v === key) out.push({ attr: a, txt: v });
         }
       }
       return out;

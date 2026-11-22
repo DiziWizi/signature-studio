@@ -855,6 +855,7 @@
       <button class="itab" data-tab="outlookmac" type="button" aria-pressed="false" data-i18n="instr.outlookmac">Outlook (Mac)</button>
       <button class="itab" data-tab="applemail" type="button" aria-pressed="false" data-i18n="instr.applemail">Apple Mail</button>
       <button class="itab" data-tab="thunderbird" type="button" aria-pressed="false" data-i18n="instr.thunderbird">Thunderbird</button>
+      <button class="itab" data-tab="mailboxorg" type="button" aria-pressed="false" data-i18n="instr.mailboxorg">mailbox.org</button>
       <button class="itab" data-tab="webmail" type="button" aria-pressed="false" data-i18n="instr.webmail">Other webmail</button>
     </div>
     <div class="ipane active" id="pane-gmail">
@@ -895,6 +896,17 @@
         <li data-i18n-html="instr.thunderbird2">Account Settings → select the account → <b>Signature text</b>.</li>
         <li data-i18n-html="instr.thunderbird3">Tick <b>Use HTML</b>, paste (Ctrl/Cmd+V) and close the dialog.</li>
       </ol>
+    </div>
+    <div class="ipane" id="pane-mailboxorg">
+      <ol>
+        <li data-i18n-html="instr.mailboxorg1">Choose <b>Export ▸ Copy to clipboard</b> above.</li>
+        <li data-i18n-html="instr.mailboxorg2">In the mailbox Suite open Settings → Mail → <b>Signatures</b> and add a signature. Menu names vary slightly by deployment.</li>
+        <li data-i18n-html="instr.mailboxorg3">Paste into the signature box with formatting intact. If your Suite shows <b>New from template</b>, that is the built-in designer — use it or paste here, not both. Its <code>{{ }}</code> placeholders do not fill inside a pasted HTML signature.</li>
+        <li data-i18n="instr.mailboxorg4">Set it as the default per sending address — each alias keeps its own signature.</li>
+        <li data-i18n-html="instr.mailboxorg5">Replies and forwards can use a different signature. Click <b>Save reply variant</b> under Saved, then paste that into the reply slot.</li>
+        <li data-i18n="instr.mailboxorg6">Images: the Suite may turn pasted images into attachments or drop data: URIs. If a logo disappears, use a hosted URL or an image-free layout. mailbox.org recipients block remote images by default.</li>
+      </ol>
+      <p class="note" data-i18n="instr.mailboxorgNote">mailbox.org does not display BIMI. A custom domain can still publish it for Gmail and Apple Mail; an @mailbox.org address cannot.</p>
     </div>
     <div class="ipane" id="pane-webmail">
       <ol>
@@ -1155,6 +1167,7 @@
   <div class="save-row">
     <input id="save-name" placeholder="Name this signature…" maxlength="60">
     <button class="btn btn-primary" id="save-now" type="button" data-i18n="saved.saveCurrent">Save current</button>
+    <button class="btn" id="save-reply" type="button" data-i18n="saved.replyVariant" data-i18n-title="saved.replyVariantHint" title="Saves a copy using the Reply template">Save reply variant</button>
   </div>
   <p class="micro" id="storage-image-note"></p>
   <p class="micro storage-persist" id="storage-persist-note" role="status"></p>

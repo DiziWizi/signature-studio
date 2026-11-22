@@ -299,7 +299,10 @@ function packCurrentImages() {
     if (needsOffload(obj[key]) && !imageIdCache.has(obj[key])) pending = true;
   }
   if (!pending) return Promise.resolve(false);
-  return packImages(state).then(changed => {
+  /* Pack a copy: the cache is what drafts need, and the live state must keep
+     its data URLs or every preview image turns into a broken idb: URL. */
+  const copy = JSON.parse(JSON.stringify(state));
+  return packImages(copy).then(changed => {
     if (changed) {
       requestPersistence();
       if (typeof flushSave === 'function') flushSave();

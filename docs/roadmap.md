@@ -346,6 +346,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   silently; a hostile-input suite covers malformed ZIPs, MIME, quoted-
   printable bombs, deep HTML nesting and garbage vCards — and found a real
   bad-base64 crash; E2E 307
+- [x] v0.92.0 — mailbox.org fit: a dedicated install tab (paste-rendered
+  workflow, separate reply slot, per-alias defaults, image caveat, "New from
+  template" phrasing, no BIMI); **Save reply variant** stores a paired Reply
+  copy without touching the open signature; fixed image packing mutating the
+  live state into idb: URLs (preview went blank after autosave); E2E 310
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
