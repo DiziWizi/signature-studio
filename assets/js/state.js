@@ -94,6 +94,7 @@ function defaultState() {
       font: 'modern',
       fontSize: 14,
       logoUrl: '',
+      portraitUrl: '',   // headshot for vCard PHOTO + photo templates ('' = logo)
       logoAlt: '',
       logoWidth: 72,
       signatureWidth: 600,   // canvas width in px — renderer clamps to 400–600

@@ -443,14 +443,20 @@ function monogramHtml(s, d) {
     `font-family:Arial,Helvetica,sans-serif;font-size:${Math.round(size * 0.38)}px;font-weight:bold;">${esc(initials)}</span>`;
 }
 
+/* A headshot, when provided, is what recipients should see as the person;
+   the logo stays the brand mark. Photo-led templates ask for this. */
+const portraitSrcOf = d => String(d.portraitUrl || '').trim() || String(d.logoUrl || '').trim();
+
 /* Logo cell content: hosted logo, or the initials monogram when enabled.
    photoShape gives the side logo a square (default), rounded or circular
-   crop; the legacy roundPhoto flag maps to 'circle'. */
-function logoCellHtml(s, d) {
-  if (d.logoUrl) {
+   crop; the legacy roundPhoto flag maps to 'circle'. opts.portrait swaps in
+   the headshot for layouts built around a face. */
+function logoCellHtml(s, d, opts = {}) {
+  const src = opts.portrait ? portraitSrcOf(d) : String(d.logoUrl || '').trim();
+  if (src) {
     const shape = photoShapeOfDesign(d);
     const radius = shape === 'circle' ? br(d, '50%') : shape === 'rounded' ? br(d, '10px') : '';
-    return imgTag(imgSrcOf(d, 'logo', d.logoUrl), d.logoWidth, String(s.design.logoAlt || 'logo'), radius, 'data-edit="logo" ');
+    return imgTag(imgSrcOf(d, 'logo', src), d.logoWidth, String(s.design.logoAlt || 'logo'), radius, 'data-edit="logo" ');
   }
   if (d.useMonogram) return monogramHtml(s, d);
   return '';
@@ -701,10 +707,10 @@ function splitRows(s, d) {
 function roundelRows(s, d) {
   const rows = [];
   const den = densityOf(d);
-  const logoContent = logoCellHtml(s, d);
+  const logoContent = logoCellHtml(s, d, { portrait: true });
   if (logoContent) {
-    const circle = d.logoUrl
-      ? `<img src="${esc(imgSrcOf(d, 'logo', d.logoUrl))}" width="${d.logoWidth}" alt="${esc(String(s.design.logoAlt || 'logo'))}" ` +
+    const circle = portraitSrcOf(d)
+      ? `<img src="${esc(imgSrcOf(d, 'logo', portraitSrcOf(d)))}" width="${d.logoWidth}" alt="${esc(String(s.design.logoAlt || 'logo'))}" ` +
         `style="display:block;width:${d.logoWidth}px;max-width:${d.logoWidth}px;height:auto;border:0;${br(d, '50%')}">`
       : monogramHtml(s, d);
     rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.dividerMargin}px 0;">${circle}</td></tr>`);
@@ -833,7 +839,7 @@ function monogramRows(s, d) {
 function photocardRows(s, d) {
   const rows = [];
   const den = densityOf(d);
-  const logoContent = logoCellHtml(s, d);
+  const logoContent = logoCellHtml(s, d, { portrait: true });
   const identity = nameHtml(s, d, { size: d.fontSize + 4 + nameExtraOf(d) }) + titleHtml(s, d) +
     companyHtml(s, d) + taglineHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
   if (logoContent || identity) {
@@ -958,7 +964,7 @@ function duotoneRows(s, d) {
   const den = densityOf(d);
   const light = mixColors(d.primaryColor, '#ffffff', 0.25);
 
-  const logoContent = logoCellHtml(s, d);
+  const logoContent = logoCellHtml(s, d, { portrait: true });
   const shown = String(s.profile.displayName || s.profile.name || '').trim();
   const duotonePrefix = String(s.profile.honorificPrefix || '').trim();
   const duotoneSuffix = String(s.profile.honorificSuffix || '').trim();
@@ -1586,8 +1592,8 @@ function verticalRows(s, d) {
   const rows = [];
   const den = densityOf(d);
   const w = Math.max(96, Math.round(d.logoWidth * 1.8));
-  const portrait = d.logoUrl
-    ? `<img src="${esc(imgSrcOf(d, 'logo', d.logoUrl))}" width="${w}" alt="${esc(String(d.logoAlt || 'logo'))}" ` +
+  const portrait = portraitSrcOf(d)
+    ? `<img src="${esc(imgSrcOf(d, 'logo', portraitSrcOf(d)))}" width="${w}" alt="${esc(String(d.logoAlt || 'logo'))}" ` +
       `style="display:block;width:${w}px;max-width:${w}px;height:auto;border:0;${br(d, '10px')}">`
     : monogramHtml(s, d);
   rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.dividerMargin}px 0;">${portrait}</td></tr>`);

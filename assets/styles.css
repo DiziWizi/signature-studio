@@ -318,6 +318,21 @@ details[open] summary::before { transform: rotate(90deg); }
   #peek-fab { display: inline-flex; }
 }
 
+/* Compatibility check rows */
+.compat-results { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+.compat-row {
+  display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: start;
+  padding: 7px 9px; border: 1px solid var(--line2); border-radius: 8px; font-size: 12px;
+}
+.compat-level { font-weight: 700; text-align: center; }
+.compat-row.fail { border-color: #8a2f33; }
+.compat-row.fail .compat-level { color: #f08c8c; }
+.compat-row.warn { border-color: #7a5c1f; }
+.compat-row.warn .compat-level { color: #f0c674; }
+.compat-row.info .compat-level { color: var(--mut); }
+.compat-empty { font-size: 12px; color: #63d489; padding: 6px 0; }
+.portrait-row input[type="url"], .portrait-row input:not([type]) { flex: 1; min-width: 0; }
+
 /* BIMI readiness results */
 .bimi-results { margin: 10px 0 4px; display: flex; flex-direction: column; gap: 6px; }
 .bimi-row {

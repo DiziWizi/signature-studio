@@ -1698,6 +1698,32 @@ Date: 2026-11-21 · Scope: asset pack, SVG Tiny PS, BIMI readiness.
 
 ---
 
+# v0.83.0 addendum (correctness batch)
+
+Date: 2026-11-21 · Scope: portrait split, compatibility check, reorder focus.
+
+- **Portrait** — `design.portraitUrl` is separate from the logo. Roundel,
+  Photo card, Duotone and Vertical card render `portraitSrcOf()`; Classic and
+  the rest keep the brand logo. The vCard photo prefers the portrait, and the
+  roundel's manual `<img>` was switched to the same source so it cannot drift
+  from its cell.
+- **Compatibility check** — `compatIssues()` scans the generated HTML for
+  heavy HTML (>60 KB warn, >100 KB fail), foreign `<style>` blocks,
+  `@font-face`, scripts, flex/grid/absolute positioning, CSS background
+  images, remote images, missing alt text, inline-image weight, and
+  rounded corners under non-strict mode. The app's own 599 px media block is
+  explicitly allowed.
+- **Gate** — Copy (button and Ctrl/Cmd+Enter) runs `runCompatGate` before the
+  existing rounding dialogue; hard failures open the modal with **Copy
+  anyway**. The "Turn on strict Outlook" fix re-renders and re-runs the scan.
+- **Focus** — the ↑/↓ buttons already existed for blocks, socials and custom
+  lines; after a move the DOM was rebuilt and focus fell to `<body>`. Each
+  reorder now refocuses the same button, falling back to the other arrow at
+  the ends.
+- 6 new E2E tests (correctness.spec.js). Suite 266/266 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

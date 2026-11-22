@@ -748,7 +748,16 @@ function onSocialListClick(e) {
   } else {
     return;
   }
+  const dir = btn.classList.contains('soc-up') ? -1 : btn.classList.contains('soc-down') ? 1 : 0;
+  const movedTo = dir ? i + dir : -1;
   renderSocials();
+  if (dir) {
+    const row = document.querySelector(`#socials-list .social-row[data-i="${movedTo}"]`);
+    const again = row && row.querySelector(dir < 0 ? '.soc-up' : '.soc-down');
+    const fallback = row && row.querySelector('.soc-up, .soc-down');
+    const target = again && !again.disabled ? again : fallback;
+    if (target) target.focus();
+  }
   renderPreview();
   scheduleSave();
 }
@@ -801,7 +810,16 @@ function onCustomListClick(e) {
   } else {
     return;
   }
+  const dir = btn.classList.contains('line-up') ? -1 : btn.classList.contains('line-down') ? 1 : 0;
+  const movedTo = dir ? i + dir : -1;
   renderCustoms();
+  if (dir) {
+    const row = document.querySelector(`#custom-list .custom-row[data-i="${movedTo}"]`);
+    const again = row && row.querySelector(dir < 0 ? '.line-up' : '.line-down');
+    const fallback = row && row.querySelector('.line-up, .line-down');
+    const target = again && !again.disabled ? again : fallback;
+    if (target) target.focus();
+  }
   renderPreview();
   scheduleSave();
 }
@@ -1564,6 +1582,12 @@ function moveBlock(from, to) {
   order.splice(to, 0, b);
   state.design.blockOrder = order;
   renderBlockList();
+  const moved = document.querySelector(`#blocks-list .block-row[data-block="${b}"]`);
+  const dir = to > from ? 1 : -1;
+  const again = moved && moved.querySelector(`[data-dir="${dir}"]`);
+  const fallback = moved && moved.querySelector('[data-dir]');
+  const target = again && !again.disabled ? again : fallback;
+  if (target) target.focus();
   renderPreview();
   scheduleSave();
 }
@@ -1797,6 +1821,9 @@ let pendingExport = null;
    Outlook desktop will square off. The user can export as-is, or switch
    strict mode on and export the Outlook-honest version. */
 function guardOutlookExport(fn) {
+  /* Hard failures block the copy until acknowledged; warnings fall through
+     to the existing rounding dialogue. */
+  if (runCompatGate(fn)) return;
   const issues = outlookIssues(state);
   if (!issues.length) {
     fn();
@@ -2080,7 +2107,7 @@ function loadImageAsync(src) {
 /* A 240 px square JPEG for vCard PHOTO — small enough to keep the card
    portable, big enough to read in a contact list. */
 async function vcardPhotoDataUrl() {
-  const src = String(state.design.logoUrl || '');
+  const src = String(state.design.portraitUrl || state.design.logoUrl || '');
   if (!/^data:image\/(png|jpe?g|webp);base64,/i.test(src)) return '';
   try {
     const img = await loadImageAsync(src);
@@ -2694,7 +2721,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.82.0';
+const APP_VERSION = '0.83.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3004,6 +3031,16 @@ function init() {
     menu.classList.toggle('hidden');
     if (willOpen) updateExportNotes();
   });
+  $('#x-compat').addEventListener('click', () => {
+    menu.classList.add('hidden');
+    openCompat(null);
+  });
+  $('#compat-continue').addEventListener('click', () => {
+    const fn = pendingCompat;
+    pendingCompat = null;
+    closeOverlay('#modal-compat');
+    if (fn) fn();
+  });
   $('#x-asset-pack').addEventListener('click', () => {
     menu.classList.add('hidden');
     doAssetPack();
@@ -3267,6 +3304,7 @@ function init() {
 
   /* image uploads */
   bindImageUpload('#upload-logo', '#logo-file', 'design.logoUrl', { square: true });
+  bindImageUpload('#upload-portrait', '#portrait-file', 'design.portraitUrl', { square: true });
   bindImageUpload('#upload-banner', '#banner-file', 'design.bannerUrl');
   bindImageUpload('#upload-footer-left', '#footer-left-file', 'design.footerLeftImg');
   bindImageUpload('#upload-footer-center', '#footer-center-file', 'design.footerCenterImg');

@@ -298,6 +298,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   snippet, README), SVG Tiny PS conversion that strips scripts and external
   refs, and an opt-in BIMI readiness check via DNS-over-HTTPS with a copyable
   record; honest copy that Microsoft never displays BIMI; E2E 260
+- [x] v0.83.0 — correctness: a separate portrait feeds the vCard photo and
+  photo-led templates (logo stays the brand mark); a local compatibility scan
+  catches Word-engine/Gmail hazards and gates Copy on hard failures, with a
+  one-click strict-Outlook fix; arrow reorders keep keyboard focus; E2E 266
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
