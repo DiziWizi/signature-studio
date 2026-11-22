@@ -96,6 +96,7 @@ function normalizeLoadedState(raw) {
     else if (typeof dv === 'number') out.design[k] = Number.isFinite(Number(v)) ? Number(v) : dv;
     else if (typeof dv === 'boolean') out.design[k] = typeof v === 'boolean' ? v : dv;
   }
+  out.design.direction = out.design.direction === 'rtl' ? 'rtl' : '';
   out.design.imageRef = Object.assign({}, def.design.imageRef || {}, out.design.imageRef || {});
   for (const k of Object.keys(def.design.imageRef || {})) {
     out.design.imageRef[k] = asStr(out.design.imageRef[k]);
@@ -3197,7 +3198,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.93.0';
+const APP_VERSION = '0.94.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {

@@ -152,6 +152,7 @@ function defaultState() {
       socialGap: '',        // px override for the social chip gap
       lineHeight: '',       // line-height multiplier 1.0-2.0 ('' = 1.5)
       textAlign: '',        // '' = layout default | left | center | right
+      direction: '',        // '' = left-to-right | 'rtl' = right-to-left content
       cardPadding: '',      // px override for card padding ('' = 16x18)
       cardBorderWidth: '',  // px override for the card border ('' = 1)
       /* '' = pronouns follow the name inline; 'underName' = own line below. */

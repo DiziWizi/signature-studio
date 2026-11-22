@@ -1993,6 +1993,24 @@ Date: 2026-11-22 · Scope: real-inbox testing, Outlook chip rendering.
 
 ---
 
+# v0.94.0 addendum (RTL content)
+
+Date: 2026-11-22 · Scope: right-to-left signatures.
+
+- **Direction control** — Design → Text direction: LTR (default) or RTL.
+  Stored as `design.direction`; imports coerce anything else to LTR.
+- **Rendering** — `dir="rtl"` and `direction:rtl` on `<html>`, `<body>` and
+  the outer table; the table's direction reverses cell order (logo side,
+  social chips). A post-pass swaps `align`, `text-align`, `padding-left/
+  right`, `margin-left/right` and `border-left/right` so "start" is the
+  right edge. Mobile stacking aligns right too.
+- **Scope** — content direction, not a full UI localisation: the editor
+  chrome stays LTR because there are no RTL locales yet.
+- 3 tests (direction and swaps, save/reload/export, exact LTR restoration).
+  Suite 318/318 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

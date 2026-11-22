@@ -1611,7 +1611,7 @@ function mobileStyleBlock(d) {
   if (!d.stackMobile) return '';
   return `<style type="text/css">
 @media (max-width:599px) {
-  .m-cell { display:block !important; width:100% !important; padding:0 0 10px 0 !important; text-align:left !important; }
+  .m-cell { display:block !important; width:100% !important; padding:0 0 10px 0 !important; text-align:${d.direction === 'rtl' ? 'right' : 'left'} !important; }
   .m-cell:last-child { padding-bottom:0 !important; }
 }
 </style>`;
@@ -1799,6 +1799,20 @@ function publicRows(s, d) {
   return rows.join('\n');
 }
 
+/* RTL content: the table's dir reverses cell order, and explicit left/right
+   alignments are swapped so "start" really is the right edge. Shorthand
+   paddings are left alone — this is content direction, not a pixel mirror. */
+function applyRtlSwaps(html) {
+  const pairs = [
+    ['align="left"', '@@RTL_ALIGN_R@@'], ['align="right"', 'align="left"'], ['@@RTL_ALIGN_R@@', 'align="right"'],
+    ['text-align:left', '@@RTL_TA_R@@'], ['text-align:right', 'text-align:left'], ['@@RTL_TA_R@@', 'text-align:right'],
+    ['padding-left:', '@@RTL_PL_R@@'], ['padding-right:', 'padding-left:'], ['@@RTL_PL_R@@', 'padding-right:'],
+    ['margin-left:', '@@RTL_ML_R@@'], ['margin-right:', 'margin-left:'], ['@@RTL_ML_R@@', 'margin-right:'],
+    ['border-left:', '@@RTL_BL_R@@'], ['border-right:', 'border-left:'], ['@@RTL_BL_R@@', 'border-right:'],
+  ];
+  return pairs.reduce((out, [from, to]) => out.split(from).join(to), String(html));
+}
+
 function renderInner(state) {
   /* Clamp user/imported numeric values so the output can never degenerate. */
   const raw = state.design || {};
@@ -1868,7 +1882,8 @@ function renderInner(state) {
     bodyRows += `\n<tr><td colspan="2" align="left">\n${String(d.customHtml)}\n</td></tr>`;
   }
 
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+  const rtl = d.direction === 'rtl';
+  const out = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"${rtl ? ' dir="rtl"' : ''} style="border-collapse:collapse;${rtl ? 'direction:rtl;' : ''}">
   <tr>
     <td align="${outerAlign}"${bgStyle ? ` style="${bgStyle}"` : ''}>
       <table role="presentation" width="${widthOf(d)}" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${widthOf(d)}px;border-collapse:collapse;">
@@ -1877,6 +1892,7 @@ ${bodyRows.split('\n').map(l => '        ' + l).join('\n')}
     </td>
   </tr>
 </table>`;
+  return rtl ? applyRtlSwaps(out) : out;
 }
 
 /* Preview-only annotations (data-edit) let a click in the live preview
@@ -1892,9 +1908,10 @@ function renderSignatureDoc(state) {
     fontSize: Math.min(18, Math.max(10, Number(raw.fontSize) || 14)),
     logoWidth: Math.min(300, Math.max(20, Number(raw.logoWidth) || 72)),
   });
+  const rtl = d.direction === 'rtl';
   const doc =
 `<!DOCTYPE html>
-<html lang="en">
+<html lang="en"${rtl ? ' dir="rtl"' : ''}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1903,7 +1920,7 @@ ${d.darkModeFriendly
   : ''}${darkStyleBlock(d)}${mobileStyleBlock(d)}
 <title>Email signature</title>
 </head>
-<body style="margin:0;padding:0;background-color:transparent;">
+<body${rtl ? ' dir="rtl"' : ''} style="margin:0;padding:0;background-color:transparent;${rtl ? 'direction:rtl;' : ''}">
 ${renderInner(state)}
 </body>
 </html>`;

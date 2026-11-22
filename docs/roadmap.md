@@ -357,6 +357,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   now states that @mailbox.org cannot publish or display it. Fixed social
   chips for Word-engine clients (table cells, ASCII-safe glyphs) after a real
   Outlook screenshot showed blank bars; E2E 315
+- [x] v0.94.0 — RTL content: per-signature direction (LTR/RTL) sets `dir`
+  on the document, table and body, reverses cell flow and swaps explicit
+  left/right alignments, padding, margins and borders; mobile stacking
+  follows the direction; E2E 318
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
