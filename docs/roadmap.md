@@ -383,6 +383,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.99.0 — classic Outlook install pack: a ZIP with `<name>.htm`,
   `<name>_files/` relative images and a README for
   `%APPDATA%\Microsoft\Signatures`; hosted URLs stay remote; E2E 330
+- [x] v0.100.0 — phone pass: fixed the uppercase hint inherited from
+  `.field`, full-width URL rows and 16 px inputs (no iOS focus zoom), toasts
+  clear the preview button, and a 4×-CPU budget test pins lazy thumbnails;
+  E2E 332
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

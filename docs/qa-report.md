@@ -2110,6 +2110,25 @@ Date: 2026-11-23 · Scope: native Outlook desktop installation.
 
 ---
 
+# v0.100.0 addendum (phone pass)
+
+Date: 2026-11-23 · Scope: 390 px editing.
+
+- **Hint styling fixed** — a `.hint` inside a `.field` inherited uppercase,
+  letter-spacing and 600 weight, so the dark-logo note read like a section
+  label. `.hint` now resets all three.
+- **URL rows wrap** — logo, dark logo and portrait inputs take the full row
+  with their buttons underneath, instead of a 160 px input between buttons.
+- **iOS zoom** — text inputs/selects are 16 px under 520 px, which stops
+  Safari zooming the page on focus.
+- **Toasts** sit 74 px from the bottom on phones so they no longer cover the
+  Preview button.
+- **Budget** — a 4× CPU-throttled test boots the app and proves thumbnail
+  iframes stay lazy (rendered count < 25 until scroll).
+- 2 tests. Suite 332/332 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
