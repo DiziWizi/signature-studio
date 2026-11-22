@@ -16,7 +16,7 @@ test('the backup ZIP holds the draft, every saved signature and an index', async
   await page.click('#save-now');
   await page.click('#saved-close');
 
-  const files = await page.evaluate(() => backupFiles().map(f => f.name));
+  const files = await page.evaluate(async () => (await backupFiles()).map(f => f.name));
   expect(files).toContain('draft.json');
   expect(files).toContain('backup.json');
   expect(files).toContain('README.txt');

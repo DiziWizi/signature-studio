@@ -616,6 +616,7 @@ window.SIG_LOCALES.en = {
   'manualCopy.micro': "Your browser blocked the one-click copy. The text below is already selected — press Ctrl+C (or right-click → Copy).",
   'manualCopy.done': "Done",
   'tpl.custom': "Custom",
+  'saved.imagesNote': "{n} image(s) live in browser storage, outside the 5 MB text budget",
   'topbar.restore': "Restore a backup…",
   'restore.title': "Restore a backup",
   'restore.summary': "{n} saved signature(s) and a draft found.",

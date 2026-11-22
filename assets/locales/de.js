@@ -614,6 +614,7 @@ window.SIG_LOCALES.de = {
   'manualCopy.micro': "Ihr Browser hat das Ein-Klick-Kopieren blockiert. Der Text unten ist bereits markiert — drücken Sie Strg+C (oder Rechtsklick → Kopieren).",
   'manualCopy.done': "Fertig",
   'tpl.custom': "Eigene",
+  'saved.imagesNote': "{n} Bild(er) liegen im Browser-Speicher, außerhalb des 5-MB-Textbudgets",
   'topbar.restore': "Sicherung wiederherstellen…",
   'restore.title': "Sicherung wiederherstellen",
   'restore.summary': "{n} gespeicherte Signatur(en) und ein Entwurf gefunden.",

@@ -15,10 +15,14 @@ function storageAvailable() {
   }
 }
 
+function storageSafeState(state) {
+  return (typeof refsForStorage === 'function') ? refsForStorage(state) : state;
+}
+
 function saveDraft(state) {
   if (!storageAvailable()) return false;
   try {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(state));
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(storageSafeState(state)));
     return true;
   } catch (e) {
     return false; /* quota exceeded — caller should warn */
@@ -63,7 +67,7 @@ function saveSnapshot(state, name) {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     name: String(name || state.meta.name || 'Signature').trim() || 'Signature',
     savedAt: new Date().toISOString(),
-    state: clone(state),
+    state: storageSafeState(state),
   };
   list.unshift(snap);
   if (list.length > MAX_SAVED) list.length = MAX_SAVED;
@@ -74,6 +78,13 @@ function saveSnapshot(state, name) {
 function loadSnapshot(id) {
   const snap = listSnapshots().find(x => x.id === id);
   return snap ? clone(snap.state) : null;
+}
+
+/* Refs become data URLs before the state is handed to the editor. */
+async function loadSnapshotHydrated(id) {
+  const stateCopy = loadSnapshot(id);
+  if (stateCopy && typeof unpackImages === 'function') await unpackImages(stateCopy);
+  return stateCopy;
 }
 
 function deleteSnapshot(id) {

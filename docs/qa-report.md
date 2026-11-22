@@ -1814,6 +1814,31 @@ Date: 2026-11-21 · Scope: browser proof, script CSP, hosting parity.
 
 ---
 
+# v0.88.0 addendum (images in IndexedDB)
+
+Date: 2026-11-22 · Scope: storage migration for image data.
+
+- **Why** — localStorage is ~5 MB of UTF-16; two photos could fill it and
+  silently break autosave. Images now live in IndexedDB (`sigstudio.images`),
+  and localStorage keeps only text plus `idb:<id>` refs.
+- **Shape** — state in memory always holds data URLs, so renderers, exports,
+  share links and CID packaging are untouched. `refsForStorage()` swaps
+  cached data URLs for refs at write time; `unpackImages()` resolves them at
+  read time and repopulates the cache so a save cannot write bytes back.
+- **Save stays synchronous** — `flushSave()` keeps its boolean contract and
+  triggers `packCurrentImages()` afterwards; the follow-up save is what
+  actually shrinks the draft. Uploads under 32 KB stay inline (no pointless
+  writes).
+- **Snapshots** persist refs; `loadSnapshotHydrated()` is used by the saved
+  panel and quick switcher. **Backups** include `images/<id>.bin` entries and
+  restore writes them back before applying the draft. **GC** deletes blobs
+  that neither the draft nor any snapshot references.
+- **Meter** — the saved panel gains an image count line, making it explicit
+  that image bytes sit outside the 5 MB text budget.
+- 5 new E2E tests (idb-images.spec.js). Suite 285/285 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

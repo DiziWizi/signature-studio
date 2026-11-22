@@ -614,6 +614,7 @@ window.SIG_LOCALES.es = {
   'manualCopy.micro': "Su navegador bloqueó la copia con un clic. El texto de abajo ya está seleccionado — pulse Ctrl+C (o clic derecho → Copiar).",
   'manualCopy.done': "Listo",
   'tpl.custom': "Personalizada",
+  'saved.imagesNote': "{n} imagen(es) viven en el almacenamiento del navegador, fuera del límite de 5 MB de texto",
   'topbar.restore': "Restaurar una copia…",
   'restore.title': "Restaurar una copia",
   'restore.summary': "{n} firma(s) guardada(s) y un borrador encontrados.",

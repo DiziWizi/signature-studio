@@ -528,6 +528,9 @@ function flushSave() {
       action: { label: t('save.free'), fn: openSavedPanel },
     });
   }
+  /* Newly added images are packed after the text write; the follow-up save
+     replaces them with refs and drops the bytes from localStorage. */
+  if (ok && typeof packCurrentImages === 'function') packCurrentImages();
   return ok;
 }
 
@@ -1207,10 +1210,10 @@ function initQuickSwitch() {
   document.addEventListener('click', e => {
     if (!e.target.closest('#quick-wrap')) menu.classList.add('hidden');
   });
-  menu.addEventListener('click', e => {
+  menu.addEventListener('click', async e => {
     const b = e.target.closest('[data-snap]');
     if (!b) return;
-    const loaded = loadSnapshot(b.dataset.snap);
+    const loaded = await loadSnapshotHydrated(b.dataset.snap);
     if (loaded) {
       pushHistory('undo.load');
       state = normalizeLoadedState(loaded);
@@ -2140,9 +2143,26 @@ function downloadBlob(blob, filename) {
 
 /* One ZIP with the draft, every saved signature and an index — the escape
    hatch for a cleared browser or a new machine. */
-function backupFiles() {
+async function backupFiles() {
   const snaps = listSnapshots();
-  const files = [{ name: 'draft.json', data: JSON.stringify(state, null, 2) }];
+  const draft = typeof refsForStorage === 'function' ? refsForStorage(state) : state;
+  const files = [{ name: 'draft.json', data: JSON.stringify(draft, null, 2) }];
+  /* Images are blobs in IndexedDB; include them so the archive is complete. */
+  const ids = new Set();
+  const states = [draft, ...snaps.map(s => s && s.state).filter(Boolean)];
+  for (const st of states) {
+    for (const { obj, key } of imageSlots(st)) {
+      const value = String(obj[key] || '');
+      if (value.startsWith('idb:')) ids.add(value.slice(4));
+    }
+  }
+  for (const id of ids) {
+    try {
+      const blob = await imgGet(id);
+      if (!blob) continue;
+      files.push({ name: `images/${id}.bin`, data: new Uint8Array(await blob.arrayBuffer()) });
+    } catch (e) { /* skip unreadable blob */ }
+  }
   snaps.forEach((snap, i) => {
     const stem = slugify(snap.name) || 'signature';
     files.push({
@@ -2176,8 +2196,8 @@ function backupFiles() {
   return files;
 }
 
-function doBackup() {
-  const files = backupFiles();
+async function doBackup() {
+  const files = await backupFiles();
   const stamp = new Date().toISOString().slice(0, 10);
   downloadBlob(new Blob([zipStore(files)], { type: 'application/zip' }), `signature-studio-backup-${stamp}.zip`);
   showToast(t('toast.backupDone', { n: listSnapshots().length }), '', { key: 'toast.backupDone' });
@@ -2210,12 +2230,17 @@ async function beginRestore(file) {
     showToast(t('restore.empty'), 'err', { key: 'restore.empty' });
     return;
   }
+  /* Stored images arrive as separate blobs; put them back before applying. */
+  for (const entry of entries.filter(e => /^images\/[^/]+\.bin$/.test(e.name))) {
+    const id = entry.name.slice('images/'.length, -'.bin'.length);
+    try { await imgPut(id, new Blob([entry.data])); } catch (e) { /* ignore */ }
+  }
   pendingRestore = { draft, snaps };
   $('#restore-summary').textContent = t('restore.summary', { n: snaps.length });
   openOverlay('#modal-restore');
 }
 
-function applyRestore(mode) {
+async function applyRestore(mode) {
   if (!pendingRestore) return;
   const { draft, snaps } = pendingRestore;
   pendingRestore = null;
@@ -2226,8 +2251,12 @@ function applyRestore(mode) {
   for (const snap of snaps) {
     saveSnapshot(snap.state, snap.name || (snap.state.meta && snap.state.meta.name) || 'Restored');
   }
-  if (draft) state = normalizeLoadedState(draft);
+  if (draft) {
+    state = normalizeLoadedState(draft);
+    if (typeof unpackImages === 'function') await unpackImages(state);
+  }
   closeOverlay('#modal-restore');
+  if (typeof gcImages === 'function') gcImages();
   rebuildAll();
   renderSavedList();
   scheduleSave();
@@ -2684,6 +2713,21 @@ function fmtSize(chars) {
   return kb >= 1024 ? nf(1).format(kb / 1024) + ' MB' : nf(0).format(Math.round(kb)) + ' KB';
 }
 
+async function updateImageNote() {
+  const el = $('#storage-image-note');
+  if (!el) return;
+  if (typeof idbAvailable !== 'function' || !idbAvailable()) {
+    el.textContent = '';
+    return;
+  }
+  try {
+    const ids = await imgKeys();
+    el.textContent = ids.length ? t('saved.imagesNote', { n: ids.length }) : '';
+  } catch (e) {
+    el.textContent = '';
+  }
+}
+
 function renderStorageMeter() {
   const fill = $('#sm-fill');
   const text = $('#sm-usage');
@@ -2692,6 +2736,7 @@ function renderStorageMeter() {
   const pct = Math.min(100, Math.round(used / STORAGE_BUDGET * 100));
   fill.style.width = pct + '%';
   fill.dataset.level = pct >= 90 ? 'full' : pct >= 70 ? 'high' : 'ok';
+  updateImageNote();
   text.textContent = t('saved.usage', {
     used: fmtSize(used), total: fmtSize(STORAGE_BUDGET), n: listSnapshots().length,
   });
@@ -2734,7 +2779,8 @@ function closeSavedPanel() {
   }
 }
 
-function doSaveSnapshot() {
+async function doSaveSnapshot() {
+  await packCurrentImages();
   const name = $('#save-name').value.trim() || state.meta.name || 'Signature';
   const snap = saveSnapshot(state, name);
   if (!snap) {
@@ -2901,7 +2947,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.87.0';
+const APP_VERSION = '0.88.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2985,6 +3031,13 @@ function init() {
   const verEl = $('#app-version');
   if (verEl) verEl.textContent = t('footer.version', { v: APP_VERSION });
   state = normalizeLoadedState(loadDraft());
+  /* Images live in IndexedDB; resolve refs before the first real render.
+     The promise is exposed so the E2E helper can wait for it. */
+  window.__imagesReadyDone = false;
+  window.__imagesReady = hydrateStateImages(state)
+    .then(() => packCurrentImages())
+    .then(() => { window.__imagesReadyDone = true; })
+    .catch(() => { window.__imagesReadyDone = true; });
 
   /* Shared-signature links (?sig=…): decode now, decide at the end of init
      — replacing the user's own signature must be a choice, not a side
@@ -3376,12 +3429,12 @@ function init() {
   $('#save-name').addEventListener('keydown', e => {
     if (e.key === 'Enter') doSaveSnapshot();
   });
-  $('#saved-list').addEventListener('click', e => {
+  $('#saved-list').addEventListener('click', async e => {
     const item = e.target.closest('.saved-item');
     if (!item) return;
     const id = item.dataset.id;
     if (e.target.classList.contains('snap-load')) {
-      const loaded = loadSnapshot(id);
+      const loaded = await loadSnapshotHydrated(id);
       if (loaded) {
         pushHistory();
         state = normalizeLoadedState(loaded);
@@ -3403,6 +3456,7 @@ function init() {
       const rows = [...document.querySelectorAll('#saved-list .saved-item')];
       const idx = Math.max(0, rows.indexOf(e.target.closest('.saved-item')));
       deleteSnapshot(id);
+      if (typeof gcImages === 'function') gcImages();
       renderSavedList();
       showToast(t('toast.deleted'), '', { key: 'toast.deleted' });
       const after = [...document.querySelectorAll('#saved-list .saved-item')];

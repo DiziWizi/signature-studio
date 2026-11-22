@@ -94,6 +94,8 @@ async function freshPage(page) {
     });
 
   await page.goto(`${BASE_URL}/?t=${Date.now()}`, { waitUntil: 'load' });
+  /* Draft images are hydrated from IndexedDB asynchronously. */
+  await page.waitForFunction(() => window.__imagesReadyDone === true, null, { timeout: 5000 }).catch(() => {});
 
   /* The first-run wizard opens on fresh storage. Dismiss it. */
   handle.wizardShown = await page

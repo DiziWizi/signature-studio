@@ -6,8 +6,8 @@ const { freshPage, expectNoErrors } = require('./helper');
 const PNG_1PX = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 
 async function makeBackup(page) {
-  const b64 = await page.evaluate(() => {
-    const zip = zipStore(backupFiles());
+  const b64 = await page.evaluate(async () => {
+    const zip = zipStore(await backupFiles());
     let s = '';
     for (const byte of zip) s += String.fromCharCode(byte);
     return btoa(s);

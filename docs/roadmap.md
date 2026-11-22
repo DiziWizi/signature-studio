@@ -320,6 +320,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   `unsafe-inline` for scripts (styles keep it by design); Netlify/Cloudflare,
   Vercel and Caddy header files share the exact nginx policy, enforced by
   `tools/check_headers.py`; E2E 280
+- [x] v0.88.0 — images in IndexedDB: uploads above 32 KB move out of the
+  5 MB localStorage budget and persist as `idb:` refs (state stays data URLs
+  in memory); snapshots, backup/restore and garbage collection follow; the
+  saved panel says how many images live outside the text budget; E2E 285
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
