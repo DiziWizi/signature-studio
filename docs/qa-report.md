@@ -2059,7 +2059,7 @@ Date: 2026-11-23 · Scope: verification across the whole library.
   `dir="auto"` + `unicode-bidi:isolate` in RTL. Legal boilerplate now uses
   the same isolation so punctuation stops jumping lines.
 - Matrix runs locally only, like the other visual baselines (font
-  rasterisation differs on CI). 1 new test; suite 323/323 twice.
+  rasterisation differs on CI). 1 new test; targeted matrix + RTL specs 4/4.
 
 ---
 
@@ -2075,8 +2075,23 @@ Date: 2026-11-23 · Scope: optional light/dark logo pair.
   dark-aware clients.
 - **UI** — optional upload beside the logo, with a blunt note that Outlook
   will not swap.
-- 2 tests (dark swap computed styles, CID/backup assets). Suite 325/325
-  twice; Firefox smoke 3/3.
+- 2 tests (dark swap computed styles, CID/backup assets). Targeted
+  dark-logo + i18n specs 6/6.
+
+---
+
+# v0.98.0 addendum (picker curation)
+
+Date: 2026-11-23 · Scope: finding a template.
+
+- **Search** — filters the 25 tiles by translated name, id and category;
+  live "Showing N" count.
+- **Start here** — six curated layouts (Classic, Minimal, Photo card, Split,
+  Booking, Reply) as a filter alongside the existing categories.
+- **Intersection** — category and query combine; zero results show a real
+  empty state instead of a blank grid.
+- 2 tests (search/clear, curated set + categories + empty state). Suite
+  327/327 twice; Firefox smoke 3/3.
 
 ---
 

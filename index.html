@@ -122,13 +122,21 @@
       <summary><span data-i18n="sec.tpl">Template &amp; layout</span></summary>
       <div class="body">
 <div class="sec-tools"><span class="sec-tools-label" data-i18n="reset.short">Reset</span> <button class="sec-reset" type="button" data-reset-sec="tpl" title="Reset this section" aria-label="Reset this section">↺</button></div>
+        <div class="tpl-search-row">
+          <input id="tpl-search" type="search" autocomplete="off" spellcheck="false"
+                 placeholder="Search templates" data-i18n-ph="tpl.search"
+                 aria-label="Search templates" data-i18n-aria="tpl.searchLabel">
+          <span class="micro" id="tpl-count" role="status"></span>
+        </div>
         <div class="tpl-filter" id="tpl-filter" role="group" aria-label="Filter templates" data-i18n-aria="tpl.filterLabel">
           <button type="button" class="tpl-cat is-on" data-cat="all" aria-pressed="true" data-i18n="tpl.all">All</button>
+          <button type="button" class="tpl-cat" data-cat="start" aria-pressed="false" data-i18n="tpl.start">Start here</button>
           <button type="button" class="tpl-cat" data-cat="personal" aria-pressed="false" data-i18n="tpl.personal">Personal</button>
           <button type="button" class="tpl-cat" data-cat="business" aria-pressed="false" data-i18n="tpl.business">Business</button>
           <button type="button" class="tpl-cat" data-cat="creative" aria-pressed="false" data-i18n="tpl.creative">Creative</button>
           <button type="button" class="tpl-cat" data-cat="public" aria-pressed="false" data-i18n="tpl.public">Public</button>
         </div>
+        <p class="micro hidden" id="tpl-empty" data-i18n="tpl.none">No templates match that search.</p>
         <div class="tpl-picker" id="tpl-picker">
           <button class="tpl-btn" data-template="classic" type="button" aria-pressed="true">
             <span class="thumb"><iframe class="tthumb" data-tpl="classic" data-i18n-title="tpl.classicPreview" title="Classic preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>

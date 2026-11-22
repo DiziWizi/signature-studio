@@ -353,6 +353,22 @@ details[open] summary::before { transform: rotate(90deg); }
 .backup-nudge.hidden { display: none; }
 .backup-nudge { color: #f0c674; margin: 0 0 8px; }
 
+.tpl-btn.hidden { display: none; }
+.tpl-search-row { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; }
+.tpl-search-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 7px 10px;
+  font: inherit;
+  font-size: 13px;
+  color: inherit;
+  background: rgba(127, 127, 127, 0.08);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.tpl-search-row .micro { flex: 0 0 auto; margin: 0; color: var(--muted-foreground); }
+#tpl-empty { margin: 8px 2px; }
+
 /* Test-in-a-real-inbox */
 .test-steps { margin: 0 0 12px; padding-left: 20px; }
 .test-steps li { margin: 0 0 6px; font-size: 13px; }
