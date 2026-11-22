@@ -1867,6 +1867,29 @@ Date: 2026-11-22 · Scope: .eml / .mht import; .msg investigated.
 
 ---
 
+# v0.89.1 addendum (duplicate social rows)
+
+Date: 2026-11-22 · Scope: one rendering bug, reported from the live demo.
+
+- **Symptom** — many templates showed the social chips twice; Creator showed
+  one row under the name and another after the contact block.
+- **Cause** — two independent defects. (1) Seven layouts emitted their own
+  row with `socialsPos(d) !== 'underName'`, which is true for `inContact`,
+  while `contactStackHtml` also appended a row for `inContact`. (2) Creator,
+  Vertical, Booking, Roundel and Photo card print a social row of their own
+  regardless of position and still let the stack append one.
+- **Fix** — bottom-row emissions are now `=== 'bottom'`; layouts with their
+  own row pass `{ socials: false }` to the stack; Academic, Clinic and Public
+  sector suppress their own row for `inContact` so the stack owns it; Custom
+  and Postcard use their dedicated blocks. Reply is unchanged and
+  intentionally has no social row.
+- **Guard** — `version-socials.spec.js` now walks all 25 templates × three
+  positions and asserts exactly one row (zero for Reply), so this cannot
+  silently return.
+- Suite 291/291 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

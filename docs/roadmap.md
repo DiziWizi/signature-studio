@@ -329,6 +329,12 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   and fed to the existing importer; plain-text email addresses are recovered
   when there is no mailto link; .msg is detected and explained, with the
   .mht/.html route instead; E2E 290
+- [x] v0.89.1 — fix: social icons rendered twice at some positions. Seven
+  layouts emitted their own row for anything except "underName" while the
+  contact stack also appended one for "inContact"; five hero-row layouts
+  ignored the position entirely. Bottom is now gated to "bottom", the
+  contact stack is authoritative for "inContact", and a 25×3 regression
+  test pins exactly one row (Reply intentionally has none); E2E 291
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

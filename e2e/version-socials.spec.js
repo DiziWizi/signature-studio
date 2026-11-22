@@ -76,6 +76,32 @@ test('footer images get upload buttons and per-image CID controls', async ({ pag
   await expectNoErrors(h);
 });
 
+test('no template renders the social row twice at any position', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+
+  const bad = await page.evaluate(() => {
+    const color = networkById(state.socials[0].network).color;
+    const needle = `background-color:${color}`;
+    const failures = [];
+    state.design.socialStyle = 'icons';
+    for (const pos of ['bottom', 'underName', 'inContact']) {
+      state.design.socialsPosition = pos;
+      for (const def of TEMPLATES) {
+        state.design.template = def.id;
+        const html = renderSignature(state);
+        const count = html.split(needle).length - 1;
+        /* Reply deliberately omits socials — it is a one-line layout. */
+        const expected = def.id === 'reply' ? 0 : 1;
+        if (count !== expected) failures.push({ pos, template: def.id, count, expected });
+      }
+    }
+    return failures;
+  });
+  expect(bad).toEqual([]);
+  await expectNoErrors(h);
+});
+
 test('app footer shows the software version matching package.json', async ({ page }) => {
   const h = await freshPage(page);
   const pkg = require('../package.json');

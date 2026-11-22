@@ -345,7 +345,9 @@ function contactStackHtml(s, d, opts = {}) {
     return inline || '';
   }
   let stack = items.map(it => contactLineHtml(d, it, { labels })).join('<br>');
-  if (socialsPos(d) === 'inContact') {
+  /* Templates that already print their own social row pass socials:false,
+     so the inContact position cannot render the chips a second time. */
+  if (opts.socials !== false && socialsPos(d) === 'inContact') {
     const socials = socialsRowHtml(s, d);
     if (socials) stack += `<br>${socials}`;
   }
@@ -751,7 +753,7 @@ function roundelRows(s, d) {
     rows.push(`<tr><td colspan="2" align="center">${booking}</td></tr>`);
     rows.push(spacerHtml(8));
   }
-  if (socialsPos(d) !== 'underName' && socialsNested) {
+  if (socialsPos(d) === 'bottom' && socialsNested) {
     rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
     rows.push(spacerHtml(4));
   }
@@ -800,7 +802,7 @@ function mastheadRows(s, d) {
     rows.push(`<tr><td colspan="2" align="left">${booking}</td></tr>`);
     rows.push(spacerHtml(8));
   }
-  if (socialsPos(d) !== 'underName' && socials) {
+  if (socialsPos(d) === 'bottom' && socials) {
     rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
     rows.push(spacerHtml(4));
   }
@@ -839,7 +841,7 @@ function monogramRows(s, d) {
     rows.push(`<tr><td colspan="2" align="center">${booking}</td></tr>`);
     rows.push(spacerHtml(8));
   }
-  if (socialsPos(d) !== 'underName' && socialsNested) {
+  if (socialsPos(d) === 'bottom' && socialsNested) {
     rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
     rows.push(spacerHtml(4));
   }
@@ -877,7 +879,7 @@ function photocardRows(s, d) {
     rows.push(`<tr><td colspan="2" align="left">${booking}</td></tr>`);
     rows.push(spacerHtml(8));
   }
-  if (socialsPos(d) !== 'underName' && socials) {
+  if (socialsPos(d) === 'bottom' && socials) {
     rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
     rows.push(spacerHtml(4));
   }
@@ -899,7 +901,7 @@ function postcardRows(s, d) {
     : '';
   const identity = [nameHtml(s, d), titleHtml(s, d), companyHtml(s, d), taglineHtml(s, d),
     contextLineHtml(s, d), statusHtml(s, d)].join('').replace(/<br>$/, '');
-  const stack = contactStackHtml(s, d, { labels: false });
+  const stack = contactStackHtml(s, d, { labels: false, socials: false });
   const socials = socialsRowHtml(s, d);
   const socialsBlock = socials
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;"><tr><td>${socials}</td></tr></table>`
@@ -1064,7 +1066,7 @@ function quoteRows(s, d) {
     rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
   }
 
-  if (socialsPos(d) !== 'underName' && socialsNested) {
+  if (socialsPos(d) === 'bottom' && socialsNested) {
     rows.push(spacerHtml(den.rowGap));
     rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
   }
@@ -1244,7 +1246,7 @@ function enterpriseRows(s, d) {
     rows.push(`<tr><td colspan="2" align="left"><span${dmCls(d, 'mut')} style="${textStyle(d, { size: d.fontSize - 2, color: mutedColor(d) })}">${esc(acknowledgement)}</span></td></tr>`);
   }
 
-  if (socialsPos(d) !== 'underName' && socials) {
+  if (socialsPos(d) === 'bottom' && socials) {
     rows.push(spacerHtml(den.rowGap));
     rows.push(`<tr><td colspan="2" align="left">${socials}</td></tr>`);
   }
@@ -1433,7 +1435,7 @@ function customRows(s, d) {
         break;
       }
       case 'contact': {
-        const stack = contactStackHtml(s, d);
+        const stack = contactStackHtml(s, d, { socials: false });
         if (stack) {
           rows.push(spacerHtml(den.rowGap));
           rows.push(`<tr><td colspan="2" align="left">${stack}</td></tr>`);
@@ -1523,7 +1525,7 @@ function letterheadRows(s, d) {
     rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
   }
 
-  if (socialsPos(d) !== 'underName' && socialsNested) {
+  if (socialsPos(d) === 'bottom' && socialsNested) {
     rows.push(spacerHtml(den.rowGap));
     rows.push(`<tr><td colspan="2" align="center">${socialsNested}</td></tr>`);
   }
@@ -1581,7 +1583,7 @@ function bookingRows(s, d) {
   if (logo) rows.push(`<tr><td align="center" style="padding:0 0 ${den.dividerMargin}px 0;">${logo}</td></tr>`);
   const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d) + statusHtml(s, d);
   if (identity) rows.push(`<tr><td align="center">${identity}</td></tr>`);
-  const stack = contactStackHtml(s, d);
+  const stack = contactStackHtml(s, d, { socials: false });
   if (stack) {
     rows.push(`<tr><td align="center" style="padding:${den.rowGap}px 0 0 0;">${stack}</td></tr>`);
   }
@@ -1613,7 +1615,7 @@ function verticalRows(s, d) {
   const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d) + statusHtml(s, d);
   if (identity) rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
   rows.push(dividerHtml(d, 2, { center: true, short: true }));
-  const stack = contactStackHtml(s, d);
+  const stack = contactStackHtml(s, d, { socials: false });
   if (stack) {
     rows.push(`<tr><td colspan="2" align="center">${stack}</td></tr>`);
     rows.push(spacerHtml(den.rowGap));
@@ -1663,7 +1665,7 @@ function academicRows(s, d) {
   rows.push(`<tr><td valign="top">${identity}</td>${right}</tr>`);
   rows.push(dividerHtml(d));
   const socials = socialsRowHtml(s, d);
-  if (socials) rows.push(`<tr><td colspan="2">${socials}</td></tr>`);
+  if (socialsPos(d) !== 'inContact' && socials) rows.push(`<tr><td colspan="2">${socials}</td></tr>`);
   rows.push(legalHtml(s, d));
   return rows.join('\n');
 }
@@ -1691,7 +1693,7 @@ function clinicRows(s, d) {
     rows.push(`<tr><td colspan="2" style="padding:4px 0 6px 0;">${booking}</td></tr>`);
   }
   const socials = socialsRowHtml(s, d);
-  if (socials) rows.push(`<tr><td colspan="2">${socials}</td></tr>`);
+  if (socialsPos(d) !== 'inContact' && socials) rows.push(`<tr><td colspan="2">${socials}</td></tr>`);
   rows.push(legalHtml(s, d));
   return rows.join('\n');
 }
@@ -1711,7 +1713,7 @@ function creatorRows(s, d) {
     rows.push(`<tr><td colspan="2" style="padding:4px 0 2px 0;">${nested}</td></tr>`);
   }
   rows.push(dividerHtml(d, 2, { short: true }));
-  const stack = contactStackHtml(s, d);
+  const stack = contactStackHtml(s, d, { socials: false });
   if (stack) rows.push(`<tr><td colspan="2">${stack}</td></tr>`);
   const qr = qrTableHtml(s, d);
   if (qr) rows.push(qr);
@@ -1734,7 +1736,7 @@ function publicRows(s, d) {
     rows.push(`<tr><td><span style="${textStyle(d, { size: d.fontSize - 2, color: mutedColor(d) })}">${esc(acknowledgement)}</span></td></tr>`);
   }
   const socials = socialsRowHtml(s, d);
-  if (socials) {
+  if (socialsPos(d) !== 'inContact' && socials) {
     rows.push(spacerHtml(8));
     rows.push(`<tr><td>${socials}</td></tr>`);
   }
