@@ -1765,6 +1765,27 @@ Date: 2026-11-21 · Scope: lazy thumbnails, section jump, share target.
 
 ---
 
+# v0.86.0 addendum (restore, team photos, output contrast)
+
+Date: 2026-11-21 · Scope: backup restore, per-row photos, contrast audit.
+
+- **ZIP reader** — `unzipStore()` walks the EOCD and central directory and
+  extracts store-only entries (our own archives); compressed entries are
+  rejected by name rather than decoded wrongly.
+- **Restore** — "Restore a backup…" reads `draft.json` and `saved/*.json`,
+  shows the counts, and offers **Add to saved** or **Replace everything**.
+  Restoring the draft pushes history first, so it is undoable; replacing the
+  saved list is not (documented in the modal copy).
+- **Team photos** — a real bug: `contactCardFiles()` embedded the base
+  portrait in every row. Rows now clear `design.portraitUrl`, take an
+  optional `photo` CSV column (`PHOTO;VALUE=URI`), and the team ZIP only
+  shares an embedded image when the base photo is a logo, not a face.
+- **Contrast audit** — `compatIssues()` now grades body text (fail <3, warn
+  <4.5), muted text and links (<4.5) against the signature background.
+- 5 new E2E tests (backup-restore.spec.js). Suite 277/277 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

@@ -2186,6 +2186,57 @@ function doBackup() {
   showToast(t('toast.backupDone', { n: listSnapshots().length }), '', { key: 'toast.backupDone' });
 }
 
+/* Restore a backup ZIP: draft, saved signatures, or both. Merge keeps what
+   is already saved; replace clears the saved list first. */
+let pendingRestore = null;
+
+async function beginRestore(file) {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  let entries;
+  try {
+    entries = unzipStore(bytes);
+  } catch (e) {
+    showToast(t('restore.badZip'), 'err', { key: 'restore.badZip' });
+    return;
+  }
+  const dec = new TextDecoder();
+  const readJson = entry => {
+    try { return JSON.parse(dec.decode(entry.data)); } catch (e) { return null; }
+  };
+  const draftEntry = entries.find(e => e.name === 'draft.json');
+  const draft = draftEntry ? readJson(draftEntry) : null;
+  const snaps = entries
+    .filter(e => /^saved\/.+\.json$/.test(e.name))
+    .map(readJson)
+    .filter(x => x && x.state && typeof x.state === 'object');
+  if (!draft && !snaps.length) {
+    showToast(t('restore.empty'), 'err', { key: 'restore.empty' });
+    return;
+  }
+  pendingRestore = { draft, snaps };
+  $('#restore-summary').textContent = t('restore.summary', { n: snaps.length });
+  openOverlay('#modal-restore');
+}
+
+function applyRestore(mode) {
+  if (!pendingRestore) return;
+  const { draft, snaps } = pendingRestore;
+  pendingRestore = null;
+  pushHistory('undo.restore');
+  if (mode === 'replace') {
+    try { localStorage.removeItem(SAVED_KEY); } catch (e) { /* ignore */ }
+  }
+  for (const snap of snaps) {
+    saveSnapshot(snap.state, snap.name || (snap.state.meta && snap.state.meta.name) || 'Restored');
+  }
+  if (draft) state = normalizeLoadedState(draft);
+  closeOverlay('#modal-restore');
+  rebuildAll();
+  renderSavedList();
+  scheduleSave();
+  showToast(t('toast.restored', { n: snaps.length }), '', { key: 'toast.restored', params: { n: snaps.length } });
+}
+
 function doExportPreset() {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   downloadBlob(blob, `${slugify(state.meta.name)}-preset.json`);
@@ -2333,14 +2384,23 @@ function contactCardFiles(photoDataUrl) {
   const plan = bulkPlan(state, csv);
   return plan.rows
     .filter(r => r.status === 'ready')
-    .map(r => ({
-      name: r.filename.replace(/\.html$/i, '.vcf'),
-      data: buildVCard(r.state, photoDataUrl ? { photoDataUrl } : {}),
-    }));
+    .map(r => {
+      const own = String((r.state.contact && r.state.contact.photoUrl) || '').trim();
+      const opts = /^https?:\/\//i.test(own)
+        ? { photoUri: normalizeUrl('custom', own) }
+        : (photoDataUrl ? { photoDataUrl } : {});
+      return {
+        name: r.filename.replace(/\.html$/i, '.vcf'),
+        data: buildVCard(r.state, opts),
+      };
+    });
 }
 
 async function doContactCardsZip() {
-  const files = contactCardFiles(await vcardPhotoDataUrl());
+  /* A headshot belongs to one person; only a shared logo is safe to copy
+     onto every team member's card. */
+  const shared = state.design.portraitUrl ? '' : await vcardPhotoDataUrl();
+  const files = contactCardFiles(shared);
   if (!files.length) {
     showToast(t('toast.cardsNone'), 'warn', { key: 'toast.cardsNone' });
     return;
@@ -2844,7 +2904,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.85.0';
+const APP_VERSION = '0.86.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3159,6 +3219,17 @@ function init() {
     menu.classList.add('hidden');
     doBackup();
   });
+  $('#x-restore').addEventListener('click', () => {
+    menu.classList.add('hidden');
+    $('#restore-file').click();
+  });
+  $('#restore-file').addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (file) beginRestore(file);
+  });
+  $('#restore-merge').addEventListener('click', () => applyRestore('merge'));
+  $('#restore-replace').addEventListener('click', () => applyRestore('replace'));
   $('#x-receiver-guide').addEventListener('click', () => {
     menu.classList.add('hidden');
     openOverlay('#modal-receiver-guide');

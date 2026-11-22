@@ -311,6 +311,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   the viewport; narrow screens get a sticky "Jump to" section picker; a PWA
   share target accepts a vCard or HTML signature and opens the importer with
   the right mode; E2E 272
+- [x] v0.86.0 — close the loop: backups restore from a ZIP (merge or
+  replace), team contact cards no longer copy one headshot onto everyone and
+  accept a per-row `photo` column, and the compatibility scan grades the
+  final text/muted/link contrast; E2E 277
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

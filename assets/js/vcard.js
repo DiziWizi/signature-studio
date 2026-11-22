@@ -154,6 +154,8 @@ function buildVCard(state, opts = {}) {
   if (/^http/i.test(logoUrl)) lines.push(vcardField('PHOTO', ['VALUE=URI'], logoUrl));
   /* Uploaded images live as data: URLs — embed a downscaled copy so the
      recipient's address book gets a picture, not just a placeholder. */
+  const photoUri = String(opts.photoUri || '').trim();
+  if (/^https?:\/\//i.test(photoUri)) lines.push(vcardField('PHOTO', ['VALUE=URI'], photoUri));
   const photo = String(opts.photoDataUrl || '');
   const photoMatch = /^data:image\/(png|jpe?g|webp);base64,([A-Za-z0-9+/=\s]+)$/i.exec(photo);
   if (photoMatch) {

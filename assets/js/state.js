@@ -71,7 +71,8 @@ function themeById(id) {
 function defaultState() {
   return {
     profile: { name: '', displayName: '', honorificPrefix: '', honorificSuffix: '', title: '', department: '', team: '', company: '', tagline: '', pronouns: '', location: '', languages: '', birthday: '', timezone: '' },
-    contact: { email: '', email2: '', emailLabel: '', email2Label: '', phone: '', phoneLabel: '', mobile: '', mobileLabel: '', website: '', websiteLabel: '', booking: '', bookingLabel: '', portfolio: '', portfolioLabel: '', pgpKey: '', address: '', addressLabel: '' },
+    contact: {
+      photoUrl: '', email: '', email2: '', emailLabel: '', email2Label: '', phone: '', phoneLabel: '', mobile: '', mobileLabel: '', website: '', websiteLabel: '', booking: '', bookingLabel: '', portfolio: '', portfolioLabel: '', pgpKey: '', address: '', addressLabel: '' },
     socials: [],      // { network, url, glyph, color }
     customLines: [],  // { label, value }
     design: {

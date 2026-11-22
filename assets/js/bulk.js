@@ -51,6 +51,7 @@ const BULK_COLUMNS = [
   { keys: ['address'], set: (s, v) => { s.contact.address = v; } },
   { keys: ['pronouns'], set: (s, v) => { s.profile.pronouns = v; } },
   { keys: ['location', 'city'], set: (s, v) => { s.profile.location = v; } },
+  { keys: ['photo', 'photourl', 'headshot'], set: (s, v) => { s.contact.photoUrl = v; } },
 ];
 
 function bulkColumnMap(header) {
@@ -237,8 +238,14 @@ function bulkPlan(state, csvText) {
     for (const k of ['name', 'displayName', 'title', 'department', 'company',
       'pronouns', 'location', 'birthday', 'languages',
       'honorificPrefix', 'honorificSuffix']) clone.profile[k] = '';
-    for (const k of ['email', 'phone', 'mobile', 'website', 'address']) clone.contact[k] = '';
+    for (const k of ['email', 'phone', 'mobile', 'website', 'address', 'photoUrl']) clone.contact[k] = '';
     for (const m of map) m.set(clone, (values[m.idx] || '').trim());
+
+    /* A portrait is personal; the base state's face must never leak into
+       every row. A per-row photo column replaces it when present. */
+    clone.design.portraitUrl = '';
+    const rowPhoto = String(clone.contact.photoUrl || '').trim();
+    if (/^https?:\/\//i.test(rowPhoto)) clone.design.portraitUrl = rowPhoto;
 
     const name = String(clone.profile.name || '').trim();
     const email = String(clone.contact.email || '').trim();

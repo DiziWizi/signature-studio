@@ -86,6 +86,8 @@
         <span class="menu-group" role="presentation" data-i18n="menu.powerTools" data-advanced>Power tools</span>
         <button role="menuitem" id="x-copy-fragment" data-advanced type="button" data-i18n="topbar.copyFragment">Copy table fragment (for CMS)</button>
         <button role="menuitem" id="x-backup" data-advanced type="button" data-i18n="topbar.backup">Back up everything (ZIP)</button>
+        <button role="menuitem" id="x-restore" data-advanced type="button" data-i18n="topbar.restore">Restore a backup…</button>
+        <input type="file" id="restore-file" accept=".zip,application/zip" hidden>
         <button role="menuitem" id="x-preset-export" data-advanced type="button" data-i18n="topbar.presetExport">Export preset (.json)</button>
         <button role="menuitem" id="x-preset-import" data-advanced type="button" data-i18n="topbar.presetImport">Import preset (.json)</button>
         <button role="menuitem" id="x-share" data-advanced type="button" data-i18n="topbar.share">Copy share link</button>
@@ -1008,6 +1010,19 @@
 </div>
 
 <!-- Bulk modal -->
+<div class="overlay hidden" id="modal-restore" role="dialog" aria-modal="true" aria-labelledby="restore-title">
+  <div class="modal">
+    <h2 id="restore-title" data-i18n="restore.title">Restore a backup</h2>
+    <p class="micro" id="restore-summary" role="status"></p>
+    <p class="micro" data-i18n="restore.mergeHint">“Add” keeps your current saved signatures. “Replace” clears them first. Either way the draft in the backup is opened.</p>
+    <div class="modal-actions">
+      <button class="btn" data-close type="button" data-i18n="restore.cancel">Cancel</button>
+      <button class="btn" id="restore-merge" type="button" data-i18n="restore.merge">Add to saved</button>
+      <button class="btn btn-primary" id="restore-replace" type="button" data-i18n="restore.replace">Replace everything</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="modal-receiver-guide" role="dialog" aria-modal="true" aria-labelledby="rg-title">
   <div class="modal">
     <h2 id="rg-title" data-i18n="rg.title">What recipients see</h2>

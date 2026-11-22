@@ -27,6 +27,25 @@ function compatIssues(s, overrideHtml) {
   }
   if (/background-image\s*:/i.test(html)) issues.push({ level: 'fail', key: 'compat.background' });
 
+  /* Contrast of the final palette, not just the fields: background colour,
+     muted text and links all land in the same message. */
+  const bg = /^#[0-9a-f]{3,8}$/i.test(String(s.design.background || '')) ? s.design.background : '#ffffff';
+  const ratioOf = (a, b) => (typeof contrastRatio === 'function' ? contrastRatio(a, b) : null);
+  const textRatio = ratioOf(s.design.textColor, bg);
+  if (textRatio !== null) {
+    if (textRatio < 3) issues.push({ level: 'fail', key: 'compat.contrastTextFail', params: { ratio: textRatio.toFixed(1) } });
+    else if (textRatio < 4.5) issues.push({ level: 'warn', key: 'compat.contrastTextWarn', params: { ratio: textRatio.toFixed(1) } });
+  }
+  const muted = typeof mutedColor === 'function' ? mutedColor(s.design) : '';
+  const mutedRatio = ratioOf(muted, bg);
+  if (mutedRatio !== null && mutedRatio < 4.5) {
+    issues.push({ level: 'warn', key: 'compat.contrastMuted', params: { ratio: mutedRatio.toFixed(1) } });
+  }
+  const linkRatio = ratioOf(s.design.linkColor || s.design.primaryColor, bg);
+  if (linkRatio !== null && linkRatio < 4.5) {
+    issues.push({ level: 'warn', key: 'compat.contrastLink', params: { ratio: linkRatio.toFixed(1) } });
+  }
+
   const remote = (html.match(/<img\b[^>]*src=["']https?:/gi) || []).length;
   if (remote) issues.push({ level: 'warn', key: 'compat.remote', params: { n: remote } });
 
