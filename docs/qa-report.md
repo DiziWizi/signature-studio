@@ -1890,6 +1890,34 @@ Date: 2026-11-22 · Scope: one rendering bug, reported from the live demo.
 
 ---
 
+# v0.90.0 addendum (layout variants, history memory)
+
+Date: 2026-11-22 · Scope: variants and undo memory.
+
+- **Variants** — three controls under the template picker:
+  `design.mirrorLayout` swaps the two columns in Classic, Compact, Split,
+  Photo card and Academic (logo side XOR `logoPosition`; Academic swaps and
+  re-aligns the contact column). `design.photoLayout` moves the Photo card
+  photo above the name and the Vertical card photo beside it. The compact
+  switch writes the existing `density` setting and stays in sync with the
+  Spacing select.
+- **Supported-set honesty** — mirroring is implemented where a two-column row
+  exists; the hint names those templates rather than pretending it applies
+  everywhere. Vertical's portrait gained `data-edit="logo"`, which also makes
+  click-to-edit work there.
+- **History memory** — `pushHistory` stores `refsForStorage(state)` (image
+  refs) instead of deep clones with data URLs, estimates each entry's size,
+  and trims oldest entries beyond a 6 MB character budget (count cap stays
+  at 50). `doUndo`/`doRedo` are async and hydrate refs before applying;
+  states without refs still apply synchronously.
+- **GC** — `gcImages(extraIds)` now keeps images referenced by undo/redo
+  stacks (`historyImageIds()`), so collecting after a delete cannot blank an
+  undo entry.
+- 6 new variant tests (variants.spec.js) + 3 history tests (undo.spec.js).
+  Suite 300/300 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

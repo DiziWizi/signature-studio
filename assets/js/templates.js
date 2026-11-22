@@ -547,7 +547,7 @@ function classicRows(s, d, { center = false, qr = true } = {}) {
   const align = center ? 'center' : 'left';
   const den = densityOf(d);
   const logoContent = logoCellHtml(s, d);
-  const right = d.logoPosition === 'right';
+  const right = (d.logoPosition === 'right') !== !!d.mirrorLayout;
   const logoCell = logoContent
     ? `<td class="m-cell" width="${d.logoWidth + den.cellPad}" valign="middle" align="${align}" style="${right ? `padding:0 0 0 ${den.cellPad}px;` : `padding:0 ${den.cellPad}px 0 0;`}">${logoContent}</td>`
     : '';
@@ -598,7 +598,7 @@ function compactRows(s, d) {
   const rows = [];
   const den = densityOf(d);
   const logoContent = logoCellHtml(s, d);
-  const right = d.logoPosition === 'right';
+  const right = (d.logoPosition === 'right') !== !!d.mirrorLayout;
   const logoCell = logoContent
     ? `<td class="m-cell" width="${d.logoWidth + den.cellPad}" valign="middle" align="${right ? 'right' : 'left'}" style="${right ? `padding:0 0 0 ${den.cellPad}px;` : `padding:0 ${den.cellPad}px 0 0;`}">${logoContent}</td>`
     : '';
@@ -682,7 +682,7 @@ function splitRows(s, d) {
     rows.push(spacerHtml(16));
   }
   const logoContent = logoCellHtml(s, d);
-  const right = d.logoPosition === 'right';
+  const right = (d.logoPosition === 'right') !== !!d.mirrorLayout;
   const den = densityOf(d);
   const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
   if (logoContent || identity) {
@@ -857,11 +857,16 @@ function photocardRows(s, d) {
   const logoContent = logoCellHtml(s, d, { portrait: true });
   const identity = nameHtml(s, d, { size: d.fontSize + 4 + nameExtraOf(d) }) + titleHtml(s, d) +
     companyHtml(s, d) + taglineHtml(s, d) + contextLineHtml(s, d) + statusHtml(s, d);
-  if (logoContent || identity) {
+  if (d.photoLayout === 'top' && logoContent) {
+    rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.rowGap}px 0;">${logoContent}</td></tr>`);
+    rows.push(`<tr><td colspan="2" align="center">${identity || '&nbsp;'}</td></tr>`);
+  } else if (logoContent || identity) {
+    const logoOnRight = !!d.mirrorLayout;
     const logoCell = logoContent
-      ? `<td class="m-cell" width="${d.logoWidth + 20}" valign="top" align="left" style="padding:2px 20px 0 0;">${logoContent}</td>`
+      ? `<td class="m-cell" width="${d.logoWidth + 20}" valign="top" align="${logoOnRight ? 'right' : 'left'}" style="${logoOnRight ? 'padding:2px 0 0 20px;' : 'padding:2px 20px 0 0;'}">${logoContent}</td>`
       : '';
-    rows.push(`<tr>${logoCell}<td class="m-cell" valign="top" align="left">${identity || '&nbsp;'}</td></tr>`);
+    const identityCell = `<td class="m-cell" valign="top" align="left">${identity || '&nbsp;'}</td>`;
+    rows.push(`<tr>${logoOnRight ? identityCell + logoCell : logoCell + identityCell}</tr>`);
   }
   const socials = socialsRowHtml(s, d);
   if (socialsPos(d) === 'underName' && socials) {
@@ -1197,7 +1202,7 @@ function enterpriseRows(s, d) {
   const rows = [];
   const den = densityOf(d);
   const logoContent = logoCellHtml(s, d);
-  const right = d.logoPosition === 'right';
+  const right = (d.logoPosition === 'right') !== !!d.mirrorLayout;
   const logoCell = logoContent
     ? `<td class="m-cell" width="${d.logoWidth + den.cellPad}" valign="middle" align="${right ? 'right' : 'left'}" style="${right ? `padding:0 0 0 ${den.cellPad}px;` : `padding:0 ${den.cellPad}px 0 0;`}">${logoContent}</td>`
     : '';
@@ -1286,7 +1291,7 @@ function nightRows(s, d) {
 
   const rows = [];
   const logoContent = logoCellHtml(s, d);
-  const right = d.logoPosition === 'right';
+  const right = (d.logoPosition === 'right') !== !!d.mirrorLayout;
   const logoCell = logoContent
     ? `<td class="m-cell" width="${d.logoWidth + den.cellPad}" valign="middle" align="${right ? 'right' : 'left'}" style="${right ? `padding:0 0 0 ${den.cellPad}px;` : `padding:0 ${den.cellPad}px 0 0;`}">${logoContent}</td>`
     : '';
@@ -1608,12 +1613,17 @@ function verticalRows(s, d) {
   const den = densityOf(d);
   const w = Math.max(96, Math.round(d.logoWidth * 1.8));
   const portrait = portraitSrcOf(d)
-    ? `<img src="${esc(imgSrcOf(d, 'logo', portraitSrcOf(d)))}" width="${w}" alt="${esc(String(d.logoAlt || 'logo'))}" ` +
+    ? `<img data-edit="logo" src="${esc(imgSrcOf(d, 'logo', portraitSrcOf(d)))}" width="${w}" alt="${esc(String(d.logoAlt || 'logo'))}" ` +
       `style="display:block;width:${w}px;max-width:${w}px;height:auto;border:0;${br(d, '10px')}">`
     : monogramHtml(s, d);
-  rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.dividerMargin}px 0;">${portrait}</td></tr>`);
   const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + taglineHtml(s, d) + statusHtml(s, d);
-  if (identity) rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
+  if (d.photoLayout === 'side') {
+    rows.push(`<tr><td class="m-cell" width="${w + 20}" valign="top" align="left" style="padding:2px 20px 0 0;">${portrait}</td>` +
+      `<td class="m-cell" valign="top" align="left">${identity || '&nbsp;'}</td></tr>`);
+  } else {
+    rows.push(`<tr><td colspan="2" align="center" style="padding:0 0 ${den.dividerMargin}px 0;">${portrait}</td></tr>`);
+    if (identity) rows.push(`<tr><td colspan="2" align="center">${identity}</td></tr>`);
+  }
   rows.push(dividerHtml(d, 2, { center: true, short: true }));
   const stack = contactStackHtml(s, d, { socials: false });
   if (stack) {
@@ -1659,10 +1669,12 @@ function academicRows(s, d) {
   }
   const identity = nameHtml(s, d) + titleHtml(s, d) + companyHtml(s, d) + statusHtml(s, d);
   const stack = contactStackHtml(s, d);
-  const right = stack
-    ? `<td width="42%" align="right" valign="top">${stack}</td>`
+  const mirrored = !!d.mirrorLayout;
+  const contactCell = stack
+    ? `<td width="42%" align="${mirrored ? 'left' : 'right'}" valign="top">${stack}</td>`
     : '';
-  rows.push(`<tr><td valign="top">${identity}</td>${right}</tr>`);
+  const identityCell = `<td valign="top" align="${mirrored ? 'right' : 'left'}">${identity}</td>`;
+  rows.push(`<tr>${mirrored ? contactCell + identityCell : identityCell + contactCell}</tr>`);
   rows.push(dividerHtml(d));
   const socials = socialsRowHtml(s, d);
   if (socialsPos(d) !== 'inContact' && socials) rows.push(`<tr><td colspan="2">${socials}</td></tr>`);

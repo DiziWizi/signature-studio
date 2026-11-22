@@ -209,9 +209,12 @@ function referencedImageIds(draft, snapshots) {
 }
 
 /* Delete blobs nothing points at. Safe to call opportunistically. */
-async function gcImages() {
+async function gcImages(extraIds) {
   if (!idbAvailable()) return 0;
   const keep = referencedImageIds(loadDraft(), listSnapshots());
+  /* Undo/redo entries reference blobs too; deleting those would make an
+     undo restore a blank image. */
+  if (extraIds) for (const id of extraIds) keep.add(id);
   let removed = 0;
   for (const id of await imgKeys()) {
     if (!keep.has(id)) {

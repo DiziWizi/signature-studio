@@ -335,6 +335,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   ignored the position entirely. Bottom is now gated to "bottom", the
   contact stack is authoritative for "inContact", and a 25×3 regression
   test pins exactly one row (Reply intentionally has none); E2E 291
+- [x] v0.90.0 — variants & history memory: layouts gain mirror columns and
+  side/above photo placement (Classic, Compact, Split, Photo card, Academic,
+  Vertical card) plus a compact-spacing switch bound to Density; undo history
+  stores image refs instead of bytes with a 6 MB budget, hydrates on
+  undo/redo, and GC keeps images referenced only by history; E2E 300
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

@@ -121,33 +121,82 @@ function normalizeLoadedState(raw) {
 
 /* History entries carry what they will undo: an unlabelled ↶ is something
    people don't trust, especially before a destructive-looking reset. */
+/* History keeps refs, not image bytes: a 50-entry stack of deep clones with
+   multi-megabyte data URLs was the largest memory consumer in the editor.
+   Entries are hydrated on undo/redo, and a character budget bounds the rare
+   uncached data URL. */
+const HISTORY_BYTE_BUDGET = 6 * 1024 * 1024;
+
+function historyImageChars(stateObj) {
+  let chars = 0;
+  if (typeof imageSlots === 'function') {
+    for (const { obj, key } of imageSlots(stateObj)) chars += String(obj[key] || '').length;
+  }
+  return chars;
+}
+
+function trimHistoryBudget() {
+  let total = undoStack.reduce((sum, entry) => sum + (entry.size || 0), 0);
+  while (undoStack.length > 1 && total > HISTORY_BYTE_BUDGET) {
+    total -= undoStack.shift().size || 0;
+  }
+}
+
 function pushHistory(key = 'undo.edit', params = null) {
-  undoStack.push({ state: clone(state), key, params });
+  const snapshot = typeof refsForStorage === 'function' ? refsForStorage(state) : clone(state);
+  undoStack.push({ state: snapshot, key, params, size: 40000 + historyImageChars(snapshot) });
   if (undoStack.length > HISTORY_MAX) undoStack.shift();
+  trimHistoryBudget();
   redoStack = [];
   updateUndoButtons();
+}
+
+function historyImageIds() {
+  const ids = new Set();
+  if (typeof imageSlots !== 'function') return ids;
+  for (const entry of [...undoStack, ...redoStack]) {
+    for (const { obj, key } of imageSlots(entry.state)) {
+      const value = String(obj[key] || '');
+      if (value.startsWith('idb:')) ids.add(value.slice(4));
+    }
+  }
+  return ids;
 }
 
 function undoWhat(entry) {
   return entry ? t(entry.key || 'undo.edit', entry.params || {}) : '';
 }
 
-function doUndo() {
+async function doUndo() {
   if (!undoStack.length) return;
   const entry = undoStack.pop();
-  redoStack.push({ state: clone(state), key: entry.key, params: entry.params });
-  state = entry.state;
+  redoStack.push({
+    state: typeof refsForStorage === 'function' ? refsForStorage(state) : clone(state),
+    key: entry.key,
+    params: entry.params,
+  });
+  const restored = entry.state;
+  try {
+    if (typeof unpackImages === 'function') await unpackImages(restored);
+  } catch (e) { /* refs that no longer exist blank their slot */ }
+  state = restored;
   rebuildAll();
   scheduleSave();
   updateUndoButtons();
   showToast(t('toast.undoneWhat', { what: undoWhat(entry) }), '', { key: 'toast.undone' });
 }
 
-function doRedo() {
+async function doRedo() {
   if (!redoStack.length) return;
   const entry = redoStack.pop();
-  undoStack.push({ state: clone(state), key: entry.key, params: entry.params });
-  state = entry.state;
+  const snapshot = typeof refsForStorage === 'function' ? refsForStorage(state) : clone(state);
+  undoStack.push({ state: snapshot, key: entry.key, params: entry.params, size: 40000 + historyImageChars(snapshot) });
+  trimHistoryBudget();
+  const restored = entry.state;
+  try {
+    if (typeof unpackImages === 'function') await unpackImages(restored);
+  } catch (e) { /* ignore */ }
+  state = restored;
   rebuildAll();
   scheduleSave();
   updateUndoButtons();
@@ -410,6 +459,8 @@ function renderPreviewNow() {
   const peek = $('#peek-frame');
   if (peek && !$('#peek-sheet').classList.contains('hidden')) peek.srcdoc = html;
   applyFieldVisibility();
+  const compactToggle = $('#variant-compact');
+  if (compactToggle) compactToggle.checked = state.design.density === 'compact';
   applyTemplateDimming();
   applyFieldErrors();
   renderContrastMeter();
@@ -2256,7 +2307,7 @@ async function applyRestore(mode) {
     if (typeof unpackImages === 'function') await unpackImages(state);
   }
   closeOverlay('#modal-restore');
-  if (typeof gcImages === 'function') gcImages();
+  if (typeof gcImages === 'function') gcImages(historyImageIds());
   rebuildAll();
   renderSavedList();
   scheduleSave();
@@ -2972,7 +3023,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.89.1';
+const APP_VERSION = '0.90.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3309,6 +3360,13 @@ function init() {
     menu.classList.add('hidden');
     openOverlay('#modal-receiver-guide');
   });
+  $('#variant-compact').addEventListener('change', e => {
+    state.design.density = e.target.checked ? 'compact' : 'regular';
+    const select = document.querySelector('[data-field="design.density"]');
+    if (select) select.value = state.design.density;
+    renderPreview();
+    scheduleSave();
+  });
   $('#x-compat').addEventListener('click', () => {
     menu.classList.add('hidden');
     openCompat(null);
@@ -3487,7 +3545,7 @@ function init() {
       const rows = [...document.querySelectorAll('#saved-list .saved-item')];
       const idx = Math.max(0, rows.indexOf(e.target.closest('.saved-item')));
       deleteSnapshot(id);
-      if (typeof gcImages === 'function') gcImages();
+      if (typeof gcImages === 'function') gcImages(historyImageIds());
       renderSavedList();
       showToast(t('toast.deleted'), '', { key: 'toast.deleted' });
       const after = [...document.querySelectorAll('#saved-list .saved-item')];

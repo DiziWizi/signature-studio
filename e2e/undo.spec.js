@@ -85,3 +85,95 @@ test('applying edited JSON is undoable', async ({ page }) => {
   expect(await page.evaluate(() => state.profile.name)).toBe(before);
   await expectNoErrors(h);
 });
+
+/* v0.90: history keeps image refs, not bytes, and stays within a budget. */
+const PNG_BIG = async page => page.evaluate(() => {
+  const c = document.createElement('canvas');
+  c.width = 220;
+  c.height = 220;
+  const ctx = c.getContext('2d');
+  const img = ctx.createImageData(220, 220);
+  for (let i = 0; i < img.data.length; i += 4) {
+    img.data[i] = Math.random() * 255;
+    img.data[i + 1] = Math.random() * 255;
+    img.data[i + 2] = Math.random() * 255;
+    img.data[i + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  return c.toDataURL('image/png');
+});
+
+test('history stores image refs and still restores the picture on undo', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+  const big = await PNG_BIG(page);
+  await page.evaluate(url => {
+    state.design.logoUrl = url;
+    renderPreview();
+    flushSave();
+  }, big);
+  await expect.poll(() => page.evaluate(() => (localStorage.getItem('sigstudio.draft.v1') || '').includes('idb:'))).toBe(true);
+
+  await page.evaluate(() => {
+    pushHistory('undo.edit');
+    state.profile.name = 'Changed afterwards';
+    renderPreview();
+  });
+  const entry = await page.evaluate(() => {
+    const last = undoStack[undoStack.length - 1];
+    return {
+      logo: last.state.design.logoUrl.slice(0, 4),
+      jsonChars: JSON.stringify(last.state).length,
+      size: last.size,
+    };
+  });
+  expect(entry.logo).toBe('idb:');
+  expect(entry.jsonChars).toBeLessThan(80000);
+  expect(entry.size).toBeLessThan(200000);
+
+  await page.click('#btn-undo');
+  await expect.poll(() => page.evaluate(() => state.profile.name)).toBe('Ada Lovelace');
+  const logo = await page.evaluate(() => state.design.logoUrl.slice(0, 10));
+  expect(logo).toBe('data:image');
+  await expectNoErrors(h);
+});
+
+test('the history budget trims old entries when images are uncached', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+  const big = await PNG_BIG(page);
+  const stats = await page.evaluate(url => {
+    imageIdCache.clear();
+    state.design.logoUrl = url;
+    for (let i = 0; i < 24; i++) pushHistory();
+    return {
+      n: undoStack.length,
+      total: undoStack.reduce((sum, entry) => sum + (entry.size || 0), 0),
+    };
+  }, big);
+  expect(stats.n).toBeLessThan(24);
+  expect(stats.total).toBeLessThanOrEqual(6 * 1024 * 1024 + 400000);
+  await expectNoErrors(h);
+});
+
+test('garbage collection keeps images referenced only by history', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-sample');
+  const big = await PNG_BIG(page);
+  await page.evaluate(url => {
+    state.design.logoUrl = url;
+    renderPreview();
+    flushSave();
+  }, big);
+  await expect.poll(() => page.evaluate(() => (localStorage.getItem('sigstudio.draft.v1') || '').includes('idb:'))).toBe(true);
+
+  await page.evaluate(async () => {
+    pushHistory();
+    state.design.logoUrl = '';
+    flushSave();
+    await gcImages(historyImageIds());
+  });
+  const keys = await page.evaluate(async () => (await imgKeys()).length);
+  expect(keys).toBeGreaterThan(0);
+  await expectNoErrors(h);
+});

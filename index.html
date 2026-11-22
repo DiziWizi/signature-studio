@@ -230,6 +230,18 @@
             <span class="tpl-name" data-i18n="tpl.custom">Custom</span>
           </button>
         </div>
+        <div class="variant-row" role="group" aria-label="Layout variants" data-i18n-aria="design.variants">
+          <label class="switch"><input type="checkbox" data-field="design.mirrorLayout"><span class="sw"></span> <span data-i18n="design.mirror">Mirror columns</span></label>
+          <label class="field variant-photo"><span data-i18n="design.photoLayout">Photo</span>
+            <select data-field="design.photoLayout">
+              <option value="" data-i18n="design.photoAuto">Template default</option>
+              <option value="side" data-i18n="design.photoSide">Beside the name</option>
+              <option value="top" data-i18n="design.photoTop">Above the name</option>
+            </select>
+          </label>
+          <label class="switch"><input type="checkbox" id="variant-compact"><span class="sw"></span> <span data-i18n="design.compactSpacing">Compact spacing</span></label>
+        </div>
+        <p class="micro" data-i18n="design.variantsHint">Mirroring applies to Classic, Compact, Split, Photo card and Academic. Photo placement applies to Photo card and Vertical card; compact spacing is the same setting as Spacing → Density.</p>
         <div id="custom-blocks" class="hidden">
           <span class="hint" data-i18n="custom.blocksHint">Drag or use the arrows to set the signature's section order. Empty sections simply don't render.</span>
           <div id="blocks-list"></div>

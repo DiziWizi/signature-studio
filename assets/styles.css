@@ -332,6 +332,15 @@ details[open] summary::before { transform: rotate(90deg); }
   .sec-jump select { flex: 1; min-width: 0; font: inherit; font-size: 12px; padding: 6px 8px; }
 }
 
+/* Layout variants under the template picker */
+.variant-row {
+  display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
+  margin: 10px 0 4px; padding: 8px 10px;
+  border: 1px solid var(--line2); border-radius: 8px;
+}
+.variant-row .field { margin: 0; }
+.variant-row select { font-size: 12px; padding: 4px 6px; }
+
 /* Import from a saved email */
 .import-file-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 6px 0 2px; }
 .import-file-row .micro { flex: 1; min-width: 200px; }

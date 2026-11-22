@@ -89,6 +89,8 @@ function defaultState() {
       qrTarget: '',         // '' = vCard, 'url'
       qrUrl: '',            // the URL when qrTarget === 'url'
       altLabel: '',         // second-language label, e.g. "Français"
+      mirrorLayout: false,  // swap the two columns where a layout has them
+      photoLayout: '',      // '' = template default | 'side' | 'top"
       altBlock: '',         // second-language block, line breaks preserved
       mutedColor: '',       // muted/secondary text override ('' = derived)
       customFont: '',       // raw font stack override ('' = font preset)
