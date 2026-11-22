@@ -861,6 +861,7 @@
       <button class="itab" data-tab="outlook" type="button" aria-pressed="false" data-i18n="instr.outlook">Outlook (Windows)</button>
       <button class="itab" data-tab="outlookmac" type="button" aria-pressed="false" data-i18n="instr.outlookmac">Outlook (Mac)</button>
       <button class="itab" data-tab="applemail" type="button" aria-pressed="false" data-i18n="instr.applemail">Apple Mail</button>
+      <button class="itab" data-tab="iosmail" type="button" aria-pressed="false" data-i18n="instr.iosmail">iPhone / iPad</button>
       <button class="itab" data-tab="thunderbird" type="button" aria-pressed="false" data-i18n="instr.thunderbird">Thunderbird</button>
       <button class="itab" data-tab="mailboxorg" type="button" aria-pressed="false" data-i18n="instr.mailboxorg">mailbox.org</button>
       <button class="itab" data-tab="webmail" type="button" aria-pressed="false" data-i18n="instr.webmail">Other webmail</button>
@@ -896,6 +897,17 @@
         <li data-i18n-html="instr.applemail2">Mail → Settings (⌘+,) → <b>Signatures</b> → select your account → <b>+</b>.</li>
         <li data-i18n="instr.applemail3">Paste (⌘V) and close. The signature syncs to iPhone/iPad if your account uses iCloud sync.</li>
       </ol>
+    </div>
+    <div class="ipane" id="pane-iosmail">
+      <ol>
+        <li data-i18n-html="instr.iosmail1">Choose <b>Export ▸ Plain-text signature (.txt)</b> above. The iOS signature field is text-only, so the HTML copy will not survive.</li>
+        <li data-i18n="instr.iosmail2">Open the .txt on the iPhone (AirDrop it, or use Files) and copy all of it.</li>
+        <li data-i18n-html="instr.iosmail3">Settings → Apps → Mail → <b>Signature</b> (iOS 18 and later). On iOS 17 or earlier: Settings → Mail → Signature.</li>
+        <li data-i18n-html="instr.iosmail4">Turn on <b>Per Account</b>, then choose the mailbox.org account.</li>
+        <li data-i18n="instr.iosmail5">Delete “Sent from my iPhone” and paste the text. Leave the screen — it saves automatically.</li>
+        <li data-i18n="instr.iosmail6">Compose a message to confirm the signature appears.</li>
+      </ol>
+      <p class="note" data-i18n="instr.iosmailNote">iOS Mail signatures are text only — no images, columns or colours. They are stored on the device and do not sync from a Mac or through iCloud, so each iPhone and iPad needs its own. For a logo, use a mail app that supports HTML signatures, or compose in webmail.</p>
     </div>
     <div class="ipane" id="pane-thunderbird">
       <ol>

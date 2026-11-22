@@ -365,6 +365,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   download, the Saved panel shows the last backup's age, and an amber nudge
   appears when storage is evictable and the backup is missing or over a week
   old; E2E 321
+- [x] v0.95.1 — iOS Mail install tab: plain-text export, the correct
+  Settings → Apps → Mail → Signature path, Per Account, and the blunt truth
+  that iOS signatures are text-only and do not sync from a Mac or iCloud;
+  E2E 322
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

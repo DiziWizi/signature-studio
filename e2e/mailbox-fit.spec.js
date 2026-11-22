@@ -20,6 +20,21 @@ test('mailbox.org tab explains the paste workflow and its traps', async ({ page 
   await expectNoErrors(h);
 });
 
+test('iPhone / iPad tab states the text-only limit and the correct path', async ({ page }) => {
+  const h = await freshPage(page);
+  await page.click('#btn-export');
+  await page.click('#x-instructions');
+  await page.click('.itab[data-tab="iosmail"]');
+  const pane = page.locator('#pane-iosmail');
+  await expect(pane).toHaveClass(/active/);
+  await expect(pane).toContainText(/Plain-text signature/i);
+  await expect(pane).toContainText(/text-only/i);
+  await expect(pane).toContainText(/Apps → Mail → Signature/i);
+  await expect(pane).toContainText(/Per Account/i);
+  await expect(pane).toContainText(/do not sync from a Mac/i);
+  await expectNoErrors(h);
+});
+
 test('Save reply variant stores a paired Reply copy without changing the editor', async ({ page }) => {
   const h = await freshPage(page);
   await page.click('#btn-sample');

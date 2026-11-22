@@ -2029,6 +2029,23 @@ Date: 2026-11-22 · Scope: backup age, verification, honest nudge.
 
 ---
 
+# v0.95.1 addendum (iOS Mail guidance)
+
+Date: 2026-11-22 · Scope: install guide only.
+
+- **iPhone / iPad tab** — directs users to the **plain-text** export, because
+  Apple's documentation states “You can only use text in your Mail
+  signatures.” Steps cover opening the `.txt` on the device, Settings → Apps
+  → Mail → Signature (iOS 18+; Settings → Mail on iOS 17 and earlier), Per
+  Account, replacing “Sent from my iPhone”, and composing a test.
+- **Honest limits** — no images, columns or colours; signatures live on the
+  device and do not sync from a Mac or through iCloud; HTML needs a mail app
+  that supports it or webmail.
+- 1 new test (path, text-only and sync wording). Suite 322/322 twice;
+  Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
