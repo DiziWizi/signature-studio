@@ -808,6 +808,11 @@
       <label><input type="radio" name="importMode" value="vcard"><span data-i18n="import.modeVcard">vCard (.vcf)</span></label>
     </div>
     <p class="hint" id="import-hint" data-i18n="import.hint">Paste the HTML of a signature you already use. Signature Studio will try to recover the name, contact details, links and images. It’s best-effort — always review the result.</p>
+    <div class="import-file-row">
+      <button class="btn btn-sm" id="import-eml" type="button" data-i18n="import.emlButton">Import email (.eml / .mht)…</button>
+      <span class="micro" data-i18n="import.emlHint">Reads the HTML part of a saved email (.eml) or an Outlook web archive (.mht). Outlook .msg must be saved as .mht or .html first.</span>
+      <input type="file" id="eml-file" accept=".eml,.mht,.mhtml,.msg,message/rfc822,multipart/related,application/vnd.ms-outlook" hidden>
+    </div>
     <textarea id="import-src" rows="7" data-autofocus placeholder="&lt;table&gt;…&lt;/table&gt; or a full HTML document"></textarea>
     <input type="file" id="vcard-file" accept=".vcf,text/vcard,text/x-vcard" hidden>
     <div class="modal-actions">
@@ -1199,6 +1204,7 @@
 <script src="assets/js/bulk.js"></script>
 <script src="assets/js/vcard-import.js"></script>
 <script src="assets/js/images.js"></script>
+<script src="assets/js/eml.js"></script>
 <script src="assets/js/compat.js"></script>
 <script src="assets/js/brand.js"></script>
 <script src="assets/js/app.js"></script>

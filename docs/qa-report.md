@@ -1839,6 +1839,34 @@ Date: 2026-11-22 · Scope: storage migration for image data.
 
 ---
 
+# v0.89.0 addendum (email import, and the .msg verdict)
+
+Date: 2026-11-22 · Scope: .eml / .mht import; .msg investigated.
+
+- **MIME reader** — `parseEml()` handles headers (unfolded), multipart
+  boundaries (nested, depth-limited), base64, quoted-printable (soft breaks
+  and `=XX` escapes) and charsets via `TextDecoder`. It returns the longest
+  HTML part, else the longest plain-text part, plus the subject.
+- **.eml / .mht** — both are MIME, so one parser serves both. The import
+  modal gains "Import email (.eml / .mht)…"; the HTML is dropped into the
+  existing textarea and parsed, so field recovery and the include/exclude
+  chips behave exactly as for pasted HTML.
+- **Importer improvement** — a visible `name@example.com` with no `mailto:`
+  is now recovered (block boundaries respected; `Ltdada@example.com` was
+  caught by a test before it shipped).
+- **.msg — investigated, not shipped.** It is an OLE2/CFB compound file with
+  MAPI property streams, not MIME: a reader needs FAT/miniFAT/directory
+  traversal plus property-stream parsing and an RTF fallback (LZFu). That is
+  several hundred lines of security-sensitive parsing, and there is no .msg
+  fixture in the repo or on this machine to verify against — generating one
+  needs Outlook. The handler detects the `D0 CF 11 E0` magic and explains the
+  supported route. Outlook can save a message as **.mht** (Web Page) or
+  **.html**, and both now import.
+- 5 new E2E tests (eml.spec.js: QP multipart, base64, QP escapes, .mht,
+  .msg detection). Suite 290/290 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

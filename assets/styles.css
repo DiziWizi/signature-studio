@@ -332,6 +332,10 @@ details[open] summary::before { transform: rotate(90deg); }
   .sec-jump select { flex: 1; min-width: 0; font: inherit; font-size: 12px; padding: 6px 8px; }
 }
 
+/* Import from a saved email */
+.import-file-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 6px 0 2px; }
+.import-file-row .micro { flex: 1; min-width: 200px; }
+
 /* Receiver guide */
 .rg-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; }
 .rg-list section { border-left: 2px solid var(--line2); padding: 2px 0 2px 10px; }

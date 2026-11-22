@@ -2289,6 +2289,31 @@ function doImportPresetFile(file) {
   reader.readAsText(file);
 }
 
+/* Read a saved email's HTML part into the existing importer. .msg is an OLE2
+   container, not MIME — detected early with a clear instruction. */
+async function importEmlFile(file) {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  if (typeof isCompoundFile === 'function' && isCompoundFile(bytes)) {
+    showToast(t('import.msgNotSupported'), 'warn', { key: 'import.msgNotSupported' });
+    return;
+  }
+  const parsed = parseEml(new TextDecoder('utf-8').decode(bytes));
+  const body = parsed.html || parsed.plain;
+  if (!body) {
+    showToast(t('import.emlEmpty'), 'err', { key: 'import.emlEmpty' });
+    return;
+  }
+  const htmlMode = document.querySelector('input[name="importMode"][value="html"]');
+  if (htmlMode) {
+    htmlMode.checked = true;
+    htmlMode.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  openOverlay('#modal-import');
+  $('#import-src').value = body;
+  doImportParse();
+  showToast(t('import.emlLoaded', { subject: parsed.subject || file.name }), '', { key: 'toast.emlLoaded' });
+}
+
 /* ── vCard + QR ───────────────────────────────────────────────────────── */
 
 function loadImageAsync(src) {
@@ -2947,7 +2972,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.88.0';
+const APP_VERSION = '0.89.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3421,6 +3446,12 @@ function init() {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) doImportParse();
   });
   $('#import-apply').addEventListener('click', doImportApply);
+  $('#import-eml').addEventListener('click', () => $('#eml-file').click());
+  $('#eml-file').addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (file) importEmlFile(file);
+  });
 
   /* saved panel */
   $('#saved-close').addEventListener('click', closeSavedPanel);

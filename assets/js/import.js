@@ -57,6 +57,17 @@ function parseSignatureHTML(html) {
     }
   }
 
+  /* A signature often prints the address without a mailto: link. Recover it
+     from the visible text so .eml imports and plain pasted HTML both work. */
+  if (!out.contact.email && doc.body) {
+    const flat = doc.body.innerHTML
+      .replace(/<(br|\/td|\/tr|\/th|\/div|\/p|\/li|\/h[1-6])\b[^>]*>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ');
+    const match = /(?:^|[^A-Za-z0-9._%+-])([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i.exec(flat);
+    if (match) out.contact.email = match[1];
+  }
+
   /* Text: first short lines become name/title/company. innerText is unreliable
      on detached documents, so split on block boundaries in the raw HTML. */
   let lines = [];
