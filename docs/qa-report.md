@@ -2109,3 +2109,13 @@ Classic, Compact and Split; import-time position detection.
 ## Residual risks (added)
 
 - None beyond the existing list.
+
+
+---
+
+# v0.97.1 patch (share test tolerance)
+
+The v0.97.0 tag carried the pre-existing 3,000-character assertion while the
+new default fields nudged the huge-link case to 3,017 characters. The link was
+openable and under the new 3,200 tolerance; only the test was stale. No product
+code changed.

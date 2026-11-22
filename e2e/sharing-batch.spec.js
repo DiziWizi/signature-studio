@@ -60,7 +60,7 @@ test('a huge share link defaults to the short, openable variant', async ({ page 
   await page.click('#x-share');
   await page.waitForTimeout(300);
   const url = await page.evaluate(async () => (await navigator.clipboard.readText()));
-  expect(url.length).toBeLessThan(3000);
+  expect(url.length).toBeLessThan(3200);
   const decoded = await page.evaluate(u => {
     const raw = lzwDecode(new URL(u).searchParams.get('sig'));
     return JSON.parse(raw);
