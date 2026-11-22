@@ -29,7 +29,12 @@ function emlDecodeQuotedPrintable(input) {
 
 function emlBase64Bytes(input) {
   const clean = String(input).replace(/[^A-Za-z0-9+/=]/g, '');
-  const bin = atob(clean);
+  let bin = '';
+  try {
+    bin = atob(clean);
+  } catch (e) {
+    return new Uint8Array(0); /* malformed base64: treat the part as empty */
+  }
   const bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
   return bytes;

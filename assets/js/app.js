@@ -2802,6 +2802,14 @@ async function updateImageNote() {
   } catch (e) {
     el.textContent = '';
   }
+  const pnote = $('#storage-persist-note');
+  if (pnote) {
+    const mode = typeof persistenceStatus === 'function' ? await persistenceStatus() : 'unsupported';
+    const key = mode === 'granted' ? 'saved.persistGranted'
+      : mode === 'denied' ? 'saved.persistDenied' : 'saved.persistUnsupported';
+    pnote.textContent = t(key);
+    pnote.dataset.state = mode;
+  }
 }
 
 function renderStorageMeter() {
@@ -2857,6 +2865,10 @@ function closeSavedPanel() {
 
 async function doSaveSnapshot() {
   await packCurrentImages();
+  if (typeof requestPersistence === 'function') {
+    await requestPersistence();
+    updateImageNote();
+  }
   const name = $('#save-name').value.trim() || state.meta.name || 'Signature';
   const snap = saveSnapshot(state, name);
   if (!snap) {
@@ -3023,7 +3035,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.90.0';
+const APP_VERSION = '0.91.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {

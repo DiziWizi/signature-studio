@@ -341,6 +341,11 @@ details[open] summary::before { transform: rotate(90deg); }
 .variant-row .field { margin: 0; }
 .variant-row select { font-size: 12px; padding: 4px 6px; }
 
+/* Storage persistence state */
+.storage-persist { margin: 0 0 6px; }
+.storage-persist[data-state="granted"] { color: #63d489; }
+.storage-persist[data-state="denied"] { color: #f0c674; }
+
 /* Import from a saved email */
 .import-file-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 6px 0 2px; }
 .import-file-row .micro { flex: 1; min-width: 200px; }

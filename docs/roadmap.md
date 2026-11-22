@@ -340,6 +340,12 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   Vertical card) plus a compact-spacing switch bound to Density; undo history
   stores image refs instead of bytes with a 6 MB budget, hydrates on
   undo/redo, and GC keeps images referenced only by history; E2E 300
+- [x] v0.91.0 — data safety: the app asks for persistent storage when the
+  first image is packed and states the result in the Saved panel; evicted
+  images are reported with a Restore-backup action instead of blanking
+  silently; a hostile-input suite covers malformed ZIPs, MIME, quoted-
+  printable bombs, deep HTML nesting and garbage vCards — and found a real
+  bad-base64 crash; E2E 307
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

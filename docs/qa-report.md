@@ -1918,6 +1918,32 @@ Date: 2026-11-22 · Scope: variants and undo memory.
 
 ---
 
+# v0.91.0 addendum (data safety, hostile input)
+
+Date: 2026-11-22 · Scope: persistence, eviction recovery, malformed input.
+
+- **Persistence** — `requestPersistence()` calls `navigator.storage.persist()`
+  when the first image is packed or the first snapshot is saved;
+  `persistenceStatus()` reads `persisted()` for the UI. The Saved panel shows
+  "Persistent storage granted" (green) or "may clear saved images — keep a
+  backup" (amber); unsupported browsers say so.
+- **Eviction is visible** — `unpackImages()` counts missing blobs;
+  `hydrateStateImages()` shows one toast with the count and a **Restore a
+  backup** action that opens the same file input as the menu. Previously the
+  slot silently became empty.
+- **Hostile input** — new suite: truncated ZIP, EOCD with a bogus central
+  directory, unterminated MIME boundary, 200k-character quoted-printable
+  payload, invalid base64, 40-deep nested multipart, 2,000-deep nested HTML,
+  unterminated vCard and binary garbage. Assertions: no thrown errors, no
+  console/page errors, each parser under 5 s.
+- **Real bug found** — invalid base64 in a MIME part made `atob` throw out of
+  `parseEml`. `emlBase64Bytes()` now treats undecodable data as an empty
+  part, so a malformed email cannot break the importer.
+- 3 persistence/recovery tests + 4 hostile tests. Suite 307/307 twice;
+  Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

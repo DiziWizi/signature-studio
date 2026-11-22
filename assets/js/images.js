@@ -17,6 +17,8 @@ const IMG_THRESHOLD = 32 * 1024; /* characters of data URL */
 const imageIdCache = new Map(); /* dataUrl -> id */
 let imgDbPromise = null;
 let imagesReady = Promise.resolve(true);
+let persistState = 'unknown'; /* granted | denied | unsupported */
+let imageHydrateMisses = 0;
 
 function idbAvailable() {
   try { return !!window.indexedDB; } catch (e) { return false; }
@@ -72,6 +74,44 @@ function imgKeys() {
     req.onsuccess = () => resolve(req.result || []);
     req.onerror = () => reject(req.error || new Error('idb-keys'));
   })).catch(() => []);
+}
+
+/* Ask the browser to keep this origin's storage. Chrome/Firefox may grant it
+   silently for installed or frequently used sites; a refusal is not fatal,
+   it just means images can be evicted — which the Saved panel says plainly. */
+async function requestPersistence() {
+  if (!navigator.storage || typeof navigator.storage.persist !== 'function') {
+    persistState = 'unsupported';
+    return persistState;
+  }
+  try {
+    if (typeof navigator.storage.persisted === 'function' && await navigator.storage.persisted()) {
+      persistState = 'granted';
+    } else {
+      persistState = (await navigator.storage.persist()) ? 'granted' : 'denied';
+    }
+  } catch (e) {
+    persistState = 'unsupported';
+  }
+  return persistState;
+}
+
+async function persistenceStatus() {
+  if (persistState !== 'unknown') return persistState;
+  if (!navigator.storage || typeof navigator.storage.persisted !== 'function') {
+    persistState = 'unsupported';
+    return persistState;
+  }
+  try {
+    persistState = (await navigator.storage.persisted()) ? 'granted' : 'denied';
+  } catch (e) {
+    persistState = 'unsupported';
+  }
+  return persistState;
+}
+
+function imageMisses() {
+  return imageHydrateMisses;
 }
 
 function dataUrlToBlob(dataUrl) {
@@ -173,9 +213,11 @@ async function unpackImages(state) {
         imageIdCache.set(dataUrl, id);
       } else {
         obj[key] = '';
+        imageHydrateMisses += 1;
       }
     } catch (e) {
       obj[key] = '';
+      imageHydrateMisses += 1;
     }
     changed = true;
   }
@@ -229,8 +271,21 @@ async function gcImages(extraIds) {
    promise is exposed for tests and the helper. */
 function hydrateStateImages(state) {
   if (!idbAvailable()) return Promise.resolve(false);
+  imageHydrateMisses = 0;
   return unpackImages(state).then(changed => {
     if (changed && typeof rebuildAll === 'function') rebuildAll();
+    if (imageHydrateMisses && typeof showToast === 'function') {
+      showToast(t('toast.imagesMissing', { n: imageHydrateMisses }), 'warn', {
+        key: 'toast.imagesMissing',
+        action: {
+          label: t('topbar.restore'),
+          fn: () => {
+            const input = document.getElementById('restore-file');
+            if (input) input.click();
+          },
+        },
+      });
+    }
     return changed;
   }).catch(() => false);
 }
@@ -245,7 +300,10 @@ function packCurrentImages() {
   }
   if (!pending) return Promise.resolve(false);
   return packImages(state).then(changed => {
-    if (changed && typeof flushSave === 'function') flushSave();
+    if (changed) {
+      requestPersistence();
+      if (typeof flushSave === 'function') flushSave();
+    }
     return changed;
   }).catch(() => false);
 }
