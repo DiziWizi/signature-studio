@@ -1744,6 +1744,27 @@ Date: 2026-11-21 · Scope: backup, bilingual block, receiver guide.
 
 ---
 
+# v0.85.0 addendum (phone pass)
+
+Date: 2026-11-21 · Scope: lazy thumbnails, section jump, share target.
+
+- **Lazy thumbnails** — `renderThumbsNow()` now marks frames and observes
+  them with `IntersectionObserver` (240 px margin); a rebuild clears the
+  marker and re-observes, so visible tiles refresh on the idle pass and
+  offscreen tiles wait until scrolled near. A no-observer fallback renders
+  everything. The update-pill spec now scrolls the classic tile into view,
+  which is the honest way to test a lazy grid.
+- **Section jump** — a sticky `<select>` shown under 760 px, filled from the
+  live section titles (so it follows translations); choosing one opens the
+  section, scrolls it into view and focuses the summary.
+- **Share target** — `share_target` (GET: title/text/url) added to the
+  manifest. `consumeShareTarget()` accepts only vCard/HTML-looking payloads,
+  opens the import modal prefilled, selects vCard mode when appropriate, and
+  strips the query so a reload does not re-open it.
+- 3 new E2E tests (phone.spec.js). Suite 272/272 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

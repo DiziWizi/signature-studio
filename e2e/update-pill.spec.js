@@ -29,6 +29,8 @@ test('template thumbnails still refresh when the user pauses typing', async ({ p
     await page.fill('[data-field="profile.name"]', `Idle Person ${i}`);
   }
   const classic = page.locator('.tthumb[data-tpl="classic"]');
+  /* Thumbnails are lazy now: bring the tile near the viewport, then wait. */
+  await classic.scrollIntoViewIfNeeded();
   await expect.poll(async () => {
     const doc = await classic.evaluate(el => el.srcdoc || '');
     return doc;

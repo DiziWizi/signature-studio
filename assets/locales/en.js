@@ -616,6 +616,7 @@ window.SIG_LOCALES.en = {
   'manualCopy.micro': "Your browser blocked the one-click copy. The text below is already selected — press Ctrl+C (or right-click → Copy).",
   'manualCopy.done': "Done",
   'tpl.custom': "Custom",
+  'nav.jump': "Jump to",
   'topbar.backup': "Back up everything (ZIP)",
   'topbar.receiverGuide': "What recipients see…",
   'toast.backupDone': "Backup downloaded — {n} saved signature(s)",

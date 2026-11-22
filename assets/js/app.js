@@ -460,18 +460,43 @@ function fitThumbs() {
   });
 }
 
+/* Thumbnails are 25 iframes; parsing all of them costs more than the tile
+   grid is worth on a phone. Render only what is near the viewport, and mark
+   each frame so a rebuild re-renders visible tiles but leaves offscreen ones
+   for the observer. */
+let thumbObserver = null;
+
+function renderThumbFrame(iframe) {
+  if (!iframe || iframe.dataset.thumbDone === '1') return;
+  const s = clone(state);
+  s.design.template = iframe.dataset.tpl;
+  let html = renderSignature(s).replace(/src="data:[^"]*"/g, 'src=""');
+  if (!remoteImagesOn()) html = html.replace(/(<img\b[^>]*?)\ssrc="https?:\/\/[^"]*"/gi, '$1');
+  iframe.srcdoc = html;
+  iframe.dataset.thumbDone = '1';
+}
+
 function renderThumbsNow() {
   thumbsNeedsRebuild = false;
-  const thumbs = document.querySelectorAll('.tthumb');
+  const thumbs = [...document.querySelectorAll('.tthumb')];
   if (!thumbs.length) return;
   fitThumbs();
-  const base = clone(state);
+  if (typeof IntersectionObserver !== 'function') {
+    thumbs.forEach(renderThumbFrame);
+    return;
+  }
+  if (!thumbObserver) {
+    thumbObserver = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        renderThumbFrame(entry.target);
+        thumbObserver.unobserve(entry.target);
+      }
+    }, { rootMargin: '240px' });
+  }
   for (const iframe of thumbs) {
-    const s = clone(base);
-    s.design.template = iframe.dataset.tpl;
-    let html = renderSignature(s).replace(/src="data:[^"]*"/g, 'src=""');
-    if (!remoteImagesOn()) html = html.replace(/(<img\b[^>]*?)\ssrc="https?:\/\/[^"]*"/gi, '$1');
-    iframe.srcdoc = html;
+    delete iframe.dataset.thumbDone;
+    thumbObserver.observe(iframe);
   }
 }
 
@@ -1337,6 +1362,55 @@ function initStatusPresets() {
     scheduleSave();
     showToast(text, '', { key: 'toast.status' });
   });
+}
+
+/* Narrow screens get a jump list instead of a long scroll. Options are read
+   from the live section titles, so translations and reordering follow. */
+function initSectionJump() {
+  const sel = $('#sec-jump');
+  if (!sel) return;
+  const sections = [...document.querySelectorAll('#main details[data-sec]')];
+  const fill = () => {
+    sel.innerHTML = sections.map(sec => {
+      const label = sec.querySelector('summary [data-i18n]');
+      return `<option value="${esc(sec.dataset.sec)}">${esc(label ? label.textContent : sec.dataset.sec)}</option>`;
+    }).join('');
+  };
+  fill();
+  sel.addEventListener('focus', fill);
+  sel.addEventListener('change', () => {
+    const sec = sections.find(d => d.dataset.sec === sel.value);
+    if (!sec) return;
+    sec.open = true;
+    sec.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    const summary = sec.querySelector('summary');
+    if (summary) setTimeout(() => summary.focus({ preventScroll: true }), 250);
+  });
+}
+
+/* PWA share target: another app can share a vCard or an HTML signature to
+   the installed app. Only importable content is consumed; the query is
+   cleaned so a reload does not re-open the modal. */
+function consumeShareTarget() {
+  const params = new URLSearchParams(location.search);
+  if (!params.has('text') && !params.has('title') && !params.has('url')) return;
+  const text = [params.get('title'), params.get('text'), params.get('url')]
+    .filter(Boolean).join('\n');
+  if (!/BEGIN:VCARD|<table|<html|<br/i.test(text)) return;
+  history.replaceState(null, '', location.pathname);
+  openOverlay('#modal-import');
+  const src = $('#import-src');
+  if (src) {
+    src.value = text;
+    src.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  if (/BEGIN:VCARD/i.test(text)) {
+    const vcard = document.querySelector('input[name="importMode"][value="vcard"]');
+    if (vcard) {
+      vcard.checked = true;
+      vcard.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  }
 }
 
 /* One starred snapshot is the default variant; the quick menu floats it. */
@@ -2770,7 +2844,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.84.0';
+const APP_VERSION = '0.85.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -2878,6 +2952,7 @@ function init() {
   initTemplatePicker();
   initContactOrder();
   initStatusPresets();
+  initSectionJump();
 
   document.addEventListener('input', onFieldInput);
   document.addEventListener('change', onFieldInput);
@@ -3528,6 +3603,7 @@ function init() {
   rebuildAll();
   updateUndoButtons();
   setSaveStatus('saved');
+  consumeShareTarget();
 
   /* Report the outcome of a ?sig= share link. With work already open, the
      load is a confirmed, undoable action rather than a silent replacement. */

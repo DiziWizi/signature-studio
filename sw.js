@@ -2,7 +2,7 @@
    to invalidate the cache and ship a new precache set. */
 'use strict';
 
-const VERSION = 'sigstudio-v0.84.0';
+const VERSION = 'sigstudio-v0.85.0';
 
 const PRECACHE = [
   './',

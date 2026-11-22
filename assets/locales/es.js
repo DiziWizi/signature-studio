@@ -614,6 +614,7 @@ window.SIG_LOCALES.es = {
   'manualCopy.micro': "Su navegador bloqueó la copia con un clic. El texto de abajo ya está seleccionado — pulse Ctrl+C (o clic derecho → Copiar).",
   'manualCopy.done': "Listo",
   'tpl.custom': "Personalizada",
+  'nav.jump': "Ir a",
   'topbar.backup': "Copia de todo (ZIP)",
   'topbar.receiverGuide': "Qué ven los destinatarios…",
   'toast.backupDone': "Copia descargada — {n} firma(s) guardada(s)",
