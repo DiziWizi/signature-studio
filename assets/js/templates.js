@@ -32,7 +32,7 @@ const imgSrcOf = (d, key, stored) => {
   const ref = d.imageRef || {};
   const refKey = key.startsWith('social-')
     ? 'socials'
-    : { 'footer-left': 'footerLeft', 'footer-center': 'footerCenter', 'footer-right': 'footerRight' }[key] || key;
+    : { 'footer-left': 'footerLeft', 'footer-center': 'footerCenter', 'footer-right': 'footerRight', 'logoDark': 'logo' }[key] || key;
   /* Per-image override wins; the legacy global imageMode applies only
      to images without an explicit per-image setting. */
   const cid = ref[refKey] === 'cid' || (!ref[refKey] && d.imageMode === 'cid');
@@ -333,7 +333,12 @@ function contactLineHtml(d, item, { labels = true } = {}) {
   }
   const label = labels && item.label
     ? `<span${cls} style="${style};font-weight:bold;">${esc(item.label)}: </span>` : '';
-  return `<span${cls} data-edit="contact:${item.key}" style="${style};">${label}${inner}</span>`;
+  /* In an RTL signature, Latin values (mail, phone, URL) must be isolated or
+     the bidi algorithm reverses phone numbers and moves punctuation. */
+  const isolate = d.direction === 'rtl' && item.key !== 'address' && item.key !== 'custom';
+  const value = isolate
+    ? `<span dir="auto" style="unicode-bidi:isolate;">${inner}</span>` : inner;
+  return `<span${cls} data-edit="contact:${item.key}" style="${style};">${label}${value}</span>`;
 }
 
 function contactStackHtml(s, d, opts = {}) {
@@ -486,8 +491,9 @@ function dividerHtml(d, cols = 2, opts = {}) {
 function legalHtml(s, d, cols = 2) {
   if (!d.showLegal || !String(d.legalText || '').trim()) return '';
   const style = textStyle(d, { size: 10, color: mutedColor(d) });
+  const rtl = d.direction === 'rtl';
   return `<tr><td colspan="${cols}" style="padding-top:6px;">` +
-    `<span${dmCls(d, 'mut')} data-edit="legal" style="${style}">${esc(d.legalText)}</span></td></tr>`;
+    `<span${dmCls(d, 'mut')} data-edit="legal"${rtl ? ' dir="auto" style="unicode-bidi:isolate;' + style + '"' : ` style="${style}"`}>${esc(d.legalText)}</span></td></tr>`;
 }
 
 function spacerHtml(h, cols = 2) {
@@ -518,10 +524,19 @@ const portraitSrcOf = d => String(d.portraitUrl || '').trim() || String(d.logoUr
    the headshot for layouts built around a face. */
 function logoCellHtml(s, d, opts = {}) {
   const src = opts.portrait ? portraitSrcOf(d) : String(d.logoUrl || '').trim();
+  const darkSrc = opts.portrait ? '' : String(d.logoDarkUrl || '').trim();
   if (src) {
     const shape = photoShapeOfDesign(d);
     const radius = shape === 'circle' ? br(d, '50%') : shape === 'rounded' ? br(d, '10px') : '';
-    return imgTag(imgSrcOf(d, 'logo', src), d.logoWidth, String(s.design.logoAlt || 'logo'), radius, 'data-edit="logo" ');
+    const light = imgTag(imgSrcOf(d, 'logo', src), d.logoWidth, String(s.design.logoAlt || 'logo'), radius,
+      `data-edit="logo"${darkSrc ? ' class="dm-logo-light"' : ''} `);
+    if (!darkSrc) return light;
+    /* The dark logo is hidden inline, so clients that ignore <style> — notably
+       Outlook — keep the light mark. Apple Mail and other dark-aware clients
+       swap the two inside prefers-color-scheme. */
+    const dark = imgTag(imgSrcOf(d, 'logoDark', darkSrc), d.logoWidth, '',
+      `${radius}display:none;mso-hide:all;`, 'class="dm-logo-dark" ');
+    return light + dark;
   }
   if (d.useMonogram) return monogramHtml(s, d);
   return '';
@@ -1585,6 +1600,19 @@ function letterheadRows(s, d) {
 
 /* ── document assembly ────────────────────────────────────────────────── */
 
+/* Optional light/dark logo pair. Separate from darkModeFriendly: uploading a
+   dark logo is itself the opt-in, and the swap must work even if the text
+   classes were left off. */
+function logoDarkStyleBlock(d) {
+  if (!String(d.logoDarkUrl || '').trim()) return '';
+  return `<style type="text/css">
+@media (prefers-color-scheme: dark) {
+  .dm-logo-light { display:none !important; mso-hide:all; max-height:0; overflow:hidden; }
+  .dm-logo-dark { display:block !important; mso-hide:all; max-height:none !important; overflow:visible !important; }
+}
+</style>`;
+}
+
 function darkStyleBlock(d) {
   if (!d.darkModeFriendly) return '';
   /* The card wrapper keeps its light tint in dark clients too, so dm
@@ -1917,7 +1945,7 @@ function renderSignatureDoc(state) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ${d.darkModeFriendly
   ? `<meta name="color-scheme" content="light dark">\n<meta name="supported-color-schemes" content="light dark">\n`
-  : ''}${darkStyleBlock(d)}${mobileStyleBlock(d)}
+  : ''}${darkStyleBlock(d)}${logoDarkStyleBlock(d)}${mobileStyleBlock(d)}
 <title>Email signature</title>
 </head>
 <body${rtl ? ' dir="rtl"' : ''} style="margin:0;padding:0;background-color:transparent;${rtl ? 'direction:rtl;' : ''}">

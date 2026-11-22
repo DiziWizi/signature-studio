@@ -369,6 +369,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   Settings → Apps → Mail → Signature path, Per Account, and the blunt truth
   that iOS signatures are text-only and do not sync from a Mac or iCloud;
   E2E 322
+- [x] v0.96.0 — rendering matrix: whole-library composites for LTR, RTL,
+  strict Outlook and narrow widths; the RTL pass found and fixed reversed
+  phone numbers (bidi isolation for Latin contact values) and misplaced
+  legal punctuation; E2E 323
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

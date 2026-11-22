@@ -2046,6 +2046,23 @@ Date: 2026-11-22 · Scope: install guide only.
 
 ---
 
+# v0.96.0 addendum (rendering matrix)
+
+Date: 2026-11-23 · Scope: verification across the whole library.
+
+- **Matrix** — five local visual composites: all 25 templates LTR, RTL,
+  strict Outlook (no radii), and two narrow-width halves. Built by collecting
+  every template's rendered body before `page.setContent` replaces the app
+  context, then painting one document.
+- **Bugs the RTL pass caught** — phone numbers rendered as `0958 7946 20 44+`
+  because bidi reordered Latin runs; contact values now carry
+  `dir="auto"` + `unicode-bidi:isolate` in RTL. Legal boilerplate now uses
+  the same isolation so punctuation stops jumping lines.
+- Matrix runs locally only, like the other visual baselines (font
+  rasterisation differs on CI). 1 new test; suite 323/323 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

@@ -3238,7 +3238,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.95.1';
+const APP_VERSION = '0.96.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
