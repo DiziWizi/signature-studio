@@ -19,6 +19,9 @@ jobs:
           python3 -m py_compile tools/publish_release.py
           python3 tools/check_selfhost.py
 
+      - name: Header policy consistency
+        run: python3 tools/check_headers.py
+
       - name: Version consistency
         run: |
           node -e "
@@ -92,10 +95,12 @@ jobs:
         # letting this step fail and still running the suite is strictly
         # better than failing the whole job before a single test runs.
         continue-on-error: true
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium webkit firefox
 
       - name: Verify Chromium is usable
         run: npx playwright install --dry-run chromium
 
       - name: Run Playwright E2E suite
         run: npx playwright test
+        env:
+          CROSS_BROWSER: '1'

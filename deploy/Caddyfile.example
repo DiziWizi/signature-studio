@@ -1,0 +1,15 @@
+# Caddy example for static hosting. Point root at the unzipped app and keep
+# these headers identical to nginx.conf (tools/check_headers.py enforces it).
+signature.example.com {
+    root * /srv/signature-studio
+    file_server
+
+    header {
+        Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://dns.google; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+        X-Frame-Options "DENY"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "no-referrer"
+        Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+        Cache-Control "no-cache"
+    }
+}

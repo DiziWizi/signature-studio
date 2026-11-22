@@ -122,7 +122,10 @@ podman run -p 8080:80 signature-studio
 **Option C — any static host** (nginx, Caddy, Forgejo Pages, …) — publish
 only the app itself: `index.html`, `assets/`, `sw.js`, `manifest.webmanifest`.
 Each release ships exactly that as **`signature-studio-<version>-app.zip`**
-(unzip into your web root; `nginx.conf` is included). The full source archive
+(unzip into your web root; `nginx.conf` is included). The same archive carries
+`_headers` (Netlify / Cloudflare Pages), `vercel.json` and
+`deploy/Caddyfile.example` — all four express the identical CSP, and
+`tools/check_headers.py` fails the build if they drift. The full source archive
 is for development. Do **not** point a public web root at a checkout:
 `e2e/`, `docs/`, `test-results/` and `node_modules/` are development material.
 

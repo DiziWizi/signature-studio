@@ -13,7 +13,10 @@ const CSP = (NGINX.match(/Content-Security-Policy "([^"]+)"/) || [])[1];
 test('nginx.conf carries the headers a hardened self-host needs', () => {
   expect(CSP).toBeTruthy();
   expect(CSP).toContain("default-src 'self'");
-  expect(CSP).toContain("script-src 'self' 'unsafe-inline'");
+  /* Scripts are all external files; only styles need 'unsafe-inline'
+     because the signature itself is inline-styled by design. */
+  expect(CSP).toContain("script-src 'self'");
+  expect(CSP).not.toContain("script-src 'self' 'unsafe-inline'");
   expect(CSP).toContain("style-src 'self' 'unsafe-inline'");
   expect(CSP).toContain("frame-ancestors 'none'");
   expect(NGINX).toContain('X-Frame-Options DENY');

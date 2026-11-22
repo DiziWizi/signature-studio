@@ -10,8 +10,9 @@ import os
 import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FILES = ['index.html', 'sw.js', 'manifest.webmanifest', 'nginx.conf']
-DIRS = ['assets']
+FILES = ['index.html', 'sw.js', 'manifest.webmanifest', 'nginx.conf',
+         '_headers', 'vercel.json']
+DIRS = ['assets', 'deploy']
 
 
 def main() -> None:

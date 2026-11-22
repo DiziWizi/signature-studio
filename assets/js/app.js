@@ -398,10 +398,7 @@ function renderPreviewNow() {
      they tell the editor which control produced the clicked element. */
   const previewScript =
     '<style>[data-edit]{cursor:pointer}[data-edit]:hover{outline:1px dashed rgba(91,124,250,.75);outline-offset:2px}</style>' +
-    '<script>document.addEventListener("click",function(e){e.preventDefault();' +
-    'var t=e.target,el=t&&t.closest?t.closest("[data-edit]"):null;' +
-    'try{parent.postMessage({__sigstudio:"edit",key:el?el.getAttribute("data-edit"):""},"*");}catch(err){}' +
-    '},true);<\/script>';
+    '<script src="assets/js/preview-reporter.js"></script>';
   let html = sanitiseDocumentHtml(renderSignaturePreview(state));
   /* Privacy/offline: a hosted logo pings its host on every keystroke. Let
      the user stop that without touching what the signature stores. */
@@ -2904,7 +2901,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.86.0';
+const APP_VERSION = '0.87.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {

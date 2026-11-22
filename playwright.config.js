@@ -28,11 +28,26 @@ module.exports = defineConfig({
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
+  /* Chromium runs everything (including the visual baselines). The smoke
+     projects are opt-in via CROSS_BROWSER=1 so a local run does not demand
+     Safari/Firefox system libraries; CI installs them and sets the flag. */
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    ...(process.env.CROSS_BROWSER ? [
+      {
+        name: 'webkit-smoke',
+        use: { ...devices['Desktop Safari'] },
+        testMatch: /cross-browser\.spec\.js/,
+      },
+      {
+        name: 'firefox-smoke',
+        use: { ...devices['Desktop Firefox'] },
+        testMatch: /cross-browser\.spec\.js/,
+      },
+    ] : []),
   ],
   webServer: {
     command: 'python3 -m http.server 8137 --bind 127.0.0.1',

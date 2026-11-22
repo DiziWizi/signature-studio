@@ -1786,6 +1786,34 @@ Date: 2026-11-21 · Scope: backup restore, per-row photos, contrast audit.
 
 ---
 
+# v0.87.0 addendum (cross-browser, CSP, static-host headers)
+
+Date: 2026-11-21 · Scope: browser proof, script CSP, hosting parity.
+
+- **Cross-browser** — `cross-browser.spec.js` covers boot/render, template
+  switch and a real HTML download. Chromium runs it as part of the suite;
+  `webkit-smoke` and `firefox-smoke` are opt-in projects (`CROSS_BROWSER=1`)
+  because Safari/Firefox system libraries are absent on this host. Firefox was
+  verified locally (3/3, with `LD_LIBRARY_PATH` pointing at the GTK sysroot);
+  WebKit is verified by CI, which installs `--with-deps chromium webkit
+  firefox`. The download test enables strict Outlook so it measures download
+  plumbing rather than the rounding dialogue.
+- **CSP** — the preview click-reporter is now `assets/js/preview-reporter.js`,
+  loaded from the srcdoc through `script-src 'self'`; `script-src` no longer
+  needs `'unsafe-inline'`. `style-src` keeps it because the output is inline
+  styles by design. `e2e/selfhost.spec.js` still applies the exact policy and
+  proves click-to-edit works.
+- **Service worker** — the precache list was missing `compat.js` and
+  `brand.js`; both (and the new reporter) are now cached, so offline installs
+  have every feature.
+- **Headers** — `_headers` (Netlify/Cloudflare Pages), `vercel.json` and
+  `deploy/Caddyfile.example` carry the identical policy;
+  `tools/check_headers.py` compares all four and rejects script
+  `unsafe-inline`. Wired into CI; the app zip now includes them.
+- 3 new E2E tests (cross-browser.spec.js) + 3 Firefox runs. Suite 280/280.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in
