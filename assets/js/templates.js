@@ -264,9 +264,22 @@ function companyHtml(s, d) {
 function taglineHtml(s, d) {
   if (d.showCompany === false || d.showTagline === false) return '';
   const tag = String(s.profile.tagline || '').trim();
-  if (!tag) return '';
+  const alt = String(d.altBlock || '').trim();
+  if (!tag && !alt) return '';
   const weight = d.taglineWeight === 'bold' ? 'bold' : undefined;
-  return `<span${dmCls(d, 'mut')} data-edit="tagline" style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d), weight })}">${esc(tag)}</span><br>`;
+  const parts = [];
+  if (tag) {
+    parts.push(`<span${dmCls(d, 'mut')} data-edit="tagline" style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d), weight })}">${esc(tag)}</span>`);
+  }
+  if (alt) {
+    const label = String(d.altLabel || '').trim();
+    const lines = alt.split(/\r?\n/).map(line => softBreak(esc(line))).join('<br>');
+    const lbl = label
+      ? `<span style="${textStyle(d, { size: d.fontSize - 2, color: linkColorOf(d), weight: 'bold' })}">${esc(label)}</span><br>`
+      : '';
+    parts.push(`${lbl}<span${dmCls(d, 'mut')} data-edit="altBlock" style="${textStyle(d, { size: d.fontSize - 1, color: mutedColor(d) })}">${lines}</span>`);
+  }
+  return parts.join('<br>') + '<br>';
 }
 
 function contactItems(s, d = {}) {

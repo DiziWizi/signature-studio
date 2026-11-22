@@ -87,6 +87,8 @@ function defaultState() {
       contactOrder: [],     // keys, e.g. ['phone','email','website']
       qrTarget: '',         // '' = vCard, 'url'
       qrUrl: '',            // the URL when qrTarget === 'url'
+      altLabel: '',         // second-language label, e.g. "Français"
+      altBlock: '',         // second-language block, line breaks preserved
       mutedColor: '',       // muted/secondary text override ('' = derived)
       customFont: '',       // raw font stack override ('' = font preset)
       taglineWeight: '',    // '' = normal | 'bold'

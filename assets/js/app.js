@@ -2067,6 +2067,51 @@ function downloadBlob(blob, filename) {
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
 }
 
+/* One ZIP with the draft, every saved signature and an index — the escape
+   hatch for a cleared browser or a new machine. */
+function backupFiles() {
+  const snaps = listSnapshots();
+  const files = [{ name: 'draft.json', data: JSON.stringify(state, null, 2) }];
+  snaps.forEach((snap, i) => {
+    const stem = slugify(snap.name) || 'signature';
+    files.push({
+      name: `saved/${String(i + 1).padStart(2, '0')}-${stem}.json`,
+      data: JSON.stringify(snap, null, 2),
+    });
+  });
+  files.push({
+    name: 'backup.json',
+    data: JSON.stringify({
+      app: 'signature-studio',
+      version: APP_VERSION,
+      createdAt: new Date().toISOString(),
+      snapshots: snaps.map(s => ({ id: s.id, name: s.name, savedAt: s.savedAt })),
+    }, null, 2),
+  });
+  files.push({
+    name: 'README.txt',
+    data: [
+      'Signature Studio backup',
+      '',
+      'draft.json        the signature that was open when you exported',
+      'saved/*.json      every saved signature, one file each',
+      'backup.json      index: app version, export time, saved names',
+      '',
+      'Keep this ZIP somewhere safe. Saved signatures live only in your browser;',
+      'clearing site data erases them.',
+      '',
+    ].join('\n'),
+  });
+  return files;
+}
+
+function doBackup() {
+  const files = backupFiles();
+  const stamp = new Date().toISOString().slice(0, 10);
+  downloadBlob(new Blob([zipStore(files)], { type: 'application/zip' }), `signature-studio-backup-${stamp}.zip`);
+  showToast(t('toast.backupDone', { n: listSnapshots().length }), '', { key: 'toast.backupDone' });
+}
+
 function doExportPreset() {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   downloadBlob(blob, `${slugify(state.meta.name)}-preset.json`);
@@ -2147,6 +2192,10 @@ function plainTextSignature(s) {
   if (role) lines.push(role);
   if (p.company) lines.push(p.company);
   if (p.tagline && d.showTagline !== false) lines.push(p.tagline);
+  if (d.altBlock && d.showTagline !== false) {
+    if (d.altLabel) lines.push(d.altLabel);
+    lines.push(...String(d.altBlock).split(/\r?\n/));
+  }
   const ctx = [p.location, p.languages, p.timezone].filter(Boolean).join(' · ');
   if (ctx) lines.push(ctx);
   lines.push('');
@@ -2721,7 +2770,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.83.0';
+const APP_VERSION = '0.84.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3030,6 +3079,14 @@ function init() {
     const willOpen = menu.classList.contains('hidden');
     menu.classList.toggle('hidden');
     if (willOpen) updateExportNotes();
+  });
+  $('#x-backup').addEventListener('click', () => {
+    menu.classList.add('hidden');
+    doBackup();
+  });
+  $('#x-receiver-guide').addEventListener('click', () => {
+    menu.classList.add('hidden');
+    openOverlay('#modal-receiver-guide');
   });
   $('#x-compat').addEventListener('click', () => {
     menu.classList.add('hidden');

@@ -1724,6 +1724,26 @@ Date: 2026-11-21 · Scope: portrait split, compatibility check, reorder focus.
 
 ---
 
+# v0.84.0 addendum (resilience & reach)
+
+Date: 2026-11-21 · Scope: backup, bilingual block, receiver guide.
+
+- **Backup** — `backupFiles()` returns `draft.json`, `saved/NN-<name>.json`
+  for every snapshot, `backup.json` (app version, timestamp, index) and a
+  README; the menu downloads it as `signature-studio-backup-YYYY-MM-DD.zip`.
+  Restore stays the existing preset import — this is the escape hatch, not a
+  migration engine.
+- **Second-language block** — `design.altLabel` + `design.altBlock`, rendered
+  by `taglineHtml` so every template that already shows a tagline gets it.
+  Line breaks are preserved with `softBreak`, it respects `showTagline`, and
+  the plain-text export includes it.
+- **Receiver guide** — a six-section modal (avatar, display name, images,
+  dark mode, clipping, BIMI) reachable from the export menu; it states that
+  Microsoft does not display BIMI and that avatars come from address books.
+- 3 new E2E tests (reach.spec.js). Suite 269/269 twice.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

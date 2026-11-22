@@ -302,6 +302,11 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   photo-led templates (logo stays the brand mark); a local compatibility scan
   catches Word-engine/Gmail hazards and gates Copy on hard failures, with a
   one-click strict-Outlook fix; arrow reorders keep keyboard focus; E2E 266
+- [x] v0.84.0 — resilience & reach: one ZIP backs up the draft, every saved
+  signature and an index; a second-language block renders under the tagline
+  (and in the plain-text export); an in-app "What recipients see" guide
+  explains avatars, display names, image blocking, dark mode and clipping;
+  E2E 269
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
