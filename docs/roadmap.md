@@ -351,6 +351,12 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   template" phrasing, no BIMI); **Save reply variant** stores a paired Reply
   copy without touching the open signature; fixed image packing mutating the
   live state into idb: URLs (preview went blank after autosave); E2E 310
+- [x] v0.93.0 — client proof kit: "Test in a real inbox" builds a real
+  multipart/alternative .eml (plain-text checklist + HTML signature, inline
+  images as multipart/related CID parts), with a copyable checklist; BIMI
+  now states that @mailbox.org cannot publish or display it. Fixed social
+  chips for Word-engine clients (table cells, ASCII-safe glyphs) after a real
+  Outlook screenshot showed blank bars; E2E 315
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

@@ -1967,6 +1967,32 @@ Date: 2026-11-22 · Scope: install guidance, paired reply signature.
 
 ---
 
+# v0.93.0 addendum (client proof kit)
+
+Date: 2026-11-22 · Scope: real-inbox testing, Outlook chip rendering.
+
+- **Test email** — Export → *Test in a real inbox…* builds a
+  `multipart/alternative` message: a plain-text checklist and the signature
+  HTML. Data-URI images become `multipart/related` parts with
+  `Content-ID: <sigstudio-…>`; hosted images stay URLs. Addressed to the
+  user's own address (profile or contact), never sent by the app.
+- **Checklist** — seven checks (images, corners, dark mode, Gmail clipping,
+  QR, social links, sender identity), shown in-app and copyable; the same
+  text rides in the plain-text part.
+- **BIMI honesty** — typing a mailbox.org domain states that the address
+  cannot publish BIMI and the Suite does not display it; custom domains can.
+- **Outlook chips fixed** — a real Outlook screenshot showed social chips as
+  blank blue bars. Inline-block spans lose width/height in the Word engine;
+  chips are now table cells with explicit dimensions, CSS centring and
+  ASCII-safe glyphs (X, ig, yt, tt, wa, sp, ko, Be). Radius falls back to a
+  square in strict Outlook, as elsewhere.
+- **Fixed** — `toast.copyFail` had no entry and leaked as a raw key when the
+  clipboard was blocked; all four locales now carry it.
+- 5 new tests (checklist, MIME structure, missing address, BIMI hint, chip
+  markup). Suite 315/315 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

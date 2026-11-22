@@ -341,6 +341,25 @@ details[open] summary::before { transform: rotate(90deg); }
 .variant-row .field { margin: 0; }
 .variant-row select { font-size: 12px; padding: 4px 6px; }
 
+/* Test-in-a-real-inbox */
+.test-steps { margin: 0 0 12px; padding-left: 20px; }
+.test-steps li { margin: 0 0 6px; font-size: 13px; }
+.test-checklist {
+  margin: 4px 0 10px;
+  padding: 10px 12px;
+  background: rgba(127, 127, 127, 0.08);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  max-height: 240px;
+  overflow: auto;
+}
+.bimi-domain-hint { margin: 0 0 8px; color: #f0c674; }
+.bimi-domain-hint.hidden { display: none; }
+
 /* Storage persistence state */
 .storage-persist { margin: 0 0 6px; }
 .storage-persist[data-state="granted"] { color: #63d489; }

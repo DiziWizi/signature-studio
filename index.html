@@ -68,6 +68,7 @@
         <button role="menuitem" id="x-plain" type="button" data-i18n="topbar.plain">Plain-text signature (.txt)</button>
         <button role="menuitem" id="x-sender-copy" type="button" data-i18n="topbar.copySender">Copy sender name &amp; address</button>
         <button role="menuitem" id="x-instructions" type="button" data-i18n="topbar.instructions">How to add it to Outlook, Gmail…</button>
+        <button role="menuitem" id="x-test" type="button" data-i18n="topbar.testInbox">Test in a real inbox…</button>
         <hr class="sep">
         <span class="menu-group" role="presentation" data-i18n="menu.mailFormats">Mail apps &amp; formats</span>
         <button role="menuitem" id="x-apple-mail" data-advanced type="button" data-i18n="topbar.appleMail">Download for Apple Mail (.mailsignature)</button>
@@ -1082,6 +1083,27 @@
   </div>
 </div>
 
+<div class="overlay hidden" id="modal-test" role="dialog" aria-modal="true" aria-labelledby="test-title">
+  <div class="modal">
+    <h2 id="test-title" data-i18n="test.title">Test it in a real inbox</h2>
+    <p class="micro" data-i18n="test.lead">Download a message that carries this signature, then open it in the clients you care about. Images travel inside the message (CID), so remote-image blocking does not hide them.</p>
+    <ol class="test-steps">
+      <li data-i18n="test.step1">Download the test email and open the .eml in Outlook, Gmail, Apple Mail or your phone.</li>
+      <li data-i18n="test.step2">Work through the checklist below — it names the failures that matter, not just the pretty ones.</li>
+      <li data-i18n="test.step3">Reply to the message to see how the signature behaves in a thread.</li>
+    </ol>
+    <div class="modal-actions" style="justify-content:flex-start;">
+      <button class="btn btn-primary" id="test-download" type="button" data-i18n="test.download">Download test email (.eml)</button>
+      <button class="btn" id="test-copy" type="button" data-i18n="test.copyChecklist">Copy checklist</button>
+    </div>
+    <pre id="test-checklist" class="test-checklist"></pre>
+    <p class="micro" data-i18n="test.note">The message is addressed to your own address and never leaves this machine until you send or open it.</p>
+    <div class="modal-actions">
+      <button class="btn" data-close type="button" data-i18n="instr.close">Close</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="modal-bimi" role="dialog" aria-modal="true" aria-labelledby="bimi-title">
   <div class="modal">
     <h2 id="bimi-title" data-i18n="bimi.title">BIMI readiness</h2>
@@ -1089,6 +1111,7 @@
     <label class="field"><span data-i18n="bimi.domain">Domain</span>
       <input id="bimi-domain" placeholder="example.com" autocomplete="off" spellcheck="false">
     </label>
+    <p class="micro bimi-domain-hint hidden" id="bimi-domain-hint" data-i18n="bimi.mailboxNote"></p>
     <div class="modal-actions" style="justify-content:flex-start;">
       <button class="btn btn-primary" id="bimi-check" type="button" data-i18n="bimi.check">Check</button>
       <button class="btn" id="bimi-copy" type="button" data-i18n="bimi.copyRecord" disabled>Copy DNS record</button>

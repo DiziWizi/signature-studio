@@ -2183,6 +2183,145 @@ async function doCopyFragment() {
 
 /* ── presets (JSON brand kits) ────────────────────────────────────────── */
 
+/* ── test email (client proof kit) ───────────────────────────────────── */
+
+function testEmailHtml() {
+  const copy = JSON.parse(JSON.stringify(state));
+  const d = copy.design || (copy.design = {});
+  d.imageRef = d.imageRef || {};
+  /* Only inline what can travel inside the message. A hosted image stays a
+     URL; turning it into a cid: without a part would guarantee a hole. */
+  const pairs = [
+    ['logo', 'logoUrl'], ['banner', 'bannerUrl'],
+    ['footerLeft', 'footerLeftImg'], ['footerCenter', 'footerCenterImg'],
+    ['footerRight', 'footerRightImg'],
+  ];
+  for (const [ref, field] of pairs) {
+    if (/^data:image\//i.test(String(d[field] || ''))) d.imageRef[ref] = 'cid';
+  }
+  const socials = (copy.socials || []).filter(x => String(x.iconUrl || '').trim());
+  if (socials.length && socials.every(x => /^data:image\//i.test(String(x.iconUrl)))) {
+    d.imageRef.socials = 'cid';
+  }
+  return { copy, html: renderSignature(copy) };
+}
+
+function mimeB64(str) {
+  const bytes = new TextEncoder().encode(String(str));
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/(.{76})/g, '$1\r\n');
+}
+
+function mimeB64Bytes(bytes) {
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/(.{76})/g, '$1\r\n');
+}
+
+function mimePhrase(str) {
+  const s = String(str || '').trim();
+  if (/^[\x20-\x7e]*$/.test(s)) return `"${s.replace(/["\\]/g, '\\$&')}"`;
+  return `=?UTF-8?B?${mimeB64(s).replace(/\r\n/g, '')}?=`;
+}
+
+/* multipart/alternative: a plain-text checklist and the real signature. If
+   images were inlined, the HTML part sits in multipart/related so their
+   Content-IDs resolve even with remote images blocked. */
+function testEmailAddress() {
+  return String((state.profile && state.profile.email)
+    || (state.contact && state.contact.email) || '').trim();
+}
+
+async function buildTestEml() {
+  const { copy, html } = testEmailHtml();
+  const assets = await bulkAssetsAsync(copy);
+  const address = testEmailAddress();
+  const name = String((copy.profile && (copy.profile.displayName || copy.profile.name)) || copy.meta.name || 'Signature').trim();
+  const subject = t('test.subject', { name });
+  const draft = `${t('test.greeting')}\n\n${t('test.checklist')}\n\n${t('test.replyNote')}`;
+  const alt = `sigstudio-alt-${Date.now().toString(36)}`;
+  const rel = `sigstudio-rel-${Date.now().toString(36)}`;
+  const cidOf = new Map();
+  if (assets && assets.manifest) {
+    for (const img of assets.manifest.images) {
+      if (img.file) cidOf.set(img.file, img.cid);
+    }
+  }
+  let body = `--${alt}\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\n${mimeB64(draft)}\r\n`;
+  if (assets && assets.assets.length) {
+    body += `--${alt}\r\nContent-Type: multipart/related; boundary="${rel}"; type="text/html"\r\n\r\n`;
+    body += `--${rel}\r\nContent-Type: text/html; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\n${mimeB64(html)}\r\n`;
+    for (const a of assets.assets) {
+      const cid = cidOf.get(a.name) || `sigstudio-${String(a.name).replace(/^.*?([a-z0-9-]+)\.[a-z]+$/i, '$1')}`;
+      const file = String(a.name).split('/').pop();
+      body += `--${rel}\r\nContent-Type: ${a.mime || 'application/octet-stream'}; name="${file}"\r\nContent-Transfer-Encoding: base64\r\nContent-ID: <${cid}>\r\nContent-Disposition: inline; filename="${file}"\r\n\r\n${mimeB64Bytes(a.data)}\r\n`;
+    }
+    body += `--${rel}--\r\n`;
+  } else {
+    body += `--${alt}\r\nContent-Type: text/html; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\n${mimeB64(html)}\r\n`;
+  }
+  body += `--${alt}--\r\n`;
+  const headers = [
+    `From: ${mimePhrase(name)} <${address}>`,
+    `To: ${mimePhrase(name)} <${address}>`,
+    `Subject: =?UTF-8?B?${mimeB64(subject).replace(/\r\n/g, '')}?=`,
+    `Date: ${new Date().toUTCString()}`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/alternative; boundary="${alt}"`,
+    '',
+    '',
+  ].join('\r\n');
+  return headers + body;
+}
+
+async function doDownloadTestEml() {
+  const address = testEmailAddress();
+  if (!address) {
+    showToast(t('test.needEmail'), 'err', {
+      key: 'test.needEmail',
+      action: {
+        label: t('test.needEmailAction'),
+        fn: () => {
+          const field = document.querySelector('[data-field="profile.email"]');
+          if (field) {
+            field.focus();
+            field.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          }
+        },
+      },
+    });
+    return;
+  }
+  const eml = await buildTestEml();
+  downloadBlob(new Blob([eml], { type: 'message/rfc822' }), `signature-test-${slugify(state.meta.name)}.eml`);
+  showToast(t('test.downloaded'), '', { key: 'test.downloaded' });
+}
+
+function openTestModal() {
+  const pre = $('#test-checklist');
+  if (pre) pre.textContent = t('test.checklist');
+  openOverlay('#modal-test');
+}
+
+async function doCopyTestChecklist() {
+  try {
+    await navigator.clipboard.writeText(t('test.checklist'));
+    showToast(t('test.checklistCopied'), '', { key: 'test.checklistCopied' });
+  } catch (e) {
+    showToast(t('toast.copyFail'), 'err', { key: 'toast.copyFail' });
+  }
+}
+
+function updateBimiDomainHint() {
+  const input = $('#bimi-domain');
+  const hint = $('#bimi-domain-hint');
+  if (!input || !hint) return;
+  const domain = typeof normalizeDomain === 'function' ? normalizeDomain(input.value) : String(input.value || '').trim().toLowerCase();
+  const mailbox = domain === 'mailbox.org' || domain.endsWith('.mailbox.org');
+  hint.classList.toggle('hidden', !mailbox);
+}
+
 function downloadBlob(blob, filename) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -3058,7 +3197,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.92.0';
+const APP_VERSION = '0.93.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3481,6 +3620,10 @@ function init() {
   $('#x-share-qr').addEventListener('click', () => { menu.classList.add('hidden'); doShowShareQR(); });
   $('#x-json').addEventListener('click', () => { menu.classList.add('hidden'); openJsonEditor(); });
   $('#x-instructions').addEventListener('click', () => { menu.classList.add('hidden'); openOverlay('#modal-instructions'); });
+  $('#x-test').addEventListener('click', () => { menu.classList.add('hidden'); openTestModal(); });
+  $('#test-download').addEventListener('click', () => { doDownloadTestEml(); });
+  $('#test-copy').addEventListener('click', () => { doCopyTestChecklist(); });
+  $('#bimi-domain').addEventListener('input', updateBimiDomainHint);
   /* Copy from inside the instructions: one place to read the steps and
      grab the signature (no bouncing back to the export menu). */
   const instrCopy = $('#instr-copy');

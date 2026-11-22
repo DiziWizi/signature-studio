@@ -361,10 +361,22 @@ function contactInlineHtml(s, d, { labels = false } = {}) {
     .join(`<span style="font-size:${d.fontSize}px;color:${mutedColor(d)};">&nbsp;·&nbsp;</span>`);
 }
 
+/* Word-engine clients have no guarantee of the symbols these chips used
+   (𝕏, ◉, ▶, ♫): missing glyphs render as blank bars. Use plain letters there. */
+const CHIP_GLYPHS = {
+  x: 'X', instagram: 'ig', youtube: 'yt', tiktok: 'tt', whatsapp: 'wa',
+  spotify: 'sp', kofi: 'ko', behance: 'Be',
+};
+
+function chipGlyph(net, soc) {
+  if (net.id === 'custom') return String(soc.glyph || '↗');
+  return CHIP_GLYPHS[net.id] || net.glyph;
+}
+
 function socialChipHtml(d, soc, withLabel, size = 22) {
   const net = networkById(soc.network);
   const isCustom = net.id === 'custom';
-  const glyph = isCustom ? (soc.glyph || '↗') : net.glyph;
+  const glyph = chipGlyph(net, soc);
   const brand = isCustom ? (soc.color || '#5b6472') : net.color;
   /* Icon colour treatment: brand (default), monochrome, or outline. */
   const mode = String(d.socialColorMode || '');
@@ -389,7 +401,7 @@ function socialChipHtml(d, soc, withLabel, size = 22) {
 }
 
 /* Chips in a nested table row — reliable in every client. */
-function socialsRowHtml(s, d) {
+function socialsRowHtml(s, d, sizeOverride) {
   if (d.showSocials === false) return '';
   const socials = s.socials.filter(x => String(x.url || '').trim());
   if (!socials.length) return '';
@@ -409,10 +421,48 @@ function socialsRowHtml(s, d) {
 
   const withLabel = style === 'icons_labels';
   const gap = densityOf(d).socialGap;
-  const cells = socials.map(soc =>
-    `<td style="padding:0 ${gap}px ${gap}px 0;vertical-align:middle;">${socialChipHtml(d, soc, withLabel, socialSizeOf(d))}</td>`).join('');
+  const size = sizeOverride || socialSizeOf(d);
+  const cells = socials.map(soc => socialChipCell(d, soc, withLabel, size, gap)).join('');
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">` +
     `<tr>${cells}</tr></table>`;
+}
+
+/* A chip is a table cell, not an inline-block span: the Word engine ignores
+   width/height on spans, which turned round chips into narrow blue bars with
+   the glyph clipped. Cells also survive Outlook Web. Radius is dropped in
+   strict Outlook mode, leaving a square — the same bargain as elsewhere. */
+function socialChipCell(d, soc, withLabel, size, gap) {
+  const net = networkById(soc.network);
+  const isCustom = net.id === 'custom';
+  const glyph = chipGlyph(net, soc);
+  const brand = isCustom ? (soc.color || '#5b6472') : net.color;
+  const mode = String(d.socialColorMode || '');
+  const color = mode === 'mono' ? d.textColor : brand;
+  const fg = mode === 'outline' ? brand : '#ffffff';
+  const bg = mode === 'outline' ? 'transparent' : color;
+  const rim = mode === 'outline' ? `border:1px solid ${brand};` : '';
+  const raw = String(soc.url || '').trim();
+  if (!raw) return '';
+  const href = normalizeUrl(net.id, raw);
+  const iconUrl = String(soc.iconUrl || '').trim();
+  const pad = `padding:0 ${gap}px ${gap}px 0;`;
+  const label = withLabel
+    ? `<td style="${pad}padding-left:6px;vertical-align:middle;font-family:${stackOf(d)};font-size:${d.fontSize - 2}px;color:${d.textColor};">` +
+      `<a href="${esc(href)}" data-edit="socials" style="color:${d.textColor};text-decoration:none;">${esc(net.name)}</a></td>`
+    : '';
+  if (iconUrl) {
+    return `<td width="${size}" height="${size}" style="${pad}width:${size}px;height:${size}px;text-align:center;vertical-align:middle;">` +
+      `<a href="${esc(href)}" data-edit="socials" style="text-decoration:none;">` +
+      `<img src="${esc(imgSrcOf(d, `social-${net.id}`, iconUrl))}" width="${size}" height="${size}" alt="${esc(net.name)}" ` +
+      `style="display:block;width:${size}px;height:${size}px;border:0;${br(d, `${Math.round(size / 2)}px`)}"></a></td>${label}`;
+  }
+  const fontPx = Math.max(9, Math.round(size * 0.42));
+  return `<td width="${size}" height="${size}"${mode === 'outline' ? '' : ` bgcolor="${bg}"`} ` +
+    `style="${pad}width:${size}px;height:${size}px;background-color:${bg};${rim}${br(d, `${Math.round(size / 2)}px`)}` +
+    `text-align:center;vertical-align:middle;mso-line-height-rule:exactly;">` +
+    `<a href="${esc(href)}" data-edit="socials" style="display:block;width:${size}px;height:${size}px;` +
+    `line-height:${size}px;mso-line-height-rule:exactly;font-family:Arial,Helvetica,sans-serif;` +
+    `font-size:${fontPx}px;font-weight:bold;color:${fg};text-decoration:none;">${esc(glyph)}</a></td>${label}`;
 }
 
 /* Divider rule. opts.short (dividerLength 'short', classic/centered/banner)
@@ -958,20 +1008,13 @@ function lineRows(s, d) {
     parts.push(`<a href="${esc(href)}"${dmCls(d, 'mut')} style="${textStyle(d, { color: muted })};text-decoration:none;">${esc(label)}</a>`);
   }
 
-  let lineSocials = '';
-  if (d.showSocials !== false) {
-    const socials = s.socials.filter(x => String(x.url || '').trim());
-    if (socials.length) {
-      const chips = socials.map(soc => socialChipHtml(d, soc, false, 18)).join('&nbsp;');
-      if (socialsPos(d) === 'underName') lineSocials = chips;
-      else parts.push(chips);
-    }
-  }
   if (parts.length) {
     rows.push(`<tr><td colspan="2" align="left">${parts.join(sep)}</td></tr>`);
   }
-  if (lineSocials) {
-    rows.push(`<tr><td colspan="2" align="left">${lineSocials}</td></tr>`);
+  /* Chips are table cells now, so they get their own row rather than
+     breaking the single text line in Word-engine clients. */
+  if (d.showSocials !== false && s.socials.some(x => String(x.url || '').trim())) {
+    rows.push(`<tr><td colspan="2" align="left" style="padding-top:${densityOf(d).rowGap}px;">${socialsRowHtml(s, d, 18)}</td></tr>`);
   }
   rows.push(legalHtml(s, d));
   return rows.join('\n');
