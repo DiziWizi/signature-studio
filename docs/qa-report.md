@@ -2179,6 +2179,21 @@ Date: 2026-11-23 · Scope: breakpoints beyond phones.
 
 ---
 
+# v0.104.0 addendum (touch editing)
+
+Date: 2026-11-23 · Scope: coarse pointers and keyboards.
+
+- **Reorder** — the drag handle is hidden under `pointer: coarse`; the ▲▼
+  path is the touch route, 36×36 and verified to reorder.
+- **Rows** — social and custom rows wrap; URL/network fields take a full line
+  instead of squeezing between six controls.
+- **Keyboard** — `scroll-padding-bottom`/`scroll-margin` plus a
+  `visualViewport` resize handler bring the focused field back into view.
+- **Landscape modals** — capped at `100dvh`, scroll internally, fit 844×390.
+- 2 tests. Suite 341/341 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

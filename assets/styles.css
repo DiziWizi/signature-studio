@@ -24,6 +24,12 @@
 ::-webkit-scrollbar-thumb:hover { background: #3a4459; }
 * { scrollbar-width: thin; scrollbar-color: #2a3245 transparent; }
 
+html {
+  scroll-padding-bottom: 120px;
+}
+
+input, select, textarea { scroll-margin-bottom: 120px; }
+
 html, body {
   margin: 0;
   padding: 0;
@@ -378,11 +384,16 @@ details[open] summary::before { transform: rotate(90deg); }
 @media (pointer: coarse) {
   .btn { min-height: 36px; }
   .topbar .btn, .tpl-cat, .sec-jump select { min-height: 40px; }
-  .btn-icon, .co-move, .block-row [data-dir], .social-row .btn-icon {
+  .btn-icon, .co-move, .block-row [data-dir], .row-btn {
     min-width: 36px;
     min-height: 36px;
   }
   .tpl-cat { padding: 8px 12px; }
+  /* Touch reorder is the arrow path; the drag handle is mouse-only. */
+  .row-btn.row-drag { display: none; }
+  .social-row, .custom-row { flex-wrap: wrap; }
+  .social-row .soc-net, .social-row .soc-url { flex: 1 1 100%; }
+  .custom-row .line-label, .custom-row .line-value { flex: 1 1 120px; }
 }
 
 @media (max-width: 520px) {

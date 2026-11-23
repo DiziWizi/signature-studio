@@ -3324,7 +3324,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.103.0';
+const APP_VERSION = '0.104.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3410,6 +3410,25 @@ function init() {
   state = normalizeLoadedState(loadDraft());
   /* Images live in IndexedDB; resolve refs before the first real render.
      The promise is exposed so the E2E helper can wait for it. */
+  /* Mobile keyboards: a focused field must not end up behind the keyboard
+     or the peek sheet. Nudge it into view when the visual viewport shrinks. */
+  if (window.visualViewport) {
+    let vvTimer = 0;
+    window.visualViewport.addEventListener('resize', () => {
+      clearTimeout(vvTimer);
+      vvTimer = setTimeout(() => {
+        const el = document.activeElement;
+        if (!el || !el.matches('input, select, textarea')) return;
+        const r = el.getBoundingClientRect();
+        const h = window.visualViewport.height;
+        if (r.bottom > h - 8 || r.top < 8) {
+          const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' });
+        }
+      }, 150);
+    });
+  }
+
   window.__imagesReadyDone = false;
   window.__imagesReady = hydrateStateImages(state)
     .then(() => packCurrentImages())
