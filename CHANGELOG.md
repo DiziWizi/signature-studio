@@ -3,6 +3,13 @@
 All notable changes to Signature Studio. Versions are tagged in the Forgejo
 repository and mirrored to GitHub.
 
+## 0.107.1 — 2026-11-23
+
+### Documentation
+- Recorded that mirrored tags may not trigger GitHub Actions when the mirror
+  pushes with `GITHUB_TOKEN`; document PAT/dispatch options and a verification
+  command. No product change.
+
 ## 0.107.0 — 2026-11-23
 
 ### Added

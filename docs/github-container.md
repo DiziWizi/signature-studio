@@ -85,6 +85,22 @@ docker pull ghcr.io/<owner>/signature-studio@sha256:<digest>
 - GHCR retention: untagged layers accumulate on frequent builds; add a
   package cleanup rule if that matters.
 
+## Trigger reliability (observed)
+
+After mirroring `v0.107.0`, GitHub listed `container-image` as **active** but
+created **no run** for the tag. The usual cause is a mirror that pushes with
+`GITHUB_TOKEN`: GitHub suppresses workflow runs for events caused by that
+token. Options, in order of preference:
+
+1. Give the Forgejo push mirror a fine-grained PAT with **workflow** scope, or
+2. call `workflow_dispatch` / `repository_dispatch` from Forgejo after a
+   release, or
+3. run the workflow manually once per release.
+
+Check with `gh run list --repo <owner>/signature-studio --workflow
+container-image`. Until a run exists, no image has been published — do not
+assume the tag alone built one.
+
 ## Failure modes
 
 | Symptom | Likely cause |
