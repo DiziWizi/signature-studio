@@ -1,13 +1,23 @@
 # Changelog
 
-All notable changes to Signature Studio. Versions are tagged in the Forgejo
-repository and mirrored to GitHub.
+All notable changes to Bowerbird Signature Builder. Versions are tagged in the
+Forgejo repository and mirrored to GitHub.
+
+## Unreleased
+
+### Fixed
+- Source release archives are now
+  `bowerbird-signature-builder-<version>.tar.gz` / `.zip` with the matching
+  archive root. The old tag job emitted `bowerbird-<version>`, treating the
+  family mark as the app name.
+- Family docs point at **Bowerbird Mail** and Contact Porter's current
+  `bowerbird-contact-porter` slug instead of the pre-rename names.
 
 ## 0.108.2 — 2026-11-23
 
 ### Fixed
-- Forgejo CI smoke test now looks for “Bowerbird Signature Builder”, and its
-  tag archive names follow the new brand. No product change.
+- Forgejo CI smoke test now looks for “Bowerbird Signature Builder”, and the
+  app archive name follows the new brand. No product change.
 
 ## 0.108.1 — 2026-11-23
 
@@ -16,7 +26,7 @@ repository and mirrored to GitHub.
   app name. The top bar shows the full name, the tagline reads “A Bowerbird
   app”, and the manifest short name is “Signature Builder”.
 - Added `docs/family.md`: Bowerbird is the shared family (Contact Porter,
-  Signature Builder, Email), not the name of any one app or agent.
+  Mail, Signature Builder), not the name of any one app or agent.
 
 ## 0.108.0 — 2026-11-23
 

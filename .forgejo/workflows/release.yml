@@ -17,6 +17,7 @@ jobs:
           for f in assets/js/*.js; do node --check "$f" || exit 1; done
           for f in tests/*.js; do node --check "$f" || exit 1; done
           python3 -m py_compile tools/publish_release.py
+          python3 -m py_compile tools/make_archives.py
           python3 tools/check_selfhost.py
 
       - name: Header policy consistency
@@ -54,20 +55,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
           V="${GITHUB_REF_NAME#v}"
-          mkdir -p dist
-          tar --exclude='./.git' --exclude='./dist' -czf "dist/bowerbird-$V.tar.gz" .
-          python3 - <<'EOF'
-          import zipfile, os
-          v = os.environ["GITHUB_REF_NAME"][1:]
-          out = f"dist/bowerbird-{v}.zip"
-          with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
-              for root, dirs, files in os.walk("."):
-                  dirs[:] = [d for d in dirs if d not in (".git", "dist")]
-                  for f in files:
-                      p = os.path.join(root, f)
-                      z.write(p, p)
-          print("wrote", out)
-          EOF
+          python3 tools/make_archives.py --version "$V" --ref "$GITHUB_REF_NAME"
           ls -la dist
 
       - name: Publish release (tags only, token-gated)
