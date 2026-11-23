@@ -45,7 +45,7 @@ jobs:
           # pipefail fails with curl exit 23 (EPIPE) once index.html exceeds
           # the 64 KB pipe buffer, because grep -q exits after the first match.
           curl -sf http://127.0.0.1:8899/ -o /tmp/index.html
-          grep -q 'Signature Studio' /tmp/index.html
+          grep -q 'Bowerbird Signature Builder' /tmp/index.html
           curl -sf http://127.0.0.1:8899/assets/styles.css > /dev/null
           for f in assets/js/*.js; do curl -sf "http://127.0.0.1:8899/$f" > /dev/null || exit 1; done
           kill $SRV
@@ -55,11 +55,11 @@ jobs:
         run: |
           V="${GITHUB_REF_NAME#v}"
           mkdir -p dist
-          tar --exclude='./.git' --exclude='./dist' -czf "dist/signature-studio-$V.tar.gz" .
+          tar --exclude='./.git' --exclude='./dist' -czf "dist/bowerbird-$V.tar.gz" .
           python3 - <<'EOF'
           import zipfile, os
           v = os.environ["GITHUB_REF_NAME"][1:]
-          out = f"dist/signature-studio-{v}.zip"
+          out = f"dist/bowerbird-{v}.zip"
           with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
               for root, dirs, files in os.walk("."):
                   dirs[:] = [d for d in dirs if d not in (".git", "dist")]

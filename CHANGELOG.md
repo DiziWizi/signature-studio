@@ -3,6 +3,12 @@
 All notable changes to Signature Studio. Versions are tagged in the Forgejo
 repository and mirrored to GitHub.
 
+## 0.108.2 — 2026-11-23
+
+### Fixed
+- Forgejo CI smoke test now looks for “Bowerbird Signature Builder”, and its
+  tag archive names follow the new brand. No product change.
+
 ## 0.108.1 — 2026-11-23
 
 ### Changed
