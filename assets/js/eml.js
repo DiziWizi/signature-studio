@@ -1,4 +1,4 @@
-/* Signature Studio — .eml import (v0.89).
+/* Bowerbird — .eml import (v0.89).
    A small, dependency-free RFC 822 reader: headers, multipart boundaries,
    base64 and quoted-printable. It extracts the message's HTML (or plain
    text) so the existing signature importer can do the field recovery.

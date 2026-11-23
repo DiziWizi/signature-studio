@@ -1,4 +1,4 @@
-/* Signature Studio — best-effort HTML signature import. */
+/* Bowerbird — best-effort HTML signature import. */
 'use strict';
 
 function parseSignatureHTML(html) {

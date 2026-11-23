@@ -1,4 +1,4 @@
-/* Signature Studio — UI wiring. */
+/* Bowerbird — UI wiring. */
 'use strict';
 
 /* ── state ────────────────────────────────────────────────────────────── */
@@ -2401,7 +2401,7 @@ async function backupFiles() {
   files.push({
     name: 'backup.json',
     data: JSON.stringify({
-      app: 'signature-studio',
+      app: 'signature-studio', /* kept: existing backups must keep importing */
       version: APP_VERSION,
       createdAt: new Date().toISOString(),
       snapshots: snaps.map(s => ({ id: s.id, name: s.name, savedAt: s.savedAt })),
@@ -2410,7 +2410,7 @@ async function backupFiles() {
   files.push({
     name: 'README.txt',
     data: [
-      'Signature Studio backup',
+      'Bowerbird backup',
       '',
       'draft.json        the signature that was open when you exported',
       'saved/*.json      every saved signature, one file each',
@@ -2449,7 +2449,7 @@ async function doBackup() {
   }
   const stamp = new Date().toISOString().slice(0, 10);
   localStorage.setItem(LAST_BACKUP_KEY, new Date().toISOString());
-  downloadBlob(new Blob([zip], { type: 'application/zip' }), `signature-studio-backup-${stamp}.zip`);
+  downloadBlob(new Blob([zip], { type: 'application/zip' }), `bowerbird-backup-${stamp}.zip`);
   showToast(t('toast.backupDone', { n: listSnapshots().length }), '', { key: 'toast.backupDone' });
   updateImageNote();
 }
@@ -2509,7 +2509,7 @@ function doTeamPack() {
     showToast(t('bulk.noRows'), 'warn', { key: 'bulk.noRows' });
     return;
   }
-  downloadBlob(new Blob([zipStore(res.files)], { type: 'application/zip' }), 'signature-studio-team.zip');
+  downloadBlob(new Blob([zipStore(res.files)], { type: 'application/zip' }), 'bowerbird-team.zip');
   showToast(t('toast.teamPack', { n: res.generated }), '', {
     key: 'toast.teamPack',
     params: { n: res.generated },
@@ -3344,7 +3344,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.107.2';
+const APP_VERSION = '0.108.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {

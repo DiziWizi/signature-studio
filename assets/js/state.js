@@ -1,4 +1,4 @@
-/* Signature Studio — data model, defaults, sample data. */
+/* Bowerbird — data model, defaults, sample data. */
 'use strict';
 
 const FONT_STACKS = {

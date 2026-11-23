@@ -1,7 +1,7 @@
-# Signature Studio
+# Bowerbird - Signature Builder
 
 > [!IMPORTANT]
-> **AI-BUILT DISCLOSURE:** Signature Studio was built largely by an AI coding
+> **AI-BUILT DISCLOSURE:** Bowerbird was built largely by an AI coding
 > agent. Its code, documentation and release packaging were AI-generated,
 > with human direction and testing. Review it independently before relying on
 > it for anything sensitive; no warranty of correctness or security is implied.
@@ -10,9 +10,12 @@ A web-based tool for **creating and editing HTML email signatures** — in your
 browser, with your data staying on your machine. No account, no backend, no
 tracking. Works offline.
 
+**Formerly Signature Studio.** The repository slug stays `signature-studio`
+for URL and release stability; the product is Bowerbird.
+
 **Live demo:** <https://diziwizi.github.io/signature-studio/>
 
-![Signature Studio overview](docs/screenshots/01-overview.png)
+![Bowerbird overview](docs/screenshots/01-overview.png)
 
 ## Features
 
@@ -131,7 +134,7 @@ podman run -p 8080:80 signature-studio
 
 **Option C — any static host** (nginx, Caddy, Forgejo Pages, …) — publish
 only the app itself: `index.html`, `assets/`, `sw.js`, `manifest.webmanifest`.
-Each release ships exactly that as **`signature-studio-<version>-app.zip`**
+Each release ships exactly that as **`bowerbird-signature-builder-<version>-app.zip`**
 (unzip into your web root; `nginx.conf` is included). The same archive carries
 `_headers` (Netlify / Cloudflare Pages), `vercel.json` and
 `deploy/Caddyfile.example` — all four express the identical CSP, and
@@ -261,7 +264,7 @@ npm run test:e2e    # Playwright suite — boot, templates, socials, checklist,
                     # crop, fixtures, export, undo, presets, PWA, security,
                     # a11y (axe), self-host CSP, visual baselines…
                     # first run: npm install && npx playwright install chromium
-npm run pack:app    # dist/signature-studio-<version>-app.zip — deployables only
+npm run pack:app    # dist/bowerbird-signature-builder-<version>-app.zip — deployables only
 ```
 
 The service worker is **cache-first**: after you change any file, bump

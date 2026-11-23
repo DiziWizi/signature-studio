@@ -1,4 +1,4 @@
-/* Signature Studio — social network catalogue. */
+/* Bowerbird — social network catalogue. */
 'use strict';
 
 const NETWORKS = [

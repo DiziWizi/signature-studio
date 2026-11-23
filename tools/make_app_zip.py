@@ -2,7 +2,8 @@
 """Build the deployable archive: the app, not the repository.
 
 Usage: python3 tools/make_app_zip.py [--version X.Y.Z]
-Writes dist/signature-studio-<version>-app.zip with the web-root contents at
+Writes dist/bowerbird-signature-builder-<version>-app.zip with the web-root
+contents at
 the zip root (unzip into a web root and you are done)."""
 import argparse
 import json
@@ -24,7 +25,7 @@ def main() -> None:
         version = json.load(open(os.path.join(ROOT, 'package.json'), encoding='utf-8'))['version']
     out_dir = os.path.join(ROOT, 'dist')
     os.makedirs(out_dir, exist_ok=True)
-    out = os.path.join(out_dir, f'signature-studio-{version}-app.zip')
+    out = os.path.join(out_dir, f'bowerbird-signature-builder-{version}-app.zip')
     count = 0
     with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as z:
         for name in FILES:

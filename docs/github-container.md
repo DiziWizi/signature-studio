@@ -17,7 +17,7 @@ tag vX.Y.Z ──► release + assets   ──►   tag mirrored ──► Actio
 
 1. **Builds linux/amd64 locally** and loads it into the runner.
 2. **Smoke tests the image**:
-   - `/` serves and contains “Signature Studio”;
+   - `/` serves and contains “Bowerbird”;
    - `/assets/styles.css` serves;
    - `/e2e/` returns 404 (the nginx deny list);
    - `X-Content-Type-Options: nosniff` is present.

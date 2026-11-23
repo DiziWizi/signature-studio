@@ -40,7 +40,7 @@ test('service worker controls the page and serves the app offline', async ({ pag
   await context.setOffline(true);
   try {
     await page.reload({ waitUntil: 'load' });
-    await expect(page.locator('.brand-name')).toHaveText('Signature Studio');
+    await expect(page.locator('.brand-name')).toHaveText('Bowerbird');
     await expect(page.locator('#preview-frame')).toBeVisible();
     /* Wizard stays dismissed (flag lives in localStorage, read offline). */
     await expect(page.locator('#modal-wizard')).toHaveClass(/hidden/);

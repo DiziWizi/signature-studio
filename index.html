@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Signature Studio — build and edit HTML email signatures in the browser. Templates, social links, contact details, live preview, one-click export. No account, everything stays local." data-i18n="meta.description">
+<meta name="description" content="Bowerbird - Signature Builder — build and edit HTML email signatures in the browser. Templates, social links, contact details, live preview, one-click export. No account, everything stays local." data-i18n="meta.description">
 <meta name="theme-color" content="#0d1017">
-<title data-i18n="meta.title">Signature Studio — HTML email signature builder</title>
+<title data-i18n="meta.title">Bowerbird - Signature Builder</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
-<h1 class="sr-only">Signature Studio</h1>
+<h1 class="sr-only">Bowerbird - Signature Builder</h1>
 <noscript>
   <div class="noscript" role="alert">
-    <strong>Signature Studio needs JavaScript.</strong>
+    <strong>Bowerbird needs JavaScript.</strong>
     Everything — editing, previewing and exporting — runs in your browser, so
     nothing works with scripting disabled. Enable JavaScript and reload.
   </div>
@@ -32,8 +32,8 @@
       <path d="M45 13 19 39l9 2 2 9 26-26z" fill="#ffffff" opacity=".95"/>
       <circle cx="26" cy="45" r="3.5" fill="#ffffff"/>
     </svg>
-    <span class="brand-name" data-i18n="brand.name">Signature Studio</span>
-    <span class="brand-tag" data-i18n="brand.tag">HTML email signatures, built locally</span>
+    <span class="brand-name" data-i18n="brand.name">Bowerbird</span>
+    <span class="brand-tag" data-i18n="brand.tag">Signature Builder</span>
   </div>
   <nav class="top-actions">
     <button class="btn" id="btn-sample" type="button" data-i18n="topbar.sample">Sample data</button>
@@ -845,7 +845,7 @@
       <label><input type="radio" name="importMode" value="html" checked><span data-i18n="import.modeHtml">HTML</span></label>
       <label><input type="radio" name="importMode" value="vcard"><span data-i18n="import.modeVcard">vCard (.vcf)</span></label>
     </div>
-    <p class="hint" id="import-hint" data-i18n="import.hint">Paste the HTML of a signature you already use. Signature Studio will try to recover the name, contact details, links and images. It’s best-effort — always review the result.</p>
+    <p class="hint" id="import-hint" data-i18n="import.hint">Paste the HTML of a signature you already use. Bowerbird will try to recover the name, contact details, links and images. It’s best-effort — always review the result.</p>
     <div class="import-file-row">
       <button class="btn btn-sm" id="import-eml" type="button" data-i18n="import.emlButton">Import email (.eml / .mht)…</button>
       <span class="micro" data-i18n="import.emlHint">Reads the HTML part of a saved email (.eml) or an Outlook web archive (.mht). Outlook .msg must be saved as .mht or .html first.</span>

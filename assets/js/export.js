@@ -1,4 +1,4 @@
-/* Signature Studio — export: clipboard (rich + plain), download, plain text. */
+/* Bowerbird — export: clipboard (rich + plain), download, plain text. */
 'use strict';
 
 function plainTextVersion(s) {

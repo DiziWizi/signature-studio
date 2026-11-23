@@ -1,4 +1,4 @@
-/* Signature Studio — signature renderer. state → full HTML document.
+/* Bowerbird — signature renderer. state → full HTML document.
    Outlook-safe: table layout, every style inline, no <style> in default output,
    explicit widths, role=presentation. */
 'use strict';

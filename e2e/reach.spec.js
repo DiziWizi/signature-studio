@@ -24,7 +24,7 @@ test('the backup ZIP holds the draft, every saved signature and an index', async
 
   await page.click('#btn-export');
   const [download] = await Promise.all([page.waitForEvent('download'), page.click('#x-backup')]);
-  expect(download.suggestedFilename()).toMatch(/^signature-studio-backup-\d{4}-\d{2}-\d{2}\.zip$/);
+  expect(download.suggestedFilename()).toMatch(/^bowerbird-backup-\d{4}-\d{2}-\d{2}\.zip$/);
   expect(fs.statSync(await download.path()).size).toBeGreaterThan(500);
   await expectNoErrors(h);
 });

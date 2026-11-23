@@ -11,7 +11,7 @@ const ROOT = path.join(__dirname, '..');
 
 test('the app archive contains deployables only', () => {
   execFileSync('python3', [path.join(ROOT, 'tools', 'make_app_zip.py'), '--version', '0.0.0'], { cwd: ROOT });
-  const zipPath = path.join(ROOT, 'dist', 'signature-studio-0.0.0-app.zip');
+  const zipPath = path.join(ROOT, 'dist', 'bowerbird-signature-builder-0.0.0-app.zip');
   const list = execFileSync('python3', ['-c', `
 import zipfile, sys
 z = zipfile.ZipFile(${JSON.stringify(zipPath)})

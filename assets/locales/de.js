@@ -1,15 +1,15 @@
-/* Signature Studio — German locale (Sie-Form). */
+/* Bowerbird — German locale (Sie-Form). */
 'use strict';
 
 window.SIG_LOCALES = window.SIG_LOCALES || {};
 window.SIG_LOCALES.de = {
-  'meta.title': 'Signature Studio — Editor für HTML-E-Mail-Signaturen',
-  'meta.description': 'Signature Studio — HTML-E-Mail-Signaturen im Browser erstellen und bearbeiten. Vorlagen, Social-Media-Links, Kontaktdaten, Live-Vorschau, Export mit einem Klick. Kein Konto, alles bleibt lokal.',
+  'meta.title': "Bowerbird - Signature Builder — HTML-E-Mail-Signaturen",
+  'meta.description': "Bowerbird - Signature Builder — HTML-E-Mail-Signaturen im Browser erstellen und bearbeiten. Vorlagen, Social-Media-Links, Kontaktdaten, Live-Vorschau, Export mit einem Klick. Kein Konto, alles bleibt lokal.",
 
   'a11y.skip': 'Zum Inhalt springen',
 
-  'brand.name': 'Signature Studio',
-  'brand.tag': 'HTML-E-Mail-Signaturen, lokal erstellt',
+  'brand.name': "Bowerbird",
+  'brand.tag': "Signature Builder",
 
   'topbar.sample': 'Beispieldaten',
   'topbar.guide': 'Anleitung',
@@ -318,7 +318,7 @@ window.SIG_LOCALES.de = {
   'wiz.finish': 'Fertig',
 
   'import.title': 'Vorhandene Signatur importieren',
-  'import.hint': 'Fügen Sie den HTML-Code einer Signatur ein, die Sie bereits verwenden. Signature Studio versucht, Name, Kontaktdaten, Links und Bilder wiederherzustellen. Das ist Best-Effort — prüfen Sie das Ergebnis immer.',
+  'import.hint': "Fügen Sie den HTML-Code einer Signatur ein, die Sie bereits verwenden. Bowerbird versucht, Name, Kontaktdaten, Links und Bilder wiederherzustellen. Das ist Best-Effort — prüfen Sie das Ergebnis immer.",
   'import.cancel': 'Abbrechen',
   'import.parse': 'Analysieren',
   'import.apply': 'In den Editor übernehmen',
@@ -438,7 +438,7 @@ window.SIG_LOCALES.de = {
   'toast.fragmentCopied': 'Tabellenfragment kopiert — fügen Sie es in Ihre CMS-Vorlage ein.',
   'toast.presetExported': 'Preset exportiert — teilen Sie die Datei mit Ihrem Team.',
   'toast.presetImported': 'Preset importiert.',
-  'toast.presetInvalid': 'Kein gültiges Signature-Studio-Preset.',
+  'toast.presetInvalid': "Kein gültiges Bowerbird-Preset.",
   'toast.vcardDownloaded': 'vCard heruntergeladen — senden Sie sie an Kontakte oder fügen Sie sie auf Ihrem Telefon hinzu.',
   'toast.vcard4Unavailable': 'vCard-4.0-Erzeuger nicht verfügbar.',
   'toast.vcard4Downloaded': 'vCard 4.0 heruntergeladen — moderne Kontakt-Apps lesen sie, einschließlich Pronomen.',
@@ -594,7 +594,7 @@ window.SIG_LOCALES.de = {
   'design.imageRefAsStored': "Wie gespeichert — URL oder hochgeladenes Bild",
   'design.imageRefCid': "Inline-CID — Mail-System hängt es an",
   'design.socialsImageRef': "Icon-Bilder nutzen",
-  'footer.version': "Signature Studio v{v}",
+  'footer.version': "Bowerbird v{v}",
   'save.saved': "Lokal gespeichert",
   'save.saving': "Speichern…",
   'save.error': "Nicht gespeichert — Speicher voll",

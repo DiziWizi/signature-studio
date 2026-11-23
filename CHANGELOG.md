@@ -3,6 +3,16 @@
 All notable changes to Signature Studio. Versions are tagged in the Forgejo
 repository and mirrored to GitHub.
 
+## 0.108.0 — 2026-11-23
+
+### Changed
+- Renamed the product to **Bowerbird - Signature Builder**: UI name, page
+  title, PWA manifest, locales, README/docs, app archive and backup download
+  names.
+- Technical identifiers stay for compatibility: repository slug
+  `signature-studio`, `sigstudio.*` storage keys, service-worker cache prefix
+  and the backup `app` field.
+
 ## 0.107.2 — 2026-11-23
 
 ### Documentation

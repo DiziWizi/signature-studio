@@ -1,12 +1,12 @@
 {
-  "name": "Signature Studio",
-  "short_name": "SigStudio",
+  "name": "Bowerbird - Signature Builder",
+  "short_name": "Bowerbird",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0d1017",
   "theme_color": "#0d1017",
-  "description": "Build HTML email signatures locally",
+  "description": "Bowerbird - Signature Builder. Build HTML email signatures locally.",
   "share_target": {
     "action": "/",
     "method": "GET",
