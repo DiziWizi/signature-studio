@@ -2209,6 +2209,22 @@ Date: 2026-11-23 · Scope: header height and editor length.
 
 ---
 
+# v0.106.0 addendum (team handoff pack)
+
+Date: 2026-11-23 · Scope: bulk CSV → installable folders.
+
+- **Team Outlook pack** — each ready CSV row becomes
+  `<slug>/<slug>.htm` + `<slug>/<slug>_files/` with relative images, inside
+  one ZIP. `team-index.csv` lists every row (ready, no name, no email,
+  duplicate); `README.txt` explains the Signatures folder.
+- **Reuse** — `outlookFilesForState()` is shared by the single-signature
+  pack and the bulk one; no second renderer.
+- **Honest limits** — classic Outlook only; hosted images stay remote.
+- 2 tests (folders/images/index, empty-set refusal). Suite 346/346 twice;
+  Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

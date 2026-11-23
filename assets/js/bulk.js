@@ -271,6 +271,37 @@ function bulkPlan(state, csvText) {
   return plan;
 }
 
+/* Per-person classic Outlook folders plus an index. One team ZIP, no server:
+   each folder is a complete <slug>.htm + <slug>_files/ pair. */
+function bulkTeamPack(state, csvText) {
+  const plan = bulkPlan(state, csvText);
+  const out = { files: [], generated: 0, skipped: 0, duplicates: 0 };
+  if (plan.empty) return out;
+  if (plan.noEmailColumn) return Object.assign(out, { noEmailColumn: true });
+  const rows = [['name', 'email', 'status', 'folder']];
+  for (const row of plan.rows) {
+    if (row.status !== 'ready') {
+      out.skipped += 1;
+      if (row.status === 'duplicate') out.duplicates += 1;
+      rows.push([row.name, row.email, row.status, '']);
+      continue;
+    }
+    if (typeof outlookFilesForState !== 'function') { out.skipped += 1; continue; }
+    const slug = String(row.filename || '').replace(/\.html$/, '') || `signature-${out.generated + 1}`;
+    const pack = outlookFilesForState(row.state, { slug });
+    for (const f of pack.files) out.files.push({ name: `${slug}/${f.name}`, data: f.data });
+    rows.push([row.name, row.email, 'ready', slug]);
+    out.generated += 1;
+  }
+  const cell = v => {
+    const s = String(v == null ? '' : v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  out.files.push({ name: 'team-index.csv', data: rows.map(r => r.map(cell).join(',')).join('\n') + '\n' });
+  out.files.push({ name: 'README.txt', data: t('teamPack.readme', { n: out.generated }) });
+  return out;
+}
+
 function bulkGenerate(state, csvText) {
   const plan = bulkPlan(state, csvText);
   const out = { files: [], generated: 0, skipped: 0, duplicates: 0 };

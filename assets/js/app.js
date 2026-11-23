@@ -2457,11 +2457,11 @@ async function doBackup() {
 /* Classic Outlook on Windows reads a signature from a folder:
    %APPDATA%\Microsoft\Signatures\<name>.htm plus a sibling <name>_files
    folder. Hosted URLs stay remote; only data URIs become local files. */
-function outlookPackFiles() {
-  const copy = JSON.parse(JSON.stringify(state));
+function outlookFilesForState(st, opts = {}) {
+  const copy = JSON.parse(JSON.stringify(st));
   copy.design.imageRef = {};
   delete copy.design.imageMode;
-  const slug = slugify(state.meta.name || (state.profile && state.profile.name) || 'signature') || 'signature';
+  const slug = opts.slug || slugify(copy.meta.name || (copy.profile && copy.profile.name) || 'signature') || 'signature';
   const folder = `${slug}_files`;
   let html = renderSignature(copy);
   const files = [];
@@ -2491,9 +2491,29 @@ function outlookPackFiles() {
       const name = addImage(b64, mime);
       return name ? `url(${name})` : m;
     });
-  return [{ name: `${slug}.htm`, data: html }]
-    .concat(files)
-    .concat([{ name: 'README.txt', data: t('outlookPack.readme', { name: `${slug}.htm`, folder }) }]);
+  return {
+    slug,
+    files: [{ name: `${slug}.htm`, data: html }].concat(files),
+  };
+}
+
+function outlookPackFiles() {
+  const { slug, files } = outlookFilesForState(state);
+  return files.concat([{ name: 'README.txt', data: t('outlookPack.readme', { name: `${slug}.htm`, folder: `${slug}_files` }) }]);
+}
+
+function doTeamPack() {
+  const csv = ($('#bulk-csv') && $('#bulk-csv').value) || '';
+  const res = bulkTeamPack(state, csv);
+  if (!res.generated) {
+    showToast(t('bulk.noRows'), 'warn', { key: 'bulk.noRows' });
+    return;
+  }
+  downloadBlob(new Blob([zipStore(res.files)], { type: 'application/zip' }), 'signature-studio-team.zip');
+  showToast(t('toast.teamPack', { n: res.generated }), '', {
+    key: 'toast.teamPack',
+    params: { n: res.generated },
+  });
 }
 
 function doOutlookPack() {
@@ -3324,7 +3344,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.105.0';
+const APP_VERSION = '0.106.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3810,6 +3830,7 @@ function init() {
   $('#x-cid-zip').addEventListener('click', () => { menu.classList.add('hidden'); doCidZip(); });
   $('#bulk-generate').addEventListener('click', runBulk);
   $('#bulk-vcards').addEventListener('click', () => { doContactCardsZip(); });
+  $('#bulk-team').addEventListener('click', () => { doTeamPack(); });
   let bulkPreviewTimer = 0;
   $('#bulk-csv').addEventListener('input', () => {
     clearTimeout(bulkPreviewTimer);
