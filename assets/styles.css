@@ -44,6 +44,7 @@ body {
      app row to the viewport share — with min-height alone the body
      grows to the content and the sidebar never becomes scrollable. */
   height: 100vh;
+  height: 100dvh;
 }
 
 .hidden { display: none !important; }
@@ -59,7 +60,8 @@ body {
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  padding: 10px 18px;
+  padding: calc(10px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right))
+           calc(10px + env(safe-area-inset-bottom)) calc(18px + env(safe-area-inset-left));
   background: rgba(13, 16, 23, 0.86);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
@@ -155,6 +157,7 @@ body {
 .editor {
   overflow-y: auto;
   min-height: 0;
+  min-width: 0;
   padding: 16px 20px 48px;
   border-right: 1px solid var(--line);
 }
@@ -273,8 +276,8 @@ details[open] summary::before { transform: rotate(90deg); }
 #peek-fab {
   display: none;
   position: fixed;
-  right: 14px;
-  bottom: 14px;
+  right: calc(14px + env(safe-area-inset-right));
+  bottom: calc(14px + env(safe-area-inset-bottom));
   z-index: 70;
   align-items: center;
   gap: 7px;
@@ -294,7 +297,8 @@ details[open] summary::before { transform: rotate(90deg); }
   right: 0;
   bottom: 0;
   z-index: 80;
-  height: min(52vh, 420px);
+  height: min(52dvh, 420px);
+  padding-bottom: env(safe-area-inset-bottom);
   background: var(--panel);
   border-top: 1px solid var(--line2);
   box-shadow: 0 -10px 30px rgba(0, 0, 0, .5);
@@ -371,12 +375,28 @@ details[open] summary::before { transform: rotate(90deg); }
 
 /* Phone pass: URL rows wrap instead of squeezing the input to 160px;
    16px inputs stop iOS Safari zooming the whole page on focus. */
+@media (max-width: 620px), (max-height: 500px) {
+  /* The FAB/peek sheet owns the preview on phones and landscape phones; the
+     in-flow copy sat 10,000 px down the page and duplicated it. */
+  .preview-col { display: none; }
+}
+
+@media (pointer: coarse) {
+  .btn { min-height: 36px; }
+  .topbar .btn, .tpl-cat, .sec-jump select { min-height: 40px; }
+  .btn-icon, .co-move, .block-row [data-dir], .social-row .btn-icon {
+    min-width: 36px;
+    min-height: 36px;
+  }
+  .tpl-cat { padding: 8px 12px; }
+}
+
 @media (max-width: 520px) {
   .url-row, .field .field-inline.portrait-row { flex-wrap: wrap; }
   .url-row input[data-field],
   .field .field-inline.portrait-row input[data-field] { flex: 1 1 100%; }
   input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px; }
-  #toasts { bottom: 74px; }
+  #toasts { bottom: calc(74px + env(safe-area-inset-bottom)); }
 }
 
 /* Test-in-a-real-inbox */
@@ -1377,7 +1397,7 @@ textarea { resize: vertical; min-height: 40px; }
   border: 1px solid var(--line);
   border-radius: 14px;
   max-width: 640px;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
   overflow-y: auto;
   overscroll-behavior: contain;
   width: 100%;
@@ -1565,7 +1585,8 @@ textarea { resize: vertical; min-height: 40px; }
 @media (max-width: 620px) {
   .grid2 { grid-template-columns: 1fr; }
   .span2 { grid-column: auto; }
-  .tpl-picker { grid-template-columns: repeat(3, 1fr); }
+  .tpl-picker { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tpl-btn { min-width: 0; }
 }
 
 /* Very narrow screens: compact the topbar instead of letting it sprawl

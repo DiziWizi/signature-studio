@@ -2147,6 +2147,23 @@ Date: 2026-11-23 · Scope: new-surface a11y, documentation.
 
 ---
 
+# v0.102.0 addendum (phone layout hygiene)
+
+Date: 2026-11-23 · Scope: phone viewport and touch.
+
+- **One preview** — below 620 px or 500 px tall, `.preview-col` is removed
+  from the flow; the FAB/peek sheet is the preview. The duplicate started
+  10,067 px down a 10,830 px page.
+- **Viewport** — `viewport-fit=cover`, `100dvh`, safe-area padding on the
+  topbar, FAB, peek sheet, toasts and modals.
+- **Touch targets** — under `pointer: coarse`, topbar buttons/chips/jump
+  select are 40 px; other buttons 36 px; row arrows 36×36.
+- **320 px** — template grid uses `minmax(0,1fr)` and editor `min-width:0`,
+  removing a 31 px horizontal overflow.
+- 4 tests. Suite 339/339 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

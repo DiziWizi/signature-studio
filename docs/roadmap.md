@@ -391,6 +391,9 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   dark-logo field and proof dialog; describedby/status/aria labels on the new
   controls; reduced-motion check; CHANGELOG, browser-support and 1.0-scope
   README; E2E 335
+- [x] v0.102.0 — phone layout hygiene: removes the duplicate in-flow preview
+  (FAB/peek only), 100dvh + safe-area padding, 36–40 px touch targets under
+  pointer:coarse, and a 320 px minmax fix; E2E 339
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,
