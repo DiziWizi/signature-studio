@@ -8,9 +8,9 @@ agent maintaining the repository.
 
 | App | Purpose | Repository |
 | --- | --- | --- |
-| **Bowerbird Contact Porter** | Move contacts between providers | `SlopWare/bowerbird` |
+| **Bowerbird Contact Porter** | Move contacts between providers | `SlopWare/bowerbird-contact-porter` |
 | **Bowerbird Signature Builder** | Build Outlook-safe HTML email signatures | `SlopWare/signature-studio` |
-| **Bowerbird Email** | Email tooling (planned) | — |
+| **Bowerbird Mail** | Native mail client (Phase 0: engine only) | `SlopWare/bowerbird-mail` |
 
 ## Naming rules
 
