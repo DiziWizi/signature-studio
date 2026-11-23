@@ -1,4 +1,4 @@
-/* Signature Studio — Playwright E2E config.
+/* Bowerbird Signature Builder — Playwright E2E config.
    Serves the static app with python3 http.server (no build step) and runs
    Chromium against http://127.0.0.1:8137 (localhost = secure context, so the
    service worker works). Local: no retries, reuse an already-running server.

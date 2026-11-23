@@ -1,4 +1,4 @@
-/* Signature Studio — shared E2E helpers. */
+/* Bowerbird Signature Builder — shared E2E helpers. */
 'use strict';
 
 const { expect } = require('@playwright/test');

@@ -1,4 +1,4 @@
-/* Signature Studio — real-world HTML signature import fixtures.
+/* Bowerbird Signature Builder — real-world HTML signature import fixtures.
    Browser-executed: parseSignatureHTML uses DOMParser, which node lacks.
    Load this after socials.js and import.js, then call runImportFixtureTests(). */
 'use strict';
