@@ -37,6 +37,8 @@
   </div>
   <nav class="top-actions">
     <button class="btn" id="btn-sample" type="button" data-i18n="topbar.sample">Sample data</button>
+    <button class="btn" id="btn-saved" type="button"><span data-i18n="topbar.saved">Saved</span> <span class="pill" id="saved-count" role="status" aria-live="polite">0</span></button>
+    <div id="top-secondary" role="group" aria-label="More actions" data-i18n-aria="topbar.moreActions">
     <button class="btn" id="btn-guide" type="button" data-i18n-title="topbar.guideTitle" data-i18n="topbar.guide">Guide</button>
     <button class="btn btn-icon" id="btn-shortcuts" type="button" title="Keyboard shortcuts (?)"
             aria-label="Keyboard shortcuts" data-i18n-title="topbar.shortcutsTitle" data-i18n-aria="topbar.shortcutsAria">?</button>
@@ -51,13 +53,14 @@
       <option value="fr" data-i18n="topbar.langFr">Français</option>
     </select>
     <button class="btn" id="btn-import" data-advanced type="button" data-i18n="topbar.import">Import HTML</button>
-    <button class="btn" id="btn-saved" type="button"><span data-i18n="topbar.saved">Saved</span> <span class="pill" id="saved-count" role="status" aria-live="polite">0</span></button>
     <div class="export-wrap" id="quick-wrap">
       <button class="btn btn-icon" id="btn-quick" type="button" data-i18n-title="topbar.switchTitle" data-i18n-aria="topbar.switchAria" title="Switch between saved signatures" aria-label="Switch saved signature">⇄</button>
       <div class="menu hidden" id="quick-menu" role="menu"></div>
     </div>
     <button class="btn btn-icon" id="btn-undo" type="button" data-i18n-title="topbar.undoTitle" data-i18n-aria="topbar.undoAria" title="Undo (Ctrl+Z)" aria-label="Undo (Ctrl+Z)" disabled>↶</button>
     <button class="btn btn-icon" id="btn-redo" type="button" data-i18n-title="topbar.redoTitle" data-i18n-aria="topbar.redoAria" title="Redo (Ctrl+Shift+Z)" aria-label="Redo (Ctrl+Shift+Z)" disabled>↷</button>
+    <button class="btn btn-icon" id="btn-reset" type="button" data-i18n-title="topbar.resetTitle" data-i18n-aria="topbar.resetAria" title="Start over" aria-label="Start over">↺</button>
+    </div>
     <div class="export-wrap">
       <button class="btn btn-primary" id="btn-export" type="button" data-i18n="topbar.export" data-i18n-title="topbar.exportShortcut" title="Export (Ctrl+Shift+E)">Export ▾</button>
       <div class="menu hidden" id="export-menu" role="menu">
@@ -101,7 +104,8 @@
         <button role="menuitem" id="x-bulk" data-advanced type="button" data-i18n="topbar.bulk">Bulk generate (CSV)…</button>
       </div>
     </div>
-    <button class="btn btn-icon" id="btn-reset" type="button" data-i18n-title="topbar.resetTitle" data-i18n-aria="topbar.resetAria" title="Start over" aria-label="Start over">↺</button>
+    <button class="btn btn-icon" id="btn-more" type="button" aria-expanded="false" aria-controls="top-secondary"
+            data-i18n-title="topbar.moreTitle" data-i18n-aria="topbar.moreAria" title="More actions" aria-label="More actions">⋯</button>
   </nav>
 </header>
 

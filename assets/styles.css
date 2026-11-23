@@ -79,6 +79,41 @@ body {
 .brand-tag { color: var(--mut); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .top-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* Primary actions stay in the bar on phones; the rest folds into #btn-more. */
+.top-actions > #btn-sample { order: 1; }
+.top-actions > #btn-saved { order: 2; }
+.top-actions > .export-wrap { order: 3; }
+#top-secondary { display: contents; }
+#top-secondary > * { order: 4; }
+#btn-more { display: none; order: 5; }
+@media (max-width: 620px), (max-height: 560px) {
+  #btn-more { display: inline-flex; }
+  #top-secondary { display: none; }
+  .topbar.more-open #top-secondary {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 70;
+    max-height: 72dvh;
+    overflow: auto;
+    padding: 12px calc(14px + env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom))
+             calc(14px + env(safe-area-inset-left));
+    background: var(--panel);
+    border-bottom: 1px solid var(--line2);
+    box-shadow: 0 16px 30px rgba(0, 0, 0, .45);
+  }
+  #top-secondary .btn, #top-secondary select { width: 100%; text-align: left; }
+  #top-secondary .seg { width: 100%; }
+  #top-secondary .seg label { flex: 1; }
+  #top-secondary .seg label span { text-align: center; }
+  #top-secondary #quick-wrap { display: none; }
+  #top-secondary #btn-undo, #top-secondary #btn-redo { width: 44px; }
+}
 
 /* ── buttons ──────────────────────────────────────────────────────────── */
 

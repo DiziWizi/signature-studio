@@ -3324,7 +3324,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.104.0';
+const APP_VERSION = '0.105.0';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {
@@ -3592,6 +3592,35 @@ function init() {
     scheduleSave();
     showToast(t('toast.sample', { name: persona.name }), '', { key: 'toast.sample', params: { name: persona.name } });
   });
+  /* Phone shell: the secondary actions live behind ⋯. */
+  const moreBtn = $('#btn-more');
+  const topbar = document.querySelector('.topbar');
+  const closeMore = () => {
+    if (!topbar) return;
+    topbar.classList.remove('more-open');
+    if (moreBtn) moreBtn.setAttribute('aria-expanded', 'false');
+  };
+  if (moreBtn && topbar) {
+    moreBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = !topbar.classList.contains('more-open');
+      topbar.classList.toggle('more-open', open);
+      moreBtn.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.topbar')) closeMore();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeMore();
+    });
+    $('#top-secondary').addEventListener('click', e => {
+      if (e.target.closest('button')) closeMore();
+    });
+    const wide = window.matchMedia('(min-width: 621px) and (min-height: 561px)');
+    const onWide = () => { if (wide.matches) closeMore(); };
+    if (wide.addEventListener) wide.addEventListener('change', onWide);
+  }
+
   $('#btn-import').addEventListener('click', () => {
     openOverlay('#modal-import'); /* focus lands on #import-src via data-autofocus */
     $('#import-summary').classList.add('hidden');
@@ -4164,6 +4193,33 @@ function init() {
   } else if (sigBootStatus === 'bad') {
     showToast(t('share.bad'), 'err', { key: 'share.bad' });
   }
+
+  initSectionPrefs();
+}
+
+/* Sections remember open/closed per device. On a phone the first two open
+   instead of all ten, which is most of the page length. */
+const SECTION_PREFS_KEY = 'sigstudio.sections.v1';
+
+function initSectionPrefs() {
+  const sections = [...document.querySelectorAll('details[data-sec]')];
+  if (!sections.length) return;
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(SECTION_PREFS_KEY) || 'null'); } catch (e) { saved = null; }
+  const phone = window.matchMedia('(max-width: 620px)').matches;
+  let applying = true;
+  sections.forEach((el, i) => {
+    const key = el.dataset.sec;
+    if (saved && typeof saved[key] === 'boolean') el.open = saved[key];
+    else if (phone) el.open = i < 2;
+    el.addEventListener('toggle', () => {
+      if (applying) return;
+      const map = {};
+      sections.forEach(s => { map[s.dataset.sec] = s.open; });
+      try { localStorage.setItem(SECTION_PREFS_KEY, JSON.stringify(map)); } catch (e) { /* private mode */ }
+    });
+  });
+  applying = false;
 }
 
 document.addEventListener('DOMContentLoaded', init);

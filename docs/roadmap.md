@@ -399,7 +399,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   dual-screen `horizontal-viewport-segments` layout; E2E 339
 - [x] v0.104.0 — touch editing: drag handles hidden on coarse pointers,
   rows wrap, arrows are 36 px and reorder; focused fields stay above the
-  virtual keyboard; landscape modals fit and scroll; E2E 341
+  virtual  keyboard; landscape modals fit and scroll; E2E 341
+- [x] v0.105.0 — compact phone shell: primary actions stay in a one-row
+  header, the rest folds behind ⋯, and sections remember open state with the
+  first two open on phones; E2E 344
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

@@ -2194,6 +2194,21 @@ Date: 2026-11-23 · Scope: coarse pointers and keyboards.
 
 ---
 
+# v0.105.0 addendum (compact phone shell)
+
+Date: 2026-11-23 · Scope: header height and editor length.
+
+- **One-row header** — Sample, Saved, Export and ⋯ stay; Guide, shortcuts,
+  mode, language, Import, undo/redo and reset fold into a sheet under ⋯.
+  At 390 px the header drops from 166 px to under 100; landscape phones
+  (844×390) use the same shell because height, not width, is the constraint.
+- **Sections** — `sigstudio.sections.v1` remembers each section; phones open
+  the first two, tablets/desktops keep the markup defaults. This removes most
+  of the 11,500 px page.
+- 3 tests. Suite 344/344 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

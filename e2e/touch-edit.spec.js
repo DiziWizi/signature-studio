@@ -9,6 +9,7 @@ test('touch lists use arrows, not a drag handle, and fit the phone', async ({ pa
   await page.setViewportSize({ width: 390, height: 844 });
   const h = await freshPage(page);
   await page.click('#btn-sample');
+  await page.evaluate(() => { document.querySelector('details[data-sec="socials"]').open = true; });
 
   const info = await page.evaluate(() => {
     const row = document.querySelector('.social-row');
