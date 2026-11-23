@@ -616,6 +616,7 @@ window.SIG_LOCALES.en = {
   'manualCopy.micro': "Your browser blocked the one-click copy. The text below is already selected — press Ctrl+C (or right-click → Copy).",
   'manualCopy.done': "Done",
   'tpl.custom': "Custom",
+  'design.logoDarkAria': "Dark-mode logo URL",
   'topbar.outlookPack': "Outlook signature folder (ZIP)",
   'instr.outlookPackStep': "Classic Outlook only: <b>Export ▸ Outlook signature folder (ZIP)</b>, unzip into <code>%APPDATA%\\Microsoft\\Signatures</code>, restart Outlook and pick it in Signatures.",
   'toast.outlookPack': "Outlook folder ZIP downloaded — unzip it into %APPDATA%\\Microsoft\\Signatures.",

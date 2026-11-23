@@ -2129,6 +2129,24 @@ Date: 2026-11-23 · Scope: 390 px editing.
 
 ---
 
+# v0.101.0 addendum (accessibility and 1.0 readiness)
+
+Date: 2026-11-23 · Scope: new-surface a11y, documentation.
+
+- **Axe** — the picker with the dark-logo section open, and the proof dialog,
+  have no serious or critical WCAG A/AA violations (preview and thumbnails
+  excluded, as elsewhere).
+- **Semantics** — proof dialog gains `aria-describedby`; the dark-logo URL
+  field has an accessible name; the template empty state is a `status`
+  region; the visible count remains a `status`.
+- **Reduced motion** — verified under emulated `prefers-reduced-motion`.
+- **Docs** — `CHANGELOG.md`; README corrected to 25 templates and the current
+  export routes; browser-support and “what 1.0 means” sections; iOS Mail
+  labelled text-only instead of a misleading tick.
+- 3 tests. Suite 335/335 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

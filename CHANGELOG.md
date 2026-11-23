@@ -1,0 +1,121 @@
+# Changelog
+
+All notable changes to Signature Studio. Versions are tagged in the Forgejo
+repository and mirrored to GitHub.
+
+## 0.101.0 — 2026-11-23
+
+### Added
+- `CHANGELOG.md`, browser-support and 1.0-scope sections in the README.
+- Accessibility metadata for the proof dialog (`aria-describedby`), the
+  dark-logo URL field, and the template empty state.
+
+### Changed
+- README corrected to 25 templates and the current export/install routes.
+
+## 0.100.0 — 2026-11-23
+
+### Fixed
+- Hints inside fields no longer inherit uppercase, letterspacing and 600
+  weight from the field label.
+- Logo, dark-logo and portrait URL rows wrap at phone widths instead of
+  squeezing the input between buttons.
+- Text inputs are 16 px under 520 px, stopping iOS Safari zoom on focus.
+- Toasts sit clear of the Preview button on phones.
+
+### Added
+- A 4×-CPU budget test proving template thumbnails stay lazy.
+
+## 0.99.0 — 2026-11-23
+
+### Added
+- Classic Outlook signature-folder ZIP: `<name>.htm`, `<name>_files/` images
+  and a README for `%APPDATA%\Microsoft\Signatures`.
+
+### Notes
+- Classic Outlook on Windows only; new Outlook, web and Mac use their own
+  editors.
+
+## 0.98.0 — 2026-11-23
+
+### Added
+- Template search, a curated **Start here** set, live result count and an
+  empty state. Categories and search intersect.
+
+## 0.97.1 — 2026-11-23
+
+### Fixed
+- Stale 3,000-character assertion for the huge-share-link test (the case is
+  3,017 characters and still openable). No product change.
+
+## 0.97.0 — 2026-11-23
+
+### Added
+- Optional dark-mode logo, swapped in `prefers-color-scheme: dark` and hidden
+  inline so Outlook keeps the light mark.
+- Dark logo travels through IndexedDB, CID packages, test emails and backups.
+
+## 0.96.0 — 2026-11-23
+
+### Added
+- Whole-library visual matrix: LTR, RTL, strict Outlook and narrow widths.
+
+### Fixed
+- RTL bidi: phone numbers no longer reverse; legal punctuation stays put.
+
+## 0.95.1 — 2026-11-23
+
+### Added
+- iPhone/iPad install tab: plain-text export, Settings → Apps → Mail →
+  Signature, Per Account, and the text-only/no-sync limits.
+
+## 0.95.0 — 2026-11-23
+
+### Added
+- Backup verification before download, last-backup age in the Saved panel,
+  and an amber nudge when storage is evictable and the backup is stale.
+
+## 0.94.0 — 2026-11-22
+
+### Added
+- Right-to-left content: direction control, reversed cell flow, mirrored
+  alignment, padding, margins and borders; mobile stacking follows.
+
+## 0.93.0 — 2026-11-22
+
+### Added
+- **Test in a real inbox**: a multipart `.eml` with inline (CID) images and a
+  seven-point checklist.
+- mailbox.org BIMI note.
+
+### Fixed
+- Social chips are table cells with ASCII-safe glyphs — no more blank bars in
+  the Word engine.
+- Clipboard failure no longer leaks a raw i18n key.
+
+## 0.92.0 — 2026-11-22
+
+### Added
+- mailbox.org install tab and **Save reply variant** for OX's separate reply
+  slot.
+
+### Fixed
+- Image packing no longer replaces the live preview's data URLs with `idb:`
+  references after autosave.
+
+## 0.91.0 — 2026-11-22
+
+### Added
+- Persistent-storage request and status; evicted images are reported with a
+  Restore-backup action.
+- Hostile-input suite for ZIP, MIME, quoted-printable, deep HTML and vCards.
+
+### Fixed
+- Invalid base64 no longer throws out of the email importer.
+
+## 0.90.0 — 2026-11-22
+
+### Added
+- Layout variants: mirrored columns, photo above/beside, compact spacing.
+- Undo history stores image references with a 6 MB budget and hydrates on
+  undo/redo.

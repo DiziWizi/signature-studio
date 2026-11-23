@@ -137,7 +137,7 @@
           <button type="button" class="tpl-cat" data-cat="creative" aria-pressed="false" data-i18n="tpl.creative">Creative</button>
           <button type="button" class="tpl-cat" data-cat="public" aria-pressed="false" data-i18n="tpl.public">Public</button>
         </div>
-        <p class="micro hidden" id="tpl-empty" data-i18n="tpl.none">No templates match that search.</p>
+        <p class="micro hidden" id="tpl-empty" role="status" data-i18n="tpl.none">No templates match that search.</p>
         <div class="tpl-picker" id="tpl-picker">
           <button class="tpl-btn" data-template="classic" type="button" aria-pressed="true">
             <span class="thumb"><iframe class="tthumb" data-tpl="classic" data-i18n-title="tpl.classicPreview" title="Classic preview" tabindex="-1" aria-hidden="true" sandbox=""></iframe></span>
@@ -333,7 +333,7 @@
             </span>
             <input type="file" id="logo-file" accept="image/*" hidden>
             <span class="field-inline portrait-row"><span data-i18n="design.logoDark">Dark-mode logo</span>
-              <input data-field="design.logoDarkUrl" placeholder="https://…/logo-dark.png">
+              <input data-field="design.logoDarkUrl" placeholder="https://…/logo-dark.png" data-i18n-aria="design.logoDarkAria">
               <button class="btn btn-sm" id="upload-logo-dark" type="button" data-i18n="design.upload">Upload</button>
             </span>
             <input type="file" id="logo-dark-file" accept="image/*" hidden>
@@ -1117,10 +1117,10 @@
   </div>
 </div>
 
-<div class="overlay hidden" id="modal-test" role="dialog" aria-modal="true" aria-labelledby="test-title">
+<div class="overlay hidden" id="modal-test" role="dialog" aria-modal="true" aria-labelledby="test-title" aria-describedby="test-lead">
   <div class="modal">
     <h2 id="test-title" data-i18n="test.title">Test it in a real inbox</h2>
-    <p class="micro" data-i18n="test.lead">Download a message that carries this signature, then open it in the clients you care about. Images travel inside the message (CID), so remote-image blocking does not hide them.</p>
+    <p class="micro" id="test-lead" data-i18n="test.lead">Download a message that carries this signature, then open it in the clients you care about. Images travel inside the message (CID), so remote-image blocking does not hide them.</p>
     <ol class="test-steps">
       <li data-i18n="test.step1">Download the test email and open the .eml in Outlook, Gmail, Apple Mail or your phone.</li>
       <li data-i18n="test.step2">Work through the checklist below — it names the failures that matter, not just the pretty ones.</li>

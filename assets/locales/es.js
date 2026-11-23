@@ -614,6 +614,7 @@ window.SIG_LOCALES.es = {
   'manualCopy.micro': "Su navegador bloqueó la copia con un clic. El texto de abajo ya está seleccionado — pulse Ctrl+C (o clic derecho → Copiar).",
   'manualCopy.done': "Listo",
   'tpl.custom': "Personalizada",
+  'design.logoDarkAria': "URL del logo para modo oscuro",
   'topbar.outlookPack': "Carpeta de firma de Outlook (ZIP)",
   'instr.outlookPackStep': "Solo Outlook clásico: <b>Exportar ▸ Carpeta de firma de Outlook (ZIP)</b>, descomprime en <code>%APPDATA%\\Microsoft\\Signatures</code>, reinicia Outlook y elígela en Firmas.",
   'toast.outlookPack': "ZIP de carpeta de Outlook descargado: descomprímelo en %APPDATA%\\Microsoft\\Signatures.",

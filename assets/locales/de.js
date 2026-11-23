@@ -614,6 +614,7 @@ window.SIG_LOCALES.de = {
   'manualCopy.micro': "Ihr Browser hat das Ein-Klick-Kopieren blockiert. Der Text unten ist bereits markiert — drücken Sie Strg+C (oder Rechtsklick → Kopieren).",
   'manualCopy.done': "Fertig",
   'tpl.custom': "Eigene",
+  'design.logoDarkAria': "URL des Logos für den Dunkelmodus",
   'topbar.outlookPack': "Outlook-Signaturordner (ZIP)",
   'instr.outlookPackStep': "Nur klassisches Outlook: <b>Export ▸ Outlook-Signaturordner (ZIP)</b>, in <code>%APPDATA%\\Microsoft\\Signatures</code> entpacken, Outlook neu starten und die Signatur auswählen.",
   'toast.outlookPack': "Outlook-Ordner-ZIP geladen — nach %APPDATA%\\Microsoft\\Signatures entpacken.",

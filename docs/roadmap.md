@@ -387,6 +387,10 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
   `.field`, full-width URL rows and 16 px inputs (no iOS focus zoom), toasts
   clear the preview button, and a 4×-CPU budget test pins lazy thumbnails;
   E2E 332
+- [x] v0.101.0 — accessibility and 1.0 readiness: axe on the picker,
+  dark-logo field and proof dialog; describedby/status/aria labels on the new
+  controls; reduced-motion check; CHANGELOG, browser-support and 1.0-scope
+  README; E2E 335
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept
   original, never persisted); E2E now 81
 - [x] v0.29.0 — i18n: dependency-free t() layer, 435 keys × en/de/es/fr,

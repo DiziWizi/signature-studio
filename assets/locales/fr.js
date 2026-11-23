@@ -615,6 +615,7 @@ window.SIG_LOCALES.fr = {
   'manualCopy.micro': "Votre navigateur a bloqué la copie en un clic. Le texte ci-dessous est déjà sélectionné — appuyez sur Ctrl+C (ou clic droit → Copier).",
   'manualCopy.done': "Terminé",
   'tpl.custom': "Personnalisé",
+  'design.logoDarkAria': "URL du logo pour le mode sombre",
   'topbar.outlookPack': "Dossier de signature Outlook (ZIP)",
   'instr.outlookPackStep': "Outlook classique uniquement : <b>Exporter ▸ Dossier de signature Outlook (ZIP)</b>, décompressez dans <code>%APPDATA%\\Microsoft\\Signatures</code>, redémarrez Outlook et choisissez-la dans Signatures.",
   'toast.outlookPack': "ZIP du dossier Outlook téléchargé — décompressez-le dans %APPDATA%\\Microsoft\\Signatures.",
