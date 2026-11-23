@@ -1,4 +1,4 @@
-/* Bowerbird — English locale (master key set).
+/* Bowerbird Signature Builder — English locale (master key set).
    Values are byte-identical to the original English UI strings; every key
    must exist in de.js, es.js and fr.js too. */
 'use strict';
@@ -320,7 +320,7 @@ window.SIG_LOCALES.en = {
   'wiz.finish': 'Finish',
 
   'import.title': 'Import an existing signature',
-  'import.hint': "Paste the HTML of a signature you already use. Bowerbird will try to recover the name, contact details, links and images. It’s best-effort — always review the result.",
+  'import.hint': "Paste the HTML of a signature you already use. Bowerbird Signature Builder will try to recover the name, contact details, links and images. It’s best-effort — always review the result.",
   'import.cancel': 'Cancel',
   'import.parse': 'Parse',
   'import.apply': 'Apply to editor',
@@ -440,7 +440,7 @@ window.SIG_LOCALES.en = {
   'toast.fragmentCopied': 'Table fragment copied — paste it into your CMS template.',
   'toast.presetExported': 'Preset exported — share the file with your team.',
   'toast.presetImported': 'Preset imported.',
-  'toast.presetInvalid': "Not a valid Bowerbird preset.",
+  'toast.presetInvalid': "Not a valid Bowerbird Signature Builder preset.",
   'toast.vcardDownloaded': 'vCard downloaded — send it to contacts or add it to your phone.',
   'toast.vcard4Unavailable': 'vCard 4.0 builder unavailable.',
   'toast.vcard4Downloaded': 'vCard 4.0 downloaded — modern contacts apps read it, including pronouns.',

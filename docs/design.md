@@ -1,4 +1,4 @@
-# Bowerbird — Design
+# Bowerbird Signature Builder — Design
 
 Date: 2026-11-18 · Status: approved by user instruction ("plan and execute")
 

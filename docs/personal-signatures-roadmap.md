@@ -1,4 +1,4 @@
-# Bowerbird — Personal signatures roadmap
+# Bowerbird Signature Builder — Personal signatures roadmap
 
 Recommendations focused on **personal** email signature users (individuals,
 freelancers, creators, job-seekers) rather than corporate brand users. Sorted

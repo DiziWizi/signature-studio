@@ -73,7 +73,7 @@ jobs:
             sleep 1
           done
           test "$ok" = 1
-          grep -q 'Bowerbird' /tmp/index.html
+          grep -q 'Bowerbird Signature Builder' /tmp/index.html
           curl -fsS http://127.0.0.1:8088/assets/styles.css > /dev/null
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8088/e2e/)" = 404
           curl -sI http://127.0.0.1:8088/ | grep -qi '^x-content-type-options: nosniff'

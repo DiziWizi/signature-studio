@@ -1,4 +1,4 @@
-/* Bowerbird — Spanish locale (formal usted). */
+/* Bowerbird Signature Builder — Spanish locale (formal usted). */
 'use strict';
 
 window.SIG_LOCALES = window.SIG_LOCALES || {};
@@ -318,7 +318,7 @@ window.SIG_LOCALES.es = {
   'wiz.finish': 'Terminar',
 
   'import.title': 'Importar una firma existente',
-  'import.hint': "Pegue el HTML de una firma que ya use. Bowerbird intentará recuperar el nombre, los datos de contacto, los enlaces y las imágenes. Es un mejor esfuerzo — revise siempre el resultado.",
+  'import.hint': "Pegue el HTML de una firma que ya use. Bowerbird Signature Builder intentará recuperar el nombre, los datos de contacto, los enlaces y las imágenes. Es un mejor esfuerzo — revise siempre el resultado.",
   'import.cancel': 'Cancelar',
   'import.parse': 'Analizar',
   'import.apply': 'Aplicar al editor',
@@ -438,7 +438,7 @@ window.SIG_LOCALES.es = {
   'toast.fragmentCopied': 'Fragmento de tabla copiado — péguelo en la plantilla de su CMS.',
   'toast.presetExported': 'Preset exportado — comparta el archivo con su equipo.',
   'toast.presetImported': 'Preset importado.',
-  'toast.presetInvalid': "No es un preset válido de Bowerbird.",
+  'toast.presetInvalid': "No es un preset válido de Bowerbird Signature Builder.",
   'toast.vcardDownloaded': 'vCard descargada — envíela a contactos o añádala a su teléfono.',
   'toast.vcard4Unavailable': 'Generador de vCard 4.0 no disponible.',
   'toast.vcard4Downloaded': 'vCard 4.0 descargada — las apps de contactos modernas la leen, incluidos los pronombres.',

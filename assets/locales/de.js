@@ -1,4 +1,4 @@
-/* Bowerbird — German locale (Sie-Form). */
+/* Bowerbird Signature Builder — German locale (Sie-Form). */
 'use strict';
 
 window.SIG_LOCALES = window.SIG_LOCALES || {};
@@ -318,7 +318,7 @@ window.SIG_LOCALES.de = {
   'wiz.finish': 'Fertig',
 
   'import.title': 'Vorhandene Signatur importieren',
-  'import.hint': "Fügen Sie den HTML-Code einer Signatur ein, die Sie bereits verwenden. Bowerbird versucht, Name, Kontaktdaten, Links und Bilder wiederherzustellen. Das ist Best-Effort — prüfen Sie das Ergebnis immer.",
+  'import.hint': "Fügen Sie den HTML-Code einer Signatur ein, die Sie bereits verwenden. Bowerbird Signature Builder versucht, Name, Kontaktdaten, Links und Bilder wiederherzustellen. Das ist Best-Effort — prüfen Sie das Ergebnis immer.",
   'import.cancel': 'Abbrechen',
   'import.parse': 'Analysieren',
   'import.apply': 'In den Editor übernehmen',
@@ -438,7 +438,7 @@ window.SIG_LOCALES.de = {
   'toast.fragmentCopied': 'Tabellenfragment kopiert — fügen Sie es in Ihre CMS-Vorlage ein.',
   'toast.presetExported': 'Preset exportiert — teilen Sie die Datei mit Ihrem Team.',
   'toast.presetImported': 'Preset importiert.',
-  'toast.presetInvalid': "Kein gültiges Bowerbird-Preset.",
+  'toast.presetInvalid': "Kein gültiges Preset für Bowerbird Signature Builder.",
   'toast.vcardDownloaded': 'vCard heruntergeladen — senden Sie sie an Kontakte oder fügen Sie sie auf Ihrem Telefon hinzu.',
   'toast.vcard4Unavailable': 'vCard-4.0-Erzeuger nicht verfügbar.',
   'toast.vcard4Downloaded': 'vCard 4.0 heruntergeladen — moderne Kontakt-Apps lesen sie, einschließlich Pronomen.',

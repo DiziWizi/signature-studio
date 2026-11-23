@@ -1,4 +1,4 @@
-# Bowerbird — QA report
+# Bowerbird Signature Builder — QA report
 
 Date: 2026-11-18 · Tester: Hermes Agent (browser-exec, Chromium) · Target:
 `http://127.0.0.1:8137` (static server) and a podman-built container.
@@ -2251,7 +2251,14 @@ Date: 2026-11-23 · Scope: product name only.
   localStorage keys, SW cache prefix and the backup `app` field. URLs, drafts
   and old backups keep working.
 - App archive is now `bowerbird-signature-builder-<version>-app.zip`.
+- v0.108.3 completed the live-surface sweep: no standalone “Bowerbird” app
+  title remains, and the GHCR smoke test checks the full name.
 - 346/346 twice; Firefox smoke 3/3.
+
+> Naming note (2026-11-23): earlier addenda quote the pre-rename footer
+> “Signature Studio vX.Y.Z” and the old smoke-test grep. Those lines are
+> historical; the current footer and smoke check say **Bowerbird Signature
+> Builder**.
 
 ---
 

@@ -13,6 +13,17 @@ Forgejo repository and mirrored to GitHub.
 - Family docs point at **Bowerbird Mail** and Contact Porter's current
   `bowerbird-contact-porter` slug instead of the pre-rename names.
 
+## 0.108.3 — 2026-11-23
+
+### Fixed
+- Removed the last standalone “Bowerbird” app references: no-script and
+  import copy, README disclosure, and docs titles now say **Bowerbird
+  Signature Builder**.
+- README no longer repeats the retired display name outside history; the QA
+  archive carries a dated correction note instead of a rewrite.
+- GHCR smoke test asserts the full product name.
+- No compatibility identifiers changed.
+
 ## 0.108.2 — 2026-11-23
 
 ### Fixed
