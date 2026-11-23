@@ -2164,6 +2164,21 @@ Date: 2026-11-23 · Scope: phone viewport and touch.
 
 ---
 
+# v0.103.0 addendum (tablet and foldable split)
+
+Date: 2026-11-23 · Scope: breakpoints beyond phones.
+
+- **Two panes** — at ≥840 px wide with ≥561 px height: iPad landscape, unfolded
+  Fold (884), small laptops. Portrait tablets and short landscape windows stay
+  single-column with the peek sheet.
+- **Dual screen** — under `horizontal-viewport-segments: 2`, the layout places
+  the editor and preview in separate segments via `env(viewport-segment-*)`
+  and hides the FAB.
+- **Tested** — 673/768 single, 844×390 single, 884×1104 and 1024×768 two
+  panes, no horizontal overflow. 339/339 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

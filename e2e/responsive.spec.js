@@ -49,26 +49,36 @@ test('landscape phones also use the peek sheet, not a buried preview', async ({ 
   await expectNoErrors(h);
 });
 
-test('tablets keep the preview, desktops keep two panes', async ({ page }) => {
+test('tablets portrait use the peek sheet; foldables and desktops get two panes', async ({ page }) => {
   const h = await freshPage(page);
 
   await page.setViewportSize({ width: 768, height: 1024 });
   const tablet = await page.evaluate(() => ({
     preview: getComputedStyle(document.querySelector('.preview-col')).display,
+    fab: getComputedStyle(document.querySelector('#peek-fab')).display,
     cols: getComputedStyle(document.querySelector('.layout')).gridTemplateColumns,
     overflow: document.documentElement.scrollWidth - innerWidth,
   }));
-  expect(tablet.preview).toBe('flex');
+  expect(tablet.preview).toBe('none');
+  expect(tablet.fab).toBe('flex');
   expect(tablet.cols.split(' ').length).toBe(1);
   expect(tablet.overflow).toBeLessThanOrEqual(0);
 
-  await page.setViewportSize({ width: 1024, height: 768 });
-  const desktop = await page.evaluate(() => ({
+  /* Unfolded Fold (884) is wide enough for two panes. */
+  await page.setViewportSize({ width: 884, height: 1104 });
+  const fold = await page.evaluate(() => ({
     cols: getComputedStyle(document.querySelector('.layout')).gridTemplateColumns,
+    preview: getComputedStyle(document.querySelector('.preview-col')).display,
     fab: getComputedStyle(document.querySelector('#peek-fab')).display,
+    overflow: document.documentElement.scrollWidth - innerWidth,
   }));
-  expect(desktop.cols.split(' ').length).toBe(2);
-  expect(desktop.fab).toBe('none');
+  expect(fold.cols.split(' ').length).toBe(2);
+  expect(fold.preview).toBe('flex');
+  expect(fold.fab).toBe('none');
+  expect(fold.overflow).toBeLessThanOrEqual(0);
+
+  await page.setViewportSize({ width: 1024, height: 768 });
+  expect((await page.evaluate(() => getComputedStyle(document.querySelector('.layout')).gridTemplateColumns)).split(' ').length).toBe(2);
   await expectNoErrors(h);
 });
 
