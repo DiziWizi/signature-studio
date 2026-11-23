@@ -1,8 +1,8 @@
-/* Bowerbird — cache-first service worker. No build step: bump VERSION
+/* Bowerbird Signature Builder — cache-first service worker. No build step: bump VERSION
    to invalidate the cache and ship a new precache set. */
 'use strict';
 
-const VERSION = 'sigstudio-v0.108.0';
+const VERSION = 'sigstudio-v0.108.1';
 
 const PRECACHE = [
   './',

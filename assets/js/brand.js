@@ -1,4 +1,4 @@
-/* Bowerbird — brand assets and BIMI readiness (v0.82).
+/* Bowerbird Signature Builder — brand assets and BIMI readiness (v0.82).
    Everything here runs in the browser. The ONLY network call is the explicit
    BIMI "Check" button, which asks Google's public DNS resolver about the
    domain the user typed — no signature data is sent. */
@@ -96,7 +96,7 @@ function assetSnippet(files) {
 
 function assetReadme(files) {
   return [
-    'Brand asset pack — Bowerbird',
+    'Brand asset pack — Bowerbird Signature Builder',
     '',
     'favicon-32.png            browser tab, 32x32',
     'apple-touch-icon-180.png  iOS home screen, 180x180',

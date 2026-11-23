@@ -1,4 +1,4 @@
-# Bowerbird - Signature Builder
+# Bowerbird Signature Builder
 
 > [!IMPORTANT]
 > **AI-BUILT DISCLOSURE:** Bowerbird was built largely by an AI coding
@@ -10,8 +10,12 @@ A web-based tool for **creating and editing HTML email signatures** — in your
 browser, with your data staying on your machine. No account, no backend, no
 tracking. Works offline.
 
-**Formerly Signature Studio.** The repository slug stays `signature-studio`
-for URL and release stability; the product is Bowerbird.
+**Formerly Signature Studio.** Part of the **Bowerbird** family of local-first
+tools, alongside Bowerbird Contact Porter and Bowerbird Email. “Bowerbird” is
+the family name, not the name of this app or of any agent working here; the app
+is **Bowerbird Signature Builder**. See [docs/family.md](docs/family.md).
+
+The repository slug stays `signature-studio` for URL and release stability.
 
 **Live demo:** <https://diziwizi.github.io/signature-studio/>
 

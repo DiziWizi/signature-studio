@@ -1,4 +1,4 @@
-/* Bowerbird — social network catalogue. */
+/* Bowerbird Signature Builder — social network catalogue. */
 'use strict';
 
 const NETWORKS = [

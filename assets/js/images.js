@@ -1,4 +1,4 @@
-/* Bowerbird — image store (v0.88).
+/* Bowerbird Signature Builder — image store (v0.88).
    localStorage is ~5 MB of text; photos do not belong in it. Images above
    IMG_THRESHOLD are written to IndexedDB and replaced by an `idb:<id>` ref in
    whatever is persisted. State in memory always holds data URLs, so every

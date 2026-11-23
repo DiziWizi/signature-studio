@@ -1,4 +1,4 @@
-/* Bowerbird — UI wiring. */
+/* Bowerbird Signature Builder — UI wiring. */
 'use strict';
 
 /* ── state ────────────────────────────────────────────────────────────── */
@@ -2410,7 +2410,7 @@ async function backupFiles() {
   files.push({
     name: 'README.txt',
     data: [
-      'Bowerbird backup',
+      'Bowerbird Signature Builder backup',
       '',
       'draft.json        the signature that was open when you exported',
       'saved/*.json      every saved signature, one file each',
@@ -3344,7 +3344,7 @@ function bindImageUpload(btnId, fileId, fieldPath, { square = false } = {}) {
    switching back restores everything exactly. */
 const MODE_KEY = 'sigstudio.mode';
 /* Kept in sync with package.json and sw.js on every release. */
-const APP_VERSION = '0.108.0';
+const APP_VERSION = '0.108.1';
 let editorMode = 'simple';
 
 function draftHasAdvanced(d) {

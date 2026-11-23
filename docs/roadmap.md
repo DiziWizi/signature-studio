@@ -409,7 +409,7 @@ ship them. Checked items are shipped (v0.1.0 / v0.2.0).
 - [x] v0.107.0 — 1.0 hardening: draft GHCR workflow (smoke-tested image,
   multi-arch, SBOM/provenance) and `docs/github-container.md`; Forgejo stays
   canonical; E2E 346
-- [x] v0.108.0 — renamed the product to **Bowerbird - Signature Builder**:
+- [x] v0.108.0 — renamed the product to **Bowerbird Signature Builder**:
   UI, title, manifest, locales, docs, app archive and backup names; legacy
   repo/storage/backup identifiers retained; E2E 346
 - [x] v0.28.0 — photo re-crop (centre/left/right from the session-kept

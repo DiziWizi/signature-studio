@@ -1,4 +1,4 @@
-/* Bowerbird — vCard 3.0 export. */
+/* Bowerbird Signature Builder — vCard 3.0 export. */
 'use strict';
 
 /* Escape a vCard field value per RFC 2426: backslash first, then ; , and newlines. */
@@ -128,7 +128,7 @@ function vcardUid(seed) {
   return 'urn:uuid:' + [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20, 32)].join('-');
 }
 
-/* Build a vCard 3.0 string from the Bowerbird state shape. */
+/* Build a vCard 3.0 string from the Bowerbird Signature Builder state shape. */
 function buildVCard(state, opts = {}) {
   const s = state || {};
   const p = s.profile || {};
@@ -230,7 +230,7 @@ function vcardField4(name, params, value, components) {
   return line;
 }
 
-/* Build a vCard 4.0 string (RFC 6350) from the Bowerbird state shape.
+/* Build a vCard 4.0 string (RFC 6350) from the Bowerbird Signature Builder state shape.
    Mirrors buildVCard() but emits every property on a single line (no folding)
    and adds PRONOUN (RFC 6715). */
 function buildVCard4(state) {

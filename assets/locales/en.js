@@ -5,13 +5,13 @@
 
 window.SIG_LOCALES = window.SIG_LOCALES || {};
 window.SIG_LOCALES.en = {
-  'meta.title': "Bowerbird - Signature Builder",
-  'meta.description': "Bowerbird - Signature Builder — build and edit HTML email signatures in the browser. Templates, social links, contact details, live preview, one-click export. No account, everything stays local.",
+  'meta.title': "Bowerbird Signature Builder",
+  'meta.description': "Bowerbird Signature Builder — build and edit HTML email signatures in the browser. Templates, social links, contact details, live preview, one-click export. No account, everything stays local.",
 
   'a11y.skip': 'Skip to content',
 
-  'brand.name': "Bowerbird",
-  'brand.tag': "Signature Builder",
+  'brand.name': "Bowerbird Signature Builder",
+  'brand.tag': "A Bowerbird app",
 
   'topbar.sample': 'Sample data',
   'topbar.guide': 'Guide',
@@ -596,7 +596,7 @@ window.SIG_LOCALES.en = {
   'design.imageRefAsStored': "As stored — URL or uploaded image",
   'design.imageRefCid': "Inline CID — mail pipeline attaches it",
   'design.socialsImageRef': "Icon images use",
-  'footer.version': "Bowerbird v{v}",
+  'footer.version': "Bowerbird Signature Builder v{v}",
   'save.saved': "Saved locally",
   'save.saving': "Saving…",
   'save.error': "Not saved — storage full",

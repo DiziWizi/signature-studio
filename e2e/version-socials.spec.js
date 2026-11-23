@@ -105,6 +105,6 @@ test('no template renders the social row twice at any position', async ({ page }
 test('app footer shows the software version matching package.json', async ({ page }) => {
   const h = await freshPage(page);
   const pkg = require('../package.json');
-  await expect(page.locator('#app-version')).toHaveText(new RegExp(`^Bowerbird v${pkg.version.replace(/\./g, '\\.')}$`));
+  await expect(page.locator('#app-version')).toHaveText(new RegExp(`^Bowerbird Signature Builder v${pkg.version.replace(/\./g, '\\.')}$`));
   await expectNoErrors(h);
 });

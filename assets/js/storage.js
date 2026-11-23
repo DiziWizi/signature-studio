@@ -1,4 +1,4 @@
-/* Bowerbird — localStorage: draft autosave + named snapshots. */
+/* Bowerbird Signature Builder — localStorage: draft autosave + named snapshots. */
 'use strict';
 
 const DRAFT_KEY = 'sigstudio.draft.v1';

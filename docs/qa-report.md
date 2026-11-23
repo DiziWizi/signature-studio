@@ -2246,7 +2246,7 @@ Date: 2026-11-23 · Scope: release infrastructure documentation.
 Date: 2026-11-23 · Scope: product name only.
 
 - UI, page title, PWA manifest, locales, README/docs and download filenames
-  now say **Bowerbird - Signature Builder**.
+  now say **Bowerbird Signature Builder**.
 - Kept for compatibility: repository slug `signature-studio`, `sigstudio.*`
   localStorage keys, SW cache prefix and the backup `app` field. URLs, drafts
   and old backups keep working.

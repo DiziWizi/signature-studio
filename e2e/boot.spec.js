@@ -6,7 +6,7 @@ const { freshPage, expectNoErrors, rawErrors, SANDBOX_INSTRUMENTATION_NOISE } = 
 
 test('app boots with zero page and console errors', async ({ page }) => {
   const h = await freshPage(page);
-  await expect(page.locator('.brand-name')).toHaveText('Bowerbird');
+  await expect(page.locator('.brand-name')).toHaveText('Bowerbird Signature Builder');
   await expect(page.locator('#preview-frame')).toBeVisible();
   await expectNoErrors(h);
 });

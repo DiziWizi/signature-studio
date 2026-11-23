@@ -1,4 +1,4 @@
-/* Bowerbird — client compatibility check (v0.83).
+/* Bowerbird Signature Builder — client compatibility check (v0.83).
    Runs locally against the generated HTML; no network. Levels:
    fail = will visibly break somewhere, warn = may degrade, info = advisory. */
 'use strict';

@@ -82,7 +82,7 @@ test('the ten sections expose heading navigation', async ({ page }) => {
       .map(e => ({ level: e.getAttribute('aria-level'), text: (e.textContent || '').trim().slice(0, 22) })),
   }));
   expect(structure.h1).toBe(1);
-  expect(structure.h1Text.trim()).toBe('Bowerbird - Signature Builder');
+  expect(structure.h1Text.trim()).toBe('Bowerbird Signature Builder');
   expect(structure.sectionHeadings).toHaveLength(10);
   expect(structure.sectionHeadings.every(x => x.level === '2')).toBe(true);
   expect(structure.sectionHeadings.map(x => x.text)).toContain('Profile');

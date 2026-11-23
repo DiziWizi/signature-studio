@@ -3,13 +3,13 @@
 
 window.SIG_LOCALES = window.SIG_LOCALES || {};
 window.SIG_LOCALES.es = {
-  'meta.title': "Bowerbird - Signature Builder — firmas de correo HTML",
-  'meta.description': "Bowerbird - Signature Builder — cree y edite firmas de correo HTML en el navegador. Plantillas, enlaces de redes sociales, datos de contacto, vista previa en vivo y exportación con un clic. Sin cuenta, todo queda en local.",
+  'meta.title': "Bowerbird Signature Builder — firmas de correo HTML",
+  'meta.description': "Bowerbird Signature Builder — cree y edite firmas de correo HTML en el navegador. Plantillas, enlaces de redes sociales, datos de contacto, vista previa en vivo y exportación con un clic. Sin cuenta, todo queda en local.",
 
   'a11y.skip': 'Saltar al contenido',
 
-  'brand.name': "Bowerbird",
-  'brand.tag': "Signature Builder",
+  'brand.name': "Bowerbird Signature Builder",
+  'brand.tag': "Una app de Bowerbird",
 
   'topbar.sample': 'Datos de ejemplo',
   'topbar.guide': 'Guía',
@@ -594,7 +594,7 @@ window.SIG_LOCALES.es = {
   'design.imageRefAsStored': "Como está guardada — URL o imagen subida",
   'design.imageRefCid': "CID en línea — el sistema de correo la adjunta",
   'design.socialsImageRef': "Las imágenes de iconos usan",
-  'footer.version': "Bowerbird v{v}",
+  'footer.version': "Bowerbird Signature Builder v{v}",
   'save.saved': "Guardado localmente",
   'save.saving': "Guardando…",
   'save.error': "Sin guardar: almacenamiento lleno",

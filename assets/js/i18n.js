@@ -1,4 +1,4 @@
-/* Bowerbird — dependency-free i18n layer.
+/* Bowerbird Signature Builder — dependency-free i18n layer.
    Locale files (assets/locales/*.js) are classic scripts that register one
    dictionary each: window.SIG_LOCALES['en'] = { 'key': 'text', ... }.
    t(key, params) substitutes {name} tokens; unknown keys fall back to the

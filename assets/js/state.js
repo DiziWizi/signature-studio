@@ -1,4 +1,4 @@
-/* Bowerbird — data model, defaults, sample data. */
+/* Bowerbird Signature Builder — data model, defaults, sample data. */
 'use strict';
 
 const FONT_STACKS = {

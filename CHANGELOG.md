@@ -3,10 +3,19 @@
 All notable changes to Signature Studio. Versions are tagged in the Forgejo
 repository and mirrored to GitHub.
 
+## 0.108.1 — 2026-11-23
+
+### Changed
+- Product title is **Bowerbird Signature Builder** — the family name plus the
+  app name. The top bar shows the full name, the tagline reads “A Bowerbird
+  app”, and the manifest short name is “Signature Builder”.
+- Added `docs/family.md`: Bowerbird is the shared family (Contact Porter,
+  Signature Builder, Email), not the name of any one app or agent.
+
 ## 0.108.0 — 2026-11-23
 
 ### Changed
-- Renamed the product to **Bowerbird - Signature Builder**: UI name, page
+- Renamed the product to **Bowerbird Signature Builder**: UI name, page
   title, PWA manifest, locales, README/docs, app archive and backup download
   names.
 - Technical identifiers stay for compatibility: repository slug
