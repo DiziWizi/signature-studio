@@ -3,6 +3,13 @@
 All notable changes to Signature Studio. Versions are tagged in the Forgejo
 repository and mirrored to GitHub.
 
+## 0.107.2 — 2026-11-23
+
+### Documentation
+- Corrected the GHCR trigger note: `v0.107.1` did build, smoke-test and push
+  `ghcr.io/diziwizi/signature-studio`; mirrored tags can be delayed. Package
+  starts private. No product change.
+
 ## 0.107.1 — 2026-11-23
 
 ### Documentation

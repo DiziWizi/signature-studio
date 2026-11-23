@@ -1,6 +1,6 @@
 {
   "name": "signature-studio",
-  "version": "0.107.1",
+  "version": "0.107.2",
   "description": "Web-based HTML email signature builder and editor. Static, dependency-free.",
   "scripts": {
     "pack:app": "python3 tools/make_app_zip.py",

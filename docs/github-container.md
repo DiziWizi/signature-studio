@@ -87,19 +87,24 @@ docker pull ghcr.io/<owner>/signature-studio@sha256:<digest>
 
 ## Trigger reliability (observed)
 
-After mirroring `v0.107.0`, GitHub listed `container-image` as **active** but
-created **no run** for the tag. The usual cause is a mirror that pushes with
-`GITHUB_TOKEN`: GitHub suppresses workflow runs for events caused by that
-token. Options, in order of preference:
+Mirrored tags can take a moment — or a second tag — before GitHub shows a
+run. In this project, `v0.107.0` produced no run immediately, while `v0.107.1`
+produced two successful `container-image` runs and pushed
+`ghcr.io/diziwizi/signature-studio:0.107.1` (tags: `0.107.1`, `0.107`,
+`latest`, `sha-403976c`). Both the build-and-smoke and multi-arch push steps
+succeeded.
 
-1. Give the Forgejo push mirror a fine-grained PAT with **workflow** scope, or
+If a release tag produces no run:
+
+1. give the Forgejo push mirror a fine-grained PAT with **workflow** scope, or
 2. call `workflow_dispatch` / `repository_dispatch` from Forgejo after a
    release, or
-3. run the workflow manually once per release.
+3. run the workflow manually once.
 
 Check with `gh run list --repo <owner>/signature-studio --workflow
-container-image`. Until a run exists, no image has been published — do not
-assume the tag alone built one.
+container-image`. Until a successful run exists, do not assume the tag built
+an image. The first push creates a **private** GHCR package; make it public in
+package settings if anonymous pulls are wanted.
 
 ## Failure modes
 
