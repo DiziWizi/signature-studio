@@ -2225,6 +2225,22 @@ Date: 2026-11-23 · Scope: bulk CSV → installable folders.
 
 ---
 
+# v0.107.0 addendum (1.0 hardening / GHCR)
+
+Date: 2026-11-23 · Scope: release infrastructure documentation.
+
+- **GHCR workflow** — `.github/workflows/ghcr.yml` builds amd64 locally,
+  smoke-tests `/`, CSS, the `/e2e/` 404 and `nosniff`, then pushes multi-arch
+  with SBOM/provenance. Triggered only by mirrored `v*` tags or manually.
+- **Canonicality** — Forgejo creates versions, tags and release assets; the
+  GitHub workflow never edits source or creates releases. The image is a
+  derived artifact; doc explains digest pinning and failure modes.
+- **Status** — draft until the GitHub mirror has Actions enabled. No image is
+  claimed to exist yet.
+- Suite unchanged at 346/346 twice; Firefox smoke 3/3.
+
+---
+
 # v0.4.0 addendum
 
 Date: 2026-11-19 · Scope: logo position (left/right of the name block) in

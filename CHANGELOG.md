@@ -3,6 +3,45 @@
 All notable changes to Signature Studio. Versions are tagged in the Forgejo
 repository and mirrored to GitHub.
 
+## 0.107.0 — 2026-11-23
+
+### Added
+- GHCR workflow (`container-image`) for building, smoke-testing and pushing a
+  multi-arch image from mirrored tags, with Forgejo remaining canonical.
+- `docs/github-container.md`: permissions, tags, digest pinning, failure modes
+  and supply-chain notes.
+- README link and 1.0 hardening notes.
+
+## 0.106.0 — 2026-11-23
+
+### Added
+- Team Outlook pack: one classic Outlook folder per bulk CSV row, with
+  relative images, `team-index.csv` skip reasons and a README.
+
+## 0.105.0 — 2026-11-23
+
+### Added
+- Compact one-row phone header with secondary actions behind ⋯.
+- Section open state remembered; phones open the first two.
+
+## 0.104.0 — 2026-11-23
+
+### Added
+- Touch reorder via 36 px arrows; drag handles hidden on coarse pointers.
+- Wrapping social/custom rows, keyboard-safe fields and landscape modals.
+
+## 0.103.0 — 2026-11-23
+
+### Added
+- Two-pane layout from 840×561, including unfolded foldables; dual-screen
+  viewport segments; portrait tablets use the peek sheet.
+
+## 0.102.0 — 2026-11-23
+
+### Fixed
+- One preview on phones (FAB/peek), safe areas, `100dvh`, 36–40 px touch
+  targets and a 320 px overflow.
+
 ## 0.101.0 — 2026-11-23
 
 ### Added

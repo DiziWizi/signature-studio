@@ -142,6 +142,12 @@ is for development. Do **not** point a public web root at a checkout:
 The Docker image is built from an explicit allow-list, so it contains the app
 and nothing else — `curl localhost:8080/e2e/a11y.spec.js` is a 404.
 
+**Prebuilt image (optional):** a GitHub Actions workflow is included for
+building and hosting the container on GHCR while Forgejo stays canonical. It
+is a draft until the GitHub mirror has Actions enabled; see
+[`docs/github-container.md`](docs/github-container.md) for the tag flow,
+permissions, digest pinning and supply-chain notes.
+
 ### Hardening
 
 `nginx.conf` ships the headers this app actually needs:
